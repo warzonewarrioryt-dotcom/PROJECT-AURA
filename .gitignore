@@ -1,5 +1,5 @@
 # =========================================================
-# PROJECT AURA 3.0 — GIT IGNORE CONFIGURATION
+# PROJECT AURA - GIT IGNORE CONFIGURATION
 # =========================================================
 
 # --- Environment & Sensitive Secret Files ---
@@ -8,6 +8,13 @@ backend/.env
 *.env
 *.env.local
 *.env.*.local
+
+# --- Local Databases & User Data ---
+aura-database.json
+backend/aura-database.json
+data/
+backend/data/
+archive/
 
 # --- Node Dependencies ---
 node_modules/
@@ -24,7 +31,7 @@ venv/
 .venv/
 env/
 
-# --- Uploads & Temporary Cache (Preserve Directory Skeletons) ---
+# --- Uploads & Temporary Cache ---
 backend/uploads/*
 !backend/uploads/.gitkeep
 backend/uploads/creations/*
@@ -43,3 +50,4 @@ Thumbs.db
 .vscode/
 .idea/
 .hintrc
+scripts/
