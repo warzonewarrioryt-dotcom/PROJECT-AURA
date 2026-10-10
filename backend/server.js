@@ -88,8 +88,8 @@ app.get("/", (req, res) => {
    Guarantees 100% preservation of the locked frontend UI
 ========================================================= */
 
-// POST /ask (Unified conversational AI with multi-provider fallback)
-app.post("/ask", async (req, res) => {
+// POST /ask & /api/ask (Unified conversational AI with multi-provider fallback)
+const handleAsk = async (req, res) => {
   try {
     const prompt = req.body.prompt || req.body.message || req.body.command;
     const conversationId = req.body.conversationId;
@@ -150,7 +150,9 @@ app.post("/ask", async (req, res) => {
     console.error("[ASK ERROR]", err);
     res.status(500).json({ success: false, error: err.message });
   }
-});
+};
+app.post("/ask", handleAsk);
+app.post("/api/ask", handleAsk);
 
 // POST /generate-image & /api/generate-image
 const handleImageGeneration = async (req, res) => {
@@ -168,8 +170,8 @@ const handleImageGeneration = async (req, res) => {
 app.post("/generate-image", handleImageGeneration);
 app.post("/api/generate-image", handleImageGeneration);
 
-// POST /route (Intent classification route)
-app.post("/route", async (req, res) => {
+// POST /route & /api/route (Intent classification route)
+const handleRoute = async (req, res) => {
   try {
     const { command } = req.body;
     const classification = aiRouterService.classifyIntentLocal(command || "");
@@ -177,7 +179,10 @@ app.post("/route", async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
-});
+};
+app.post("/route", handleRoute);
+app.post("/api/route", handleRoute);
+
 
 // CONVERSATIONS APIs
 app.get("/api/conversations", (req, res) => {

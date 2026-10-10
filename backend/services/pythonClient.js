@@ -5,11 +5,20 @@
 
 "use strict";
 
-const PYTHON_URL = process.env.PYTHON_ENGINE_URL || "http://127.0.0.1:5050";
+/**
+ * Dynamically resolves the internal URL of the Python AI Engine service.
+ * In Vercel Services, the internal URL is injected into process.env.PYTHON_ENGINE_URL
+ * via the caller-side service binding at runtime.
+ */
+function getPythonEngineUrl(endpointPath = "") {
+  const base = process.env.PYTHON_ENGINE_URL || "http://127.0.0.1:5050";
+  return new URL(endpointPath.replace(/^\//, ""), base.endsWith("/") ? base : `${base}/`).toString();
+}
 
 async function checkPythonHealth() {
   try {
-    const res = await fetch(`${PYTHON_URL}/health`, { signal: AbortSignal.timeout(300) });
+    const url = getPythonEngineUrl("health");
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
     if (!res.ok) return false;
     const data = await res.json();
     return data.status === "ONLINE";
@@ -20,11 +29,12 @@ async function checkPythonHealth() {
 
 async function classifyIntentPython(text) {
   try {
-    const res = await fetch(`${PYTHON_URL}/intent`, {
+    const url = getPythonEngineUrl("intent");
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
-      signal: AbortSignal.timeout(300)
+      signal: AbortSignal.timeout(3000)
     });
     if (res.ok) {
       const json = await res.json();
@@ -38,11 +48,12 @@ async function classifyIntentPython(text) {
 
 async function analyzeNlpPython(text) {
   try {
-    const res = await fetch(`${PYTHON_URL}/nlp`, {
+    const url = getPythonEngineUrl("nlp");
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
-      signal: AbortSignal.timeout(300)
+      signal: AbortSignal.timeout(3000)
     });
     if (res.ok) {
       const json = await res.json();
@@ -54,11 +65,12 @@ async function analyzeNlpPython(text) {
 
 async function scoreSimilarityPython(query, chunks, topK = 5) {
   try {
-    const res = await fetch(`${PYTHON_URL}/rag/similarity`, {
+    const url = getPythonEngineUrl("rag/similarity");
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query, chunks, topK }),
-      signal: AbortSignal.timeout(3000)
+      signal: AbortSignal.timeout(4000)
     });
     if (res.ok) {
       const json = await res.json();
@@ -70,11 +82,12 @@ async function scoreSimilarityPython(query, chunks, topK = 5) {
 
 async function analyzeAnalyticsPython(quizResults) {
   try {
-    const res = await fetch(`${PYTHON_URL}/analytics`, {
+    const url = getPythonEngineUrl("analytics");
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ quizResults }),
-      signal: AbortSignal.timeout(2000)
+      signal: AbortSignal.timeout(3000)
     });
     if (res.ok) {
       const json = await res.json();
@@ -89,5 +102,6 @@ module.exports = {
   classifyIntentPython,
   analyzeNlpPython,
   scoreSimilarityPython,
-  analyzeAnalyticsPython
+  analyzeAnalyticsPython,
+  getPythonEngineUrl
 };

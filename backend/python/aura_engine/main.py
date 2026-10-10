@@ -5,6 +5,7 @@ Fast HTTP API on port 5050 using standard Python libraries.
 """
 
 import json
+import os
 import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from typing import Dict, Any
@@ -15,7 +16,7 @@ from rag import rank_chunks, build_grounded_context
 from documents import chunk_document
 from analytics import analyze_quiz_performance
 
-PORT = 5050
+PORT = int(os.environ.get("PORT", 5050))
 
 class AuraEngineHandler(BaseHTTPRequestHandler):
     def _set_headers(self, status=200):
@@ -110,14 +111,18 @@ class AuraEngineHandler(BaseHTTPRequestHandler):
         # Keep logs clean
         sys.stderr.write(f"[PYTHON AURA ENGINE] {args[0]} - {args[1]}\n")
 
+# Vercel Serverless / Service Handler Exports
+handler = AuraEngineHandler
+app = AuraEngineHandler
+
 def run_server():
-    server_address = ("127.0.0.1", PORT)
+    server_address = ("0.0.0.0", PORT)
     httpd = HTTPServer(server_address, AuraEngineHandler)
     print(f"========================================")
     print(f"       PROJECT AURA 3.0")
     print(f"    PYTHON AI INTELLIGENCE CORE")
     print(f"========================================")
-    print(f"Status: ONLINE on http://127.0.0.1:{PORT}")
+    print(f"Status: ONLINE on http://0.0.0.0:{PORT}")
     print(f"========================================")
     try:
         httpd.serve_forever()

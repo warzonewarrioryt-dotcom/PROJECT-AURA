@@ -1,0 +1,68 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "app": {
+      "root": "."
+    },
+    "backend": {
+      "root": "backend",
+      "framework": "express",
+      "bindings": [
+        {
+          "type": "service",
+          "service": "aura_engine",
+          "format": "url",
+          "env": "PYTHON_ENGINE_URL"
+        }
+      ]
+    },
+    "aura_engine": {
+      "root": "backend/python/aura_engine",
+      "runtime": "python"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/ask",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/generate-image",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/route",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/creations/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "app"
+      }
+    }
+  ]
+}
