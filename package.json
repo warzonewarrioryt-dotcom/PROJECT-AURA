@@ -1,0 +1,14 @@
+{
+  "name": "project-aura",
+  "version": "3.0.0",
+  "description": "Project Aura 3.0 — Personal AI Command Operating System",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "engine": "python backend/python/aura_engine/main.py",
+    "dev": "node backend/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

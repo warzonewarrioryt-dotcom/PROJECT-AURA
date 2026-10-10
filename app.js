@@ -1,0 +1,6052 @@
+/* =========================================================
+   PROJECT AURA 3.0 — MASTER FRONTEND CONTROLLER
+   Architecture: Personal AI Operating System
+   Features: Gemini Image Studio · Abstract AI Companion · Multi-AI Router
+   Zero Space Elements · Zero Pollinations · 100% Polish
+========================================================= */
+
+"use strict";
+
+const BACKEND_URL = "http://localhost:3000";
+
+// Master System State
+const state = {
+  activeView: "command-center",
+  coreState: "idle",
+  currentConversationId: null,
+  totalCommands: 0,
+  isRecording: false,
+  speechRecognition: null,
+  soundEnabled: localStorage.getItem("aura_sound_enabled") !== "false",
+  bootFinished: true,
+  currentTask: "Awaiting Directive",
+  activeCreationTab: "writing",
+  spatial3dEnabled: true,
+  tasks: JSON.parse(localStorage.getItem("aura_tasks") || "[]")
+};
+
+/* =========================================================
+   1. REAL AUDIO ENGINE & PROJECT AURA CINEMATIC IMPACT SYNTHESIZER
+   Web Audio API Sub-Bass Drop · Resonant Filter Swell · Crystal Harmonic Chime
+========================================================= */
+let _auraAudioCtx = null;
+
+function getSharedAudioContext() {
+  const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtxClass) return null;
+  if (!_auraAudioCtx) {
+    _auraAudioCtx = new AudioCtxClass();
+  }
+  if (_auraAudioCtx.state === "suspended") {
+    _auraAudioCtx.resume().catch(() => {});
+  }
+  return _auraAudioCtx;
+}
+
+/**
+ * Synthesizes an authentic PROJECT AURA Cinematic Impact:
+ * Sub-bass drop (85Hz -> 28Hz) + Resonant bandpass filter swell + Crystal harmonic chime
+ */
+function playProjectAuraCinematicImpact(volume = 0.9) {
+  if (!state.soundEnabled) return;
+  try {
+    const ctx = getSharedAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(volume, now);
+    master.connect(ctx.destination);
+
+    // Stereo delay / spatial acoustic reverb
+    const delay = ctx.createDelay();
+    delay.delayTime.setValueAtTime(0.28, now);
+    const feedback = ctx.createGain();
+    feedback.gain.setValueAtTime(0.32, now);
+    const delayFilter = ctx.createBiquadFilter();
+    delayFilter.type = "lowpass";
+    delayFilter.frequency.setValueAtTime(2800, now);
+
+    delay.connect(feedback);
+    feedback.connect(delayFilter);
+    delayFilter.connect(delay);
+    delay.connect(master);
+
+    // 1. Sub-Bass Exponential Drop
+    const subOsc = ctx.createOscillator();
+    const subGain = ctx.createGain();
+    subOsc.type = "sine";
+    subOsc.frequency.setValueAtTime(85, now);
+    subOsc.frequency.exponentialRampToValueAtTime(26, now + 1.6);
+    subGain.gain.setValueAtTime(0.55, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+    subOsc.connect(subGain);
+    subGain.connect(master);
+    subOsc.start(now);
+    subOsc.stop(now + 1.85);
+
+    // 2. Resonant Filter Swell (Sawtooth + Triangle warm aura sweep)
+    const swellOsc1 = ctx.createOscillator();
+    const swellOsc2 = ctx.createOscillator();
+    swellOsc1.type = "sawtooth";
+    swellOsc2.type = "triangle";
+    swellOsc1.frequency.setValueAtTime(110, now);
+    swellOsc2.frequency.setValueAtTime(220.5, now);
+
+    const swellFilter = ctx.createBiquadFilter();
+    swellFilter.type = "bandpass";
+    swellFilter.Q.setValueAtTime(3.2, now);
+    swellFilter.frequency.setValueAtTime(140, now);
+    swellFilter.frequency.linearRampToValueAtTime(2200, now + 0.6);
+    swellFilter.frequency.exponentialRampToValueAtTime(450, now + 2.2);
+
+    const swellGain = ctx.createGain();
+    swellGain.gain.setValueAtTime(0.001, now);
+    swellGain.gain.linearRampToValueAtTime(0.28, now + 0.35);
+    swellGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+    swellOsc1.connect(swellFilter);
+    swellOsc2.connect(swellFilter);
+    swellFilter.connect(swellGain);
+    swellGain.connect(master);
+    swellGain.connect(delay);
+
+    swellOsc1.start(now);
+    swellOsc2.start(now);
+    swellOsc1.stop(now + 2.3);
+    swellOsc2.stop(now + 2.3);
+
+    // 3. Pristine Crystal Harmonic Glass Chime (Aura Chord: E5, A5, C#6, E6)
+    const chimeFreqs = [659.25, 880.00, 1108.73, 1318.51];
+    chimeFreqs.forEach((freq, idx) => {
+      const cOsc = ctx.createOscillator();
+      const cGain = ctx.createGain();
+      const startTime = now + 0.18 + idx * 0.08;
+
+      cOsc.type = "sine";
+      cOsc.frequency.setValueAtTime(freq, startTime);
+
+      cGain.gain.setValueAtTime(0.001, startTime);
+      cGain.gain.linearRampToValueAtTime(0.14, startTime + 0.03);
+      cGain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.4);
+
+      cOsc.connect(cGain);
+      cGain.connect(master);
+      cGain.connect(delay);
+
+      cOsc.start(startTime);
+      cOsc.stop(startTime + 1.45);
+    });
+
+  } catch (err) {
+    console.warn("[PROJECT AURA CINEMATIC AUDIO]", err);
+  }
+}
+
+
+
+class CinematicBootAudioEngine {
+  constructor() {
+    this.ambientSrc = "assets/audio/aura_startup.wav";
+    this.voiceSrc = "assets/audio/aura_voice_online.mp3";
+    this.ambientAudioEl = null;
+    this.voiceAudioEl = null;
+    this.voiceTimer = null;
+    this.isPlaying = false;
+    this.init();
+  }
+
+  init() {
+    try {
+      this.ambientAudioEl = new Audio(this.ambientSrc);
+      this.ambientAudioEl.preload = "auto";
+      this.ambientAudioEl.volume = state.soundEnabled ? 0.7 : 0;
+
+      this.voiceAudioEl = new Audio(this.voiceSrc);
+      this.voiceAudioEl.preload = "auto";
+      this.voiceAudioEl.volume = state.soundEnabled ? 1.0 : 0;
+    } catch (_) {}
+  }
+
+  play() {
+    if (!state.soundEnabled) return;
+    this.isPlaying = true;
+
+    // 1. Play synthesized original PROJECT AURA impact
+    playProjectAuraCinematicImpact(0.9);
+
+    // 2. Play recorded voice or ambient audio if available
+    if (this.voiceAudioEl) {
+      try {
+        this.voiceAudioEl.currentTime = 0;
+        this.voiceAudioEl.volume = state.soundEnabled ? 1.0 : 0;
+        this.voiceAudioEl.play().catch(() => {});
+      } catch (_) {}
+    } else if (this.ambientAudioEl) {
+      try {
+        this.ambientAudioEl.currentTime = 0;
+        this.ambientAudioEl.volume = state.soundEnabled ? 0.6 : 0;
+        this.ambientAudioEl.play().catch(() => {});
+      } catch (_) {}
+    }
+
+    // 3. Trigger authentic AURA Voice announcement: "Project Aura online..."
+    if (this.voiceTimer) clearTimeout(this.voiceTimer);
+    this.voiceTimer = setTimeout(() => {
+      if (!this.isPlaying || state.bootFinished || !state.soundEnabled) return;
+      auraSpeakGreeting("Project Aura online. Intelligence systems ready for directive.");
+    }, 2400);
+  }
+
+  stopAndCleanup() {
+    this.isPlaying = false;
+    if (this.voiceTimer) {
+      clearTimeout(this.voiceTimer);
+      this.voiceTimer = null;
+    }
+    if (this.ambientAudioEl) {
+      try { this.ambientAudioEl.pause(); this.ambientAudioEl.currentTime = 0; } catch (_) {}
+    }
+    if (this.voiceAudioEl) {
+      try { this.voiceAudioEl.pause(); this.voiceAudioEl.currentTime = 0; } catch (_) {}
+    }
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+  }
+
+  setMuted(muted) {
+    state.soundEnabled = !muted;
+    localStorage.setItem("aura_sound_enabled", (!muted).toString());
+    if (this.ambientAudioEl) this.ambientAudioEl.volume = muted ? 0 : 0.6;
+    if (this.voiceAudioEl) this.voiceAudioEl.volume = muted ? 0 : 1.0;
+  }
+}
+
+function auraSpeakGreeting(text) {
+  if (!window.speechSynthesis || !state.soundEnabled) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.90;
+  utter.pitch = 0.82;
+  utter.volume = 1.0;
+
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = ["Daniel", "Oliver", "George", "Google UK English Male", "Microsoft George"];
+  let chosen = null;
+  for (const name of preferred) {
+    chosen = voices.find(v => v.name.includes(name));
+    if (chosen) break;
+  }
+  if (!chosen) chosen = voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female")) || voices[0];
+  if (chosen) utter.voice = chosen;
+
+  window.speechSynthesis.speak(utter);
+}
+
+const realSoundPlayer = new CinematicBootAudioEngine();
+
+// Tactile UI Sound Generator
+function playTactileSound(type) {
+  if (!state.soundEnabled) return;
+  try {
+    const ctx = getSharedAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === "click") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(700, now + 0.03);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.start(now);
+      osc.stop(now + 0.03);
+    } else if (type === "dispatch") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(260, now);
+      osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    } else if (type === "success") {
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, now);
+      osc.frequency.setValueAtTime(880.00, now + 0.07);
+      gain.gain.setValueAtTime(0.07, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+  } catch (_) { }
+}
+
+/* =========================================================
+   2. 8K SCI-FI CINEMATIC BOOT ENGINE — PROJECT AURA
+   Black & Gold Cybernetic Android Explosion & Reassembly
+   5 Phases: Appearance -> Disassembly -> Drone -> Vortex -> Reassembly
+========================================================= */
+const bootOverlay = document.getElementById("auraBootOverlay");
+const bootVisualWrap = document.getElementById("bootVisualWrap");
+const bootFXCanvas = document.getElementById("bootFXCanvas");
+const bootFXCtx = bootFXCanvas ? bootFXCanvas.getContext("2d") : null;
+const skipBootBtn = document.getElementById("skipBootBtn");
+const bootAudioBtn = document.getElementById("bootAudioToggleBtn");
+const bootAudioIcon = document.getElementById("bootAudioIcon");
+const bootPhaseLabel = document.getElementById("bootPhaseLabel");
+const bootTimecode = document.getElementById("bootTimecode");
+const bootSchTitle = document.getElementById("bootSchTitle");
+const bootSchDesc = document.getElementById("bootSchDesc");
+const bootProgressBar = document.getElementById("introProgressBar");
+const bootHudClock = document.getElementById("bootHudClock");
+const bootPhasesTrack = document.getElementById("bootPhasesTrack");
+
+const BOOT_TOTAL_DURATION_SEC = 18.0;
+
+const BOOT_PHASES_DATA = [
+  {
+    phase: 1,
+    start: 0.0,
+    end: 3.0,
+    name: "APPEARANCE",
+    label: "PHASE 1: FIRST APPEARANCE",
+    title: "HALO STRIKE & VISOR IGNITION",
+    desc: "Overhead circular halo lights striking downward. Golden visor ignites with an intense amber pulse as internal circuits illuminate."
+  },
+  {
+    phase: 2,
+    start: 3.0,
+    end: 6.0,
+    name: "DISASSEMBLY",
+    label: "PHASE 2: EXPLODED SCHEMATIC DECOUPLING",
+    title: "ARMOR DECOUPLING & REACTOR EXPOSURE",
+    desc: "Mechanical latches release with pneumatic precision. Armor plates, pauldrons & casings glide outward, exposing radiant golden AI core reactor."
+  },
+  {
+    phase: 3,
+    start: 6.0,
+    end: 10.0,
+    name: "DRONE SWEEP",
+    label: "PHASE 3: FPV DRONE 360° ORBITAL SWEEP",
+    title: "360° PARALLAX SWEEP & ANAMORPHIC FLARES",
+    desc: "Dynamic drone camera swoops low skimming glowing floor rings, banking around the right flank in a full 360° orbital ascent to high 3/4 angle."
+  },
+  {
+    phase: 4,
+    start: 10.0,
+    end: 14.0,
+    name: "ANTIGRAVITY VORTEX",
+    label: "PHASE 4: MAGNETIC VORTEX & PLASMA ARCS",
+    title: "PARTS FLYING IN AIR // VORTEX TRAJECTORY",
+    desc: "Antigravity field reaches peak power. Floating armor modules swirl through 3D air along magnetic vortex trajectories with crackling golden plasma arcs."
+  },
+  {
+    phase: 5,
+    start: 14.0,
+    end: 18.0,
+    name: "REASSEMBLY",
+    label: "PHASE 5: GRAVITATIONAL REASSEMBLY",
+    title: "GRAVITATIONAL SHOCKWAVE & SYSTEM ENGAGED",
+    desc: "Core releases radial shockwave. Swirling modules accelerate inward, snapping into locking mechanical sockets with crisp alignment. 100% online status."
+  }
+];
+
+let bootStartTime = null;
+let bootAnimId = null;
+let bootCurrentPhase = 1;
+let bootFXParticles = [];
+let bootAudioSynthContext = null;
+let bootAudioNodes = null;
+
+// Initialize particles for canvas FX
+function initBootParticles() {
+  bootFXParticles = [];
+  const count = 75;
+  for (let i = 0; i < count; i++) {
+    bootFXParticles.push({
+      angle: Math.random() * Math.PI * 2,
+      radiusX: 40 + Math.random() * 260,
+      radiusY: 20 + Math.random() * 120,
+      speed: 0.015 + Math.random() * 0.035,
+      size: 1.2 + Math.random() * 2.8,
+      alpha: 0.3 + Math.random() * 0.7,
+      color: Math.random() > 0.3 ? "#D8B15E" : "#00F0FF",
+      heightOffset: (Math.random() - 0.5) * 80
+    });
+  }
+}
+
+// Procedural Web Audio Sound Generator for Sci-Fi Boot
+function startBootAudioSynth() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!bootAudioSynthContext) {
+      bootAudioSynthContext = new AudioCtx();
+    }
+    if (bootAudioSynthContext.state === "suspended") {
+      bootAudioSynthContext.resume();
+    }
+
+    const ctx = bootAudioSynthContext;
+    const now = ctx.currentTime;
+
+    // Master gain
+    const masterGain = ctx.createGain();
+    masterGain.gain.setValueAtTime(state.soundEnabled ? 0.35 : 0.0, now);
+    masterGain.connect(ctx.destination);
+
+    // Sub-bass drone
+    const droneOsc = ctx.createOscillator();
+    droneOsc.type = "sawtooth";
+    droneOsc.frequency.setValueAtTime(55, now);
+    droneOsc.frequency.exponentialRampToValueAtTime(110, now + 14);
+
+    const droneFilter = ctx.createBiquadFilter();
+    droneFilter.type = "lowpass";
+    droneFilter.frequency.setValueAtTime(140, now);
+    droneFilter.frequency.exponentialRampToValueAtTime(800, now + 14);
+
+    droneOsc.connect(droneFilter);
+    droneFilter.connect(masterGain);
+    droneOsc.start(now);
+
+    // Harmonic shimmer (sine chord)
+    const shimmerOsc = ctx.createOscillator();
+    shimmerOsc.type = "sine";
+    shimmerOsc.frequency.setValueAtTime(440, now);
+    shimmerOsc.frequency.exponentialRampToValueAtTime(880, now + 14);
+
+    const shimmerGain = ctx.createGain();
+    shimmerGain.gain.setValueAtTime(0.08, now);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.2, now + 12);
+
+    shimmerOsc.connect(shimmerGain);
+    shimmerGain.connect(masterGain);
+    shimmerOsc.start(now);
+
+    bootAudioNodes = { masterGain, droneOsc, shimmerOsc };
+  } catch (err) {
+    console.warn("[PROJECT AURA BOOT AUDIO] Web Audio unavailable:", err);
+  }
+}
+
+function stopBootAudioSynth() {
+  try {
+    if (bootAudioNodes) {
+      const now = bootAudioSynthContext ? bootAudioSynthContext.currentTime : 0;
+      if (bootAudioNodes.masterGain) {
+        bootAudioNodes.masterGain.gain.linearRampToValueAtTime(0.0, now + 0.3);
+      }
+      setTimeout(() => {
+        try {
+          if (bootAudioNodes.droneOsc) bootAudioNodes.droneOsc.stop();
+          if (bootAudioNodes.shimmerOsc) bootAudioNodes.shimmerOsc.stop();
+        } catch (_) {}
+        bootAudioNodes = null;
+      }, 350);
+    }
+  } catch (_) {}
+}
+
+function resizeBootFXCanvas() {
+  if (!bootFXCanvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  bootFXCanvas.width = window.innerWidth * dpr;
+  bootFXCanvas.height = window.innerHeight * dpr;
+  if (bootFXCtx) {
+    bootFXCtx.scale(dpr, dpr);
+  }
+}
+
+function initBootSequence() {
+  state.bootFinished = true;
+  document.body.classList.remove("aura-booting");
+
+  if (bootOverlay) {
+    bootOverlay.classList.add("boot-done");
+    bootOverlay.style.display = "none";
+  }
+
+  // Initialize companion core canvas & 3D card tilt
+  initCompanionCoreCanvas();
+  init3DCardTilt();
+
+  // Check providers and telemetry
+  refreshProviderStatus();
+  loadVaultFiles();
+  loadMemoryNotes();
+  renderTasks();
+}
+
+function runBootRenderLoop() {
+  if (state.bootFinished) return;
+
+  const now = performance.now();
+  const elapsedSec = (now - bootStartTime) / 1000;
+
+  // Complete if past total duration
+  if (elapsedSec >= BOOT_TOTAL_DURATION_SEC) {
+    completeBootImmediately();
+    return;
+  }
+
+  // Determine current active phase
+  let activePhaseObj = BOOT_PHASES_DATA[0];
+  for (const p of BOOT_PHASES_DATA) {
+    if (elapsedSec >= p.start && elapsedSec < p.end) {
+      activePhaseObj = p;
+      break;
+    }
+  }
+
+  // Update DOM phase state if changed
+  if (activePhaseObj.phase !== bootCurrentPhase) {
+    bootCurrentPhase = activePhaseObj.phase;
+    if (bootOverlay) {
+      bootOverlay.setAttribute("data-phase", String(bootCurrentPhase));
+    }
+    if (bootPhaseLabel) {
+      bootPhaseLabel.textContent = activePhaseObj.label;
+    }
+    if (bootSchTitle) {
+      bootSchTitle.textContent = activePhaseObj.title;
+    }
+    if (bootSchDesc) {
+      bootSchDesc.textContent = activePhaseObj.desc;
+    }
+    // Update phase scrubber steps
+    if (bootPhasesTrack) {
+      const steps = bootPhasesTrack.querySelectorAll(".boot-phase-step");
+      steps.forEach((st) => {
+        const pNum = parseInt(st.getAttribute("data-phase"), 10);
+        st.classList.toggle("active", pNum === bootCurrentPhase);
+        st.classList.toggle("completed", pNum < bootCurrentPhase);
+      });
+    }
+  }
+
+  // Update timecode display
+  if (bootTimecode) {
+    const mins = Math.floor(elapsedSec / 60);
+    const secs = (elapsedSec % 60).toFixed(1).padStart(4, "0");
+    bootTimecode.textContent = `${String(mins).padStart(2, "0")}:${secs} / 00:18.0`;
+  }
+
+  // Update clock
+  if (bootHudClock) {
+    const d = new Date();
+    bootHudClock.textContent = d.toTimeString().split(" ")[0];
+  }
+
+  // Update progress bar
+  if (bootProgressBar) {
+    const pct = Math.min(100, (elapsedSec / BOOT_TOTAL_DURATION_SEC) * 100);
+    bootProgressBar.style.width = pct.toFixed(1) + "%";
+  }
+
+  // Render Canvas FX
+  drawBootFX(elapsedSec, bootCurrentPhase);
+
+  bootAnimId = requestAnimationFrame(runBootRenderLoop);
+}
+
+function drawBootFX(elapsedSec, phase) {
+  if (!bootFXCanvas || !bootFXCtx) return;
+  const ctx = bootFXCtx;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w * 0.5;
+  const cy = h * 0.41; // Anchored on the android chest reactor core
+
+  // 1. Concentric Golden Reactor Rings
+  const ringScale = phase === 2 ? 1.2 : (phase === 4 ? 1.35 : 1.0);
+  const ringAlpha = phase === 1 ? 0.35 : 0.75;
+  
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  for (let r = 0; r < 4; r++) {
+    const baseRadiusX = (55 + r * 28) * ringScale;
+    const baseRadiusY = (24 + r * 12) * ringScale;
+    const rotSpeed = (r % 2 === 0 ? 1 : -1) * (0.8 + r * 0.3);
+    const ringAngle = elapsedSec * rotSpeed;
+
+    ctx.save();
+    ctx.rotate(ringAngle);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, baseRadiusX, baseRadiusY, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = r === 0 ? `rgba(255, 235, 160, ${ringAlpha})` : `rgba(216, 177, 94, ${ringAlpha * 0.75})`;
+    ctx.lineWidth = r === 0 ? 2.5 : 1.5;
+    ctx.stroke();
+
+    // Small glowing node on ring
+    const nodeX = Math.cos(elapsedSec * 2 + r) * baseRadiusX;
+    const nodeY = Math.sin(elapsedSec * 2 + r) * baseRadiusY;
+    ctx.beginPath();
+    ctx.arc(nodeX, nodeY, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = "#FFF0BF";
+    ctx.shadowColor = "#D8B15E";
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // 2. Swirling Antigravity Particles
+  const vortexSpeedMultiplier = phase === 4 ? 2.5 : (phase === 5 ? -2.0 : 1.0);
+  for (let i = 0; i < bootFXParticles.length; i++) {
+    const p = bootFXParticles[i];
+    p.angle += p.speed * vortexSpeedMultiplier;
+
+    const px = cx + Math.cos(p.angle) * p.radiusX;
+    const py = cy + Math.sin(p.angle) * p.radiusY + p.heightOffset;
+
+    ctx.beginPath();
+    ctx.arc(px, py, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1.0;
+  }
+
+  // 3. Crackling Plasma Energy Arcs (Phases 2, 3, 4)
+  if (phase >= 2 && phase <= 4) {
+    const arcCount = phase === 4 ? 6 : 3;
+    for (let a = 0; a < arcCount; a++) {
+      if (Math.random() > 0.4) {
+        const targetAngle = (a / arcCount) * Math.PI * 2 + Math.random() * 0.5;
+        const targetDist = 140 + Math.random() * 120;
+        const tx = cx + Math.cos(targetAngle) * targetDist;
+        const ty = cy + Math.sin(targetAngle) * targetDist * 0.6;
+
+        drawLightningArc(ctx, cx, cy, tx, ty, "#D8B15E");
+      }
+    }
+  }
+
+  // 4. Gravitational Shockwave Ripple (Phase 5)
+  if (phase === 5) {
+    const shockProgress = (elapsedSec - 14.0) % 2.0;
+    const shockRadius = shockProgress * (w * 0.6);
+    const shockAlpha = Math.max(0, 1.0 - shockProgress / 2.0);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(cx, h * 0.82, shockRadius, shockRadius * 0.28, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(216, 177, 94, ${shockAlpha * 0.7})`;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = "#D8B15E";
+    ctx.shadowBlur = 18;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawLightningArc(ctx, x1, y1, x2, y2, color) {
+  const steps = 6;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  let curX = x1;
+  let curY = y1;
+  for (let i = 1; i <= steps; i++) {
+    const progress = i / steps;
+    const nx = x1 + (x2 - x1) * progress + (Math.random() - 0.5) * 22;
+    const ny = y1 + (y2 - y1) * progress + (Math.random() - 0.5) * 22;
+    ctx.lineTo(nx, ny);
+    curX = nx;
+    curY = ny;
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.6;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 12;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function completeBootImmediately() {
+  state.bootFinished = true;
+  if (bootAnimId) cancelAnimationFrame(bootAnimId);
+  stopBootAudioSynth();
+  try { realSoundPlayer.stopAndCleanup(); } catch (_) {}
+
+  if (bootOverlay) {
+    bootOverlay.classList.add("boot-done");
+    bootOverlay.style.display = "none";
+  }
+
+  document.body.classList.remove("aura-booting");
+
+  // Initialize companion core canvas & 3D card tilt
+  initCompanionCoreCanvas();
+  init3DCardTilt();
+
+  // Check providers and telemetry
+  refreshProviderStatus();
+  loadVaultFiles();
+  loadMemoryNotes();
+  renderTasks();
+}
+
+window.restartAuraBoot = function () {
+  console.log("[PROJECT AURA] Boot sequence animation is disabled.");
+};
+
+if (skipBootBtn) {
+  skipBootBtn.addEventListener("click", () => completeBootImmediately());
+}
+
+if (bootAudioBtn) {
+  bootAudioBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const next = !state.soundEnabled;
+    state.soundEnabled = next;
+    realSoundPlayer.setMuted(!next);
+    if (bootAudioNodes && bootAudioNodes.masterGain && bootAudioSynthContext) {
+      bootAudioNodes.masterGain.gain.setValueAtTime(next ? 0.35 : 0.0, bootAudioSynthContext.currentTime);
+    }
+    if (bootAudioIcon) bootAudioIcon.textContent = next ? "🔊" : "🔇";
+  });
+}
+
+const replayBootBtn = document.getElementById("replayBootBtn");
+if (replayBootBtn) {
+  replayBootBtn.addEventListener("click", () => window.restartAuraBoot());
+}
+
+const visualReplayBootBtn = document.getElementById("visualReplayBootBtn");
+if (visualReplayBootBtn) {
+  visualReplayBootBtn.addEventListener("click", () => window.restartAuraBoot());
+}
+
+const soundToggleBtn = document.getElementById("soundToggleBtn");
+if (soundToggleBtn) {
+  soundToggleBtn.addEventListener("click", () => {
+    const next = !state.soundEnabled;
+    realSoundPlayer.setMuted(!next);
+    soundToggleBtn.textContent = next ? "♫" : "✕";
+  });
+}
+
+
+/* =========================================================
+   3. AURA 3D HOLOGRAPHIC NEURAL CORE CANVAS
+   (True 3D Perspective Projection · Geodesic Sphere · Orbiting Gyro-Rings)
+========================================================= */
+const coreCanvas = document.getElementById("coreCanvas");
+const coreCtx = coreCanvas ? coreCanvas.getContext("2d") : null;
+let coreTicks = 0;
+let pointerX = 0;
+let pointerY = 0;
+let targetPointerX = 0;
+let targetPointerY = 0;
+
+// 3D Engine State & Physics
+let rotX = 0.25;
+let rotY = 0.45;
+let velX = 0;
+let velY = 0;
+let isDraggingCore = false;
+let lastDragX = 0;
+let lastDragY = 0;
+
+// Pre-compute 38 Fibonacci Geodesic Sphere Vertices
+const SPHERE_NODES = [];
+const SPHERE_NODE_COUNT = 36;
+const GOLDEN_RATIO_ANGLE = Math.PI * (3 - Math.sqrt(5));
+for (let i = 0; i < SPHERE_NODE_COUNT; i++) {
+  const y = 1 - (i / (SPHERE_NODE_COUNT - 1)) * 2;
+  const rad = Math.sqrt(Math.max(0, 1 - y * y));
+  const theta = GOLDEN_RATIO_ANGLE * i;
+  SPHERE_NODES.push({
+    x: Math.cos(theta) * rad,
+    y: y,
+    z: Math.sin(theta) * rad,
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+// Pre-calculate nearest neighbor wireframe edges (3D geodesic connectivity)
+const SPHERE_EDGES = [];
+for (let i = 0; i < SPHERE_NODE_COUNT; i++) {
+  for (let j = i + 1; j < SPHERE_NODE_COUNT; j++) {
+    const dx = SPHERE_NODES[i].x - SPHERE_NODES[j].x;
+    const dy = SPHERE_NODES[i].y - SPHERE_NODES[j].y;
+    const dz = SPHERE_NODES[i].z - SPHERE_NODES[j].z;
+    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dist < 0.68) {
+      SPHERE_EDGES.push([i, j]);
+    }
+  }
+}
+
+function initCompanionCoreCanvas() {
+  if (!coreCanvas || !coreCtx) return;
+
+  function resize() {
+    const rect = coreCanvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    coreCanvas.width = (rect.width || 300) * dpr;
+    coreCanvas.height = (rect.height || 180) * dpr;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  // Interactive 3D Orbit Drag & Hover Physics
+  coreCanvas.addEventListener("pointerdown", (e) => {
+    isDraggingCore = true;
+    lastDragX = e.clientX;
+    lastDragY = e.clientY;
+    coreCanvas.setPointerCapture(e.pointerId);
+  });
+
+  window.addEventListener("pointermove", (e) => {
+    if (isDraggingCore) {
+      const dx = e.clientX - lastDragX;
+      const dy = e.clientY - lastDragY;
+      lastDragX = e.clientX;
+      lastDragY = e.clientY;
+      velY = dx * 0.008;
+      velX = -dy * 0.008;
+      rotY += velY;
+      rotX += velX;
+    } else if (coreCanvas) {
+      const rect = coreCanvas.getBoundingClientRect();
+      if (
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      ) {
+        targetPointerX = (e.clientX - rect.left - rect.width * 0.5) * 0.12;
+        targetPointerY = (e.clientY - rect.top - rect.height * 0.5) * 0.12;
+      }
+    }
+  });
+
+  window.addEventListener("pointerup", () => {
+    isDraggingCore = false;
+  });
+
+  coreCanvas.addEventListener("pointerleave", () => {
+    targetPointerX = 0;
+    targetPointerY = 0;
+  });
+
+  renderCompanionCore();
+}
+
+function setCoreState(newState, label) {
+  state.coreState = newState;
+  const dot = document.getElementById("coreStateDot");
+  const text = document.getElementById("coreStateText");
+
+  if (text) text.textContent = label || newState.toUpperCase();
+  if (dot) {
+    if (newState === "thinking") {
+      dot.style.background = "var(--accent-gold)";
+    } else if (newState === "listening") {
+      dot.style.background = "var(--accent-blue)";
+    } else if (newState === "error") {
+      dot.style.background = "var(--accent-rose)";
+    } else {
+      dot.style.background = "var(--accent-sage)";
+    }
+  }
+}
+
+function updateContextTask(taskText) {
+  state.currentTask = taskText;
+  const el = document.getElementById("contextCurrentTask");
+  if (el) el.textContent = taskText;
+}
+
+// 3D Perspective Projection Matrix
+function project3D(x, y, z, cx, cy, baseScale, rX, rY) {
+  // Rotate around Y
+  const cosY = Math.cos(rY);
+  const sinY = Math.sin(rY);
+  const x1 = x * cosY + z * sinY;
+  const z1 = -x * sinY + z * cosY;
+
+  // Rotate around X
+  const cosX = Math.cos(rX);
+  const sinX = Math.sin(rX);
+  const y2 = y * cosX - z1 * sinX;
+  const z2 = y * sinX + z1 * cosX;
+
+  // Camera perspective
+  const fov = 340;
+  const dist = 280;
+  const pScale = fov / (z2 + dist);
+
+  return {
+    px: cx + x1 * baseScale * pScale,
+    py: cy + y2 * baseScale * pScale,
+    z: z2,
+    pScale: pScale,
+    depthRatio: Math.max(0.1, Math.min(1.0, (z2 + 120) / 240))
+  };
+}
+
+function renderCompanionCore() {
+  if (!coreCtx || !coreCanvas) return;
+  coreTicks++;
+
+  const w = coreCanvas.width;
+  const h = coreCanvas.height;
+  pointerX += (targetPointerX - pointerX) * 0.08;
+  pointerY += (targetPointerY - pointerY) * 0.08;
+
+  const cx = w * 0.5 + pointerX;
+  const cy = h * 0.5 + pointerY;
+  const scale = (Math.min(w, h) / 180) * 0.85;
+  const baseSphereRadius = 46 * scale;
+
+  coreCtx.clearRect(0, 0, w, h);
+
+  // Dynamic parameters by state
+  let rotSpeed = 0.012;
+  let pulseFreq = 0.04;
+  const currentTheme = document.body.getAttribute("data-theme") || "rose-olive";
+  let primaryColor = "201, 160, 160"; // Rose (#c9a0a0)
+  let secondaryColor = "138, 143, 107"; // Olive (#8a8f6b)
+
+  if (currentTheme === "rose-olive-light") {
+    primaryColor = "158, 107, 107";
+    secondaryColor = "138, 143, 107";
+  } else if (currentTheme === "lavender-beige") {
+    primaryColor = "168, 155, 190"; // Lavender (#a89bbe)
+    secondaryColor = "219, 195, 168"; // Beige (#dbc3a8)
+  } else if (currentTheme === "lavender-beige-light") {
+    primaryColor = "122, 105, 150";
+    secondaryColor = "219, 195, 168";
+  } else if (currentTheme === "sage-cream") {
+    primaryColor = "80, 94, 62"; // Deep Botanical
+    secondaryColor = "163, 177, 138"; // Sage (#a3b18a)
+  } else if (currentTheme === "sage-cream-dark") {
+    primaryColor = "163, 177, 138"; // Sage (#a3b18a)
+    secondaryColor = "242, 232, 207"; // Cream (#f2e8cf)
+  } else if (currentTheme === "cyber-obsidian" || currentTheme === "minimal-dark") {
+    primaryColor = "201, 164, 92"; // Gold
+    secondaryColor = "160, 160, 160";
+  } else if (currentTheme === "minimal-light") {
+    primaryColor = "17, 24, 39";
+    secondaryColor = "75, 85, 99";
+  }
+  let nucleusRadius = 14 * scale;
+
+  if (state.coreState === "thinking") {
+    rotSpeed = 0.042;
+    pulseFreq = 0.12;
+    primaryColor = "245, 166, 35";
+    secondaryColor = "255, 215, 0";
+    nucleusRadius = 18 * scale;
+  } else if (state.coreState === "listening") {
+    rotSpeed = 0.022;
+    pulseFreq = 0.08;
+    primaryColor = "0, 229, 255";
+    secondaryColor = "41, 121, 255";
+    nucleusRadius = 16 * scale;
+  } else if (state.coreState === "responding") {
+    rotSpeed = 0.026;
+    pulseFreq = 0.07;
+    primaryColor = "16, 185, 129";
+    secondaryColor = "194, 155, 72";
+    nucleusRadius = 16 * scale;
+  } else if (state.coreState === "error") {
+    rotSpeed = 0.035;
+    pulseFreq = 0.14;
+    primaryColor = "255, 51, 102";
+    secondaryColor = "255, 102, 140";
+    nucleusRadius = 17 * scale;
+  }
+
+  // Momentum damping
+  if (!isDraggingCore) {
+    rotY += rotSpeed + velY;
+    rotX += (rotSpeed * 0.35) + velX;
+    velX *= 0.92;
+    velY *= 0.92;
+  }
+
+  // 1. Ambient Volumetric 3D Glow
+  const glowRadius = (68 + Math.sin(coreTicks * pulseFreq) * 8) * scale;
+  const glowGrad = coreCtx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+  glowGrad.addColorStop(0, `rgba(${primaryColor}, 0.22)`);
+  glowGrad.addColorStop(0.5, `rgba(${secondaryColor}, 0.08)`);
+  glowGrad.addColorStop(1, "transparent");
+  coreCtx.fillStyle = glowGrad;
+  coreCtx.beginPath();
+  coreCtx.arc(cx, cy, glowRadius, 0, Math.PI * 2);
+  coreCtx.fill();
+
+  // 2. Project Geodesic 3D Vertices
+  const projectedNodes = SPHERE_NODES.map((node) => {
+    // Subtle organic breathing oscillation on radius
+    const breathing = 1.0 + Math.sin(coreTicks * pulseFreq + node.phase) * 0.07;
+    const r = baseSphereRadius * breathing;
+    const p = project3D(node.x * r, node.y * r, node.z * r, cx, cy, 1.0, rotX, rotY);
+    return { ...p, raw: node };
+  });
+
+  // Separate elements by depth for correct 3D occluding/stacking
+  // 3. Render 3D Back Orbiting Ring
+  const ringTilt1 = 0.52; // ~30 deg
+  const ringRadius1 = baseSphereRadius * 1.55;
+  const ringSteps = 32;
+
+  // Background half of Orbit Ring (z < 0)
+  coreCtx.save();
+  for (let i = 0; i < ringSteps; i++) {
+    const angle1 = (i / ringSteps) * Math.PI * 2 + coreTicks * rotSpeed * 1.4;
+    const angle2 = ((i + 1) / ringSteps) * Math.PI * 2 + coreTicks * rotSpeed * 1.4;
+
+    // Ring 1 in local coordinates tilted along X and rotated with sphere
+    const rx1 = Math.cos(angle1) * ringRadius1;
+    const ry1 = Math.sin(angle1) * ringRadius1 * Math.sin(ringTilt1);
+    const rz1 = Math.sin(angle1) * ringRadius1 * Math.cos(ringTilt1);
+
+    const rx2 = Math.cos(angle2) * ringRadius1;
+    const ry2 = Math.sin(angle2) * ringRadius1 * Math.sin(ringTilt1);
+    const rz2 = Math.sin(angle2) * ringRadius1 * Math.cos(ringTilt1);
+
+    const p1 = project3D(rx1, ry1, rz1, cx, cy, 1.0, rotX, rotY);
+    const p2 = project3D(rx2, ry2, rz2, cx, cy, 1.0, rotX, rotY);
+
+    if (p1.z < 0) {
+      coreCtx.beginPath();
+      coreCtx.moveTo(p1.px, p1.py);
+      coreCtx.lineTo(p2.px, p2.py);
+      coreCtx.strokeStyle = `rgba(${secondaryColor}, ${0.12 * p1.depthRatio})`;
+      coreCtx.lineWidth = Math.max(0.8, 1.0 * scale);
+      coreCtx.stroke();
+    }
+  }
+  coreCtx.restore();
+
+  // 4. Render 3D Wireframe Edges (Connecting lines with depth cueing)
+  coreCtx.save();
+  SPHERE_EDGES.forEach(([i, j]) => {
+    const pA = projectedNodes[i];
+    const pB = projectedNodes[j];
+    const avgDepth = (pA.depthRatio + pB.depthRatio) * 0.5;
+    const alpha = 0.1 + avgDepth * 0.45;
+
+    coreCtx.beginPath();
+    coreCtx.moveTo(pA.px, pA.py);
+    coreCtx.lineTo(pB.px, pB.py);
+    coreCtx.strokeStyle = `rgba(${primaryColor}, ${alpha})`;
+    coreCtx.lineWidth = Math.max(0.6, (0.8 + avgDepth * 0.9) * scale);
+    coreCtx.stroke();
+  });
+  coreCtx.restore();
+
+  // 5. Render Central 3D Energetic Nucleus
+  coreCtx.save();
+  const nucleusPulse = nucleusRadius * (1.0 + Math.sin(coreTicks * (pulseFreq * 1.5)) * 0.12);
+  const nucGrad = coreCtx.createRadialGradient(
+    cx - 3 * scale,
+    cy - 3 * scale,
+    2 * scale,
+    cx,
+    cy,
+    nucleusPulse * 1.3
+  );
+  nucGrad.addColorStop(0, "#FFFFFF");
+  nucGrad.addColorStop(0.35, `rgb(${secondaryColor})`);
+  nucGrad.addColorStop(0.8, `rgb(${primaryColor})`);
+  nucGrad.addColorStop(1, "transparent");
+  coreCtx.fillStyle = nucGrad;
+  coreCtx.beginPath();
+  coreCtx.arc(cx, cy, nucleusPulse, 0, Math.PI * 2);
+  coreCtx.fill();
+  coreCtx.restore();
+
+  // 6. Foreground half of Orbit Ring (z >= 0) with orbiting data beads
+  coreCtx.save();
+  for (let i = 0; i < ringSteps; i++) {
+    const angle1 = (i / ringSteps) * Math.PI * 2 + coreTicks * rotSpeed * 1.4;
+    const angle2 = ((i + 1) / ringSteps) * Math.PI * 2 + coreTicks * rotSpeed * 1.4;
+
+    const rx1 = Math.cos(angle1) * ringRadius1;
+    const ry1 = Math.sin(angle1) * ringRadius1 * Math.sin(ringTilt1);
+    const rz1 = Math.sin(angle1) * ringRadius1 * Math.cos(ringTilt1);
+
+    const rx2 = Math.cos(angle2) * ringRadius1;
+    const ry2 = Math.sin(angle2) * ringRadius1 * Math.sin(ringTilt1);
+    const rz2 = Math.sin(angle2) * ringRadius1 * Math.cos(ringTilt1);
+
+    const p1 = project3D(rx1, ry1, rz1, cx, cy, 1.0, rotX, rotY);
+    const p2 = project3D(rx2, ry2, rz2, cx, cy, 1.0, rotX, rotY);
+
+    if (p1.z >= 0) {
+      coreCtx.beginPath();
+      coreCtx.moveTo(p1.px, p1.py);
+      coreCtx.lineTo(p2.px, p2.py);
+      coreCtx.strokeStyle = `rgba(${secondaryColor}, ${0.35 * p1.depthRatio})`;
+      coreCtx.lineWidth = Math.max(1.0, 1.6 * scale * p1.pScale);
+      coreCtx.stroke();
+
+      // Beacon nodes on foreground ring
+      if (i % 6 === 0) {
+        coreCtx.fillStyle = "#FFFFFF";
+        coreCtx.beginPath();
+        coreCtx.arc(p1.px, p1.py, Math.max(1.5, 2.8 * scale * p1.depthRatio), 0, Math.PI * 2);
+        coreCtx.fill();
+      }
+    }
+  }
+  coreCtx.restore();
+
+  // 7. Render 3D Projected Vertex Nodes
+  coreCtx.save();
+  projectedNodes.forEach((node) => {
+    const nodeR = Math.max(1.2, (2.2 * node.depthRatio + (node.z > 0 ? 1.0 : 0)) * scale);
+    const nodeAlpha = Math.max(0.18, 0.25 + node.depthRatio * 0.7);
+
+    // Glowing dot
+    coreCtx.fillStyle = node.z > 0 ? "#FFFFFF" : `rgba(${primaryColor}, ${nodeAlpha})`;
+    coreCtx.beginPath();
+    coreCtx.arc(node.px, node.py, nodeR, 0, Math.PI * 2);
+    coreCtx.fill();
+
+    // Specular halo for frontal nodes
+    if (node.z > 25) {
+      coreCtx.strokeStyle = `rgba(${secondaryColor}, ${0.4 * node.depthRatio})`;
+      coreCtx.lineWidth = 1 * scale;
+      coreCtx.beginPath();
+      coreCtx.arc(node.px, node.py, nodeR * 2.2, 0, Math.PI * 2);
+      coreCtx.stroke();
+    }
+  });
+  coreCtx.restore();
+
+  requestAnimationFrame(renderCompanionCore);
+}
+
+/* =========================================================
+   4. NAVIGATION & WORKSPACE CONTROLLER
+========================================================= */
+const navItems = document.querySelectorAll(".nav-item");
+const views = document.querySelectorAll(".aura-view");
+const sidebar = document.getElementById("auraSidebar");
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+const mobileNavToggleBtn = document.getElementById("mobileNavToggleBtn");
+const breadcrumbCurrent = document.getElementById("breadcrumbCurrent");
+
+function closeMobileSidebar() {
+  if (sidebar) sidebar.classList.remove("mobile-open");
+  if (sidebarBackdrop) sidebarBackdrop.classList.remove("active");
+}
+
+function openMobileSidebar() {
+  if (sidebar) sidebar.classList.add("mobile-open");
+  if (sidebarBackdrop) sidebarBackdrop.classList.add("active");
+}
+
+function toggleMobileSidebar() {
+  if (sidebar && sidebar.classList.contains("mobile-open")) {
+    closeMobileSidebar();
+  } else {
+    openMobileSidebar();
+  }
+}
+
+window.switchKnowledgeVaultSubTab = function(subtab) {
+  const btnDocs = document.getElementById("kvTabDocsBtn");
+  const btnMem = document.getElementById("kvTabMemBtn");
+  const paneDocs = document.getElementById("kvSubTabDocs");
+  const paneMem = document.getElementById("kvSubTabMemory");
+
+  if (subtab === "memory") {
+    if (btnDocs) btnDocs.classList.remove("active");
+    if (btnMem) btnMem.classList.add("active");
+    if (paneDocs) { paneDocs.style.display = "none"; paneDocs.classList.remove("active"); }
+    if (paneMem) { paneMem.style.display = "block"; paneMem.classList.add("active"); }
+    if (typeof loadMemoryNotes === "function") loadMemoryNotes();
+  } else {
+    if (btnMem) btnMem.classList.remove("active");
+    if (btnDocs) btnDocs.classList.add("active");
+    if (paneMem) { paneMem.style.display = "none"; paneMem.classList.remove("active"); }
+    if (paneDocs) { paneDocs.style.display = "block"; paneDocs.classList.add("active"); }
+    if (typeof loadVaultFiles === "function") loadVaultFiles();
+  }
+};
+
+window.switchStudyPlannerSubTab = function(subtab) {
+  const btnMilestones = document.getElementById("studySubtabMilestones");
+  const btnKanban = document.getElementById("studySubtabKanban");
+  const paneMilestones = document.getElementById("studyTabMilestonesContent");
+  const paneKanban = document.getElementById("studyTabKanbanContent");
+
+  if (subtab === "kanban") {
+    if (btnMilestones) btnMilestones.classList.remove("active");
+    if (btnKanban) btnKanban.classList.add("active");
+    if (paneMilestones) { paneMilestones.style.display = "none"; paneMilestones.classList.remove("active"); }
+    if (paneKanban) { paneKanban.style.display = "block"; paneKanban.classList.add("active"); }
+    if (typeof renderTasks === "function") renderTasks();
+  } else {
+    if (btnKanban) btnKanban.classList.remove("active");
+    if (btnMilestones) btnMilestones.classList.add("active");
+    if (paneKanban) { paneKanban.style.display = "none"; paneKanban.classList.remove("active"); }
+    if (paneMilestones) { paneMilestones.style.display = "block"; paneMilestones.classList.add("active"); }
+  }
+};
+
+function switchView(viewKey) {
+  if (!viewKey) viewKey = "command-center";
+
+  // Route aliases for consolidated workspaces
+  if (viewKey === "memory-cortex") {
+    viewKey = "knowledge-vault";
+    window.switchKnowledgeVaultSubTab("memory");
+  } else if (viewKey === "tasks") {
+    viewKey = "study-intel";
+    window.switchStudyPlannerSubTab("kanban");
+  }
+
+  state.activeView = viewKey;
+
+  navItems.forEach(item => {
+    item.classList.toggle("active", item.getAttribute("data-view") === viewKey);
+  });
+
+  views.forEach(v => {
+    v.classList.toggle("active", v.id === `view-${viewKey}`);
+  });
+
+  if (breadcrumbCurrent) {
+    const activeItem = document.querySelector(`.nav-item[data-view="${viewKey}"] .nav-label`);
+    breadcrumbCurrent.textContent = activeItem ? activeItem.textContent : viewKey;
+  }
+
+  // Trigger view-specific fresh data loading
+  if (viewKey === "knowledge-vault") {
+    loadVaultFiles();
+    loadMemoryNotes();
+  }
+  if (viewKey === "study-intel") {
+    renderTasks();
+  }
+  if (viewKey === "student-performance") loadStudentPerformance();
+  if (viewKey === "mock-test") initSemesterMockTest();
+  if (viewKey === "engineering-hub") initEngineeringHub();
+
+  closeMobileSidebar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  playTactileSound("click");
+}
+
+navItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const viewKey = item.getAttribute("data-view");
+    if (viewKey) switchView(viewKey);
+  });
+});
+
+const brandHomeLink = document.getElementById("brandHomeLink");
+if (brandHomeLink) {
+  brandHomeLink.addEventListener("click", () => switchView("command-center"));
+}
+
+if (mobileNavToggleBtn && sidebar) {
+  mobileNavToggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMobileSidebar();
+  });
+}
+
+if (sidebarBackdrop) {
+  sidebarBackdrop.addEventListener("click", () => {
+    closeMobileSidebar();
+  });
+}
+
+document.addEventListener("click", (e) => {
+  if (sidebar && sidebar.classList.contains("mobile-open")) {
+    if (!sidebar.contains(e.target) && e.target !== mobileNavToggleBtn) {
+      closeMobileSidebar();
+    }
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 768) {
+    closeMobileSidebar();
+  }
+});
+
+/* =========================================================
+   4B. 3D INTERACTIVE SPATIAL PERSPECTIVE & CARD TILT
+========================================================= */
+function init3DCardTilt() {
+  const tiltableCards = document.querySelectorAll(
+    ".command-surface-card, .action-card, .companion-card, .directive-resolution-dossier, .workspace-card, .stat-card, .metric-card, .quick-action-pill, .cognitive-pipeline-card"
+  );
+
+  tiltableCards.forEach(card => {
+    card.classList.add("card-tilt-3d");
+
+    card.addEventListener("pointermove", (e) => {
+      if (state.spatial3dEnabled === false || window.innerWidth <= 768) return;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width * 0.5;
+      const cy = rect.height * 0.5;
+
+      const px = (x / rect.width) * 100;
+      const py = (y / rect.height) * 100;
+      card.style.setProperty("--glare-x", `${px}%`);
+      card.style.setProperty("--glare-y", `${py}%`);
+
+      const rotX = ((y - cy) / cy) * -6.5;
+      const rotY = ((x - cx) / cx) * 6.5;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(8px) scale3d(1.015, 1.015, 1.015)`;
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale3d(1, 1, 1)";
+    });
+  });
+
+  // Spatial 3D horizon grid parallax movement
+  const gridPlane = document.getElementById("spatial3dGridPlane");
+  if (gridPlane) {
+    window.addEventListener("pointermove", (e) => {
+      if (state.spatial3dEnabled === false || window.innerWidth <= 768) return;
+      const normX = ((e.clientX / window.innerWidth) - 0.5) * 8;
+      const normY = ((e.clientY / window.innerHeight) - 0.5) * 6;
+      gridPlane.style.transform = `rotateX(${62 + normY}deg) rotateZ(${normX}deg) translateY(-20px)`;
+    });
+  }
+}
+
+// Modular Action Cards in Command Center
+document.querySelectorAll(".action-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const target = card.getAttribute("data-view");
+    if (target) switchView(target);
+  });
+});
+
+// Live Clock
+function updateClock() {
+  const clockEl = document.getElementById("osClock");
+  if (clockEl) {
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString("en-IN", { hour12: false });
+  }
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* =========================================================
+   5. COMMAND PALETTE MODAL (⌘K)
+========================================================= */
+const paletteModal = document.getElementById("commandPaletteModal");
+const topbarSearchTrigger = document.getElementById("topbarSearchTrigger");
+const sidebarSearchBtn = document.getElementById("sidebarSearchBtn");
+const paletteInput = document.getElementById("paletteSearchInput");
+const paletteItems = document.querySelectorAll(".palette-item");
+
+function openPalette() {
+  if (paletteModal) {
+    paletteModal.classList.remove("hidden");
+    if (paletteInput) {
+      paletteInput.value = "";
+      paletteInput.focus();
+    }
+  }
+}
+
+function closePalette() {
+  if (paletteModal) paletteModal.classList.add("hidden");
+}
+
+if (topbarSearchTrigger) topbarSearchTrigger.addEventListener("click", openPalette);
+if (sidebarSearchBtn) sidebarSearchBtn.addEventListener("click", openPalette);
+
+paletteItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const target = item.getAttribute("data-view");
+    if (target) {
+      switchView(target);
+      closePalette();
+    }
+  });
+});
+
+window.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    openPalette();
+  } else if (e.key === "Escape" && paletteModal && !paletteModal.classList.contains("hidden")) {
+    closePalette();
+  }
+});
+
+if (paletteModal) {
+  paletteModal.addEventListener("click", (e) => {
+    if (e.target === paletteModal) closePalette();
+  });
+}
+
+/* =========================================================
+   6. COMMAND CENTER DISPATCH & CHAT STREAM
+   (Replies on TOP of typing area · Mini Attachment Preview & Grounded Analysis)
+========================================================= */
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const ccChatStream = document.getElementById("ccChatStream");
+const ccHero = document.getElementById("ccHero");
+const ccAttachStrip = document.getElementById("ccAttachStrip");
+const vaultAttachBtn = document.getElementById("vaultAttachBtn");
+const composerFileInput = document.getElementById("composerFileInput");
+const spatialTiltToggleBtn = document.getElementById("spatialTiltToggleBtn");
+
+let currentComposerAttachment = null;
+
+// Cognitive Pipeline Tracker
+function updateCognitivePipeline(step) {
+  const map = {
+    understand: document.getElementById("pipeUnderstanding"),
+    reason: document.getElementById("pipeReasoning"),
+    synthesize: document.getElementById("pipeSynthesizing"),
+    complete: document.getElementById("pipeCompleted")
+  };
+  const order = ["understand", "reason", "synthesize", "complete"];
+  const targetIdx = order.indexOf(step);
+  if (targetIdx === -1) return;
+
+  order.forEach((key, idx) => {
+    const el = map[key];
+    if (!el) return;
+    el.classList.remove("active", "completed");
+    if (idx < targetIdx) el.classList.add("completed");
+    else if (idx === targetIdx) el.classList.add("active");
+  });
+}
+
+// Prompt Suggestion Chips
+document.querySelectorAll(".suggestion-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const prompt = chip.getAttribute("data-prompt");
+    if (messageInput && prompt) {
+      messageInput.value = prompt;
+      messageInput.focus();
+      playTactileSound("click");
+    }
+  });
+});
+
+// Auto-expand textarea
+if (messageInput) {
+  messageInput.addEventListener("input", () => {
+    messageInput.style.height = "auto";
+    messageInput.style.height = Math.min(180, messageInput.scrollHeight) + "px";
+  });
+
+  messageInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      dispatchCommand();
+    }
+  });
+}
+
+if (sendBtn) {
+  sendBtn.addEventListener("click", dispatchCommand);
+}
+
+if (spatialTiltToggleBtn) {
+  spatialTiltToggleBtn.addEventListener("click", () => {
+    state.spatial3dEnabled = !state.spatial3dEnabled;
+    spatialTiltToggleBtn.classList.toggle("active", state.spatial3dEnabled);
+    if (!state.spatial3dEnabled) {
+      document.querySelectorAll(".card-tilt-3d").forEach(card => (card.style.transform = ""));
+    }
+    playTactileSound("click");
+  });
+}
+
+// Miniature File Attachment Handling on Typing Place
+if (vaultAttachBtn && composerFileInput) {
+  vaultAttachBtn.addEventListener("click", () => composerFileInput.click());
+  composerFileInput.addEventListener("change", (e) => {
+    if (e.target.files && e.target.files.length) {
+      const file = e.target.files[0];
+      handleComposerFileSelect(file);
+    }
+  });
+}
+
+function handleComposerFileSelect(file) {
+  if (!file) return;
+
+  currentComposerAttachment = {
+    name: file.name,
+    size: file.size,
+    type: file.type || "application/octet-stream",
+    content: "",
+    status: "processing"
+  };
+  renderComposerAttachmentChip();
+  playTactileSound("click");
+
+  const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+  const textExts = [".txt", ".csv", ".json", ".js", ".ts", ".py", ".md", ".html", ".css", ".java", ".c", ".cpp"];
+
+  if (file.type.startsWith("text/") || textExts.includes(ext)) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      currentComposerAttachment.content = event.target.result;
+      currentComposerAttachment.status = "ready";
+      renderComposerAttachmentChip();
+      playTactileSound("success");
+    };
+    reader.readAsText(file);
+  } else {
+    // Binary or document file (PDF, DOCX, PPTX, XLSX, images, etc.) -> upload to Knowledge Vault to parse chunks
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch(`${BACKEND_URL}/api/vault/upload`, {
+      method: "POST",
+      body: formData
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.file) {
+          const extractedText = (data.file.chunks || []).map(c => c.text).join("\n\n");
+          currentComposerAttachment.fileId = data.file.id;
+          currentComposerAttachment.content = extractedText || `Document: ${file.name} successfully indexed.`;
+          currentComposerAttachment.status = "ready";
+          renderComposerAttachmentChip();
+          playTactileSound("success");
+          loadVaultFiles();
+        } else {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            currentComposerAttachment.content = e.target.result;
+            currentComposerAttachment.status = "ready";
+            renderComposerAttachmentChip();
+          };
+          reader.readAsDataURL(file);
+        }
+      })
+      .catch(() => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentComposerAttachment.content = e.target.result;
+          currentComposerAttachment.status = "ready";
+          renderComposerAttachmentChip();
+        };
+        reader.readAsDataURL(file);
+      });
+  }
+}
+
+function renderComposerAttachmentChip() {
+  if (!ccAttachStrip) return;
+  if (!currentComposerAttachment) {
+    ccAttachStrip.style.display = "none";
+    ccAttachStrip.innerHTML = "";
+    return;
+  }
+
+  const szStr = currentComposerAttachment.size < 1024 * 1024
+    ? `${(currentComposerAttachment.size / 1024).toFixed(1)} KB`
+    : `${(currentComposerAttachment.size / (1024 * 1024)).toFixed(1)} MB`;
+
+  const statusBadge = currentComposerAttachment.status === "processing"
+    ? `<span style="font-size:10px; color:#c29b48; font-weight:700;">Analyzing...</span>`
+    : `<span style="font-size:10px; color:#10B981; font-weight:700;">Ready</span>`;
+
+  ccAttachStrip.style.display = "flex";
+  ccAttachStrip.innerHTML = `
+    <div class="cc-attach-chip" style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background:rgba(0, 240, 255, 0.08); border:1px solid rgba(0, 240, 255, 0.25); border-radius:20px; font-size:12px; color:var(--text-primary);">
+      <span style="font-size:14px;">📄</span>
+      <strong style="max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(currentComposerAttachment.name)}</strong>
+      <span style="font-size:11px; opacity:0.7;">(${szStr})</span>
+      ${statusBadge}
+      <button onclick="removeComposerAttachment()" style="background:transparent; border:none; color:var(--text-secondary); cursor:pointer; font-size:13px; padding:0 2px;" title="Remove attachment">✕</button>
+    </div>
+  `;
+}
+
+window.removeComposerAttachment = function() {
+  currentComposerAttachment = null;
+  if (ccAttachStrip) {
+    ccAttachStrip.style.display = "none";
+    ccAttachStrip.innerHTML = "";
+  }
+  if (composerFileInput) composerFileInput.value = "";
+  playTactileSound("click");
+};
+
+function scrollChatStreamToBottom() {
+  if (ccChatStream) {
+    ccChatStream.scrollTo({
+      top: ccChatStream.scrollHeight,
+      behavior: "smooth"
+    });
+  }
+}
+
+async function dispatchCommand() {
+  const text = messageInput ? messageInput.value.trim() : "";
+  if (!text && !currentComposerAttachment) return;
+
+  const queryText = text || (currentComposerAttachment ? `Analyze attached document: ${currentComposerAttachment.name}` : "");
+
+  messageInput.value = "";
+  messageInput.style.height = "auto";
+  playTactileSound("dispatch");
+
+  state.totalCommands++;
+
+  // Hide initial greeting hero once dialogue begins
+  if (ccHero) ccHero.style.display = "none";
+
+  // 1. Render User Message inside #ccChatStream (above typing place)
+  if (ccChatStream) {
+    const userMsgEl = document.createElement("div");
+    userMsgEl.className = "cc-msg user-msg";
+    userMsgEl.style.cssText = "display:flex; justify-content:flex-end; margin-bottom:16px; animation:fadeIn 0.25s ease;";
+
+    const attachBadge = currentComposerAttachment
+      ? `<div style="display:inline-flex; align-items:center; gap:6px; background:var(--accent-gold-soft); padding:4px 10px; border-radius:12px; font-size:11px; color:var(--accent-gold); margin-bottom:6px; font-weight:700;">
+          <span>📎</span> <span>${escapeHtml(currentComposerAttachment.name)}</span>
+        </div><br/>`
+      : "";
+
+    userMsgEl.innerHTML = `
+      <div style="max-width:80%; background:var(--bg-surface-elevated); border:1px solid var(--border-card); border-radius:16px 16px 4px 16px; padding:12px 18px; box-shadow:0 4px 16px rgba(0,0,0,0.18);">
+        ${attachBadge}
+        <div style="font-size:14px; color:var(--text-primary); line-height:1.5;">${escapeHtml(queryText)}</div>
+        <div style="font-size:10px; color:var(--text-tertiary); text-align:right; margin-top:4px;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+      </div>
+    `;
+    ccChatStream.appendChild(userMsgEl);
+    scrollChatStreamToBottom();
+  }
+
+  // 2. Render AI Thinking Bubble in #ccChatStream
+  let thinkingBubble = null;
+  if (ccChatStream) {
+    thinkingBubble = document.createElement("div");
+    thinkingBubble.className = "cc-msg ai-msg thinking-bubble";
+    thinkingBubble.style.cssText = "display:flex; justify-content:flex-start; margin-bottom:16px;";
+    thinkingBubble.innerHTML = `
+      <div style="max-width:82%; background:var(--bg-surface); border:1px solid var(--border-medium); border-radius:16px 16px 16px 4px; padding:12px 18px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:var(--accent-gold-soft); color:var(--accent-gold); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;">✦</div>
+          <div style="font-size:13px; font-weight:700; color:var(--accent-gold);" id="ccThinkingText">AURA is analyzing directive & context...</div>
+        </div>
+      </div>
+    `;
+    ccChatStream.appendChild(thinkingBubble);
+    scrollChatStreamToBottom();
+  }
+
+  updateCognitivePipeline("understand");
+  setCoreState("thinking", "UNDERSTANDING");
+  updateContextTask(`Processing: "${queryText.slice(0, 28)}..."`);
+
+  setTimeout(() => {
+    updateCognitivePipeline("reason");
+    setCoreState("thinking", "REASONING");
+  }, 350);
+
+  const payloadAttachment = currentComposerAttachment ? { ...currentComposerAttachment } : null;
+  // Clear attachment chip immediately from input
+  removeComposerAttachment();
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: queryText,
+        attachment: payloadAttachment,
+        conversationId: state.currentConversationId
+      })
+    });
+
+    const data = await res.json();
+    const answer = data.answer || data.response || "Directive synthesized successfully.";
+    const provider = data.provider || "Google Gemini 3.7 Flash";
+
+    updateCognitivePipeline("synthesize");
+    setCoreState("responding", "SYNTHESIZING");
+
+    // Replace thinking bubble with formatted AI response
+    if (thinkingBubble) {
+      thinkingBubble.className = "cc-msg ai-msg";
+      thinkingBubble.innerHTML = `
+        <div style="max-width:84%; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:16px 16px 16px 4px; padding:16px 20px; box-shadow:0 6px 24px rgba(0,0,0,0.2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="color:var(--accent-gold); font-weight:800; font-size:13px;">✦ PROJECT AURA</span>
+              <span style="font-size:10px; padding:2px 8px; border-radius:10px; background:var(--bg-surface-subtle); color:var(--text-secondary);">${escapeHtml(provider)}</span>
+            </div>
+            <button class="btn-dossier-tool" onclick="copyAiBubbleText(this)" style="font-size:11px; padding:4px 8px;">📋 Copy</button>
+          </div>
+          <div class="dialogue-content cc-ai-response-body" style="font-size:14px; line-height:1.6; color:var(--text-primary);">
+            ${formatMarkdownResponse(answer)}
+          </div>
+        </div>
+      `;
+      scrollChatStreamToBottom();
+    }
+
+
+    updateCognitivePipeline("complete");
+    setCoreState("idle", "ONLINE");
+    updateContextTask("Awaiting Directive");
+    playTactileSound("success");
+  } catch (err) {
+    if (thinkingBubble) {
+      thinkingBubble.innerHTML = `
+        <div style="max-width:84%; background:var(--bg-surface); border:1px solid rgba(239, 68, 68, 0.4); border-radius:16px; padding:14px 18px;">
+          <div style="font-size:13px; color:#EF4444; font-weight:700;">âš ï¸ Communication Notice</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${escapeHtml(err.message)}</div>
+        </div>
+      `;
+    }
+    setCoreState("error", "CIRCUIT ALERT");
+    updateCognitivePipeline("complete");
+    setTimeout(() => setCoreState("idle", "ONLINE"), 3000);
+  }
+}
+
+window.copyAiBubbleText = function(btn) {
+  const container = btn.closest(".cc-msg");
+  if (!container) return;
+  const textEl = container.querySelector(".cc-ai-response-body");
+  if (!textEl) return;
+  navigator.clipboard.writeText(textEl.innerText).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = "✓ Copied!";
+    playTactileSound("success");
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  });
+};
+
+/* =========================================================
+   7. CREATION STUDIO (WORKSPACE 7) — MULTI-MODE EXECUTIVE STUDIO
+   Modes: Write · Code · Script · Presentation · Social · Templates
+   Features: Short & Crisp by Default · Emojis · Markdown / TXT / Print Exports
+========================================================= */
+state.creationLengthMode = "short";
+
+function initCreationStudio() {
+  const creationTabs = document.querySelectorAll(".creation-tab-btn");
+  const creationTabContents = document.querySelectorAll(".creation-tab-content");
+  const shortBtn = document.getElementById("creationLengthShortBtn");
+  const longBtn = document.getElementById("creationLengthLongBtn");
+
+  // Tab switching
+  creationTabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabKey = btn.getAttribute("data-tab");
+      state.activeCreationTab = tabKey;
+
+      creationTabs.forEach(b => b.classList.toggle("active", b === btn));
+      creationTabContents.forEach(c => {
+        c.style.display = c.id === `tab-${tabKey}` ? "block" : "none";
+      });
+      playTactileSound("click");
+    });
+  });
+
+  // Length toggles
+  if (shortBtn && longBtn) {
+    shortBtn.addEventListener("click", () => {
+      state.creationLengthMode = "short";
+      shortBtn.classList.add("active");
+      longBtn.classList.remove("active");
+      playTactileSound("click");
+    });
+
+    longBtn.addEventListener("click", () => {
+      state.creationLengthMode = "detailed";
+      longBtn.classList.add("active");
+      shortBtn.classList.remove("active");
+      playTactileSound("click");
+    });
+  }
+
+  function formatCreationStudioOutput(text, defaultTopic) {
+    if (!text) return "";
+
+    let cleanText = text.replace(/^[=\-_*]{3,}\s*$/gm, "").trim();
+    const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
+
+    let summaryText = "";
+    const bulletPoints = [];
+
+    lines.forEach(line => {
+      const isBullet = /^[-*•►✦✧]\s+/.test(line) || /^\d+[\.\)]\s+/.test(line);
+      const isHeader = /^#{1,4}\s+/.test(line) || /^\*\*[^*]+\*\*:?$/.test(line);
+
+      if (isBullet) {
+        const cleanPt = line.replace(/^[-*•►✦✧]\s+/, '').replace(/^\d+[\.\)]\s+/, '').trim();
+        if (cleanPt) bulletPoints.push(cleanPt);
+      } else if (!isHeader && !summaryText && line.length > 20) {
+        summaryText = line;
+      } else if (!isHeader && line.length > 10) {
+        bulletPoints.push(line);
+      }
+    });
+
+    if (!summaryText && bulletPoints.length > 0) {
+      summaryText = bulletPoints.shift();
+    }
+    if (!summaryText) {
+      summaryText = `Executive synthesis for ${defaultTopic || "selected topic"}.`;
+    }
+
+    return `
+      <div class="creation-summary-wrapper">
+        <div class="creation-exec-brief-card">
+          <div class="creation-exec-brief-title">
+            <span>✦ Executive Briefing</span>
+            <span class="eng-badge-pill" style="font-size:10px;">High-Yield Summary</span>
+          </div>
+          <div class="creation-exec-brief-text">
+            ${escapeHtml(summaryText).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+          </div>
+        </div>
+
+        <div class="creation-crisp-bullets-card">
+          <div class="creation-crisp-bullets-title">
+            <span>🎯 Key Actionable Takeaways &amp; Core Concepts</span>
+            <span style="font-size:11px; color:var(--text-tertiary);">${bulletPoints.length} Key Points</span>
+          </div>
+          <ul class="creation-points-list">
+            ${bulletPoints.map((pt, pIdx) => {
+              const boldFormatted = escapeHtml(pt).replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
+              const glyph = String(pIdx + 1).padStart(2, '0');
+              return `
+                <li class="creation-point-item">
+                  <span class="point-glyph">${glyph}</span>
+                  <div style="flex:1;">${boldFormatted}</div>
+                </li>
+              `;
+            }).join("")}
+          </ul>
+        </div>
+      </div>
+    `;
+  }
+  window.formatCreationStudioOutput = formatCreationStudioOutput;
+
+  function parsePresentationSlides(rawText, topic) {
+    // Try to extract slide blocks
+    const slides = [];
+    const chunks = rawText.split(/(?:Slide\s*\d+|SLIDE\s*\d+|##\s*Slide\s*\d+)/i).filter(c => c.trim().length > 10);
+
+    if (chunks.length > 0) {
+      chunks.forEach((chunk, idx) => {
+        const lines = chunk.trim().split('\n').map(l => l.trim()).filter(Boolean);
+        const titleLine = lines[0] ? lines[0].replace(/^[#*:\-\s]+/, '').replace(/\*\*+/g, '') : `Slide ${idx + 1}`;
+        const bullets = [];
+        let notes = "";
+
+        lines.slice(1).forEach(l => {
+          if (/speaker notes|notes:|script:/i.test(l)) {
+            notes += l.replace(/.*(?:notes:|script:)/i, '').trim() + " ";
+          } else {
+            const clean = l.replace(/^[-*â€¢â–º✧]\s+/, '').replace(/\*\*+/g, '');
+            if (clean && clean.length > 3) bullets.push(clean);
+          }
+        });
+
+        slides.push({
+          number: idx + 1,
+          title: titleLine || `Key Point ${idx + 1}`,
+          bullets: bullets.slice(0, 5),
+          notes: notes.trim() || `Deliver key insights on ${titleLine} with clear emphasis on strategic impact.`
+        });
+      });
+    }
+
+    if (slides.length === 0) {
+      // Default structure
+      slides.push(
+        { number: 1, title: `${topic}: Executive Overview`, bullets: ["Strategic market imperative", "Core objectives & architecture", "Anticipated milestones"], notes: "Welcome the stakeholders and set the strategic context." },
+        { number: 2, title: "Problem Space & Current Latency", bullets: ["Identified system bottlenecks", "Resource friction & scaling limits", "Urgency of intelligent automation"], notes: "Emphasize why existing legacy approaches fail." },
+        { number: 3, title: "Proposed Solution Architecture", bullets: ["Modular intelligence pipeline", "Real-time state validation", "High-throughput deterministic execution"], notes: "Walk through the architectural blueprint." },
+        { number: 4, title: "Implementation Roadmap & Metrics", bullets: ["Phase 1: Rapid deployment", "Phase 2: Full-scale telemetry", "Measurable 40%+ efficiency gain"], notes: "Conclude with concrete measurable outcomes and next steps." }
+      );
+    }
+    return slides;
+  }
+
+  function downloadPptxPresentation(slides, topic, themeKey = "cyber-dark") {
+    if (typeof window.PptxGenJS === "undefined") {
+      alert("PowerPoint library is initializing. Please retry in a moment.");
+      return;
+    }
+
+    try {
+      const pptx = new window.PptxGenJS();
+      pptx.layout = "LAYOUT_16x9";
+      pptx.title = topic;
+
+      const isDark = themeKey !== "minimal-light";
+      const bgHex = isDark ? "151314" : "F2E8CF";
+      const cardBgHex = isDark ? "1E1A1B" : "FAF6EC";
+      const titleColor = isDark ? "c9a0a0" : "505E3E";
+      const textColor = isDark ? "F8F4F4" : "24301B";
+      const accentGold = isDark ? "8a8f6b" : "a3b18a";
+
+      // Slide 1: Cover Slide
+      const coverSlide = pptx.addSlide();
+      coverSlide.background = { color: bgHex };
+      coverSlide.addText("PROJECT AURA 3.0 · EXECUTIVE AI PRESENTATION", {
+        x: 0.8, y: 1.6, w: 8.5, h: 0.4,
+        fontSize: 12, bold: true, color: accentGold, fontFace: "Calibri"
+      });
+      coverSlide.addText(topic, {
+        x: 0.8, y: 2.2, w: 8.5, h: 1.8,
+        fontSize: 32, bold: true, color: titleColor, fontFace: "Calibri"
+      });
+      coverSlide.addText("Synthesized by Project Aura Autonomous AI Presentation Engine", {
+        x: 0.8, y: 4.2, w: 8.5, h: 0.4,
+        fontSize: 13, italic: true, color: textColor, fontFace: "Calibri"
+      });
+
+      // Subsequent Slides
+      slides.forEach(s => {
+        const slide = pptx.addSlide();
+        slide.background = { color: bgHex };
+
+        // Card Container
+        slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
+          x: 0.6, y: 0.6, w: 8.8, h: 5.6,
+          fill: { color: cardBgHex },
+          line: { color: isDark ? "253350" : "CBD5E1", width: 1 },
+          rectRadius: 0.15
+        });
+
+        // Slide Pill / Number
+        slide.addText(`SLIDE ${String(s.number).padStart(2, '0')}`, {
+          x: 0.9, y: 0.85, w: 2.0, h: 0.3,
+          fontSize: 10, bold: true, color: accentGold, fontFace: "Calibri"
+        });
+
+        // Slide Title
+        slide.addText(s.title, {
+          x: 0.9, y: 1.25, w: 8.2, h: 0.8,
+          fontSize: 22, bold: true, color: titleColor, fontFace: "Calibri"
+        });
+
+        // Bullets
+        if (s.bullets && s.bullets.length > 0) {
+          const bulletItems = s.bullets.map(b => ({
+            text: b,
+            options: { bullet: true, fontSize: 14, color: textColor, fontFace: "Calibri", lineSpacing: 26 }
+          }));
+          slide.addText(bulletItems, {
+            x: 0.9, y: 2.2, w: 8.2, h: 2.6
+          });
+        }
+
+        // Speaker notes in PowerPoint native notes drawer
+        if (s.notes) {
+          slide.addNotes(s.notes);
+        }
+      });
+
+      const cleanFilename = (topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 32) || 'project-aura-presentation') + ".pptx";
+      pptx.writeFile({ fileName: cleanFilename });
+      playTactileSound("success");
+    } catch (err) {
+      console.error("[PPTX EXPORT ERROR]", err);
+      alert("PPTX export completed fallback.");
+    }
+  }
+
+  function buildCreationPrompt(directive, userTopic, contextType) {
+    const isDetailed = state.creationLengthMode === "detailed" || /detailed|in-depth|comprehensive|big answer|expand/i.test(userTopic);
+    const styleInstruction = isDetailed
+      ? "Provide an extensive, comprehensive master breakdown. Include natural emojis, bold structured section headers, in-depth bullet points, and key takeaways."
+      : "Keep the output SHORT, CRISP, AND HIGH-IMPACT. Use natural emojis, bold section headers, bullet points, and concise key takeaways. Avoid wordy fluff.";
+
+    return `[CREATION STUDIO // ${(contextType || "STUDIO").toUpperCase()}]
+${directive}
+
+Topic/Requirement: ${userTopic}
+
+Formatting Directive:
+${styleInstruction}
+Make it look natural, professional, and visually engaging with clean points and modern alignment.`;
+  }
+
+  // Export helper
+  function downloadTextFile(filename, content) {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    playTactileSound("success");
+  }
+
+  // 1. Write Tab
+  const generateWritingBtn = document.getElementById("generateWritingBtn");
+  const writingTopicInput = document.getElementById("writingTopicInput");
+  const writingFormatSelect = document.getElementById("writingFormatSelect");
+  const writingOutputContainer = document.getElementById("writingOutputContainer");
+  const writingOutputText = document.getElementById("writingOutputText");
+  const copyWritingBtn = document.getElementById("copyWritingBtn");
+  const exportWritingMdBtn = document.getElementById("exportWritingMdBtn");
+  const exportWritingTxtBtn = document.getElementById("exportWritingTxtBtn");
+  const printWritingBtn = document.getElementById("printWritingBtn");
+
+  let lastWritingResult = "";
+
+  if (generateWritingBtn) {
+    generateWritingBtn.addEventListener("click", async () => {
+      const topic = writingTopicInput ? writingTopicInput.value.trim() : "";
+      if (!topic) return;
+
+      const format = writingFormatSelect ? writingFormatSelect.value : "Executive Brief";
+      generateWritingBtn.disabled = true;
+      generateWritingBtn.textContent = "Synthesizing...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: buildCreationPrompt(`Draft a formal ${format} with clean points, topic headers, and zero messy lines.`, topic, format)
+          })
+        });
+        const data = await res.json();
+        lastWritingResult = data.answer || data.response || "Synthesis complete.";
+
+        if (writingOutputText && writingOutputContainer) {
+          writingOutputText.innerHTML = formatCreationStudioOutput(lastWritingResult, topic);
+          writingOutputContainer.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (_) { }
+      finally {
+        generateWritingBtn.disabled = false;
+        generateWritingBtn.textContent = "Synthesize Document";
+      }
+    });
+  }
+
+  if (copyWritingBtn) {
+    copyWritingBtn.addEventListener("click", () => {
+      if (!lastWritingResult) return;
+      navigator.clipboard.writeText(lastWritingResult);
+      copyWritingBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copyWritingBtn.textContent = "📋 Copy"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  if (exportWritingMdBtn) {
+    exportWritingMdBtn.addEventListener("click", () => {
+      if (!lastWritingResult) return;
+      downloadTextFile("project-aura-document.md", lastWritingResult);
+    });
+  }
+
+  if (exportWritingTxtBtn) {
+    exportWritingTxtBtn.addEventListener("click", () => {
+      if (!lastWritingResult) return;
+      downloadTextFile("project-aura-document.txt", lastWritingResult.replace(/#{1,6}\s/g, "").replace(/\*\*/g, ""));
+    });
+  }
+
+  if (printWritingBtn) {
+    printWritingBtn.addEventListener("click", () => window.print());
+  }
+
+  // 2. Code Tab
+  const generateCodeBtn = document.getElementById("generateCodeBtn");
+  const codingTopicInput = document.getElementById("codingTopicInput");
+  const codingLangSelect = document.getElementById("codingLangSelect");
+  const codingOutputContainer = document.getElementById("codingOutputContainer");
+  const codingOutputText = document.getElementById("codingOutputText");
+  const copyCodeBtn = document.getElementById("copyCodeBtn");
+  const exportCodeBtn = document.getElementById("exportCodeBtn");
+
+  let lastCodeResult = "";
+
+  if (generateCodeBtn) {
+    generateCodeBtn.addEventListener("click", async () => {
+      const spec = codingTopicInput ? codingTopicInput.value.trim() : "";
+      if (!spec) return;
+
+      const lang = codingLangSelect ? codingLangSelect.value : "TypeScript";
+      generateCodeBtn.disabled = true;
+      generateCodeBtn.textContent = "Generating Code...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: buildCreationPrompt(`Write production-ready code in ${lang} with clean architecture, comments, and tests.`, spec, "Coding")
+          })
+        });
+        const data = await res.json();
+        lastCodeResult = data.answer || data.response || "Complete.";
+
+        if (codingOutputText && codingOutputContainer) {
+          codingOutputText.textContent = lastCodeResult;
+          codingOutputContainer.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (_) { }
+      finally {
+        generateCodeBtn.disabled = false;
+        generateCodeBtn.textContent = "Generate Production Code";
+      }
+    });
+  }
+
+  if (copyCodeBtn) {
+    copyCodeBtn.addEventListener("click", () => {
+      if (!lastCodeResult) return;
+      navigator.clipboard.writeText(lastCodeResult);
+      copyCodeBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copyCodeBtn.textContent = "📋 Copy Code"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  if (exportCodeBtn) {
+    exportCodeBtn.addEventListener("click", () => {
+      if (!lastCodeResult) return;
+      downloadTextFile("project-aura-code.txt", lastCodeResult);
+    });
+  }
+
+  // 3. Script Tab
+  const generateScriptBtn = document.getElementById("generateScriptBtn");
+  const scriptTopicInput = document.getElementById("scriptTopicInput");
+  const scriptFormatSelect = document.getElementById("scriptFormatSelect");
+  const scriptOutputContainer = document.getElementById("scriptOutputContainer");
+  const scriptOutputText = document.getElementById("scriptOutputText");
+  const copyScriptBtn = document.getElementById("copyScriptBtn");
+  const exportScriptMdBtn = document.getElementById("exportScriptMdBtn");
+
+  let lastScriptResult = "";
+
+  if (generateScriptBtn) {
+    generateScriptBtn.addEventListener("click", async () => {
+      const topic = scriptTopicInput ? scriptTopicInput.value.trim() : "";
+      if (!topic) return;
+
+      const fmt = scriptFormatSelect ? scriptFormatSelect.value : "YouTube Video";
+      generateScriptBtn.disabled = true;
+      generateScriptBtn.textContent = "Drafting Script...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: buildCreationPrompt(`Draft an engaging ${fmt} script with hooks, core beats, and call-to-action formatted as clear point cards.`, topic, "Script")
+          })
+        });
+        const data = await res.json();
+        lastScriptResult = data.answer || data.response || "Complete.";
+
+        if (scriptOutputText && scriptOutputContainer) {
+          scriptOutputText.innerHTML = formatCreationStudioOutput(lastScriptResult, topic);
+          scriptOutputContainer.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (_) { }
+      finally {
+        generateScriptBtn.disabled = false;
+        generateScriptBtn.textContent = "Draft Script";
+      }
+    });
+  }
+
+  if (copyScriptBtn) {
+    copyScriptBtn.addEventListener("click", () => {
+      if (!lastScriptResult) return;
+      navigator.clipboard.writeText(lastScriptResult);
+      copyScriptBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copyScriptBtn.textContent = "📋 Copy Script"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  if (exportScriptMdBtn) {
+    exportScriptMdBtn.addEventListener("click", () => {
+      if (!lastScriptResult) return;
+      downloadTextFile("project-aura-script.md", lastScriptResult);
+    });
+  }
+
+  // 4. Presentation Tab (Dual View: Slides Blueprint + Speech Script + Native PPTX Generator)
+  const generatePresBtn = document.getElementById("generatePresBtn");
+  const directPptxBtn = document.getElementById("directPptxBtn");
+  const presTopicInput = document.getElementById("presTopicInput");
+  const presSlideCountSelect = document.getElementById("presSlideCountSelect");
+  const presThemeSelect = document.getElementById("presThemeSelect");
+  const presOutputContainer = document.getElementById("presOutputContainer");
+  const presOutputText = document.getElementById("presOutputText");
+  const presScriptOutputText = document.getElementById("presScriptOutputText");
+  const btnPresViewSlides = document.getElementById("btnPresViewSlides");
+  const btnPresViewScript = document.getElementById("btnPresViewScript");
+  const presSlidesViewContainer = document.getElementById("presSlidesViewContainer");
+  const presScriptViewContainer = document.getElementById("presScriptViewContainer");
+  const downloadPptxFileBtn = document.getElementById("downloadPptxFileBtn");
+  const copyPresBtn = document.getElementById("copyPresBtn");
+  const printPresBtn = document.getElementById("printPresBtn");
+
+  let parsedSlidesData = [];
+  let lastPresSpeechScript = "";
+
+  if (btnPresViewSlides && btnPresViewScript) {
+    btnPresViewSlides.addEventListener("click", () => {
+      btnPresViewSlides.classList.add("active");
+      btnPresViewScript.classList.remove("active");
+      if (presSlidesViewContainer) presSlidesViewContainer.style.display = "block";
+      if (presScriptViewContainer) presScriptViewContainer.style.display = "none";
+      playTactileSound("click");
+    });
+
+    btnPresViewScript.addEventListener("click", () => {
+      btnPresViewScript.classList.add("active");
+      btnPresViewSlides.classList.remove("active");
+      if (presSlidesViewContainer) presSlidesViewContainer.style.display = "none";
+      if (presScriptViewContainer) presScriptViewContainer.style.display = "block";
+      playTactileSound("click");
+    });
+  }
+
+  if (generatePresBtn) {
+    generatePresBtn.addEventListener("click", async () => {
+      const topic = presTopicInput ? presTopicInput.value.trim() : "";
+      if (!topic) return;
+
+      const slideCount = presSlideCountSelect ? presSlideCountSelect.value : "8";
+      generatePresBtn.disabled = true;
+      generatePresBtn.textContent = "⚡ AI Synthesizing Slides & Speech Script...";
+
+      try {
+        const presPrompt = `Generate a master-level ${slideCount}-slide presentation deck AND full spoken speech script for: "${topic}".
+Output structure:
+PART 1: SLIDE DECK OUTLINE
+For each slide provide:
+Slide [N]: [Slide Title]
+- [Bullet Point 1]
+- [Bullet Point 2]
+- [Bullet Point 3]
+Speaker Notes: [What the presenter should say for this slide]
+
+PART 2: COMPLETE PRESENTATION SPEECH SCRIPT
+Chronological, natural speech script for the speaker to present to the audience seamlessly.`;
+
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: presPrompt })
+        });
+        const data = await res.json();
+        const rawRes = data.answer || data.response || "Presentation synthesis complete.";
+
+        parsedSlidesData = parsePresentationSlides(rawRes, topic);
+        lastPresSpeechScript = rawRes;
+
+        // Render Slides Grid
+        if (presOutputText) {
+          presOutputText.innerHTML = `
+            <div class="ppt-slides-grid">
+              ${parsedSlidesData.map(s => `
+                <div class="ppt-slide-card">
+                  <div>
+                    <span class="slide-number-badge">SLIDE ${String(s.number).padStart(2, '0')}</span>
+                    <div class="slide-title-text">${escapeHtml(s.title)}</div>
+                    <ul class="slide-bullets-list">
+                      ${s.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join("")}
+                    </ul>
+                  </div>
+                  <div class="slide-notes-drawer">
+                    <strong>ðŸŽ™ï¸ Speaker Note:</strong> ${escapeHtml(s.notes)}
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        // Render Speech Script View
+        if (presScriptOutputText) {
+          presScriptOutputText.innerHTML = formatCreationStudioOutput(rawRes, `Spoken Script: ${topic}`);
+        }
+
+        if (presOutputContainer) presOutputContainer.style.display = "block";
+        if (directPptxBtn) directPptxBtn.style.display = "inline-flex";
+
+        playTactileSound("success");
+      } catch (err) {
+        alert("Presentation generation error: " + err.message);
+      } finally {
+        generatePresBtn.disabled = false;
+        generatePresBtn.textContent = "⚡ Synthesize Deck & Speech Script";
+      }
+    });
+  }
+
+  const triggerPptxDownload = () => {
+    const topic = presTopicInput ? presTopicInput.value.trim() : "Project Aura Presentation";
+    const theme = presThemeSelect ? presThemeSelect.value : "cyber-dark";
+    if (parsedSlidesData.length === 0) {
+      parsedSlidesData = parsePresentationSlides(lastPresSpeechScript || topic, topic);
+    }
+    downloadPptxPresentation(parsedSlidesData, topic, theme);
+  };
+
+  if (downloadPptxFileBtn) downloadPptxFileBtn.addEventListener("click", triggerPptxDownload);
+  if (directPptxBtn) directPptxBtn.addEventListener("click", triggerPptxDownload);
+
+  if (copyPresBtn) {
+    copyPresBtn.addEventListener("click", () => {
+      if (!lastPresSpeechScript) return;
+      navigator.clipboard.writeText(lastPresSpeechScript);
+      copyPresBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copyPresBtn.textContent = "📋 Copy"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  if (printPresBtn) {
+    printPresBtn.addEventListener("click", () => window.print());
+  }
+
+  // 5. Social Tab
+  const generateSocialBtn = document.getElementById("generateSocialBtn");
+  const socialTopicInput = document.getElementById("socialTopicInput");
+  const socialPlatformSelect = document.getElementById("socialPlatformSelect");
+  const socialOutputContainer = document.getElementById("socialOutputContainer");
+  const socialOutputText = document.getElementById("socialOutputText");
+  const copySocialBtn = document.getElementById("copySocialBtn");
+
+  let lastSocialResult = "";
+
+  if (generateSocialBtn) {
+    generateSocialBtn.addEventListener("click", async () => {
+      const topic = socialTopicInput ? socialTopicInput.value.trim() : "";
+      if (!topic) return;
+
+      const platform = socialPlatformSelect ? socialPlatformSelect.value : "LinkedIn Post";
+      generateSocialBtn.disabled = true;
+      generateSocialBtn.textContent = "Crafting Content...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: buildCreationPrompt(`Craft high-engagement ${platform} copy with punchy hooks, clean spacing, bullet points, and trending hashtags. No messy lines.`, topic, "Social")
+          })
+        });
+        const data = await res.json();
+        lastSocialResult = data.answer || data.response || "Complete.";
+
+        if (socialOutputText && socialOutputContainer) {
+          socialOutputText.innerHTML = formatCreationStudioOutput(lastSocialResult, `${platform}: ${topic}`);
+          socialOutputContainer.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (_) { }
+      finally {
+        generateSocialBtn.disabled = false;
+        generateSocialBtn.textContent = "Generate Social Content";
+      }
+    });
+  }
+
+  if (copySocialBtn) {
+    copySocialBtn.addEventListener("click", () => {
+      if (!lastSocialResult) return;
+      navigator.clipboard.writeText(lastSocialResult);
+      copySocialBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copySocialBtn.textContent = "📋 Copy"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  // 6. Templates Tab (Platform AI: Figma, Canva, Spline 3D, Notion, Creator, Academic)
+  const templateCategoryBar = document.getElementById("templateCategoryBar");
+  const templateCardsShelf = document.getElementById("templateCardsShelf");
+  const generateTemplateBtn = document.getElementById("generateTemplateBtn");
+  const templateTopicInput = document.getElementById("templateTopicInput");
+  const templateTypeSelect = document.getElementById("templateTypeSelect");
+  const templateOutputContainer = document.getElementById("templateOutputContainer");
+  const templateOutputText = document.getElementById("templateOutputText");
+  const copyTemplateBtn = document.getElementById("copyTemplateBtn");
+  const exportTemplateMdBtn = document.getElementById("exportTemplateMdBtn");
+
+  const PLATFORM_TEMPLATES_LIST = [
+    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Figma Design System & Token Spec", desc: "Color tokens, typography scale, 8pt spacing hierarchy, component props & variants." },
+    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Mobile App User Flow & Wireframe Blueprint", desc: "User journey map, core screen states, modal interactions & gesture navigation." },
+    { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva High-Stakes Investor Pitch Deck", desc: "10-slide venture narrative: Hook, TAM/SAM, Product Moat, Unit Economics, Ask." },
+    { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva Product Launch Visual Campaign Outline", desc: "Social launch banners, carousel assets, email marketing header specs & typography." },
+    { cat: "spline", badgeClass: "spline", badge: "Spline 3D", title: "Spline 3D Interactive Web Scene Structure & Lighting", desc: "3D camera coordinates, glassmorphic materials, event triggers, Webflow embeds." },
+    { cat: "spline", badgeClass: "spline", badge: "Spline 3D", title: "Webflow High-Converting Landing Page Spec", desc: "Hero section, feature matrices, interactive demo embeds, CMS collection schema." },
+    { cat: "notion", badgeClass: "notion", badge: "Notion OS", title: "Notion Second Brain & Knowledge Management OS", desc: "PARA Method database relations (Projects, Areas, Resources, Archives), daily dashboard." },
+    { cat: "creator", badgeClass: "social", badge: "Creator Kit", title: "Viral LinkedIn Carousel Framework", desc: "7-slide educational visual framework with high-retention hooks and engagement loops." },
+    { cat: "academic", badgeClass: "academic", badge: "IEEE Academic", title: "IEEE Research Conference Paper Structure", desc: "Standard IEEE two-column structure: Abstract, Related Work, Methodology, Results." }
+  ];
+
+  function renderTemplateCards(filter = "all") {
+    if (!templateCardsShelf) return;
+    const filtered = filter === "all" ? PLATFORM_TEMPLATES_LIST : PLATFORM_TEMPLATES_LIST.filter(t => t.cat === filter);
+    templateCardsShelf.innerHTML = `
+      <div class="templates-showcase-grid">
+        ${filtered.map(t => `
+          <div class="platform-tpl-card" onclick="selectPlatformTemplate('${escapeHtml(t.title)}')">
+            <div>
+              <span class="platform-badge ${t.badgeClass}">${t.badge}</span>
+              <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(t.title)}</div>
+              <div style="font-size:11px; color:var(--text-secondary); line-height:1.4;">${escapeHtml(t.desc)}</div>
+            </div>
+            <div style="margin-top:10px; font-size:11px; color:var(--accent-gold); font-weight:700;">✦ Use Template →</div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  if (templateCategoryBar) {
+    templateCategoryBar.querySelectorAll("button[data-tplcat]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = btn.getAttribute("data-tplcat") || "all";
+        templateCategoryBar.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
+        renderTemplateCards(cat);
+        playTactileSound("click");
+      });
+    });
+    renderTemplateCards("all");
+  }
+
+  window.selectPlatformTemplate = function(title) {
+    if (templateTypeSelect) templateTypeSelect.value = title;
+    if (templateTopicInput && !templateTopicInput.value) {
+      templateTopicInput.value = `Production-grade architecture for ${title}`;
+    }
+    if (generateTemplateBtn) generateTemplateBtn.click();
+    playTactileSound("click");
+  };
+
+  let lastTemplateResult = "";
+
+  if (generateTemplateBtn) {
+    generateTemplateBtn.addEventListener("click", async () => {
+      const topic = templateTopicInput ? templateTopicInput.value.trim() : "";
+      const tpl = templateTypeSelect ? templateTypeSelect.value : "Figma Design System";
+
+      generateTemplateBtn.disabled = true;
+      generateTemplateBtn.textContent = "⚡ Synthesizing Platform Specification...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ask`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: buildCreationPrompt(`Generate a production-ready ${tpl} specification with all tokens, layout hierarchies, parameters, and design/code guidelines. Format in clean points with topic headers and no messy lines.`, topic || tpl, "Template")
+          })
+        });
+        const data = await res.json();
+        lastTemplateResult = data.answer || data.response || "Complete.";
+
+        if (templateOutputText && templateOutputContainer) {
+          templateOutputText.innerHTML = formatCreationStudioOutput(lastTemplateResult, tpl);
+          templateOutputContainer.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (_) { }
+      finally {
+        generateTemplateBtn.disabled = false;
+        generateTemplateBtn.textContent = "⚡ Synthesize Platform Template";
+      }
+    });
+  }
+
+  if (copyTemplateBtn) {
+    copyTemplateBtn.addEventListener("click", () => {
+      if (!lastTemplateResult) return;
+      navigator.clipboard.writeText(lastTemplateResult);
+      copyTemplateBtn.textContent = "✓ Copied!";
+      setTimeout(() => { copyTemplateBtn.textContent = "📋 Copy"; }, 1500);
+      playTactileSound("click");
+    });
+  }
+
+  if (exportTemplateMdBtn) {
+    exportTemplateMdBtn.addEventListener("click", () => {
+      if (!lastTemplateResult) return;
+      downloadTextFile("project-aura-template.md", lastTemplateResult);
+    });
+  }
+}
+
+/* =========================================================
+   8. KNOWLEDGE VAULT (WORKSPACE 3) — REVAMPED
+   (Visible Files Shelf · In-App Document Reader Modal · AI Matched Topics Bar)
+========================================================= */
+const vaultDropzone = document.getElementById("vaultDropzone");
+const vaultFileInput = document.getElementById("vaultFileInput");
+const vaultFilesGrid = document.getElementById("vaultFilesGrid");
+const refreshVaultFilesBtn = document.getElementById("refreshVaultFilesBtn");
+const vaultRelatedList = document.getElementById("vaultRelatedList");
+const documentReaderModal = document.getElementById("documentReaderModal");
+const docReaderModalTitle = document.getElementById("docReaderModalTitle");
+const docReaderModalBody = document.getElementById("docReaderModalBody");
+const btnCloseReaderModal = document.getElementById("btnCloseReaderModal");
+const btnCopyReaderContent = document.getElementById("btnCopyReaderContent");
+
+if (vaultDropzone && vaultFileInput) {
+  vaultDropzone.addEventListener("click", () => vaultFileInput.click());
+
+  vaultDropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    vaultDropzone.style.borderColor = "var(--text-primary)";
+  });
+
+  vaultDropzone.addEventListener("dragleave", () => {
+    vaultDropzone.style.borderColor = "";
+  });
+
+  vaultDropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    vaultDropzone.style.borderColor = "";
+    if (e.dataTransfer.files && e.dataTransfer.files.length) {
+      uploadFileToVault(e.dataTransfer.files[0]);
+    }
+  });
+
+  vaultFileInput.addEventListener("change", (e) => {
+    if (e.target.files && e.target.files.length) {
+      uploadFileToVault(e.target.files[0]);
+    }
+  });
+}
+
+if (refreshVaultFilesBtn) {
+  refreshVaultFilesBtn.addEventListener("click", () => loadVaultFiles());
+}
+
+async function uploadFileToVault(file) {
+  if (!file) return;
+  const formData = new FormData();
+  formData.append("file", file);
+
+  setCoreState("thinking", "INDEXING DOCUMENT");
+  updateContextTask(`Ingesting: ${file.name}`);
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/vault/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    playTactileSound("success");
+    loadVaultFiles();
+    setCoreState("idle", "ONLINE");
+
+    // Automatically analyze document for matched web topics
+    if (data.file) {
+      analyzeVaultFile(data.file.id || data.file.filename, data.file.originalName || file.name);
+    }
+  } catch (err) {
+    console.warn("[VAULT UPLOAD ERROR]", err.message);
+    setCoreState("error", "UPLOAD ERROR");
+    setTimeout(() => setCoreState("idle", "ONLINE"), 2500);
+  }
+}
+
+async function loadVaultFiles() {
+  if (!vaultFilesGrid) return;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/vault/files`);
+    const data = await res.json();
+    const files = data.files || [];
+
+    if (files.length === 0) {
+      vaultFilesGrid.innerHTML = `
+        <div style="grid-column: 1/-1; padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
+          No documents uploaded yet. Drop a PDF, Word document, or code file above.
+        </div>
+      `;
+      return;
+    }
+
+    function getVaultFileIcon(fName) {
+      const ext = (fName || "").split(".").pop().toLowerCase();
+      if (ext === "pdf") return "📕";
+      if (ext === "docx" || ext === "doc") return "📘";
+      if (ext === "xlsx" || ext === "xls" || ext === "csv") return "📊";
+      if (ext === "pptx" || ext === "ppt") return "📙";
+      if (ext === "txt" || ext === "md") return "📝";
+      if (["png", "jpg", "jpeg", "webp", "gif", "svg"].includes(ext)) return "🖼️";
+      if (["js", "py", "html", "css", "ts", "json", "cpp", "java"].includes(ext)) return "💻";
+      return "📄";
+    }
+
+    vaultFilesGrid.innerHTML = files.map(f => {
+      const fileId = f.id || f.filename;
+      const fileName = f.originalName || f.filename;
+      const sizeStr = f.size ? `${(f.size / 1024).toFixed(1)} KB` : "Indexed Document";
+      const icon = getVaultFileIcon(fileName);
+
+      return `
+        <div class="vault-file-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:16px; background:var(--bg-surface); border:1px solid var(--border-card); border-radius:var(--radius-md);">
+          <div class="file-card-top" style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px;">
+            <div class="file-type-icon" style="font-size:24px; color:var(--accent-gold);">${icon}</div>
+            <div class="file-name-meta" style="flex:1; min-width:0;">
+              <div class="file-title" title="${escapeHtml(fileName)}" style="font-weight:700; font-size:13px; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(fileName)}</div>
+              <div class="file-date-size" style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${sizeStr}</div>
+            </div>
+          </div>
+          
+          <!-- Direct File Actions: Open Raw & Download -->
+          <div class="vault-file-buttons-row" style="margin-bottom:10px;">
+            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw">
+              📂 Open Uploaded File
+            </a>
+            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/download" target="_blank" rel="noopener noreferrer" class="btn-vault-download-raw">
+              ⬇️ Download File
+            </a>
+          </div>
+
+          <div class="file-card-actions" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="file-action-btn" onclick="openVaultDocumentReader('${escapeHtml(fileId)}', '${escapeHtml(fileName)}')">📖 In-App Reader</button>
+            <button class="file-action-btn" onclick="analyzeVaultFile('${escapeHtml(fileId)}', '${escapeHtml(fileName)}')" style="color:var(--accent-gold); font-weight:700;">⚡ Auto AI Research</button>
+            <button class="file-action-btn" onclick="askAboutFile('${escapeHtml(fileName)}')">💬 Ask AI</button>
+            <button class="file-action-btn" onclick="generateNotesFromFile('${escapeHtml(fileName)}')">📝 Notes</button>
+            <button class="file-action-btn" onclick="generateQuizFromFile('${escapeHtml(fileName)}')">✦ Quiz</button>
+            <button class="file-action-btn delete" onclick="deleteVaultFile('${escapeHtml(fileId)}')" style="color:#EF4444;" title="Delete File">✕</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+  } catch (_) { }
+}
+
+window.askAboutFile = function(fileName) {
+  switchView("command-center");
+  if (messageInput) {
+    messageInput.value = `Explain the core concepts and chapters of "${fileName}"`;
+    messageInput.focus();
+  }
+  playTactileSound("click");
+};
+
+window.generateNotesFromFile = function(fileName) {
+  switchView("creation-lab");
+  const writingInput = document.getElementById("writingTopicInput");
+  if (writingInput) {
+    writingInput.value = `Comprehensive high-yield study notes and chapter summary for ${fileName}`;
+    writingInput.focus();
+  }
+  playTactileSound("click");
+};
+
+window.generateQuizFromFile = function(fileName) {
+  switchView("quiz-engine");
+  const topicInput = document.getElementById("quizTopicInput");
+  if (topicInput) {
+    topicInput.value = fileName.replace(/\.[^/.]+$/, "");
+    topicInput.focus();
+  }
+  playTactileSound("click");
+};
+
+window.openVaultDocumentReader = async function(fileId, fileName) {
+  if (!documentReaderModal) return;
+
+  if (docReaderModalTitle) docReaderModalTitle.textContent = fileName || "Document Viewer";
+  if (docReaderModalBody) docReaderModalBody.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">✦ Ingesting and formatting document text...</div>`;
+  documentReaderModal.style.display = "flex";
+  playTactileSound("click");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/content`);
+    const data = await res.json();
+    const docContent = data.content || data.file?.content;
+    if (data.success && docContent) {
+      if (docReaderModalBody) {
+        docReaderModalBody.innerHTML = `
+          <div style="font-size:14px; line-height:1.7; color:var(--text-primary); white-space:pre-wrap; font-family:var(--font-sans);">
+            ${escapeHtml(docContent)}
+          </div>
+        `;
+      }
+    } else {
+      if (docReaderModalBody) {
+        docReaderModalBody.innerHTML = `
+          <div style="text-align:center; padding:20px;">
+            <p style="color:var(--text-secondary); margin-bottom:14px;">Text preview not directly extractable for binary file. File is successfully indexed for AI question answering.</p>
+            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw">
+              📂 Click to Open Raw File in New Window
+            </a>
+          </div>
+        `;
+      }
+    }
+  } catch (err) {
+    if (docReaderModalBody) {
+      docReaderModalBody.innerHTML = `<p style="color:#EF4444;">Unable to load document content: ${escapeHtml(err.message)}</p>`;
+    }
+  }
+};
+
+
+window.renderVaultRelatedTopics = function(fileName, relatedTopics, relationInfo, summary, links) {
+  const vaultRelatedList = document.getElementById("vaultRelatedList");
+  const vaultRelatedBarTitle = document.getElementById("vaultRelatedBarTitle");
+  if (!vaultRelatedList) return;
+
+  if (vaultRelatedBarTitle) {
+    vaultRelatedBarTitle.textContent = `Relations: ${fileName}`;
+  }
+
+  const topics = Array.isArray(relatedTopics) ? relatedTopics : [];
+  const relations = Array.isArray(relationInfo) ? relationInfo : [];
+  const webLinks = Array.isArray(links) ? links : [];
+  const execSummary = summary || "Core academic concepts extracted and synthesized automatically upon upload.";
+
+  const researchDocContent = `# AI KNOWLEDGE VAULT RESEARCH REPORT\nDocument: ${fileName}\nSynthesized: ${new Date().toLocaleString()}\n\n## EXECUTIVE SUMMARY\n${execSummary}\n\n## RELATED TOPICS\n${topics.map(t => `- ${t}`).join('\n')}\n\n## CONCEPT RELATIONS\n${relations.map(r => `- ${r.topic || r.name} (${r.relationship || r.category || 'Core'}): ${r.info || r.description || ''}`).join('\n')}\n\n## VERIFIED CHROME RESOURCES\n${webLinks.map((l, i) => `${i + 1}. ${l.title}\n   URL: ${l.url}\n   Summary: ${l.snippet}\n`).join('\n')}`;
+
+  vaultRelatedList.innerHTML = `
+    <!-- Executive Briefing Card -->
+    <div style="padding:14px; background:var(--bg-surface-subtle); border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+        <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase;">✦ Ingested: ${escapeHtml(fileName)}</div>
+        <button class="btn-vault-download-raw" onclick="downloadTextFile('${escapeHtml(fileName.replace(/\\.[^/.]+$/, ''))}-relations.md', decodeURIComponent('${encodeURIComponent(researchDocContent)}'))">
+          📥 Download Report (.md)
+        </button>
+      </div>
+      <div style="font-size:12px; color:var(--text-primary); line-height:1.55;">${escapeHtml(execSummary)}</div>
+    </div>
+
+    <!-- Extracted Related Topics -->
+    ${topics.length > 0 ? `
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; margin-bottom:8px;">
+          🏷️ Extracted Academic Topics (${topics.length})
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${topics.map(t => `
+            <button class="youtube-quick-pill" onclick="askAboutTopic('${escapeHtml(t).replace(/'/g, "\\'")}')" style="font-size:11px; padding:4px 10px;">
+              ✦ ${escapeHtml(t)}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Relational Information Hierarchy -->
+    ${relations.length > 0 ? `
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; margin-bottom:8px;">
+          ⚡ Conceptual Relations & Dependencies
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          ${relations.map(r => `
+            <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:6px; padding:8px 12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-weight:700; color:var(--accent-gold); font-size:12px;">${escapeHtml(r.topic || r.name || 'Concept')}</span>
+                <span style="font-size:10px; color:var(--text-tertiary); background:var(--bg-surface-subtle); padding:2px 6px; border-radius:4px;">${escapeHtml(r.relationship || r.category || 'Linked')}</span>
+              </div>
+              <div style="font-size:11px; color:var(--text-secondary); margin-top:4px; line-height:1.4;">
+                ${escapeHtml(r.info || r.description || '')}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Verified Chrome & Web Links -->
+    ${webLinks.length > 0 ? `
+      <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+        <span>🌐 Verified Web Resources:</span>
+        <span style="color:#10B981; font-weight:700;">${webLinks.length} Links</span>
+      </div>
+      ${webLinks.map(l => `
+        <div class="chrome-web-res-card">
+          <div class="chrome-res-top">
+            <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="chrome-res-title">${escapeHtml(l.title)}</a>
+            <span style="font-size:10px; color:#10B981; font-weight:800; background:rgba(16, 185, 129, 0.12); padding:2px 6px; border-radius:4px;">Verified</span>
+          </div>
+          <p class="chrome-res-snippet">${escapeHtml(l.snippet)}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <a href="${l.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:var(--accent-gold); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+              <span>🌐 Open in Chrome →</span>
+            </a>
+            <button onclick="askAboutTopic('${escapeHtml(l.title).replace(/'/g, "\\'")}')" class="btn-vault-action" style="font-size:10px; padding:3px 10px;">
+              Ask AURA
+            </button>
+          </div>
+        </div>
+      `).join("")}
+    ` : ''}
+  `;
+  playTactileSound("success");
+};
+
+window.analyzeVaultFile = async function(fileId, fileName) {
+  if (!vaultRelatedList) return;
+
+  vaultRelatedList.innerHTML = `
+    <div style="text-align:center; padding:24px; color:var(--text-secondary);">
+      <span class="pulse-dot-cyan"></span>
+      <div style="margin-top:8px; font-weight:600; font-size:12px;">AI is researching web topics, matching Chrome links & compiling documentation...</div>
+    </div>
+  `;
+  playTactileSound("click");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/files/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileId, fileName })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      const summary = data.summary || "Core technical content analyzed.";
+      const links = data.links || [];
+
+      // Construct downloadable AI research document
+      const researchDocContent = `# AI RESEARCH INTELLIGENCE REPORT
+Document: ${fileName}
+Analyzed: ${new Date().toLocaleString()}
+
+## EXECUTIVE SUMMARY
+${summary}
+
+## MATCHED WEB TOPICS & HIGHER-YIELD RESOURCES
+${links.map((l, i) => `${i + 1}. ${l.title}\n   URL: ${l.url}\n   Summary: ${l.snippet}\n`).join("\n")}
+
+Synthesized by Project Aura 3.0 Knowledge Intelligence Engine.`;
+
+      vaultRelatedList.innerHTML = `
+        <div style="padding:14px; background:var(--bg-surface-subtle); border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+            <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase;">AI Synthesis: ${escapeHtml(fileName)}</div>
+            <button class="btn-vault-download-raw" onclick="downloadTextFile('${escapeHtml(fileName.replace(/\\.[^/.]+$/, ''))}-ai-research.md', decodeURIComponent('${encodeURIComponent(researchDocContent)}'))">
+              📥 Download AI Research Doc (.md)
+            </button>
+          </div>
+          <div style="font-size:12px; color:var(--text-primary); line-height:1.55;">${escapeHtml(summary)}</div>
+        </div>
+
+        <div style="font-size:11px; font-weight:800; color:var(--text-secondary); text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+          <span>🌐 100% Matched Web Pages & Chrome Results:</span>
+          <span style="color:#10B981; font-weight:700;">${links.length} Resources Found</span>
+        </div>
+
+        ${links.map(l => `
+          <div class="chrome-web-res-card">
+            <div class="chrome-res-top">
+              <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="chrome-res-title">
+                ${escapeHtml(l.title)}
+              </a>
+              <span style="font-size:10px; color:#10B981; font-weight:800; background:rgba(16, 185, 129, 0.12); padding:2px 6px; border-radius:4px;">100% Match</span>
+            </div>
+            <p class="chrome-res-snippet">${escapeHtml(l.snippet)}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+              <a href="${l.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:var(--accent-gold); font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                <span>🌐 Open in Chrome / Browser →</span>
+              </a>
+              <button onclick="askAboutTopic('${escapeHtml(l.title).replace(/'/g, "\\'")}')" class="btn-vault-action" style="font-size:10px; padding:3px 10px;">
+                Ask AURA
+              </button>
+            </div>
+          </div>
+        `).join("")}
+      `;
+      playTactileSound("success");
+    }
+  } catch (err) {
+    vaultRelatedList.innerHTML = `<div style="padding:16px; color:#EF4444; font-size:12px;">Failed to analyze document topics: ${escapeHtml(err.message)}</div>`;
+  }
+};
+
+window.askAboutTopic = function(topic) {
+  switchView("command-center");
+  if (messageInput) {
+    messageInput.value = `Explain the core concepts and applications of: ${topic}`;
+    messageInput.focus();
+  }
+};
+
+window.deleteVaultFile = async function(fileId) {
+  try {
+    await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}`, { method: "DELETE" });
+    playTactileSound("click");
+    loadVaultFiles();
+  } catch (_) { }
+};
+
+if (btnCloseReaderModal && documentReaderModal) {
+  btnCloseReaderModal.addEventListener("click", () => {
+    documentReaderModal.style.display = "none";
+    playTactileSound("click");
+  });
+  documentReaderModal.addEventListener("click", (e) => {
+    if (e.target === documentReaderModal) {
+      documentReaderModal.style.display = "none";
+    }
+  });
+}
+
+if (btnCopyReaderContent) {
+  btnCopyReaderContent.addEventListener("click", () => {
+    if (!docReaderModalBody) return;
+    navigator.clipboard.writeText(docReaderModalBody.innerText).then(() => {
+      const orig = btnCopyReaderContent.textContent;
+      btnCopyReaderContent.textContent = "✓ Copied!";
+      playTactileSound("success");
+      setTimeout(() => { btnCopyReaderContent.textContent = orig; }, 1800);
+    });
+  });
+}
+
+/* =========================================================
+   9. MEMORY CORTEX (WORKSPACE 2) — CATEGORIZED & PINNABLE MEMORY
+   Categories: Personal · Study · Projects · Preferences · Notes · Knowledge
+   Features: Live Search · Pin to Top · AI Strategic Insights
+========================================================= */
+const memoryTitleInput = document.getElementById("memoryTitleInput");
+const memoryCategorySelect = document.getElementById("memoryCategorySelect");
+const memoryContentInput = document.getElementById("memoryContentInput");
+const saveMemoryBtn = document.getElementById("saveMemoryBtn");
+const memoryNotesGrid = document.getElementById("memoryNotesGrid");
+const memorySearchInput = document.getElementById("memorySearchInput");
+
+const memoryState = {
+  allMemories: [],
+  activeCategory: "all",
+  searchQuery: "",
+  pinnedIds: JSON.parse(localStorage.getItem("aura_pinned_memories") || "[]")
+};
+
+function initMemoryCortex() {
+  // Category tabs
+  const catTabs = document.querySelectorAll("#memoryCategoryTabs .creation-tab-btn");
+  catTabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cat = btn.getAttribute("data-memcat");
+      memoryState.activeCategory = cat || "all";
+      catTabs.forEach(b => b.classList.toggle("active", b === btn));
+      renderFilteredMemories();
+      playTactileSound("click");
+    });
+  });
+
+  // Search input
+  if (memorySearchInput) {
+    memorySearchInput.addEventListener("input", () => {
+      memoryState.searchQuery = memorySearchInput.value.trim().toLowerCase();
+      renderFilteredMemories();
+    });
+  }
+
+  if (saveMemoryBtn) {
+    saveMemoryBtn.addEventListener("click", async () => {
+      const title = memoryTitleInput ? memoryTitleInput.value.trim() : "";
+      const content = memoryContentInput ? memoryContentInput.value.trim() : "";
+      const category = memoryCategorySelect ? memoryCategorySelect.value : "study";
+
+      if (!content) return;
+
+      saveMemoryBtn.disabled = true;
+      saveMemoryBtn.textContent = "Analyzing & Committing...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/memory`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, content, category })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (memoryTitleInput) memoryTitleInput.value = "";
+          if (memoryContentInput) memoryContentInput.value = "";
+          loadMemoryNotes();
+          playTactileSound("success");
+        }
+      } catch (err) {
+        console.warn("[MEMORY COMMIT ERROR]", err.message);
+      } finally {
+        saveMemoryBtn.disabled = false;
+        saveMemoryBtn.textContent = "Commit to Memory (with AI Analysis)";
+      }
+    });
+  }
+}
+
+async function loadMemoryNotes() {
+  if (!memoryNotesGrid) return;
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/memory`);
+    const data = await res.json();
+    memoryState.allMemories = data.memories || data.notes || [];
+    renderFilteredMemories();
+  } catch (_) { }
+}
+
+function renderFilteredMemories() {
+  if (!memoryNotesGrid) return;
+
+  let filtered = memoryState.allMemories.filter(m => {
+    const matchCat = memoryState.activeCategory === "all" ||
+      (m.category && m.category.toLowerCase().includes(memoryState.activeCategory));
+    const matchQuery = !memoryState.searchQuery ||
+      (m.title && m.title.toLowerCase().includes(memoryState.searchQuery)) ||
+      (m.content && m.content.toLowerCase().includes(memoryState.searchQuery)) ||
+      (m.tags && m.tags.some(t => t.toLowerCase().includes(memoryState.searchQuery)));
+    return matchCat && matchQuery;
+  });
+
+  // Sort pinned memories to top
+  filtered.sort((a, b) => {
+    const aPin = memoryState.pinnedIds.includes(a.id) ? 1 : 0;
+    const bPin = memoryState.pinnedIds.includes(b.id) ? 1 : 0;
+    return bPin - aPin;
+  });
+
+  if (filtered.length === 0) {
+    memoryNotesGrid.innerHTML = `
+      <div style="grid-column: 1/-1; padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
+        No memories match the selected filter. Save a memory above or try another category.
+      </div>
+    `;
+    return;
+  }
+
+  memoryNotesGrid.innerHTML = filtered.map(n => {
+    const isPinned = memoryState.pinnedIds.includes(n.id);
+    const retentionPct = 90 + Math.floor(Math.random() * 10);
+
+    return `
+      <div class="memory-entry-card ${isPinned ? 'pinned' : ''}" id="memCard_${n.id}">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:8px;">
+            <div>
+              <div style="font-size:14px; font-weight:800; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(n.title || "Memory Entry")}</div>
+              <div class="neural-retention-pill">
+                <span>⚡ ${retentionPct}% Neural Retention</span>
+                <span style="opacity:0.6;">· Active Synapse</span>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${isPinned ? '<span class="memory-pin-badge">📌 PINNED</span>' : ''}
+              <button onclick="togglePinMemory('${n.id}')" style="background:transparent; border:none; cursor:pointer; font-size:13px; color:${isPinned ? 'var(--accent-gold)' : 'var(--text-tertiary)'};" title="Pin / Unpin">📌</button>
+              <button onclick="deleteMemoryNote('${n.id}')" style="background:transparent; border:none; cursor:pointer; font-size:12px; color:#EF4444;" title="Delete">✕</button>
+            </div>
+          </div>
+          
+          <p style="font-size:13px; color:var(--text-secondary); line-height:1.5; margin:10px 0 12px 0;">${escapeHtml(n.content || "")}</p>
+          
+          ${n.aiInsight ? `
+            <div style="background:var(--accent-gold-soft); border-left:3px solid var(--accent-gold); padding:10px 12px; border-radius:4px; font-size:12px; color:var(--text-primary); line-height:1.4; margin-bottom:10px;">
+              <strong style="color:var(--accent-gold);">💡 AI Strategic Insight:</strong>
+              <div>${escapeHtml(n.aiInsight.replace(/💡\s*/, ''))}</div>
+            </div>
+          ` : ''}
+
+          <!-- AI Research Actions Row -->
+          <div class="memory-action-row">
+            <button class="btn-memory-action-pill" onclick="triggerMemoryDeepResearch('${n.id}', '${escapeHtml(n.title || '').replace(/'/g, "\\'")}', '${escapeHtml(n.content || '').replace(/'/g, "\\'")}')">
+              ðŸ”¬ Deep Research
+            </button>
+            <button class="btn-memory-action-pill" onclick="triggerMemoryActionPlan('${n.id}', '${escapeHtml(n.title || '').replace(/'/g, "\\'")}', '${escapeHtml(n.content || '').replace(/'/g, "\\'")}')">
+              📋 Action Steps
+            </button>
+            <button class="btn-memory-action-pill" onclick="triggerMemoryRecallQuiz('${n.id}', '${escapeHtml(n.title || '').replace(/'/g, "\\'")}', '${escapeHtml(n.content || '').replace(/'/g, "\\'")}')">
+              🎯 Test Recall
+            </button>
+          </div>
+
+          <!-- Inline Expandable Research Drawer -->
+          <div id="memDrawer_${n.id}" class="memory-deep-research-box" style="display:none; margin-top:12px;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-subtle); padding-top:10px; margin-top:12px; font-size:11px; color:var(--text-tertiary);">
+          <span style="text-transform:uppercase; font-weight:700; color:var(--accent-gold);">✦ ${escapeHtml(n.category || "General")}</span>
+          <span>${n.createdAt ? new Date(n.createdAt).toLocaleDateString() : ""}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.triggerMemoryDeepResearch = async function(id, title, content) {
+  const drawer = document.getElementById(`memDrawer_${id}`);
+  if (!drawer) return;
+  drawer.style.display = "block";
+  drawer.innerHTML = `<span class="pulse-dot-cyan"></span> Conducting AI Deep Research & Literature Mapping for "${escapeHtml(title)}"...`;
+  playTactileSound("click");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Conduct an elite research deep-dive on this concept:
+Topic: ${title}
+Context: ${content}
+
+Provide:
+1. Advanced Theoretical Foundations & Governing Laws
+2. Real-World Industry Architectural Applications
+3. Key Equations / Algorithmic Flow
+4. Cross-Disciplinary Research Synergies`
+      })
+    });
+    const data = await res.json();
+    const text = data.answer || data.response || "Research complete.";
+    drawer.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong style="color:var(--accent-gold); font-size:12px;">🔬 Deep Research Synthesis</strong>
+        <button onclick="document.getElementById('memDrawer_${id}').style.display='none'" style="background:transparent; border:none; color:var(--text-tertiary); cursor:pointer;">✕ Close</button>
+      </div>
+      <div style="font-size:12px; line-height:1.55; color:var(--text-primary); white-space:pre-wrap;">${escapeHtml(text)}</div>
+    `;
+    playTactileSound("success");
+  } catch (err) {
+    drawer.innerHTML = `<span style="color:#EF4444;">Deep research error: ${escapeHtml(err.message)}</span>`;
+  }
+};
+
+window.triggerMemoryActionPlan = async function(id, title, content) {
+  const drawer = document.getElementById(`memDrawer_${id}`);
+  if (!drawer) return;
+  drawer.style.display = "block";
+  drawer.innerHTML = `<span class="pulse-dot-cyan"></span> Synthesizing high-impact execution action plan...`;
+  playTactileSound("click");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Synthesize 3 concrete, high-impact tactical execution action steps for this memory:
+Title: ${title}
+Content: ${content}
+Format each step clearly with:
+Step 1: [Actionable Directive]
+Step 2: [Actionable Directive]
+Step 3: [Actionable Directive]`
+      })
+    });
+    const data = await res.json();
+    const text = data.answer || data.response || "Action plan ready.";
+    drawer.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong style="color:#10B981; font-size:12px;">📋 Tactical Action Roadmap</strong>
+        <button onclick="document.getElementById('memDrawer_${id}').style.display='none'" style="background:transparent; border:none; color:var(--text-tertiary); cursor:pointer;">✕ Close</button>
+      </div>
+      <div style="font-size:12px; line-height:1.55; color:var(--text-primary); white-space:pre-wrap;">${escapeHtml(text)}</div>
+    `;
+    playTactileSound("success");
+  } catch (err) {
+    drawer.innerHTML = `<span style="color:#EF4444;">Action plan error: ${escapeHtml(err.message)}</span>`;
+  }
+};
+
+window.triggerMemoryRecallQuiz = async function(id, title, content) {
+  const drawer = document.getElementById(`memDrawer_${id}`);
+  if (!drawer) return;
+  drawer.style.display = "block";
+  drawer.innerHTML = `<span class="pulse-dot-cyan"></span> Formulating Active Recall Challenge...`;
+  playTactileSound("click");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Create a single high-impact active recall question with 3 options based on:
+Concept: ${title} - ${content}.
+Include which option is correct and brief explanation.`
+      })
+    });
+    const data = await res.json();
+    const text = data.answer || data.response || "Recall challenge ready.";
+    drawer.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong style="color:var(--accent-gold); font-size:12px;">🎯 Active Synapse Challenge</strong>
+        <button onclick="document.getElementById('memDrawer_${id}').style.display='none'" style="background:transparent; border:none; color:var(--text-tertiary); cursor:pointer;">✕ Close</button>
+      </div>
+      <div style="font-size:12px; line-height:1.55; color:var(--text-primary); white-space:pre-wrap;">${escapeHtml(text)}</div>
+    `;
+    playTactileSound("success");
+  } catch (err) {
+    drawer.innerHTML = `<span style="color:#EF4444;">Recall error: ${escapeHtml(err.message)}</span>`;
+  }
+};
+
+window.togglePinMemory = function(id) {
+  const idx = memoryState.pinnedIds.indexOf(id);
+  if (idx !== -1) {
+    memoryState.pinnedIds.splice(idx, 1);
+  } else {
+    memoryState.pinnedIds.push(id);
+  }
+  localStorage.setItem("aura_pinned_memories", JSON.stringify(memoryState.pinnedIds));
+  renderFilteredMemories();
+  playTactileSound("click");
+};
+
+async function deleteMemoryNote(id) {
+  try {
+    await fetch(`${BACKEND_URL}/api/memory/${id}`, { method: "DELETE" });
+    memoryState.allMemories = memoryState.allMemories.filter(m => m.id !== id);
+    renderFilteredMemories();
+    playTactileSound("click");
+  } catch (_) { }
+}
+
+/* =========================================================
+   10. STUDY, QUIZ, RESEARCH & YOUTUBE WORKSPACES
+   Study Intel (Paced Milestones) · Quiz Engine (7 Patterns) · Research · YouTube
+========================================================= */
+
+// â”€â”€ STUDY INTEL (PACED MILESTONES: TODAY, THIS WEEK, UPCOMING) â”€â”€
+const generateStudyPlanBtn = document.getElementById("generateStudyPlanBtn");
+const studyTopicInput = document.getElementById("studyTopicInput");
+const studyPlanOutput = document.getElementById("studyPlanOutput");
+const studyPlanText = document.getElementById("studyPlanText");
+const studyPacedMilestonesGrid = document.getElementById("studyPacedMilestonesGrid");
+const studyTodayTasks = document.getElementById("studyTodayTasks");
+const studyWeekTasks = document.getElementById("studyWeekTasks");
+const studyUpcomingTasks = document.getElementById("studyUpcomingTasks");
+const copyStudyPlanBtn = document.getElementById("copyStudyPlanBtn");
+
+document.querySelectorAll(".study-quick-pill").forEach(pill => {
+  pill.addEventListener("click", () => {
+    const t = pill.getAttribute("data-topic");
+    if (studyTopicInput && t) {
+      studyTopicInput.value = t;
+      if (generateStudyPlanBtn) generateStudyPlanBtn.click();
+    }
+  });
+});
+
+let lastStudyPlanResult = "";
+
+if (generateStudyPlanBtn) {
+  generateStudyPlanBtn.addEventListener("click", async () => {
+    const topic = studyTopicInput ? studyTopicInput.value.trim() : "";
+    if (!topic) return;
+
+    generateStudyPlanBtn.disabled = true;
+    generateStudyPlanBtn.textContent = "Synthesizing Paced Milestones...";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: `Create a structured paced milestone study plan for: "${topic}".
+Divide into 3 distinct paced buckets:
+1. TODAY: 3 immediate high-priority active recall objectives.
+2. THIS WEEK: 3 core foundational modules & exam PYQ patterns.
+3. UPCOMING: 3 advanced revision milestones & practice problems.
+
+Followed by a high-yield summary of key formulas, 2-mark definitions, and 13-mark repeated exam questions.`
+        })
+      });
+      const data = await res.json();
+      lastStudyPlanResult = data.answer || data.response || "Complete.";
+
+      // Populate interactive milestones
+      renderPacedMilestones(topic);
+
+      if (studyPlanText && studyPlanOutput) {
+        if (typeof window.formatCreationStudioOutput === "function") {
+          studyPlanText.innerHTML = window.formatCreationStudioOutput(lastStudyPlanResult, `Curriculum Blueprint: ${topic}`);
+        } else {
+          studyPlanText.innerHTML = formatMarkdownResponse(lastStudyPlanResult);
+        }
+        studyPlanOutput.style.display = "block";
+      }
+      playTactileSound("success");
+    } catch (_) { }
+    finally {
+      generateStudyPlanBtn.disabled = false;
+      generateStudyPlanBtn.textContent = "Build Paced Milestones";
+    }
+  });
+}
+
+function renderPacedMilestones(topic) {
+  if (!studyPacedMilestonesGrid) return;
+  studyPacedMilestonesGrid.style.display = "grid";
+
+  const todayItems = [
+    `Master foundational theorems & core governing laws of ${topic}`,
+    `Solve 5 high-frequency university 2-mark definitions`,
+    `Construct visual mind-map / architecture block diagram`
+  ];
+
+  const weekItems = [
+    `Complete Unit 1 & Unit 2 derivations and proofs`,
+    `Draft outline for 3 repeated 13-mark university PYQs`,
+    `Take Semester Mock Test under 60-minute exam conditions`
+  ];
+
+  const upcomingItems = [
+    `Comprehensive full-syllabus active recall revision`,
+    `Review weak topics identified by AI Performance Mentor`,
+    `Final exam simulation & model answer key comparison`
+  ];
+
+  function makeTaskHtml(items) {
+    return items.map(text => `
+      <label class="study-task-item">
+        <input type="checkbox" class="study-task-checkbox" onchange="this.closest('.study-task-item').classList.toggle('done', this.checked)">
+        <span class="study-task-label">${escapeHtml(text)}</span>
+      </label>
+    `).join("");
+  }
+
+  if (studyTodayTasks) studyTodayTasks.innerHTML = makeTaskHtml(todayItems);
+  if (studyWeekTasks) studyWeekTasks.innerHTML = makeTaskHtml(weekItems);
+  if (studyUpcomingTasks) studyUpcomingTasks.innerHTML = makeTaskHtml(upcomingItems);
+}
+
+if (copyStudyPlanBtn) {
+  copyStudyPlanBtn.addEventListener("click", () => {
+    if (!lastStudyPlanResult) return;
+    navigator.clipboard.writeText(lastStudyPlanResult);
+    copyStudyPlanBtn.textContent = "✓ Copied!";
+    setTimeout(() => { copyStudyPlanBtn.textContent = "📋 Copy Blueprint"; }, 1500);
+    playTactileSound("click");
+  });
+}
+
+// â”€â”€ QUIZ ENGINE (7 DIVERSE QUESTION PATTERNS) â”€â”€
+const generateQuizBtn = document.getElementById("generateQuizBtn");
+const quizTopicInput = document.getElementById("quizTopicInput");
+const quizRunnerBox = document.getElementById("quizRunnerBox");
+const quizTopicBadge = document.getElementById("quizTopicBadge");
+const quizProgressBadge = document.getElementById("quizProgressBadge");
+const quizPatternBadge = document.getElementById("quizPatternBadge");
+const quizScoreTracker = document.getElementById("quizScoreTracker");
+const quizProgressFill = document.getElementById("quizProgressFill");
+const quizQuestionText = document.getElementById("quizQuestionText");
+
+// 7 Pattern containers
+const quizOptionsContainer = document.getElementById("quizOptionsContainer");
+const quizTfContainer = document.getElementById("quizTfContainer");
+const quizTfTrueBtn = document.getElementById("quizTfTrueBtn");
+const quizTfFalseBtn = document.getElementById("quizTfFalseBtn");
+const quizFillBlankContainer = document.getElementById("quizFillBlankContainer");
+const quizFillBlankInput = document.getElementById("quizFillBlankInput");
+const quizFillBlankVerifyBtn = document.getElementById("quizFillBlankVerifyBtn");
+const quizWrittenContainer = document.getElementById("quizWrittenContainer");
+const quizWrittenInput = document.getElementById("quizWrittenInput");
+const quizWrittenVerifyBtn = document.getElementById("quizWrittenVerifyBtn");
+const quizMatchContainer = document.getElementById("quizMatchContainer");
+const quizMatchPairsList = document.getElementById("quizMatchPairsList");
+const quizMatchVerifyBtn = document.getElementById("quizMatchVerifyBtn");
+const quizScenarioContainer = document.getElementById("quizScenarioContainer");
+const quizScenarioPrompt = document.getElementById("quizScenarioPrompt");
+const quizScenarioOptionsContainer = document.getElementById("quizScenarioOptionsContainer");
+const quizCodingContainer = document.getElementById("quizCodingContainer");
+const quizCodingInput = document.getElementById("quizCodingInput");
+const quizCodingVerifyBtn = document.getElementById("quizCodingVerifyBtn");
+
+const quizExplanationBox = document.getElementById("quizExplanationBox");
+const quizExplanationText = document.getElementById("quizExplanationText");
+const quizFooterActions = document.getElementById("quizFooterActions");
+const nextQuizQuestionBtn = document.getElementById("nextQuizQuestionBtn");
+const quizStatusHint = document.getElementById("quizStatusHint");
+
+const quizScoreSummaryBox = document.getElementById("quizScoreSummaryBox");
+const quizFinalScoreBadge = document.getElementById("quizFinalScoreBadge");
+const quizFinalScoreTitle = document.getElementById("quizFinalScoreTitle");
+const quizFinalScoreDesc = document.getElementById("quizFinalScoreDesc");
+const retakeQuizBtn = document.getElementById("retakeQuizBtn");
+const newQuizTopicBtn = document.getElementById("newQuizTopicBtn");
+
+const quizState = {
+  topic: "",
+  difficulty: "Standard",
+  questions: [],
+  currentIndex: 0,
+  score: 0,
+  userAnswers: [],
+  answered: false
+};
+
+async function startInteractiveQuiz(topic) {
+  if (!topic) return;
+
+  if (generateQuizBtn) {
+    generateQuizBtn.disabled = true;
+    generateQuizBtn.textContent = "Synthesizing Multi-Pattern Quiz...";
+  }
+
+  if (quizScoreSummaryBox) quizScoreSummaryBox.style.display = "none";
+  if (quizRunnerBox) quizRunnerBox.style.display = "none";
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/quiz/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic, count: 7, difficulty: "Semester Standard" })
+    });
+    const data = await res.json();
+
+    if (data.success && data.questions && data.questions.length > 0) {
+      quizState.topic = data.topic || topic;
+      quizState.difficulty = data.difficulty || "Semester Standard";
+      quizState.questions = data.questions;
+      quizState.currentIndex = 0;
+      quizState.score = 0;
+      quizState.userAnswers = [];
+      quizState.answered = false;
+
+      renderQuizQuestion(0);
+      playTactileSound("success");
+    } else {
+      throw new Error(data.error || "Unable to generate quiz questions.");
+    }
+  } catch (err) {
+    console.error("[QUIZ ERROR]", err);
+    // 7-Pattern Fallback questions
+    quizState.topic = topic;
+    quizState.difficulty = "Semester Standard";
+    quizState.questions = [
+      {
+        id: 1,
+        pattern: "MCQ",
+        question: `Which fundamental principle is central to ${topic}?`,
+        options: [
+          "Rigorous structural analysis and continuous validation",
+          "Random execution without bounds checking",
+          "Bypassing deterministic invariants",
+          "Static unoptimized memory allocations"
+        ],
+        answer: 0,
+        explanation: `In ${topic}, rigorous structural analysis and continuous validation ensure deterministic resilience.`
+      },
+      {
+        id: 2,
+        pattern: "TRUE_FALSE",
+        question: `In ${topic}, optimal performance requires maintaining a balanced trade-off between throughput and latency overhead.`,
+        options: ["True", "False"],
+        answer: 0,
+        explanation: "Engineering trade-offs between computational throughput and latency are universally fundamental."
+      },
+      {
+        id: 3,
+        pattern: "FILL_BLANK",
+        question: `In ${topic}, the measure of asymptotic efficiency is formally expressed as Big-___ notation.`,
+        answerText: "O",
+        acceptableAnswers: ["O", "Oh", "Order"],
+        explanation: "Big-O notation describes the upper bound on the growth rate of algorithm run time or memory."
+      },
+      {
+        id: 4,
+        pattern: "WRITTEN",
+        question: `Define the primary engineering objective or core theorem governing ${topic}:`,
+        answerText: "Reliability and deterministic efficiency",
+        explanation: `In ${topic}, primary architectural models guarantee deterministic reliability and fault tolerance.`
+      },
+      {
+        id: 5,
+        pattern: "MATCH",
+        question: `Match the foundational concepts of ${topic} with their primary role:`,
+        leftItems: ["Invariance", "Convergence", "Modularity"],
+        rightItems: ["System Boundary Isolation", "Guaranteed End State", "Condition Unchanged During Execution"],
+        correctMatches: { 0: 2, 1: 1, 2: 0 },
+        explanation: "Invariance remains unchanged, convergence guarantees termination, and modularity encapsulates boundaries."
+      },
+      {
+        id: 6,
+        pattern: "SCENARIO",
+        scenario: `A high-throughput distributed system encounters severe latency spikes under peak load in ${topic}. Which mitigation strategy provides immediate stability?`,
+        question: "Select the optimal mitigation strategy:",
+        options: [
+          "Implement exponential backoff with jitter and circuit breaking",
+          "Double the concurrent thread pool without rate limiting",
+          "Disable all caching layers to force fresh queries",
+          "Increase retry frequency to maximum"
+        ],
+        answer: 0,
+        explanation: "Circuit breaking combined with exponential backoff and jitter prevents thundering herd failures."
+      },
+      {
+        id: 7,
+        pattern: "CODING",
+        question: `Write the base condition check for a recursive search or traversal in ${topic}:`,
+        targetKeyword: "return",
+        explanation: "A robust base condition terminates recursion when the terminal or base case is reached."
+      }
+    ];
+    quizState.currentIndex = 0;
+    quizState.score = 0;
+    quizState.userAnswers = [];
+    quizState.answered = false;
+
+    renderQuizQuestion(0);
+  } finally {
+    if (generateQuizBtn) {
+      generateQuizBtn.disabled = false;
+      generateQuizBtn.textContent = "Create Quiz";
+    }
+  }
+}
+
+function hideAllQuizPatternContainers() {
+  if (quizOptionsContainer) quizOptionsContainer.style.display = "none";
+  if (quizTfContainer) quizTfContainer.style.display = "none";
+  if (quizFillBlankContainer) quizFillBlankContainer.style.display = "none";
+  if (quizWrittenContainer) quizWrittenContainer.style.display = "none";
+  if (quizMatchContainer) quizMatchContainer.style.display = "none";
+  if (quizScenarioContainer) quizScenarioContainer.style.display = "none";
+  if (quizCodingContainer) quizCodingContainer.style.display = "none";
+}
+
+function renderQuizQuestion(index) {
+  if (!quizState.questions || index >= quizState.questions.length) {
+    showQuizScoreSummary();
+    return;
+  }
+
+  quizState.currentIndex = index;
+  quizState.answered = false;
+  const q = quizState.questions[index];
+  const total = quizState.questions.length;
+  const pattern = (q.pattern || "MCQ").toUpperCase();
+
+  if (quizRunnerBox) quizRunnerBox.style.display = "flex";
+  if (quizScoreSummaryBox) quizScoreSummaryBox.style.display = "none";
+
+  if (quizTopicBadge) quizTopicBadge.textContent = `✦ ${(quizState.topic || "QUIZ").toUpperCase()}`;
+  if (quizProgressBadge) quizProgressBadge.textContent = `Question ${index + 1} of ${total}`;
+  if (quizPatternBadge) quizPatternBadge.textContent = pattern;
+  if (quizScoreTracker) quizScoreTracker.textContent = `Score: ${quizState.score} / ${total}`;
+
+  const pct = Math.round(((index + 1) / total) * 100);
+  if (quizProgressFill) quizProgressFill.style.width = `${pct}%`;
+
+  if (quizQuestionText) quizQuestionText.textContent = q.question || "Question text unavailable";
+
+  if (quizExplanationBox) quizExplanationBox.style.display = "none";
+  if (quizFooterActions) quizFooterActions.style.display = "none";
+
+  hideAllQuizPatternContainers();
+
+  // Pattern 1: MCQ
+  if (pattern === "MCQ") {
+    if (quizOptionsContainer) {
+      quizOptionsContainer.style.display = "grid";
+      const opts = q.options || [];
+      quizOptionsContainer.innerHTML = opts.map((opt, i) => `
+        <button class="quiz-opt-btn" onclick="handleQuizAnswer(${i})">
+          <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+          <span class="opt-text">${escapeHtml(opt)}</span>
+        </button>
+      `).join("");
+    }
+  }
+  // Pattern 2: TRUE_FALSE
+  else if (pattern === "TRUE_FALSE") {
+    if (quizTfContainer) {
+      quizTfContainer.style.display = "flex";
+      if (quizTfTrueBtn) {
+        quizTfTrueBtn.className = "btn-tf-opt";
+        quizTfTrueBtn.onclick = () => handleQuizAnswer(0);
+      }
+      if (quizTfFalseBtn) {
+        quizTfFalseBtn.className = "btn-tf-opt";
+        quizTfFalseBtn.onclick = () => handleQuizAnswer(1);
+      }
+    }
+  }
+  // Pattern 3: FILL_BLANK
+  else if (pattern === "FILL_BLANK") {
+    if (quizFillBlankContainer) {
+      quizFillBlankContainer.style.display = "block";
+      if (quizFillBlankInput) {
+        quizFillBlankInput.value = "";
+        quizFillBlankInput.disabled = false;
+        quizFillBlankInput.focus();
+      }
+      if (quizFillBlankVerifyBtn) {
+        quizFillBlankVerifyBtn.onclick = () => {
+          const val = (quizFillBlankInput?.value || "").trim().toLowerCase();
+          const target = (q.answerText || q.answer || "").toString().trim().toLowerCase();
+          const acceptable = (q.acceptableAnswers || []).map(a => a.toLowerCase());
+          const isCorrect = val === target || acceptable.includes(val);
+          handleQuizVerifiedAnswer(isCorrect, q.answerText || target);
+        };
+      }
+    }
+  }
+  // Pattern 4: WRITTEN
+  else if (pattern === "WRITTEN") {
+    if (quizWrittenContainer) {
+      quizWrittenContainer.style.display = "block";
+      if (quizWrittenInput) {
+        quizWrittenInput.value = "";
+        quizWrittenInput.disabled = false;
+        quizWrittenInput.focus();
+      }
+      if (quizWrittenVerifyBtn) {
+        quizWrittenVerifyBtn.onclick = () => {
+          const val = (quizWrittenInput?.value || "").trim().toLowerCase();
+          const target = (q.answerText || "").toLowerCase();
+          const words = target.split(/\s+/).filter(w => w.length > 3);
+          const isMatch = words.length === 0 || words.some(w => val.includes(w));
+          handleQuizVerifiedAnswer(isMatch, q.answerText || "Model Key Definition");
+        };
+      }
+    }
+  }
+  // Pattern 5: MATCH
+  else if (pattern === "MATCH") {
+    if (quizMatchContainer && quizMatchPairsList) {
+      quizMatchContainer.style.display = "block";
+      const left = q.leftItems || ["Concept A", "Concept B", "Concept C"];
+      const right = q.rightItems || ["Definition 1", "Definition 2", "Definition 3"];
+
+      quizMatchPairsList.innerHTML = left.map((lItem, idx) => `
+        <div class="match-pair-row">
+          <span class="match-left-item">${idx + 1}. ${escapeHtml(lItem)}</span>
+          <select class="match-select" id="matchSelect_${idx}">
+            <option value="">-- Match with --</option>
+            ${right.map((rItem, rIdx) => `<option value="${rIdx}">${escapeHtml(rItem)}</option>`).join("")}
+          </select>
+        </div>
+      `).join("");
+
+      if (quizMatchVerifyBtn) {
+        quizMatchVerifyBtn.onclick = () => {
+          const correct = q.correctMatches || { 0: 0, 1: 1, 2: 2 };
+          let matchesCount = 0;
+          let totalPairs = left.length;
+
+          left.forEach((_, idx) => {
+            const sel = document.getElementById(`matchSelect_${idx}`);
+            if (sel && parseInt(sel.value, 10) === correct[idx]) {
+              matchesCount++;
+            }
+          });
+
+          const isOverallCorrect = matchesCount >= Math.ceil(totalPairs * 0.6);
+          handleQuizVerifiedAnswer(isOverallCorrect, `Matched ${matchesCount} of ${totalPairs} pairs correctly.`);
+        };
+      }
+    }
+  }
+  // Pattern 6: SCENARIO
+  else if (pattern === "SCENARIO") {
+    if (quizScenarioContainer) {
+      quizScenarioContainer.style.display = "block";
+      if (quizScenarioPrompt) {
+        quizScenarioPrompt.textContent = q.scenario || q.question;
+      }
+      if (quizScenarioOptionsContainer) {
+        const opts = q.options || [];
+        quizScenarioOptionsContainer.innerHTML = opts.map((opt, i) => `
+          <button class="quiz-opt-btn" onclick="handleQuizAnswer(${i})">
+            <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+            <span class="opt-text">${escapeHtml(opt)}</span>
+          </button>
+        `).join("");
+      }
+    }
+  }
+  // Pattern 7: CODING
+  else if (pattern === "CODING") {
+    if (quizCodingContainer) {
+      quizCodingContainer.style.display = "block";
+      if (quizCodingInput) {
+        quizCodingInput.value = "";
+        quizCodingInput.disabled = false;
+        quizCodingInput.focus();
+      }
+      if (quizCodingVerifyBtn) {
+        quizCodingVerifyBtn.onclick = () => {
+          const codeVal = (quizCodingInput?.value || "").trim().toLowerCase();
+          const target = (q.targetKeyword || "return").toLowerCase();
+          const isCorrect = codeVal.includes(target) && codeVal.length > 5;
+          handleQuizVerifiedAnswer(isCorrect, `Target syntax: "${target}"`);
+        };
+      }
+    }
+  }
+}
+
+function handleQuizVerifiedAnswer(isCorrect, keyAnswer) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.currentIndex];
+
+  if (isCorrect) {
+    quizState.score++;
+    playTactileSound("success");
+  } else {
+    playTactileSound("click");
+  }
+
+  const total = quizState.questions.length;
+  if (quizScoreTracker) quizScoreTracker.textContent = `Score: ${quizState.score} / ${total}`;
+
+  if (quizExplanationBox && quizExplanationText) {
+    quizExplanationText.innerHTML = `
+      <div style="font-weight:700; color:${isCorrect ? '#10B981' : '#FF0055'}; margin-bottom:4px;">
+        ${isCorrect ? "✓ Accurate Answer!" : "✕ Key Expected:"}
+      </div>
+      ${!isCorrect ? `<div style="font-size:12px; color:var(--text-primary); margin-bottom:6px;"><strong>Model Key:</strong> ${escapeHtml(keyAnswer)}</div>` : ''}
+      <div style="font-size:12px; color:var(--text-secondary);">${escapeHtml(q.explanation || "Verification completed.")}</div>
+    `;
+    quizExplanationBox.style.display = "flex";
+  }
+
+  if (quizFooterActions) {
+    quizFooterActions.style.display = "flex";
+    if (quizStatusHint) quizStatusHint.textContent = isCorrect ? "Excellent mastery!" : "Review explanation before proceeding";
+  }
+}
+
+window.handleQuizAnswer = function(chosenIdx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.questions[quizState.currentIndex];
+  const isCorrect = chosenIdx === q.answer;
+
+  if (isCorrect) {
+    quizState.score++;
+    playTactileSound("success");
+  } else {
+    playTactileSound("click");
+  }
+
+  const total = quizState.questions.length;
+  if (quizScoreTracker) quizScoreTracker.textContent = `Score: ${quizState.score} / ${total}`;
+
+  // Highlight buttons
+  document.querySelectorAll(".quiz-opt-btn").forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.answer) btn.classList.add("correct");
+    else if (idx === chosenIdx) btn.classList.add("wrong");
+  });
+
+  if (q.pattern === "TRUE_FALSE") {
+    if (quizTfTrueBtn) quizTfTrueBtn.classList.toggle("correct", q.answer === 0);
+    if (quizTfFalseBtn) quizTfFalseBtn.classList.toggle("correct", q.answer === 1);
+    if (!isCorrect) {
+      if (chosenIdx === 0 && quizTfTrueBtn) quizTfTrueBtn.classList.add("wrong");
+      if (chosenIdx === 1 && quizTfFalseBtn) quizTfFalseBtn.classList.add("wrong");
+    }
+  }
+
+  if (quizExplanationBox && quizExplanationText) {
+    quizExplanationText.innerHTML = `
+      <div style="font-weight:700; color:${isCorrect ? '#10B981' : '#FF0055'}; margin-bottom:4px;">
+        ${isCorrect ? "✓ Accurate Choice!" : "✕ Not quite"}
+      </div>
+      <div style="font-size:12px; color:var(--text-secondary);">${escapeHtml(q.explanation || "")}</div>
+    `;
+    quizExplanationBox.style.display = "flex";
+  }
+
+  if (quizFooterActions) {
+    quizFooterActions.style.display = "flex";
+    if (quizStatusHint) quizStatusHint.textContent = isCorrect ? "Well done!" : "Examine rationale above";
+  }
+};
+
+if (nextQuizQuestionBtn) {
+  nextQuizQuestionBtn.addEventListener("click", () => {
+    renderQuizQuestion(quizState.currentIndex + 1);
+    playTactileSound("click");
+  });
+}
+
+function showQuizScoreSummary() {
+  if (quizRunnerBox) quizRunnerBox.style.display = "none";
+  if (quizScoreSummaryBox) quizScoreSummaryBox.style.display = "flex";
+
+  const total = quizState.questions.length || 1;
+  const pct = Math.round((quizState.score / total) * 100);
+
+  if (quizFinalScoreBadge) quizFinalScoreBadge.textContent = `${pct}%`;
+  if (quizFinalScoreTitle) {
+    quizFinalScoreTitle.textContent = pct >= 80 ? "Outstanding Comprehension!" : (pct >= 50 ? "Proficient Understanding" : "Foundational Review Recommended");
+  }
+  if (quizFinalScoreDesc) {
+    quizFinalScoreDesc.textContent = `You answered ${quizState.score} out of ${total} questions correctly across all 7 diverse patterns.`;
+  }
+
+  // Record quiz result in DB analytics
+  fetch(`${BACKEND_URL}/api/activity`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "quiz_result",
+      message: `Completed Multi-Pattern Quiz on "${quizState.topic}": ${pct}%`,
+      metadata: { topic: quizState.topic, score: quizState.score, total, percentage: pct }
+    })
+  }).catch(() => {});
+}
+
+if (retakeQuizBtn) {
+  retakeQuizBtn.addEventListener("click", () => {
+    quizState.currentIndex = 0;
+    quizState.score = 0;
+    quizState.answered = false;
+    renderQuizQuestion(0);
+  });
+}
+
+if (newQuizTopicBtn) {
+  newQuizTopicBtn.addEventListener("click", () => {
+    if (quizScoreSummaryBox) quizScoreSummaryBox.style.display = "none";
+    if (quizTopicInput) {
+      quizTopicInput.value = "";
+      quizTopicInput.focus();
+    }
+  });
+}
+
+if (generateQuizBtn) {
+  generateQuizBtn.addEventListener("click", () => {
+    const topic = quizTopicInput ? quizTopicInput.value.trim() : "";
+    if (topic) startInteractiveQuiz(topic);
+  });
+}
+
+document.querySelectorAll(".quiz-quick-topic").forEach(pill => {
+  pill.addEventListener("click", () => {
+    const t = pill.getAttribute("data-topic");
+    if (t) {
+      if (quizTopicInput) quizTopicInput.value = t;
+      startInteractiveQuiz(t);
+    }
+  });
+});
+
+// Deep Research Studio
+const executeResearchBtn = document.getElementById("executeResearchBtn");
+const researchQueryInput = document.getElementById("researchQueryInput");
+const researchResultsContainer = document.getElementById("researchResultsContainer");
+const researchSummaryText = document.getElementById("researchSummaryText");
+
+if (executeResearchBtn) {
+  executeResearchBtn.addEventListener("click", async () => {
+    const query = researchQueryInput ? researchQueryInput.value.trim() : "";
+    if (!query) return;
+
+    executeResearchBtn.disabled = true;
+    executeResearchBtn.textContent = "Researching...";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/research`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query })
+      });
+      const data = await res.json();
+      if (researchSummaryText && researchResultsContainer) {
+        researchSummaryText.innerHTML = formatMarkdownResponse(data.summary || data.answer || "Research complete.");
+        researchResultsContainer.style.display = "block";
+      }
+      playTactileSound("success");
+    } catch (_) { }
+    finally {
+      executeResearchBtn.disabled = false;
+      executeResearchBtn.textContent = "Research";
+    }
+  });
+}
+
+// YouTube Intel Search
+const ytSearchBtn = document.getElementById("ytSearchBtn");
+const ytSearchInput = document.getElementById("ytSearchInput");
+const ytVideoResultsGrid = document.getElementById("ytVideoResultsGrid");
+const ytSearchStatus = document.getElementById("ytSearchStatus");
+
+if (ytSearchBtn) {
+  ytSearchBtn.addEventListener("click", async () => {
+    const q = ytSearchInput ? ytSearchInput.value.trim() : "";
+    if (!q) return;
+
+    ytSearchBtn.disabled = true;
+    ytSearchBtn.textContent = "Searching...";
+    if (ytSearchStatus) {
+      ytSearchStatus.style.display = "block";
+      ytSearchStatus.textContent = `Searching educational lectures for: "${q}"...`;
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/youtube/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q, maxResults: 6 })
+      });
+      const data = await res.json();
+      const videos = data.videos || data.results || [];
+
+      if (ytVideoResultsGrid) {
+        if (videos.length === 0) {
+          ytVideoResultsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-secondary);">No videos found for this topic.</div>`;
+        } else {
+          ytVideoResultsGrid.innerHTML = videos.map(v => `
+            <div class="yt-video-card" style="display:flex; flex-direction:column; background:var(--bg-surface); border:1px solid var(--border-card); border-radius:var(--radius-md); overflow:hidden;">
+              <img src="${escapeHtml(v.thumbnail || '')}" style="width:100%; height:140px; object-fit:cover;" alt="thumbnail" />
+              <div style="padding:12px; display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+                <div>
+                  <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${escapeHtml(v.title || '')}</div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-bottom:8px;">${escapeHtml(v.channel || '')}</div>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-vault-action" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url || '')}', '${escapeHtml(v.title || '').replace(/'/g, "\\'")}', '${escapeHtml(v.channel || '').replace(/'/g, "\\'")}')">▷ Play</button>
+                  <a href="${escapeHtml(v.url || '')}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="text-decoration:none;">↗ External</a>
+                </div>
+              </div>
+            </div>
+          `).join("");
+        }
+      }
+      playTactileSound("success");
+    } catch (_) { }
+    finally {
+      ytSearchBtn.disabled = false;
+      ytSearchBtn.textContent = "Search YouTube";
+      if (ytSearchStatus) ytSearchStatus.style.display = "none";
+    }
+  });
+}
+
+// Global In-App YouTube Modal Player
+window.openEmbeddedYoutubeModal = function (url, title, channel) {
+  const modal = document.getElementById("youtubeEmbeddedModal");
+  const iframe = document.getElementById("ytModalIframe");
+  const titleEl = document.getElementById("ytModalVideoTitle");
+  if (!modal || !iframe) return;
+
+  let videoId = "";
+  if (url.includes("watch?v=")) {
+    videoId = url.split("watch?v=")[1].split("&")[0];
+  } else if (url.includes("youtu.be/")) {
+    videoId = url.split("youtu.be/")[1].split("?")[0];
+  } else if (url.includes("embed/")) {
+    videoId = url.split("embed/")[1].split("?")[0];
+  }
+
+  if (titleEl) {
+    titleEl.textContent = title ? `${title} · ${channel || 'YouTube'}` : "Educational Lecture Stream";
+  }
+
+  iframe.src = videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1` : url;
+  modal.style.display = "flex";
+  modal.classList.add("active");
+  playTactileSound("click");
+};
+
+const btnCloseYtModal = document.getElementById("btnCloseYtModal");
+if (btnCloseYtModal) {
+  btnCloseYtModal.addEventListener("click", () => {
+    const modal = document.getElementById("youtubeEmbeddedModal");
+    const iframe = document.getElementById("ytModalIframe");
+    if (iframe) iframe.src = "";
+    if (modal) {
+      modal.style.display = "none";
+      modal.classList.remove("active");
+    }
+  });
+}
+
+const ytEmbeddedModal = document.getElementById("youtubeEmbeddedModal");
+if (ytEmbeddedModal) {
+  ytEmbeddedModal.addEventListener("click", (e) => {
+    if (e.target === ytEmbeddedModal) {
+      const iframe = document.getElementById("ytModalIframe");
+      if (iframe) iframe.src = "";
+      ytEmbeddedModal.style.display = "none";
+      ytEmbeddedModal.classList.remove("active");
+    }
+  });
+}
+
+if (ytSearchInput) {
+  ytSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (ytSearchBtn) ytSearchBtn.click();
+    }
+  });
+}
+
+/* =========================================================
+   11. TASKS WORKSPACE (3-COLUMN KANBAN & EVENT SCHEDULER)
+========================================================= */
+const newTaskInput = document.getElementById("newTaskInput");
+const taskBucketSelect = document.getElementById("taskBucketSelect");
+const taskPrioritySelect = document.getElementById("taskPrioritySelect");
+const addTaskBtn = document.getElementById("addTaskBtn");
+
+const tasksTodayList = document.getElementById("tasksTodayList");
+const tasksUpcomingList = document.getElementById("tasksUpcomingList");
+const tasksCompletedList = document.getElementById("tasksCompletedList");
+const tasksTodayCount = document.getElementById("tasksTodayCount");
+const tasksUpcomingCount = document.getElementById("tasksUpcomingCount");
+const tasksCompletedCount = document.getElementById("tasksCompletedCount");
+
+// Task Edit Modal Elements
+const taskEditModal = document.getElementById("taskEditModal");
+const taskEditTextInput = document.getElementById("taskEditTextInput");
+const taskEditBucketSelect = document.getElementById("taskEditBucketSelect");
+const btnSaveTaskEdit = document.getElementById("btnSaveTaskEdit");
+const btnCloseTaskEditModal = document.getElementById("btnCloseTaskEditModal");
+
+let activeEditingTaskId = null;
+
+function saveTasks() {
+  localStorage.setItem("aura_tasks", JSON.stringify(state.tasks));
+}
+
+function renderTasks() {
+  if (!tasksTodayList) return;
+
+  const today = state.tasks.filter(t => !t.completed && (t.bucket === "today" || !t.bucket));
+  const upcoming = state.tasks.filter(t => !t.completed && t.bucket === "upcoming");
+  const completed = state.tasks.filter(t => t.completed);
+
+  if (tasksTodayCount) tasksTodayCount.textContent = today.length;
+  if (tasksUpcomingCount) tasksUpcomingCount.textContent = upcoming.length;
+  if (tasksCompletedCount) tasksCompletedCount.textContent = completed.length;
+
+  tasksTodayList.innerHTML = today.length === 0
+    ? `<div style="font-size:12px; color:var(--text-tertiary); padding:16px; text-align:center; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm);">No active focus items for today. Add an objective above.</div>`
+    : today.map(t => renderKanbanTaskCard(t)).join("");
+
+  tasksUpcomingList.innerHTML = upcoming.length === 0
+    ? `<div style="font-size:12px; color:var(--text-tertiary); padding:16px; text-align:center; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm);">No upcoming academic deadlines or events recorded.</div>`
+    : upcoming.map(t => renderKanbanTaskCard(t)).join("");
+
+  tasksCompletedList.innerHTML = completed.length === 0
+    ? `<div style="font-size:12px; color:var(--text-tertiary); padding:16px; text-align:center; background:rgba(255,255,255,0.02); border-radius:var(--radius-sm);">No completed objectives yet.</div>`
+    : completed.map(t => renderKanbanTaskCard(t)).join("");
+}
+
+function renderKanbanTaskCard(t) {
+  const priorityColor = t.priority === "High" ? "#FF0055" : t.priority === "Low" ? "#10B981" : "#F59E0B";
+  const priorityIcon = t.priority === "High" ? "🔥" : t.priority === "Low" ? "🌱" : "⚡";
+
+  return `
+    <div class="task-item-card" style="display:flex; flex-direction:column; gap:8px; padding:12px; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md); transition:border-color 0.2s ease;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+        <span style="font-size:11px; font-weight:700; color:${priorityColor}; display:inline-flex; align-items:center; gap:4px; padding:2px 6px; background:rgba(255,255,255,0.04); border-radius:4px;">
+          ${priorityIcon} ${t.priority || "Medium"}
+        </span>
+        <span style="font-size:10px; color:var(--text-tertiary); font-family:var(--font-mono);">${t.date || "Active"}</span>
+      </div>
+
+      <div style="font-size:13px; font-weight:500; color:var(--text-primary); line-height:1.4; ${t.completed ? "text-decoration:line-through; opacity:0.6;" : ""}">
+        ${escapeHtml(t.text)}
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; align-items:center; gap:6px; margin-top:4px; border-top:1px solid var(--border-subtle); padding-top:6px;">
+        ${!t.completed ? `
+          <button onclick="toggleTask('${t.id}')" class="btn-vault-action" style="padding:4px 8px; font-size:11px; color:#10B981; border-color:rgba(16,185,129,0.3);" title="Mark as Completed">
+            ✓ Done
+          </button>
+          <button onclick="openTaskEdit('${t.id}')" class="btn-vault-action" style="padding:4px 8px; font-size:11px;" title="Edit Task">
+            âœŽ Edit
+          </button>
+        ` : `
+          <button onclick="toggleTask('${t.id}')" class="btn-vault-action" style="padding:4px 8px; font-size:11px; color:var(--accent-cyan);" title="Reopen Task">
+            â†º Reopen
+          </button>
+        `}
+        <button onclick="deleteTask('${t.id}')" class="btn-vault-action delete" style="padding:4px 8px; font-size:11px;" title="Delete Task">
+          ✕
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+window.toggleTask = function (id) {
+  const item = state.tasks.find(t => t.id === id);
+  if (item) {
+    item.completed = !item.completed;
+    saveTasks();
+    renderTasks();
+    playTactileSound("click");
+  }
+};
+
+window.deleteTask = function (id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  saveTasks();
+  renderTasks();
+  playTactileSound("click");
+};
+
+window.openTaskEdit = function (id) {
+  const item = state.tasks.find(t => t.id === id);
+  if (!item || !taskEditModal) return;
+  activeEditingTaskId = id;
+  if (taskEditTextInput) taskEditTextInput.value = item.text || "";
+  if (taskEditBucketSelect) taskEditBucketSelect.value = item.bucket || "today";
+  taskEditModal.classList.add("active");
+};
+
+if (btnCloseTaskEditModal && taskEditModal) {
+  btnCloseTaskEditModal.addEventListener("click", () => {
+    taskEditModal.classList.remove("active");
+    activeEditingTaskId = null;
+  });
+}
+
+if (btnSaveTaskEdit) {
+  btnSaveTaskEdit.addEventListener("click", () => {
+    if (!activeEditingTaskId) return;
+    const item = state.tasks.find(t => t.id === activeEditingTaskId);
+    if (item && taskEditTextInput) {
+      const newText = taskEditTextInput.value.trim();
+      if (newText) {
+        item.text = newText;
+        if (taskEditBucketSelect) item.bucket = taskEditBucketSelect.value;
+        saveTasks();
+        renderTasks();
+        playTactileSound("success");
+      }
+    }
+    if (taskEditModal) taskEditModal.classList.remove("active");
+    activeEditingTaskId = null;
+  });
+}
+
+if (addTaskBtn && newTaskInput) {
+  function handleAddTask() {
+    const text = newTaskInput.value.trim();
+    if (!text) return;
+
+    const bucket = taskBucketSelect ? taskBucketSelect.value : "today";
+    const priority = taskPrioritySelect ? taskPrioritySelect.value : "Medium";
+
+    state.tasks.unshift({
+      id: "task_" + Date.now(),
+      text,
+      bucket,
+      priority,
+      completed: false,
+      date: new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })
+    });
+
+    newTaskInput.value = "";
+    saveTasks();
+    renderTasks();
+    playTactileSound("success");
+  }
+
+  addTaskBtn.addEventListener("click", handleAddTask);
+  newTaskInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTask();
+    }
+  });
+}
+
+/* =========================================================
+   11B. SEMESTER MOCK TEST (A4 UNIVERSITY EXAMINATION SIMULATOR)
+========================================================= */
+const mockExamState = {
+  currentPaper: null,
+  timerInterval: null,
+  secondsLeft: 3600,
+  answers: {}
+};
+
+function initSemesterMockTest() {
+  const mockGroupSelect = document.getElementById("mockGroupSelect");
+  const mockCollegeSelect = document.getElementById("mockCollegeSelect");
+  const mockBranchSelect = document.getElementById("mockBranchSelect");
+  const mockSemesterSelect = document.getElementById("mockSemesterSelect");
+  const mockSubjectSelect = document.getElementById("mockSubjectSelect");
+  const generateMockPaperBtn = document.getElementById("generateMockPaperBtn");
+
+  const mockPaperDisplayWrapper = document.getElementById("mockPaperDisplayWrapper");
+  const a4QuestionsSheetBody = document.getElementById("a4QuestionsSheetBody");
+  const a4PaperSubject = document.getElementById("a4PaperSubject");
+  const a4PaperCode = document.getElementById("a4PaperCode");
+  const a4PaperMarks = document.getElementById("a4PaperMarks");
+  const mockCountdownClock = document.getElementById("mockCountdownClock");
+
+  const btnCancelPaper = document.getElementById("btnCancelPaper");
+  const btnSubmitPaperForGrading = document.getElementById("btnSubmitPaperForGrading");
+  const mockSubmitConfirmModal = document.getElementById("mockSubmitConfirmModal");
+  const btnCancelSubmitModal = document.getElementById("btnCancelSubmitModal");
+  const btnConfirmSubmitModal = document.getElementById("btnConfirmSubmitModal");
+
+  const mockExamGradingReportBox = document.getElementById("mockExamGradingReportBox");
+  const mockReportSubjectTitle = document.getElementById("mockReportSubjectTitle");
+  const mockReportScoreVal = document.getElementById("mockReportScoreVal");
+  const mockReportGradeLetter = document.getElementById("mockReportGradeLetter");
+  const mockReportComments = document.getElementById("mockReportComments");
+  const mockReportFocusList = document.getElementById("mockReportFocusList");
+  const btnGoToPerformance = document.getElementById("btnGoToPerformance");
+  const btnNewMockExam = document.getElementById("btnNewMockExam");
+
+  if (!mockGroupSelect || mockGroupSelect.dataset.initialized === "true") return;
+  mockGroupSelect.dataset.initialized = "true";
+
+  async function loadDisciplinesForGroup() {
+    if (!mockGroupSelect || !mockBranchSelect) return;
+    const groupVal = mockGroupSelect.value;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/quiz/curriculum/groups`);
+      const data = await res.json();
+      if (data.success && data.groups) {
+        const found = data.groups.find(g => g.id === groupVal) || data.groups[0];
+        mockBranchSelect.innerHTML = found.disciplines.map(d => `
+          <option value="${d.id}">${d.icon || ""} ${escapeHtml(d.name)}</option>
+        `).join("");
+      }
+    } catch (_) {
+      // Fallback
+      mockBranchSelect.innerHTML = `
+        <option value="CSE" selected>💻 Computer Science & Engineering</option>
+        <option value="AIDS">🧠 AI & Data Science</option>
+        <option value="ECE">📡 Electronics & Comm</option>
+        <option value="EEE">⚡ Electrical & Electronics</option>
+      `;
+    }
+    loadSubjectsForDiscipline();
+  }
+
+  async function loadSubjectsForDiscipline() {
+    if (!mockBranchSelect || !mockSemesterSelect || !mockSubjectSelect) return;
+    const groupType = mockGroupSelect ? mockGroupSelect.value : "ENGINEERING";
+    const branch = mockBranchSelect.value || "CSE";
+    const semester = mockSemesterSelect.value || 3;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/quiz/curriculum/subjects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupType, branch, semester })
+      });
+      const data = await res.json();
+      if (data.success && data.subjects && data.subjects.length > 0) {
+        mockSubjectSelect.innerHTML = data.subjects.map(s => `
+          <option value="${escapeHtml(s)}">${escapeHtml(s)}</option>
+        `).join("");
+      } else {
+        mockSubjectSelect.innerHTML = `<option value="Core University Subject">Core University Subject</option>`;
+      }
+    } catch (_) {
+      mockSubjectSelect.innerHTML = `<option value="Data Structures & Algorithms">Data Structures & Algorithms</option>`;
+    }
+  }
+
+  mockGroupSelect.addEventListener("change", loadDisciplinesForGroup);
+  if (mockBranchSelect) mockBranchSelect.addEventListener("change", loadSubjectsForDiscipline);
+  if (mockSemesterSelect) mockSemesterSelect.addEventListener("change", loadSubjectsForDiscipline);
+
+  loadDisciplinesForGroup();
+
+  function startExamTimer(durationSeconds) {
+    if (mockExamState.timerInterval) clearInterval(mockExamState.timerInterval);
+    mockExamState.secondsLeft = durationSeconds;
+
+    function updateDisplay() {
+      const mins = Math.floor(mockExamState.secondsLeft / 60);
+      const secs = mockExamState.secondsLeft % 60;
+      if (mockCountdownClock) {
+        mockCountdownClock.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        if (mins < 5) mockCountdownClock.style.color = "#FF0055";
+        else mockCountdownClock.style.color = "var(--accent-gold)";
+      }
+      if (mockExamState.secondsLeft <= 0) {
+        clearInterval(mockExamState.timerInterval);
+        alert("Time limit reached! The examination will now automatically be submitted for grading.");
+        submitExamForGrading();
+      }
+      mockExamState.secondsLeft--;
+    }
+
+    updateDisplay();
+    mockExamState.timerInterval = setInterval(updateDisplay, 1000);
+  }
+
+  if (generateMockPaperBtn) {
+    generateMockPaperBtn.addEventListener("click", async () => {
+      const group = mockGroupSelect ? mockGroupSelect.value : "ENGINEERING";
+      const college = mockCollegeSelect ? mockCollegeSelect.value : "Anna University / CEG Chennai";
+      const branch = mockBranchSelect ? mockBranchSelect.value : "CSE";
+      const semester = mockSemesterSelect ? mockSemesterSelect.value : 3;
+      const subject = mockSubjectSelect ? mockSubjectSelect.value : "Data Structures & Algorithms";
+
+      generateMockPaperBtn.disabled = true;
+      generateMockPaperBtn.textContent = "ðŸ›ï¸ Compiling Authentic University PYQs...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/mock-test`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subject, group, branch, semester, collegeName: college })
+        });
+        const data = await res.json();
+        if (!data.success || !data.questions) throw new Error("Could not assemble paper");
+
+        mockExamState.currentPaper = data;
+        mockExamState.answers = {};
+
+        const instTitle = document.querySelector(".a4-institute-title");
+        const instWm = document.querySelector(".a4-watermark");
+        if (instTitle) instTitle.textContent = `PROJECT AURA INSTITUTE · ${college.toUpperCase()}`;
+        if (instWm) instWm.textContent = `PROJECT AURA · ${college.toUpperCase()}`;
+
+        if (a4PaperSubject) a4PaperSubject.textContent = data.subject || subject;
+        if (a4PaperCode) a4PaperCode.textContent = data.subjectCode || "AUR-UNIV-301";
+        if (a4PaperMarks) a4PaperMarks.textContent = `34 Marks (Model Blueprint)`;
+
+        // Render questions strictly following the 34-mark blueprint:
+        // Part A: 5 questions × 2M = 10 Marks
+        // Part B: 2 optional questions (8M each), user writes 1 = 8 Marks
+        // Part C: 1 question × 16M = 16 Marks
+        if (a4QuestionsSheetBody) {
+          const partA = data.questions.filter(q => q.part === "PART_A");
+          const partB = data.questions.filter(q => q.part === "PART_B");
+          const partC = data.questions.filter(q => q.part === "PART_C");
+
+          function renderQuestionInput(q) {
+            if (q.type === "CHOOSE" && q.options) {
+              return `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                  ${q.options.map((opt, oIdx) => `
+                    <label style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(0,0,0,0.03); border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; font-size:13px; color:#1e293b;">
+                      <input type="radio" name="mock_q_${q.id}" value="${oIdx}" />
+                      <span><strong>${String.fromCharCode(65 + oIdx)}.</strong> ${escapeHtml(opt)}</span>
+                    </label>
+                  `).join("")}
+                </div>
+              `;
+            } else if (q.type === "TRUE_FALSE") {
+              return `
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                  <label style="display:flex; align-items:center; gap:8px; padding:6px 16px; background:rgba(0,0,0,0.03); border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; font-size:13px; color:#1e293b;">
+                    <input type="radio" name="mock_q_${q.id}" value="0" />
+                    <span>✓ True</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:8px; padding:6px 16px; background:rgba(0,0,0,0.03); border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; font-size:13px; color:#1e293b;">
+                    <input type="radio" name="mock_q_${q.id}" value="1" />
+                    <span>✕ False</span>
+                  </label>
+                </div>
+              `;
+            } else {
+              const rows = (q.marks || 2) > 8 ? 8 : ((q.marks || 2) > 2 ? 6 : 3);
+              return `
+                <textarea class="mock-exam-typing-area" data-qid="${q.id}" rows="${rows}" placeholder="Type formal university answer, definitions, governing equations, or code here..."></textarea>
+              `;
+            }
+          }
+
+          let html = `
+            <div style="margin-bottom:16px;">
+              <div class="mock-exam-blueprint-badge">
+                <span>ðŸ›ï¸ Official 50-Mark Semester Blueprint: Part A (10M) · Part B Choice (8M) · Part C (2 × 16M = 32M) · Total 50 Marks</span>
+              </div>
+            </div>
+          `;
+
+          // 1. PART A (5 questions × 2M = 10 Marks)
+          if (partA.length > 0) {
+            html += `
+              <div class="a4-section-divider">
+                <span class="a4-section-badge">PART A</span>
+                <span class="a4-section-info">(5 Questions × 2 Marks = 10 Marks · All Questions Compulsory)</span>
+              </div>
+              ${partA.map((q, idx) => `
+                <div class="a4-question-item">
+                  <div class="a4-question-header">
+                    <span class="a4-q-num">Q${idx + 1}.</span>
+                    <div class="a4-q-text">${escapeHtml(q.question)}</div>
+                    <span class="a4-q-marks">[2 Marks]</span>
+                  </div>
+                  ${renderQuestionInput(q)}
+                </div>
+              `).join("")}
+            `;
+          }
+
+          // 2. PART B (Optional Pattern: 2 questions × 8M, student writes 1 = 8 Marks)
+          if (partB.length > 0) {
+            const optA = partB[0];
+            const optB = partB[1] || partB[0];
+            html += `
+              <div class="a4-section-divider">
+                <span class="a4-section-badge">PART B</span>
+                <span class="a4-section-info">(Optional Question Pattern · Choose either Option A OR Option B · 1 × 8 Marks = 8 Marks)</span>
+              </div>
+
+              <div class="part-b-choice-toggle-row">
+                <button type="button" class="part-b-option-btn active" id="btnToggleOptA" onclick="togglePartBOption('A')">
+                  ✓ Option A: ${escapeHtml(optA.optionLabel || "Question 6A")} (8 Marks)
+                </button>
+                <button type="button" class="part-b-option-btn" id="btnToggleOptB" onclick="togglePartBOption('B')">
+                  Option B: ${escapeHtml(optB.optionLabel || "Question 6B")} (8 Marks) [OR]
+                </button>
+              </div>
+
+              <div id="partBContainerA" class="a4-question-item" style="border: 2px solid rgba(0, 240, 255, 0.4); border-radius: 8px; padding: 14px;">
+                <div class="a4-question-header">
+                  <span class="a4-q-num">Q6 (A).</span>
+                  <div class="a4-q-text">${escapeHtml(optA.question)}</div>
+                  <span class="a4-q-marks">[8 Marks]</span>
+                </div>
+                ${renderQuestionInput(optA)}
+              </div>
+
+              <div id="partBContainerB" class="a4-question-item" style="display:none; border: 2px solid rgba(194, 155, 72, 0.4); border-radius: 8px; padding: 14px;">
+                <div class="a4-question-header">
+                  <span class="a4-q-num">Q6 (B).</span>
+                  <div class="a4-q-text">${escapeHtml(optB.question)}</div>
+                  <span class="a4-q-marks">[8 Marks]</span>
+                </div>
+                ${renderQuestionInput(optB)}
+              </div>
+            `;
+          }
+
+          // 3. PART C (2 questions × 16 Marks = 32 Marks)
+          if (partC.length > 0) {
+            html += `
+              <div class="a4-section-divider" style="margin-top:20px;">
+                <span class="a4-section-badge">PART C</span>
+                <span class="a4-section-info">(Comprehensive Problem Solving & Advanced Engineering Application · 2 Questions × 16 Marks = 32 Marks · All Compulsory)</span>
+              </div>
+              ${partC.map((cq, idx) => `
+                <div class="a4-question-item" style="border: 2px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+                  <div class="a4-question-header">
+                    <span class="a4-q-num">Q${7 + idx}.</span>
+                    <div class="a4-q-text">${escapeHtml(cq.question)}</div>
+                    <span class="a4-q-marks">[16 Marks]</span>
+                  </div>
+                  ${renderQuestionInput(cq)}
+                </div>
+              `).join("")}
+            `;
+          }
+
+          a4QuestionsSheetBody.innerHTML = html;
+        }
+
+        window.togglePartBOption = function(choice) {
+          const btnA = document.getElementById("btnToggleOptA");
+          const btnB = document.getElementById("btnToggleOptB");
+          const boxA = document.getElementById("partBContainerA");
+          const boxB = document.getElementById("partBContainerB");
+
+          if (choice === "A") {
+            if (btnA) btnA.classList.add("active");
+            if (btnB) btnB.classList.remove("active");
+            if (boxA) boxA.style.display = "block";
+            if (boxB) boxB.style.display = "none";
+          } else {
+            if (btnB) btnB.classList.add("active");
+            if (btnA) btnA.classList.remove("active");
+            if (boxB) boxB.style.display = "block";
+            if (boxA) boxA.style.display = "none";
+          }
+          playTactileSound("click");
+        };
+
+        if (mockPaperDisplayWrapper) mockPaperDisplayWrapper.style.display = "block";
+        if (mockExamGradingReportBox) mockExamGradingReportBox.style.display = "none";
+
+        startExamTimer(data.timeLimitMinutes ? data.timeLimitMinutes * 60 : 5400);
+        mockPaperDisplayWrapper.scrollIntoView({ behavior: "smooth" });
+        playTactileSound("success");
+      } catch (err) {
+        alert("Failed to synthesize semester mock paper: " + err.message);
+      } finally {
+        generateMockPaperBtn.disabled = false;
+        generateMockPaperBtn.textContent = "ðŸ›ï¸ Generate Official 34-Mark Semester Examination Paper (PYQ)";
+      }
+    });
+  }
+
+  if (btnCancelPaper) {
+    btnCancelPaper.addEventListener("click", () => {
+      if (confirm("Are you sure you want to cancel the current examination session?")) {
+        if (mockExamState.timerInterval) clearInterval(mockExamState.timerInterval);
+        if (mockPaperDisplayWrapper) mockPaperDisplayWrapper.style.display = "none";
+      }
+    });
+  }
+
+  if (btnSubmitPaperForGrading && mockSubmitConfirmModal) {
+    btnSubmitPaperForGrading.addEventListener("click", () => {
+      mockSubmitConfirmModal.classList.add("active");
+    });
+  }
+
+  if (btnCancelSubmitModal && mockSubmitConfirmModal) {
+    btnCancelSubmitModal.addEventListener("click", () => {
+      mockSubmitConfirmModal.classList.remove("active");
+    });
+  }
+
+  async function submitExamForGrading() {
+    if (mockSubmitConfirmModal) mockSubmitConfirmModal.classList.remove("active");
+    if (mockExamState.timerInterval) clearInterval(mockExamState.timerInterval);
+
+    // Collect answers
+    const studentAnswers = {};
+    document.querySelectorAll(".mock-exam-typing-area").forEach(ta => {
+      const qid = ta.getAttribute("data-qid");
+      if (qid) studentAnswers[qid] = ta.value.trim();
+    });
+
+    if (mockExamState.currentPaper?.questions) {
+      mockExamState.currentPaper.questions.forEach(q => {
+        if (q.type === "CHOOSE" || q.type === "TRUE_FALSE") {
+          const checked = document.querySelector(`input[name="mock_q_${q.id}"]:checked`);
+          if (checked) studentAnswers[q.id] = parseInt(checked.value, 10);
+        }
+      });
+    }
+
+    if (btnSubmitPaperForGrading) {
+      btnSubmitPaperForGrading.disabled = true;
+      btnSubmitPaperForGrading.textContent = "AI Examiner Grading 34-Mark Scheme...";
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/grade-mock`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: mockExamState.currentPaper?.subject,
+          group: mockGroupSelect ? mockGroupSelect.value : "Engineering",
+          branch: mockBranchSelect ? mockBranchSelect.value : "CSE",
+          semester: mockSemesterSelect ? mockSemesterSelect.value : 3,
+          questions: mockExamState.currentPaper?.questions,
+          studentAnswers
+        })
+      });
+
+      const report = await res.json();
+      if (!report.success) throw new Error(report.error || "Grading failed");
+
+      // Hide question paper
+      if (mockPaperDisplayWrapper) mockPaperDisplayWrapper.style.display = "none";
+
+      // Render marksheet report
+      if (mockExamGradingReportBox) {
+        mockExamGradingReportBox.style.display = "block";
+        if (mockReportSubjectTitle) mockReportSubjectTitle.textContent = `${report.subject} · 34-Mark University Marksheet`;
+        if (mockReportScoreVal) mockReportScoreVal.textContent = `${report.earnedMarks} / 34 (${report.percentage}%)`;
+        if (mockReportGradeLetter) mockReportGradeLetter.textContent = report.grade || "A";
+        if (mockReportComments) mockReportComments.textContent = report.evaluationSummary || "34-Mark Blueprint Evaluation complete.";
+
+        const breakdown = report.scoreBreakdown || { partA: { earned: 8, max: 10 }, partB: { earned: 6, max: 8 }, partC: { earned: 14, max: 16 } };
+        
+        let breakdownHtml = `
+          <div class="mock-scorecard-grid">
+            <div class="scorecard-item-box">
+              <div class="scorecard-item-label">Part A (Short Ans)</div>
+              <div class="scorecard-item-value" style="color:var(--accent-gold);">${breakdown.partA.earned} / ${breakdown.partA.max}</div>
+            </div>
+            <div class="scorecard-item-box">
+              <div class="scorecard-item-label">Part B (Option)</div>
+              <div class="scorecard-item-value" style="color:var(--accent-sage);">${breakdown.partB.earned} / ${breakdown.partB.max}</div>
+            </div>
+            <div class="scorecard-item-box">
+              <div class="scorecard-item-label">Part C (2 × 16M = 32M)</div>
+              <div class="scorecard-item-value" style="color:#10B981;">${breakdown.partC.earned} / ${breakdown.partC.max}</div>
+            </div>
+          </div>
+        `;
+
+        if (mockReportFocusList) {
+          mockReportFocusList.innerHTML = breakdownHtml;
+        }
+
+        mockExamGradingReportBox.scrollIntoView({ behavior: "smooth" });
+        playTactileSound("success");
+      }
+    } catch (err) {
+      alert("AI Grading encountered an error: " + err.message);
+    } finally {
+      if (btnSubmitPaperForGrading) {
+        btnSubmitPaperForGrading.disabled = false;
+        btnSubmitPaperForGrading.textContent = "🎓 Submit Examination for AI Grading";
+      }
+    }
+  }
+
+  if (btnConfirmSubmitModal) {
+    btnConfirmSubmitModal.addEventListener("click", submitExamForGrading);
+  }
+
+  if (btnGoToPerformance) {
+    btnGoToPerformance.addEventListener("click", () => {
+      switchView("student-performance");
+    });
+  }
+
+  if (btnNewMockExam) {
+    btnNewMockExam.addEventListener("click", () => {
+      if (mockExamGradingReportBox) mockExamGradingReportBox.style.display = "none";
+      const selectionCard = document.getElementById("mockSelectionCard");
+      if (selectionCard) selectionCard.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+}
+
+/* =========================================================
+   11C. STUDENT PERFORMANCE & ANALYTICS CONTROLLER
+========================================================= */
+async function loadStudentPerformance() {
+  const perfAvgScore = document.getElementById("perfAvgScore");
+  const perfTestsCount = document.getElementById("perfTestsCount");
+  const perfStrongCount = document.getElementById("perfStrongCount");
+  const perfFocusCount = document.getElementById("perfFocusCount");
+
+  const perfGuideSubjectTitle = document.getElementById("perfGuideSubjectTitle");
+  const perfGuideTopicsList = document.getElementById("perfGuideTopicsList");
+  const perfGuideInstructionsList = document.getElementById("perfGuideInstructionsList");
+  const refreshPerfGuideBtn = document.getElementById("refreshPerfGuideBtn");
+  const perfHistoryContainer = document.getElementById("perfHistoryContainer");
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/analytics/performance`);
+    const data = await res.json();
+    if (!data.success) return;
+
+    if (perfAvgScore) perfAvgScore.textContent = `${data.stats?.averagePercentage || 0}%`;
+    if (perfTestsCount) perfTestsCount.textContent = data.stats?.totalTestsTaken || 0;
+    if (perfStrongCount) perfStrongCount.textContent = data.stats?.strongSubjectsCount || 0;
+    if (perfFocusCount) perfFocusCount.textContent = data.stats?.needsFocusCount || 0;
+
+    // AI Mentor Guide
+    const records = data.records || [];
+    if (perfGuideSubjectTitle && records.length > 0) {
+      perfGuideSubjectTitle.textContent = `Focus Directive: ${records[0].subject}`;
+    }
+
+    if (perfGuideTopicsList) {
+      const topTopics = records.flatMap(r => r.focusTopics || []).slice(0, 4);
+      perfGuideTopicsList.innerHTML = topTopics.length === 0
+        ? `<span style="font-size:12px; color:var(--text-secondary);">Core principles and comprehensive derivations.</span>`
+        : topTopics.map(t => `
+          <span style="font-size:12px; padding:4px 10px; background:var(--bg-surface-subtle); border:1px solid var(--border-medium); border-radius:20px; color:var(--accent-gold); font-weight:600;">
+            ✦ ${escapeHtml(t.topic || t)}
+          </span>
+        `).join("");
+    }
+
+    if (perfGuideInstructionsList) {
+      perfGuideInstructionsList.innerHTML = `
+        <div style="margin-bottom:6px;">1. 🎯 <strong>Target 5-Year Repeated PYQs</strong> — 70% of semester weightage recurs around core theorems.</div>
+        <div style="margin-bottom:6px;">2. ðŸ“ <strong>Draw Clean Architecture Block Diagrams</strong> — Guaranteed 30% presentation marks in Part B.</div>
+        <div>3. ⚡ <strong>Practice 45-Minute Timed Mock Drills</strong> to build rapid handwriting and formula recall.</div>
+      `;
+    }
+
+    // History Table
+    if (perfHistoryContainer) {
+      if (records.length === 0) {
+        perfHistoryContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">No mock examinations recorded yet. Take your first semester examination in the Semester Mock Test section!</div>`;
+      } else {
+        perfHistoryContainer.innerHTML = `
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-secondary);">
+                  <th style="padding:10px 12px;">Subject</th>
+                  <th style="padding:10px 12px;">Discipline</th>
+                  <th style="padding:10px 12px;">Marks</th>
+                  <th style="padding:10px 12px;">Percentage</th>
+                  <th style="padding:10px 12px;">Grade</th>
+                  <th style="padding:10px 12px;">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${records.map(r => `
+                  <tr style="border-bottom:1px solid var(--border-subtle);">
+                    <td style="padding:10px 12px; font-weight:600; color:var(--text-primary);">${escapeHtml(r.subject)}</td>
+                    <td style="padding:10px 12px; color:var(--text-secondary);">${escapeHtml(r.group)}</td>
+                    <td style="padding:10px 12px; font-family:var(--font-mono);">${r.earnedMarks} / ${r.totalMarks}</td>
+                    <td style="padding:10px 12px; font-weight:700; color:var(--accent-gold);">${r.percentage}%</td>
+                    <td style="padding:10px 12px;">
+                      <span style="padding:2px 8px; border-radius:4px; font-weight:700; font-size:11px; background:${r.percentage >= 75 ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'}; color:${r.percentage >= 75 ? '#10B981' : '#F59E0B'};">
+                        ${escapeHtml(r.grade)}
+                      </span>
+                    </td>
+                    <td style="padding:10px 12px; color:var(--text-tertiary); font-size:11px;">${new Date(r.timestamp).toLocaleDateString()}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
+  } catch (_) { }
+
+  if (refreshPerfGuideBtn && !refreshPerfGuideBtn.dataset.bound) {
+    refreshPerfGuideBtn.dataset.bound = "true";
+    refreshPerfGuideBtn.addEventListener("click", async () => {
+      refreshPerfGuideBtn.disabled = true;
+      refreshPerfGuideBtn.textContent = "Refreshing...";
+      try {
+        const guideRes = await fetch(`${BACKEND_URL}/api/analytics/guide`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ records: [] })
+        });
+        const gData = await guideRes.json();
+        if (gData.success && gData.guide) {
+          if (perfGuideSubjectTitle) perfGuideSubjectTitle.textContent = `Focus Directive: ${gData.guide.focusSubject}`;
+          if (perfGuideInstructionsList) {
+            perfGuideInstructionsList.innerHTML = (gData.guide.studyInstructions || []).map((step, idx) => `
+              <div style="margin-bottom:6px;">${escapeHtml(step)}</div>
+            `).join("");
+          }
+          playTactileSound("success");
+        }
+      } catch (_) { }
+      finally {
+        refreshPerfGuideBtn.disabled = false;
+        refreshPerfGuideBtn.textContent = "ðŸ”„ Refresh AI Guide";
+      }
+    });
+  }
+}
+
+
+/* =========================================================
+   12. PROVIDERS & SYSTEM TELEMETRY
+========================================================= */
+const providersGrid = document.getElementById("providersGrid");
+const retestProvidersBtn = document.getElementById("retestProvidersBtn");
+
+async function refreshProviderStatus() {
+  if (!providersGrid) return;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/providers`);
+    const data = await res.json();
+
+    const providerList = [
+      {
+        name: "Google Gemini",
+        role: "Primary Intelligence & Vision",
+        status: data.geminiStatus || (data.gemini ? "configured" : "unavailable"),
+        badge: data.geminiStatus === "available" ? "available" : data.geminiStatus === "failed" ? "failed" : data.gemini ? "configured" : "unavailable"
+      },
+      {
+        name: "OpenAI Core",
+        role: "Language & Logic Fallback",
+        status: data.openai ? "Configured" : "Unavailable",
+        badge: data.openai ? "configured" : "unavailable"
+      },
+      {
+        name: "Groq LPU",
+        role: "Ultra-Fast Inference",
+        status: data.groq ? "Configured" : "Unavailable",
+        badge: data.groq ? "configured" : "unavailable"
+      },
+      {
+        name: "NVIDIA NIM",
+        role: "Accelerated Reasoning",
+        status: data.nvidia ? "Configured" : "Unavailable",
+        badge: data.nvidia ? "configured" : "unavailable"
+      },
+      {
+        name: "Hugging Face",
+        role: "Open Weights Hub",
+        status: data.huggingface ? "Configured" : "Unavailable",
+        badge: data.huggingface ? "configured" : "unavailable"
+      },
+      {
+        name: "Tavily AI",
+        role: "Live Web Knowledge Search",
+        status: data.tavily ? "Configured" : "Unavailable",
+        badge: data.tavily ? "configured" : "unavailable"
+      },
+      {
+        name: "ElevenLabs",
+        role: "Neural Voice Synthesis",
+        status: data.elevenlabs ? "Configured" : "Unavailable",
+        badge: data.elevenlabs ? "configured" : "unavailable"
+      },
+      {
+        name: "YouTube Data",
+        role: "Video Ingestion API",
+        status: data.youtube ? "Configured" : "Unavailable",
+        badge: data.youtube ? "configured" : "unavailable"
+      }
+    ];
+
+    providersGrid.innerHTML = providerList.map(p => `
+      <div class="provider-status-card">
+        <div class="provider-card-header">
+          <span class="provider-name">${escapeHtml(p.name)}</span>
+          <span class="provider-badge ${p.badge}">${escapeHtml(p.status.toUpperCase())}</span>
+        </div>
+        <p style="font-size:12px; color:var(--text-secondary);">${escapeHtml(p.role)}</p>
+      </div>
+    `).join("");
+
+    const sidebarBadge = document.getElementById("sidebarEngineStatus");
+    if (sidebarBadge) {
+      sidebarBadge.textContent = data.gemini ? "Online" : "Standby";
+    }
+  } catch (_) { }
+}
+
+if (retestProvidersBtn) {
+  retestProvidersBtn.addEventListener("click", () => {
+    refreshProviderStatus();
+    playTactileSound("click");
+  });
+}
+
+/* =========================================================
+   13. CUTE ROBOT VOICE ASSISTANT (MIC TRIGGERED MODAL)
+   (Blur background · cute animated robot · expressions)
+========================================================= */
+const cuteRobotModal = document.getElementById("cuteRobotModal");
+const robotBackdropBlur = document.getElementById("robotBackdropBlur");
+const voiceBtn = document.getElementById("voiceBtn");
+const robotHead = document.getElementById("robotHead");
+const robotEyeLeft = document.getElementById("robotEyeLeft");
+const robotEyeRight = document.getElementById("robotEyeRight");
+const robotMouth = document.getElementById("robotMouth");
+const antennaBulb = document.getElementById("antennaBulb");
+const robotSoundRings = document.getElementById("robotSoundRings");
+const robotStatusCaption = document.getElementById("robotStatusCaption");
+const robotTranscriptBox = document.getElementById("robotTranscriptBox");
+const robotSendBtn = document.getElementById("robotSendBtn");
+const robotCancelBtn = document.getElementById("robotCancelBtn");
+
+let robotSpeechRec = null;
+let robotExpressionInterval = null;
+let currentRobotTranscript = "";
+
+function setCuteRobotExpression(expression) {
+  if (!robotEyeLeft || !robotEyeRight || !robotMouth) return;
+
+  // Reset
+  robotEyeLeft.classList.remove("happy", "wink");
+  robotEyeRight.classList.remove("happy", "wink");
+  robotMouth.classList.remove("smiling");
+  if (robotHead) robotHead.classList.remove("listening-tilt");
+  document.querySelectorAll(".robot-blush").forEach(b => b.classList.remove("bright"));
+
+  if (expression === "happy") {
+    robotEyeLeft.classList.add("happy");
+    robotEyeRight.classList.add("happy");
+    robotMouth.classList.add("smiling");
+    document.querySelectorAll(".robot-blush").forEach(b => b.classList.add("bright"));
+  } else if (expression === "wink") {
+    robotEyeLeft.classList.add("wink");
+    robotMouth.classList.add("smiling");
+    document.querySelectorAll(".robot-blush").forEach(b => b.classList.add("bright"));
+  } else if (expression === "listening") {
+    if (robotHead) robotHead.classList.add("listening-tilt");
+    robotMouth.classList.add("smiling");
+    document.querySelectorAll(".robot-blush").forEach(b => b.classList.add("bright"));
+  }
+}
+
+function openCuteRobotAssistant() {
+  if (!cuteRobotModal) return;
+  cuteRobotModal.classList.add("active");
+  currentRobotTranscript = "";
+  if (robotTranscriptBox) {
+    robotTranscriptBox.textContent = "Listening to your voice... Speak a directive!";
+    robotTranscriptBox.style.color = "var(--text-secondary)";
+  }
+  if (robotStatusCaption) {
+    robotStatusCaption.textContent = "Aura Robot is Listening...";
+  }
+
+  setCuteRobotExpression("listening");
+  playTactileSound("dispatch");
+  setCoreState("listening", "LISTENING");
+
+  // Animate cute expressions periodically
+  if (robotExpressionInterval) clearInterval(robotExpressionInterval);
+  robotExpressionInterval = setInterval(() => {
+    if (!cuteRobotModal || !cuteRobotModal.classList.contains("active")) return;
+    const exprs = ["listening", "wink", "happy"];
+    const pick = exprs[Math.floor(Math.random() * exprs.length)];
+    setCuteRobotExpression(pick);
+    setTimeout(() => {
+      if (cuteRobotModal && cuteRobotModal.classList.contains("active")) {
+        setCuteRobotExpression("listening");
+      }
+    }, 1500);
+  }, 4200);
+
+  // Initialize Speech Recognition
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRec) {
+    try {
+      if (robotSpeechRec) {
+        try { robotSpeechRec.stop(); } catch (_) { }
+      }
+      robotSpeechRec = new SpeechRec();
+      robotSpeechRec.continuous = true;
+      robotSpeechRec.interimResults = true;
+      robotSpeechRec.lang = "en-US";
+
+      robotSpeechRec.onresult = (e) => {
+        let finalTxt = "";
+        let interimTxt = "";
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            finalTxt += e.results[i][0].transcript;
+          } else {
+            interimTxt += e.results[i][0].transcript;
+          }
+        }
+        const combined = (finalTxt || interimTxt).trim();
+        if (combined) {
+          currentRobotTranscript = combined;
+          if (robotTranscriptBox) {
+            robotTranscriptBox.textContent = `"${combined}"`;
+            robotTranscriptBox.style.color = "var(--text-primary)";
+          }
+          if (robotStatusCaption) {
+            robotStatusCaption.textContent = "I heard that! ✧";
+          }
+          setCuteRobotExpression("happy");
+        }
+      };
+
+      robotSpeechRec.onerror = (err) => {
+        console.warn("[SPEECH REC NOTE]", err.error);
+        if (robotTranscriptBox && !currentRobotTranscript) {
+          robotTranscriptBox.textContent = "Microphone ready. Speak or edit directive below.";
+        }
+      };
+
+      robotSpeechRec.onend = () => {
+        if (cuteRobotModal && cuteRobotModal.classList.contains("active") && !currentRobotTranscript) {
+          try { robotSpeechRec.start(); } catch (_) { }
+        }
+      };
+
+      robotSpeechRec.start();
+    } catch (e) {
+      console.warn("[SPEECH REC START FAILED]", e);
+    }
+  } else {
+    if (robotTranscriptBox) {
+      robotTranscriptBox.textContent = "Speech recognition ready. Dictate or type your prompt here.";
+      robotTranscriptBox.setAttribute("contenteditable", "true");
+    }
+  }
+}
+
+function closeCuteRobotAssistant() {
+  if (!cuteRobotModal) return;
+  cuteRobotModal.classList.remove("active");
+  if (robotExpressionInterval) {
+    clearInterval(robotExpressionInterval);
+    robotExpressionInterval = null;
+  }
+  if (robotSpeechRec) {
+    try { robotSpeechRec.stop(); } catch (_) { }
+    robotSpeechRec = null;
+  }
+  setCoreState("idle", "ONLINE");
+}
+
+function initCuteRobotVoice() {
+  if (voiceBtn) {
+    voiceBtn.addEventListener("click", () => {
+      openCuteRobotAssistant();
+    });
+  }
+
+  if (robotCancelBtn) {
+    robotCancelBtn.addEventListener("click", closeCuteRobotAssistant);
+  }
+
+  if (robotBackdropBlur) {
+    robotBackdropBlur.addEventListener("click", closeCuteRobotAssistant);
+  }
+
+  if (robotSendBtn) {
+    robotSendBtn.addEventListener("click", () => {
+      const text = currentRobotTranscript || (robotTranscriptBox ? robotTranscriptBox.textContent.replace(/^"|"$/g, "").trim() : "");
+      closeCuteRobotAssistant();
+      if (text && !text.includes("Listening to your voice") && !text.includes("Microphone ready")) {
+        if (messageInput) messageInput.value = text;
+        dispatchCommand();
+      }
+    });
+  }
+}
+
+/* =========================================================
+   14. LIVE THEMES CONTROLLER (5 DISTINCT STYLES)
+========================================================= */
+/* =========================================================
+   14. LIVE ACTION THEMES ENGINE (CHATGPT 6 ASTRA LIVE LIFE)
+========================================================= */
+class LiveThemeCanvasEngine {
+  constructor(canvasId) {
+    this.canvas = document.getElementById(canvasId);
+    if (!this.canvas) return;
+    this.ctx = this.canvas.getContext("2d");
+    this.currentTheme = "live-waves";
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.time = 0;
+    this.particles = [];
+    this.running = true;
+
+    this.initCanvas();
+    this.initTheme(this.currentTheme);
+    window.addEventListener("resize", () => this.resize());
+    this.loop = this.loop.bind(this);
+    requestAnimationFrame(this.loop);
+  }
+
+  initCanvas() {
+    this.resize();
+  }
+
+  resize() {
+    if (!this.canvas) return;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = this.width * dpr;
+    this.canvas.height = this.height * dpr;
+    this.ctx.resetTransform?.();
+    this.ctx.scale(dpr, dpr);
+    this.initTheme(this.currentTheme);
+  }
+
+  setTheme(themeId) {
+    this.currentTheme = themeId;
+    this.initTheme(themeId);
+  }
+
+  initTheme(theme) {
+    this.particles = [];
+    const count = theme === "live-waves" ? 40
+      : theme === "live-hearts" ? 35
+        : theme === "cute-beautiful" ? 45
+          : theme === "action-cyber" ? 60
+            : theme === "rugged-tactical" ? 40
+              : 30;
+
+    for (let i = 0; i < count; i++) {
+      this.particles.push(this.createParticle(theme));
+    }
+  }
+
+  createParticle(theme) {
+    const w = this.width;
+    const h = this.height;
+
+    if (theme === "live-waves") {
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        radius: Math.random() * 2.5 + 1,
+        speedY: -(Math.random() * 0.8 + 0.3),
+        alpha: Math.random() * 0.5 + 0.2,
+        wobble: Math.random() * Math.PI * 2
+      };
+    } else if (theme === "live-hearts") {
+      return {
+        x: Math.random() * w,
+        y: h + Math.random() * 80,
+        size: Math.random() * 14 + 10,
+        speedY: -(Math.random() * 0.9 + 0.4),
+        speedX: (Math.random() - 0.5) * 0.5,
+        alpha: Math.random() * 0.5 + 0.3,
+        pulseOffset: Math.random() * Math.PI * 2,
+        color: Math.random() > 0.4 ? "#FF2E93" : "#C084FC"
+      };
+    } else if (theme === "cute-beautiful") {
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 10 + 6,
+        speedY: Math.random() * 0.8 + 0.4,
+        speedX: Math.sin(Math.random() * Math.PI) * 0.6 + 0.2,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.03,
+        alpha: Math.random() * 0.45 + 0.25,
+        isSparkle: Math.random() > 0.65
+      };
+    } else if (theme === "action-cyber") {
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        length: Math.random() * 60 + 20,
+        speed: Math.random() * 6 + 3,
+        thickness: Math.random() * 1.5 + 0.5,
+        color: Math.random() > 0.4 ? "#00FFB2" : "#00F0FF",
+        alpha: Math.random() * 0.6 + 0.2
+      };
+    } else if (theme === "rugged-tactical") {
+      return {
+        x: Math.random() * w,
+        y: h + Math.random() * 40,
+        radius: Math.random() * 2.5 + 1,
+        speedY: -(Math.random() * 1.2 + 0.5),
+        speedX: (Math.random() - 0.5) * 0.6,
+        alpha: Math.random() * 0.6 + 0.3,
+        color: Math.random() > 0.5 ? "#FF5500" : "#F59E0B"
+      };
+    } else {
+      // cyber-obsidian / warm-ivory / neutral
+      return {
+        x: Math.random() * w,
+        y: Math.random() * h,
+        radius: Math.random() * 1.8 + 0.5,
+        speedY: (Math.random() - 0.5) * 0.3,
+        speedX: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.35 + 0.15
+      };
+    }
+  }
+
+  drawHeart(ctx, x, y, size, color, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = color;
+    ctx.beginPath();
+    const topCurveHeight = size * 0.3;
+    ctx.moveTo(0, topCurveHeight);
+    // Top left curve
+    ctx.bezierCurveTo(
+      0, 0,
+      -size / 2, 0,
+      -size / 2, topCurveHeight
+    );
+    // Bottom left curve
+    ctx.bezierCurveTo(
+      -size / 2, (size + topCurveHeight) / 2,
+      0, size,
+      0, size * 1.25
+    );
+    // Bottom right curve
+    ctx.bezierCurveTo(
+      0, size,
+      size / 2, (size + topCurveHeight) / 2,
+      size / 2, topCurveHeight
+    );
+    // Top right curve
+    ctx.bezierCurveTo(
+      size / 2, 0,
+      0, 0,
+      0, topCurveHeight
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  drawPetal(ctx, x, y, size, rotation, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#FFB3D9";
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = "rgba(244, 114, 182, 0.4)";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.45, size, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  drawSparkle(ctx, x, y, size, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#F472B6";
+    ctx.beginPath();
+    ctx.arc(0, 0, size * 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  loop() {
+    if (!this.running || !this.ctx) return;
+    this.time += 1;
+    const ctx = this.ctx;
+    const w = this.width;
+    const h = this.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (this.currentTheme === "live-waves") {
+      // Draw Undulating Multi-Layer Ocean Waves
+      const waveLayers = [
+        { freq: 0.003, amp: 40, speed: 0.015, color: "rgba(0, 240, 255, 0.06)", base: h * 0.68 },
+        { freq: 0.004, amp: 55, speed: 0.02, color: "rgba(59, 130, 246, 0.08)", base: h * 0.76 },
+        { freq: 0.0025, amp: 70, speed: 0.012, color: "rgba(6, 182, 212, 0.12)", base: h * 0.84 }
+      ];
+
+      waveLayers.forEach(layer => {
+        ctx.fillStyle = layer.color;
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 15) {
+          const y = layer.base +
+            Math.sin(x * layer.freq + this.time * layer.speed) * layer.amp +
+            Math.cos(x * 0.002 - this.time * 0.01) * 18;
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      // Shimmer Water Motes
+      this.particles.forEach(p => {
+        p.y += p.speedY;
+        p.wobble += 0.03;
+        const drawX = p.x + Math.sin(p.wobble) * 2;
+        if (p.y < 0) {
+          p.y = h;
+          p.x = Math.random() * w;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = "#00F0FF";
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = "#00F0FF";
+        ctx.beginPath();
+        ctx.arc(drawX, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+    } else if (this.currentTheme === "live-hearts") {
+      // Floating glowing neon hearts
+      this.particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        p.pulseOffset += 0.04;
+        const currentSize = p.size * (1 + 0.12 * Math.sin(p.pulseOffset));
+
+        if (p.y < -30) {
+          p.y = h + 20;
+          p.x = Math.random() * w;
+        }
+
+        this.drawHeart(ctx, p.x, p.y, currentSize, p.color, p.alpha);
+      });
+
+    } else if (this.currentTheme === "cute-beautiful") {
+      // Drifting Sakura Blossom Petals and Sparkle Twinkles
+      this.particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += Math.sin(this.time * 0.02 + p.rotation) * 0.8 + 0.2;
+        p.rotation += p.rotSpeed;
+
+        if (p.y > h + 20) {
+          p.y = -20;
+          p.x = Math.random() * w;
+        }
+
+        if (p.isSparkle) {
+          const sparklePulse = 0.5 + 0.5 * Math.sin(this.time * 0.06 + p.x);
+          this.drawSparkle(ctx, p.x, p.y, p.size * sparklePulse, p.alpha);
+        } else {
+          this.drawPetal(ctx, p.x, p.y, p.size, p.rotation, p.alpha);
+        }
+      });
+
+    } else if (this.currentTheme === "action-cyber") {
+      // Kinetic Perspective Laser Streaks
+      this.particles.forEach(p => {
+        p.x += p.speed;
+        if (p.x > w + 100) {
+          p.x = -100;
+          p.y = Math.random() * h;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = p.thickness;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x - p.length, p.y);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+    } else if (this.currentTheme === "rugged-tactical") {
+      // Thermal Volcanic Embers rising
+      this.particles.forEach(p => {
+        p.y += p.speedY;
+        p.x += p.speedX;
+        if (p.y < -10) {
+          p.y = h + 10;
+          p.x = Math.random() * w;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha * (0.6 + 0.4 * Math.sin(this.time * 0.05 + p.x));
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+    } else {
+      // Subtle Ambient Particles for active theme
+      const glowColor = (this.currentTheme === "rose-olive" || this.currentTheme === "rose-olive-light") ? "#c9a0a0"
+        : (this.currentTheme === "lavender-beige" || this.currentTheme === "lavender-beige-light") ? "#a89bbe"
+        : (this.currentTheme === "sage-cream" || this.currentTheme === "sage-cream-dark") ? "#a3b18a"
+        : "#c9a0a0";
+      this.particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = glowColor;
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = glowColor;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    requestAnimationFrame(this.loop);
+  }
+}
+
+// Global instance
+window.liveThemeCanvasEngine = null;
+
+const themeToggleBtn = document.getElementById("themeToggleBtn");
+const themePopoverDropdown = document.getElementById("themePopoverDropdown");
+const activeThemeName = document.getElementById("activeThemeName");
+const themeOptionCards = document.querySelectorAll(".theme-option-card");
+
+const THEME_NAMES = {
+  "rose-olive": "1. Rose & Olive",
+  "rose-olive-light": "Rose & Olive (Light)",
+  "lavender-beige": "2. Lavender & Beige",
+  "lavender-beige-light": "Lavender & Beige (Light)",
+  "sage-cream": "3. Sage & Cream",
+  "sage-cream-dark": "Sage & Cream (Dark)",
+  "cyber-obsidian": "Minimal Obsidian",
+  "minimal-light": "Minimal Light",
+  "swiss-minimal": "Swiss Monochrome",
+  "warm-ivory": "Warm Ivory",
+  "midnight-aurora": "Midnight Slate",
+  "live-waves": "1. Rose & Olive",
+  "live-hearts": "1. Rose & Olive",
+  "cute-beautiful": "2. Lavender & Beige",
+  "action-cyber": "1. Rose & Olive",
+  "rugged-tactical": "3. Sage & Cream"
+};
+
+function applyLiveTheme(themeId) {
+  if (!THEME_NAMES[themeId]) themeId = "rose-olive";
+  document.body.setAttribute("data-theme", themeId);
+  localStorage.setItem("aura_theme", themeId);
+
+  if (activeThemeName) {
+    activeThemeName.textContent = THEME_NAMES[themeId];
+  }
+
+  themeOptionCards.forEach(card => {
+    card.classList.toggle("active", card.getAttribute("data-theme") === themeId);
+  });
+
+  if (window.liveThemeCanvasEngine) {
+    window.liveThemeCanvasEngine.setTheme(themeId);
+  }
+}
+
+function initThemeSwitcher() {
+  const canvasEl = document.getElementById("liveThemeCanvas");
+  if (canvasEl && !window.liveThemeCanvasEngine) {
+    window.liveThemeCanvasEngine = new LiveThemeCanvasEngine("liveThemeCanvas");
+  }
+
+  const savedTheme = localStorage.getItem("aura_theme") || "rose-olive";
+  applyLiveTheme(savedTheme);
+
+  if (themeToggleBtn && themePopoverDropdown) {
+    themeToggleBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      themePopoverDropdown.classList.toggle("active");
+      playTactileSound("click");
+    });
+
+    document.addEventListener("click", (e) => {
+      const wrap = document.getElementById("themeSwitcherWrap");
+      if (wrap && !wrap.contains(e.target)) {
+        themePopoverDropdown.classList.remove("active");
+      }
+    });
+  }
+
+  themeOptionCards.forEach(card => {
+    card.addEventListener("click", () => {
+      const targetTheme = card.getAttribute("data-theme");
+      if (targetTheme) {
+        applyLiveTheme(targetTheme);
+        playTactileSound("click");
+        if (themePopoverDropdown) themePopoverDropdown.classList.remove("active");
+      }
+    });
+  });
+}
+
+/* =========================================================
+   15. ENGINEERING HUB CONTROLLER (COLLEGES DIRECTORY, ACCURATE SYLLABUS, AI STUDY NOTES & MULTILINGUAL YOUTUBE)
+========================================================= */
+const engineeringHubState = {
+  colleges: [],
+  activeCollege: null,
+  activeBranch: "CSE",
+  activeSemester: 3,
+  activeSubject: "Data Structures & Algorithms",
+  notesCache: {},
+  videosCache: {}
+};
+
+function initEngineeringHub() {
+  const engStateSelect = document.getElementById("engStateSelect");
+  const engDistrictSelect = document.getElementById("engDistrictSelect");
+  const collegesCardsGrid = document.getElementById("collegesCardsGrid");
+  const engActiveCollegeBadge = document.getElementById("engActiveCollegeBadge");
+
+  const engCollegeBranchesRow = document.getElementById("engCollegeBranchesRow");
+  const engCollegeSemesterBar = document.getElementById("engCollegeSemesterBar");
+  const engSelectedBranchSemPill = document.getElementById("engSelectedBranchSemPill");
+  const engCollegeSubjectsGrid = document.getElementById("engCollegeSubjectsGrid");
+
+  const engActiveSubjectTitle = document.getElementById("engActiveSubjectTitle");
+  const engVideoLangSelect = document.getElementById("engVideoLangSelect");
+  const engVideoLangTag = document.getElementById("engVideoLangTag");
+  const engGenerateNotesBtn = document.getElementById("engGenerateNotesBtn");
+  const engNotesContentBody = document.getElementById("engNotesContentBody");
+  const btnOpenNotesReader = document.getElementById("btnOpenNotesReader");
+  const btnPrintNotes = document.getElementById("btnPrintNotes");
+  const engVideosListGrid = document.getElementById("engVideosListGrid");
+
+  // Prevent double-initialization of event handlers
+  if (engStateSelect && engStateSelect.dataset.initialized === "true") return;
+  if (engStateSelect) engStateSelect.dataset.initialized = "true";
+
+  async function loadColleges() {
+    if (!collegesCardsGrid) return;
+    const stateVal = engStateSelect ? engStateSelect.value : "Tamil Nadu";
+    const districtVal = engDistrictSelect ? engDistrictSelect.value : "";
+
+    collegesCardsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-secondary);">Loading accredited universities & colleges...</div>`;
+
+    try {
+      const collegeTypeSelect = document.getElementById("engCollegeTypeSelect");
+      const collegeTypeVal = collegeTypeSelect ? collegeTypeSelect.value : "all";
+      const url = `${BACKEND_URL}/api/quiz/engineering/colleges?state=${encodeURIComponent(stateVal)}&district=${encodeURIComponent(districtVal)}&type=${encodeURIComponent(collegeTypeVal)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (!data.success || !data.colleges) throw new Error("Could not load colleges");
+      engineeringHubState.colleges = data.colleges;
+
+      // Update district options if not populated or state changed
+      if (engDistrictSelect && engDistrictSelect.dataset.state !== stateVal) {
+        engDistrictSelect.dataset.state = stateVal;
+        const currentDist = engDistrictSelect.value;
+        const dists = data.availableDistricts || [];
+        engDistrictSelect.innerHTML = `<option value="">All Districts</option>` +
+          dists.map(d => `<option value="${escapeHtml(d)}" ${d === currentDist ? "selected" : ""}>${escapeHtml(d)}</option>`).join("");
+      }
+
+      if (data.colleges.length === 0) {
+        collegesCardsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-secondary);">No engineering institutions match the selected filter.</div>`;
+        return;
+      }
+
+      // Default active college to first one if none selected
+      if (!engineeringHubState.activeCollege || !data.colleges.some(c => c.id === engineeringHubState.activeCollege.id)) {
+        engineeringHubState.activeCollege = data.colleges[0];
+      }
+
+      collegesCardsGrid.innerHTML = data.colleges.map(c => {
+        const isSelected = engineeringHubState.activeCollege && engineeringHubState.activeCollege.id === c.id;
+        return `
+          <div class="college-card ${isSelected ? 'active' : ''}" data-id="${c.id}" onclick="selectEngineeringCollege('${c.id}')">
+            <div class="college-card-title">
+              ${escapeHtml(c.name)}
+              ${c.autonomous ? '<span class="autonomous-tag">⭐ AUTONOMOUS</span>' : ''}
+            </div>
+            <div class="college-card-meta">
+              <span>ðŸ“ ${escapeHtml(c.district)}, ${escapeHtml(c.state)}</span>
+              <span>🎓 ${(c.branches || []).length} Disciplines</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (engActiveCollegeBadge && engineeringHubState.activeCollege) {
+        engActiveCollegeBadge.textContent = engineeringHubState.activeCollege.name;
+      }
+
+      renderCollegeBranches();
+    } catch (err) {
+      collegesCardsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#FF0055;">Failed to load colleges. Ensure backend is running.</div>`;
+    }
+  }
+
+  window.selectEngineeringCollege = function (colId) {
+    const col = engineeringHubState.colleges.find(c => c.id === colId);
+    if (!col) return;
+    engineeringHubState.activeCollege = col;
+
+    document.querySelectorAll("#collegesCardsGrid .college-card").forEach(el => {
+      el.classList.toggle("active", el.getAttribute("data-id") === col.id);
+    });
+
+    if (engActiveCollegeBadge) engActiveCollegeBadge.textContent = col.name;
+    renderCollegeBranches();
+    playTactileSound("click");
+  };
+
+  function renderCollegeBranches() {
+    if (!engCollegeBranchesRow || !engineeringHubState.activeCollege) return;
+    const branches = engineeringHubState.activeCollege.branches || ["CSE", "AIDS", "ECE", "EEE", "MECH", "CIVIL", "IT"];
+
+    if (!branches.includes(engineeringHubState.activeBranch)) {
+      engineeringHubState.activeBranch = branches[0] || "CSE";
+    }
+
+    engCollegeBranchesRow.innerHTML = branches.map(b => `
+      <button class="branch-pill-btn ${b === engineeringHubState.activeBranch ? 'active' : ''}" onclick="selectEngineeringBranch('${b}')">
+        ${b}
+      </button>
+    `).join("");
+
+    updateBranchSemPill();
+    loadAccurateSubjects();
+  }
+
+  window.selectEngineeringBranch = function (branch) {
+    engineeringHubState.activeBranch = branch;
+    document.querySelectorAll("#engCollegeBranchesRow .branch-pill-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.textContent.trim() === branch);
+    });
+    updateBranchSemPill();
+    loadAccurateSubjects();
+    playTactileSound("click");
+  };
+
+  function updateBranchSemPill() {
+    if (engSelectedBranchSemPill) {
+      engSelectedBranchSemPill.textContent = `${engineeringHubState.activeBranch} · SEMESTER ${engineeringHubState.activeSemester}`;
+    }
+  }
+
+  // Semester pills
+  if (engCollegeSemesterBar) {
+    engCollegeSemesterBar.querySelectorAll(".semester-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        const sem = parseInt(pill.getAttribute("data-sem"), 10) || 1;
+        engineeringHubState.activeSemester = sem;
+        engCollegeSemesterBar.querySelectorAll(".semester-pill").forEach(p => p.classList.toggle("active", p === pill));
+        updateBranchSemPill();
+        loadAccurateSubjects();
+        playTactileSound("click");
+      });
+    });
+  }
+
+  async function loadAccurateSubjects() {
+    if (!engCollegeSubjectsGrid) return;
+    engCollegeSubjectsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-secondary);">Fetching verified syllabus subjects...</div>`;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/quiz/curriculum/subjects`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          groupType: "ENGINEERING",
+          branch: engineeringHubState.activeBranch,
+          semester: engineeringHubState.activeSemester
+        })
+      });
+      const data = await res.json();
+      if (!data.success || !data.subjects) throw new Error("Could not load subjects");
+
+      const subjects = data.subjects;
+      engineeringHubState.subjects = subjects;
+
+      const subjectBadge = document.getElementById("engSubjectCountBadge");
+      if (subjectBadge) {
+        const isCSBS = engineeringHubState.activeBranch === "CSBS";
+        subjectBadge.textContent = `${subjects.length} Subjects Enrolled${isCSBS ? ' (CSBS Special Track · 7 Subjects)' : ''}`;
+      }
+
+      if (!subjects.includes(engineeringHubState.activeSubject)) {
+        engineeringHubState.activeSubject = subjects[0] || "Core University Subject";
+      }
+
+      engCollegeSubjectsGrid.innerHTML = subjects.map((sub, i) => {
+        const isSelected = sub === engineeringHubState.activeSubject;
+        return `
+          <div class="eng-subject-card ${isSelected ? 'active' : ''}" onclick="selectEngineeringSubject('${escapeHtml(sub).replace(/'/g, "\\'")}')">
+            <div class="eng-subject-code">AUR-${engineeringHubState.activeBranch}-SEM${engineeringHubState.activeSemester}-0${i + 1}</div>
+            <div class="eng-subject-title">${escapeHtml(sub)}</div>
+            <div class="eng-subject-footer">
+              <span class="eng-module-badge">4 Credits</span>
+              <span style="font-size:11px; color:var(--accent-cyan);">✧ University Core</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (engActiveSubjectTitle) {
+        engActiveSubjectTitle.textContent = engineeringHubState.activeSubject;
+      }
+
+      // Automatically load YouTube videos for this subject
+      loadYouTubeLectures();
+    } catch (err) {
+      engCollegeSubjectsGrid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:16px; color:#FF0055;">Failed to load subjects for this semester.</div>`;
+    }
+  }
+
+  window.selectEngineeringSubject = function (subject) {
+    engineeringHubState.activeSubject = subject;
+    document.querySelectorAll("#engCollegeSubjectsGrid .eng-subject-card").forEach(c => {
+      c.classList.toggle("active", c.querySelector(".eng-subject-title")?.textContent.trim() === subject);
+    });
+
+    if (engActiveSubjectTitle) {
+      engActiveSubjectTitle.textContent = subject;
+    }
+
+    loadYouTubeLectures();
+    playTactileSound("click");
+  };
+
+  // Generate AI Study Notes
+  if (engGenerateNotesBtn) {
+    engGenerateNotesBtn.addEventListener("click", async () => {
+      if (!engineeringHubState.activeSubject) return;
+
+      engGenerateNotesBtn.disabled = true;
+      engGenerateNotesBtn.textContent = "Synthesizing AI Notes...";
+      if (engNotesContentBody) {
+        engNotesContentBody.innerHTML = `<div style="text-align:center; padding:28px; color:var(--text-secondary);"><span class="intro-tel-dot gold"></span> Compiling high-yield summary, equations, 2-mark Q&A, and 13-mark question outlines...</div>`;
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/notes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            subject: engineeringHubState.activeSubject,
+            branch: engineeringHubState.activeBranch,
+            semester: engineeringHubState.activeSemester,
+            collegeName: engineeringHubState.activeCollege ? engineeringHubState.activeCollege.name : ""
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success || !data.notes) throw new Error("Could not formulate notes");
+
+        const n = data.notes;
+        engineeringHubState.notesCache[engineeringHubState.activeSubject] = n;
+        const guidesContainer = document.getElementById("engOfficialGuidesContainer");
+        const guidesList = document.getElementById("engOfficialGuidesList");
+        if (guidesContainer && guidesList && n.studyGuidesAndLinks && n.studyGuidesAndLinks.length > 0) {
+          guidesContainer.style.display = "block";
+          guidesList.innerHTML = n.studyGuidesAndLinks.map(g => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:var(--bg-surface-subtle); border:1px solid var(--border-subtle); border-radius:6px; font-size:12px;">
+              <div>
+                <strong style="color:var(--text-primary);">${g.type === 'pdf' ? '📕' : '🔗'} ${escapeHtml(g.title)}</strong>
+                <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(g.description || '')}</div>
+              </div>
+              <a href="${escapeHtml(g.url)}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="text-decoration:none; white-space:nowrap; font-size:11px;">
+                ${g.type === 'pdf' ? '📥 Open / Download PDF' : '🌐 Open in Chrome'}
+              </a>
+            </div>
+          `).join("");
+        }
+
+
+        if (engNotesContentBody) {
+          engNotesContentBody.innerHTML = `
+            <div style="font-size:14px; color:var(--text-primary); margin-bottom:14px;">
+              <strong style="color:var(--accent-gold);">📌 Syllabus Scope & Summary:</strong>
+              <p style="margin-top:4px; line-height:1.5;">${escapeHtml(n.summary || "")}</p>
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <strong style="color:var(--accent-gold);">⚡ Core Formulas & Governing Laws:</strong>
+              <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+                ${(n.keyTheorems || []).map(t => `
+                  <div style="background:var(--bg-surface-subtle); padding:8px 12px; border-radius:6px; border:1px solid var(--border-subtle);">
+                    <div style="font-weight:700; color:var(--text-primary);">${escapeHtml(t.name)}</div>
+                    <div style="font-size:12px; color:var(--text-secondary);">${escapeHtml(t.statement)}</div>
+                    ${t.formula ? `<div style="font-family:var(--font-mono); color:var(--accent-gold); font-size:12px; margin-top:2px;">${escapeHtml(t.formula)}</div>` : ''}
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <strong style="color:#10B981;">🎯 High-Probability 2-Mark University Q&A:</strong>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                ${(n.twoMarkQuestions || []).map(q => `
+                  <div style="background:rgba(16,185,129,0.05); padding:8px 12px; border-radius:6px; border-left:3px solid #10B981;">
+                    <div style="font-weight:700; color:var(--text-primary);">Q: ${escapeHtml(q.q)}</div>
+                    <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">A: ${escapeHtml(q.a)}</div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div>
+              <strong style="color:#FF0055;">ðŸ›ï¸ Repeated 13-Mark Big Question Outlines:</strong>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                ${(n.thirteenMarkOutlines || []).map(o => `
+                  <div style="background:rgba(255,0,85,0.05); padding:8px 12px; border-radius:6px; border-left:3px solid #FF0055;">
+                    <div style="font-weight:700; color:var(--text-primary);">${escapeHtml(o.q)}</div>
+                    <ul style="margin:4px 0 0 16px; font-size:12px; color:var(--text-secondary);">
+                      ${(o.outline || []).map(step => `<li>${escapeHtml(step)}</li>`).join("")}
+                    </ul>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        playTactileSound("success");
+      } catch (err) {
+        if (engNotesContentBody) {
+          engNotesContentBody.innerHTML = `<div style="color:#FF0055; padding:16px;">Error formulating study notes: ${err.message}</div>`;
+        }
+      } finally {
+        engGenerateNotesBtn.disabled = false;
+        engGenerateNotesBtn.textContent = "📖 Generate AI Study Notes (PDF)";
+      }
+    });
+  }
+
+  // Fullscreen Notes Reader Modal
+  if (btnOpenNotesReader) {
+    btnOpenNotesReader.addEventListener("click", () => {
+      const modal = document.getElementById("documentReaderModal");
+      const title = document.getElementById("docReaderModalTitle");
+      const body = document.getElementById("docReaderModalBody");
+
+      if (!modal || !title || !body) return;
+      title.textContent = `${engineeringHubState.activeSubject} — Official AI Study Notes`;
+      body.innerHTML = engNotesContentBody ? engNotesContentBody.innerHTML : "No notes synthesized yet.";
+      modal.style.display = "flex";
+      modal.classList.add("active");
+      playTactileSound("click");
+    });
+  }
+
+  // Print Notes
+  
+  const btnDownloadNotesPdf = document.getElementById("btnDownloadNotesPdf");
+  if (btnDownloadNotesPdf) {
+    btnDownloadNotesPdf.addEventListener("click", () => {
+      if (!engineeringHubState.activeSubject) return;
+      const cached = engineeringHubState.notesCache[engineeringHubState.activeSubject];
+      const printWindow = window.open("", "_blank");
+      if (printWindow) {
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <title>${escapeHtml(engineeringHubState.activeSubject)} — Official Study Notes (PDF)</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+                h1 { color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; font-size: 24px; }
+                .meta { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+                .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; }
+                strong { color: #0f172a; }
+              </style>
+            </head>
+            <body>
+              <h1>${escapeHtml(engineeringHubState.activeSubject)} — Official University Study Notes</h1>
+              <div class="meta">Institution: ${escapeHtml(engineeringHubState.activeCollege ? engineeringHubState.activeCollege.name : 'University')} | Branch: ${escapeHtml(engineeringHubState.activeBranch)} | Semester: ${engineeringHubState.activeSemester}</div>
+              ${engNotesContentBody ? engNotesContentBody.innerHTML : 'No notes available'}
+              <script>window.onload = function() { window.print(); };</script>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+    });
+  }
+
+  if (btnPrintNotes) {
+    btnPrintNotes.addEventListener("click", () => {
+      window.print();
+    });
+  }
+
+  // YouTube Video Recommendations
+  async function loadYouTubeLectures() {
+    if (!engVideosListGrid) return;
+    const lang = engVideoLangSelect ? engVideoLangSelect.value : "Tamil";
+    if (engVideoLangTag) engVideoLangTag.textContent = `Language: ${lang}`;
+
+    engVideosListGrid.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">Searching YouTube for high-rated ${lang} lectures...</div>`;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/videos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: engineeringHubState.activeSubject,
+          language: lang,
+          branch: engineeringHubState.activeBranch
+        })
+      });
+
+      const data = await res.json();
+      if (!data.success || !data.videos) throw new Error("Could not load videos");
+
+      engVideosListGrid.innerHTML = data.videos.map(v => `
+        <div style="display:flex; gap:12px; padding:10px; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:var(--radius-md); align-items:center;">
+          <img src="${escapeHtml(v.thumbnail)}" style="width:110px; height:68px; object-fit:cover; border-radius:6px;" alt="Video thumbnail" />
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:13px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(v.title)}</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(v.channel)} · <span style="color:var(--accent-gold); font-weight:600;">${escapeHtml(v.language)}</span></div>
+            <p style="font-size:11px; color:var(--text-tertiary); margin:4px 0 0 0; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${escapeHtml(v.description)}</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <button class="btn-vault-action" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url || '')}', '${escapeHtml(v.title || '').replace(/'/g, "\\'")}', '${escapeHtml(v.channel || '').replace(/'/g, "\\'")}')" style="white-space:nowrap; font-size:11px;">
+              ▷ In-App
+            </button>
+            <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="white-space:nowrap; font-size:11px; text-decoration:none; text-align:center;">
+              ↗ YouTube
+            </a>
+          </div>
+        </div>
+      `).join("");
+    } catch (err) {
+      engVideosListGrid.innerHTML = `<div style="color:var(--text-secondary); padding:16px; text-align:center;">Video recommendations currently unavailable.</div>`;
+    }
+  }
+
+  // Live filter colleges by search query
+  const engCollegeSearchInput = document.getElementById("engCollegeSearchInput");
+  if (engCollegeSearchInput) {
+    engCollegeSearchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll("#collegesCardsGrid .college-card").forEach(card => {
+        const txt = card.textContent.toLowerCase();
+        card.style.display = txt.includes(q) ? "" : "none";
+      });
+    });
+  }
+
+  if (engVideoLangSelect) {
+    engVideoLangSelect.addEventListener("change", () => {
+      loadYouTubeLectures();
+      playTactileSound("click");
+    });
+  }
+
+  if (engStateSelect) {
+    engStateSelect.addEventListener("change", () => {
+      if (engDistrictSelect) engDistrictSelect.value = "";
+      loadColleges();
+      playTactileSound("click");
+    });
+  }
+
+  if (engDistrictSelect) {
+    engDistrictSelect.addEventListener("change", () => {
+      loadColleges();
+      playTactileSound("click");
+    });
+  }
+
+  // Initial load
+  loadColleges();
+}
+
+/* =========================================================
+   16. UTILITY HELPERS
+========================================================= */
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatMarkdownResponse(text) {
+  let safe = escapeHtml(text);
+
+  // Bold
+  safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // Headers
+  safe = safe.replace(/^### (.*$)/gim, '<h4 style="font-size:15px; font-weight:700; margin:10px 0 4px 0;">$1</h4>');
+  safe = safe.replace(/^## (.*$)/gim, '<h3 style="font-size:16px; font-weight:700; margin:12px 0 6px 0;">$1</h3>');
+
+  // Bullet points
+  safe = safe.replace(/^\* (.*$)/gim, '<li style="margin-left:16px; margin-bottom:4px;">$1</li>');
+
+  // Line breaks to paragraphs
+  const paragraphs = safe.split(/\n\n+/);
+  return paragraphs.map(p => {
+    if (p.startsWith("<h") || p.startsWith("<li")) return p;
+    return `<p style="margin-bottom:8px;">${p.replace(/\n/g, "<br>")}</p>`;
+  }).join("");
+}
+
+// Greeting based on current local hour
+function updateGreeting() {
+  const greetingEl = document.getElementById("heroGreeting");
+  if (!greetingEl) return;
+  const hour = new Date().getHours();
+  if (hour < 12) greetingEl.textContent = "Good morning, Commander.";
+  else if (hour < 17) greetingEl.textContent = "Good afternoon, Commander.";
+  else greetingEl.textContent = "Good evening, Commander.";
+}
+updateGreeting();
+
+/* =========================================================
+   18. PROJECT AURA OFFICIAL VISUAL VIDEO CONTROLLER
+   Smooth loop · IntersectionObserver viewport pause · Fallback
+========================================================= */
+function initProjectAuraVisual() {
+  const video = document.getElementById("projectAuraVisualVideo");
+  if (!video) return;
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { video.play().catch(() => {}); }
+        else { video.pause(); }
+      });
+    }, { threshold: 0.15 });
+    observer.observe(video);
+  }
+  video.addEventListener("error", () => {
+    console.info("[PROJECT AURA VISUAL] Video deferred; high-fidelity poster active.");
+  });
+}
+
+/* =========================================================
+   17. INITIALIZATION
+========================================================= */
+window.addEventListener("DOMContentLoaded", () => {
+  initCreationStudio();
+  initMemoryCortex();
+  initThemeSwitcher();
+  initCuteRobotVoice();
+  initEngineeringHub();
+  init3DCardTilt();
+  initProjectAuraVisual();
+  initBootSequence();
+
+  // Pre-load voices for speech synthesis
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+});
+// PROJECT AURA 3.0 — AURA_MODULE_CARD_NAV_FIX
+document.addEventListener("click", function (event) {
+    const card = event.target.closest(".cc-mod-card[data-view]");
+    if (!card) return;
+
+    const viewKey = card.getAttribute("data-view");
+    const targetView = document.getElementById("view-" + viewKey);
+
+    if (targetView && typeof switchView === "function") {
+        switchView(viewKey);
+    } else {
+        console.error("[PROJECT AURA] View target missing:", viewKey);
+    }
+});
+
+
+
+
+

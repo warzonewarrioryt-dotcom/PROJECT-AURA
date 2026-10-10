@@ -1,0 +1,11 @@
+# =========================================================
+# PROJECT AURA 3.0 — PYTHON NLP & ROUTER ENGINE
+# =========================================================
+# The core Python AI Engine (`backend/python/aura_engine/main.py`)
+# is intentionally built with high-performance Python 3.9+ standard
+# libraries (http.server, json, sys, re, math, typing) for instant,
+# zero-dependency execution on port 5050.
+#
+# Optional recommended utilities for extended ML/Data workloads:
+requests>=2.28.0
+numpy>=1.22.0
