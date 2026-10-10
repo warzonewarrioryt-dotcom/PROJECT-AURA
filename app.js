@@ -7,10 +7,9 @@
 
 "use strict";
 
-// Backend API Endpoint: in production on Vercel, requests use same-origin rewrites; in local dev fallback to http://localhost:3000
-const BACKEND_URL = (typeof window !== "undefined" && window.location.hostname && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1")
-  ? ""
-  : "http://localhost:3000";
+// Backend API Endpoint
+const API_URL = "https://project-aura-xxxx.onrender.com";
+const BACKEND_URL = API_URL;
 
 // Master System State
 const state = {

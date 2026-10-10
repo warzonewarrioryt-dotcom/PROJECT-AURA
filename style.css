@@ -9543,8 +9543,8 @@ body {
 .aura-topbar {
   height: 56px !important;
   background: var(--bg-glass) !important;
-  backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
   border-bottom: 1px solid var(--border-subtle) !important;
   padding: 0 24px !important;
 }
