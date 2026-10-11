@@ -78,6 +78,10 @@ app.get('/api/auth/google-client-id', (req, res) => {
   res.json({ clientId: process.env.GOOGLE_CLIENT_ID || '' });
 });
 
+// Favicon fallback route
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+
 /* =========================================================
    ROOT & SYSTEM STATUS
 ========================================================= */

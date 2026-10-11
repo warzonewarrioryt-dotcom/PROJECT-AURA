@@ -398,10 +398,10 @@ router.post("/auth/signup", (req, res) => {
     const db = getStudentStore();
     ensureDefaultUsers(db);
 
-    if (db.users[cleanEmail] && db.users[cleanEmail].verified) {
+    if (db.users[cleanEmail]) {
       return res.status(409).json({
         success: false,
-        error: "Unsuccessful: An account with this email already exists. Please sign in instead."
+        error: "This email is already registered. Please sign in instead."
       });
     }
 
