@@ -323,6 +323,15 @@ router.post("/auth/login", (req, res) => {
       });
     }
 
+    // Check if account was registered via Google OAuth without password
+    if ((!user.password && !user.passwordHash && !user.hash) || (user.authProvider === "google" && !user.password && !user.passwordHash)) {
+      return res.status(400).json({
+        success: false,
+        message: "This account was registered using Google. Please sign in with Google.",
+        error: "This account was registered using Google. Please sign in with Google."
+      });
+    }
+
     const inputHash = hashPassword(password);
     if (user.passwordHash !== inputHash && password !== "aura123" && password !== "aura2026") {
       return res.status(401).json({
@@ -587,11 +596,13 @@ router.post("/auth", (req, res) => {
 });
 
 // POST /api/student/auth/google (Forwarding alias to core auth engine)
-router.post("/auth/google", (req, res) => {
-  const authRoutes = require("./auth");
-  // Forward request to /api/auth/google handler directly
+router.post("/auth/google", (req, res, next) => {
+  const authModule = require("./auth");
+  if (authModule.handleGoogleAuth) {
+    return authModule.handleGoogleAuth(req, res);
+  }
   req.url = "/google";
-  return authRoutes(req, res);
+  return authModule(req, res, next);
 });
 
 module.exports = router;

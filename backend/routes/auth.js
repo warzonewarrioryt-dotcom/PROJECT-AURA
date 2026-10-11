@@ -10,6 +10,9 @@ const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const { OAuth2Client } = require("google-auth-library");
+const googleOAuthClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || "792884492277-qu4hiu3qpdiacda8ufrj558ef5sghcp9.apps.googleusercontent.com");
+
 
 // Primary database targets: aura_database.json & aura-database.json
 const DB_FILES = [
@@ -249,6 +252,15 @@ const handleLogin = (req, res) => {
       });
     }
 
+    // Check if account was registered via Google OAuth without a password
+    if ((!user.salt && !user.hash && !user.passwordHash && !user.password) || (user.authProvider === "google" && !user.salt && !user.hash)) {
+      return res.status(400).json({
+        success: false,
+        message: "This account was registered using Google. Please sign in with Google.",
+        error: "This account was registered using Google. Please sign in with Google."
+      });
+    }
+
     // Verify Password using PBKDF2 (with graceful upgrade from legacy sha256 if needed)
     let isMatch = false;
     if (user.salt && user.hash) {
@@ -369,14 +381,36 @@ function decodeJwtPayload(token) {
 
 /**
  * Verifies Google Credential Token
- * 1. Checks official Google OAuth2 TokenInfo endpoint: https://oauth2.googleapis.com/tokeninfo
- * 2. Fallback: decodes valid JWT payload claims
+ * 1. Checks official google-auth-library verifyIdToken
+ * 2. Fallback: official Google OAuth2 TokenInfo endpoint: https://oauth2.googleapis.com/tokeninfo
+ * 3. Fallback: decodes valid JWT payload claims
  */
 async function verifyGoogleToken(rawToken) {
   if (!rawToken || typeof rawToken !== "string") return null;
   const cleanToken = rawToken.trim();
 
-  // Try official Google TokenInfo API
+  // 1. Verify with google-auth-library OAuth2Client
+  try {
+    const audience = process.env.GOOGLE_CLIENT_ID || "792884492277-qu4hiu3qpdiacda8ufrj558ef5sghcp9.apps.googleusercontent.com";
+    const ticket = await googleOAuthClient.verifyIdToken({
+      idToken: cleanToken,
+      audience
+    });
+    const payload = ticket.getPayload();
+    if (payload && payload.email) {
+      return {
+        email: payload.email,
+        name: payload.name || payload.given_name || payload.email.split("@")[0],
+        picture: payload.picture || "",
+        sub: payload.sub,
+        email_verified: payload.email_verified === true || payload.email_verified === "true"
+      };
+    }
+  } catch (authLibErr) {
+    console.warn("[GOOGLE AUTH LIB WARN] OAuth2Client.verifyIdToken fallback:", authLibErr.message);
+  }
+
+  // 2. Try official Google TokenInfo API
   try {
     const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(cleanToken)}`, {
       method: "GET",
@@ -398,7 +432,7 @@ async function verifyGoogleToken(rawToken) {
     console.warn("[GOOGLE TOKENINFO WARN] Google API check unreached, checking token payload:", apiErr.message);
   }
 
-  // Fallback: decode standard JWT payload
+  // 3. Fallback: decode standard JWT payload
   const jwtClaims = decodeJwtPayload(cleanToken);
   if (jwtClaims && jwtClaims.email) {
     return {
@@ -417,7 +451,7 @@ async function verifyGoogleToken(rawToken) {
    POST /google
    Verifies Google ID token, extracts user details, saves into aura_database.json, returns session profile
 --------------------------------------------------------- */
-router.post("/google", async (req, res) => {
+const handleGoogleAuth = async (req, res) => {
   try {
     const { credential, token, id_token } = req.body;
     const rawToken = credential || token || id_token;
@@ -515,6 +549,7 @@ router.post("/google", async (req, res) => {
       success: true,
       message: `✓ Signed in with Google as ${user.name}!`,
       token: sessionToken,
+      student: db.studentProfiles[userId] || user,
       user: {
         id: user.id,
         name: user.name,
@@ -532,7 +567,9 @@ router.post("/google", async (req, res) => {
       error: err.message || "Google authentication failed due to a server error."
     });
   }
-});
+};
+
+router.post("/google", handleGoogleAuth);
 
 /* ---------------------------------------------------------
    GET /google-client-id
@@ -544,4 +581,6 @@ router.get("/google-client-id", (req, res) => {
 });
 
 module.exports = router;
+module.exports.handleGoogleAuth = handleGoogleAuth;
+
 

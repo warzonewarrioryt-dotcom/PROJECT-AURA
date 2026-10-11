@@ -45,6 +45,13 @@ app.use(cors({
   credentials: true
 }));
 
+// Cross-Origin-Opener-Policy for Google OAuth popup postMessage
+app.use((req, res, next) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  res.setHeader("Cross-Origin-Embedder-Policy", "unsafe-none");
+  next();
+});
+
 app.use(express.json({ limit: "30mb" }));
 app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 
@@ -80,6 +87,11 @@ app.get('/api/auth/google-client-id', (req, res) => {
 
 // Favicon fallback route
 app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+// Dashboard route fallback
+app.get(["/dashboard", "/dashboard.html"], (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "index.html"));
+});
 
 
 /* =========================================================

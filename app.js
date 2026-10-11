@@ -7710,43 +7710,42 @@ function initAuthGateway() {
 
     showAlert("Verifying Google account with Project Aura...", false);
 
-    const targetUrl = "https://project-aura-hush.onrender.com/api/auth/google";
     const payload = JSON.stringify({ credential: response.credential });
 
     try {
       let res;
       try {
-        res = await fetch(targetUrl, {
+        res = await fetch(`${BACKEND_URL}/api/student/auth/google`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: payload
         });
-      } catch (cloudErr) {
-        console.warn("[GOOGLE AUTH] Remote cloud endpoint unreachable, trying active backend:", cloudErr.message);
-        if (typeof BACKEND_URL !== "undefined") {
-          res = await fetch(`${BACKEND_URL}/api/auth/google`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-          });
-        } else {
-          throw cloudErr;
-        }
+      } catch (err) {
+        console.warn("[GOOGLE AUTH] Primary endpoint failed, trying fallback:", err.message);
+        res = await fetch("https://project-aura-hush.onrender.com/api/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        });
       }
 
       if (!res.ok) {
         let errData = {};
         try { errData = await res.json(); } catch (_) {}
-        throw new Error(errData.error || `Authentication failed with status ${res.status}`);
+        throw new Error(errData.message || errData.error || `Authentication failed with status ${res.status}`);
       }
 
       const data = await res.json();
 
-      // Store authentic user session in browser & persistent storage
+      // Store token and student session in localStorage
+      localStorage.setItem("token", data.token);
       localStorage.setItem("aura_auth_session", JSON.stringify(data));
-      localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+      const studentData = data.student || data.user || data.profile;
+      if (studentData) {
+        localStorage.setItem("aura_student_profile", JSON.stringify(studentData));
+      }
 
-      showAlert(`✓ Welcome, ${(data.user && data.user.name) || "Student"}! Google authentication successful.`, false);
+      showAlert(`✓ Welcome, ${(studentData && studentData.name) || "Student"}! Google authentication successful.`, false);
       if (typeof playTactileSound === "function") playTactileSound("success");
       if (typeof playProjectAuraCinematicImpact === "function") {
         playProjectAuraCinematicImpact(0.85);
@@ -7754,11 +7753,15 @@ function initAuthGateway() {
 
       setTimeout(() => {
         if (portal) portal.classList.add("authenticated");
-        if (userNameLabel) userNameLabel.textContent = (data.user && data.user.name) || "Student";
-        if (typeof updateTopUserName === "function") updateTopUserName((data.user && data.user.name) || "Student");
+        if (userNameLabel) userNameLabel.textContent = (studentData && studentData.name) || "Student";
+        if (typeof updateTopUserName === "function") updateTopUserName((studentData && studentData.name) || "Student");
         if (signOutBtn) signOutBtn.style.display = "inline-flex";
         if (typeof loadStudentPerformance === "function") loadStudentPerformance();
         if (typeof updateAuthProfileDisplay === "function") updateAuthProfileDisplay();
+        if (typeof switchView === "function") switchView("command-center");
+
+        // Redirect directly to dashboard route as requested
+        window.location.href = "/dashboard.html";
       }, 500);
 
     } catch (err) {
@@ -7815,18 +7818,24 @@ function initAuthGateway() {
 
   // Check active session on startup
   const existingSession = localStorage.getItem("aura_auth_session");
-  if (existingSession) {
+  const existingToken = localStorage.getItem("token");
+  if (existingSession || existingToken) {
     try {
-      const sess = JSON.parse(existingSession);
-      if (sess && sess.user) {
+      const sess = existingSession ? JSON.parse(existingSession) : null;
+      const user = (sess && (sess.student || sess.user || sess.profile)) || JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+      portal.classList.add("authenticated");
+      if (user && user.name) {
+        if (userNameLabel) userNameLabel.textContent = user.name || "Student";
+        if (typeof updateTopUserName === "function") updateTopUserName(user.name);
+      }
+      if (signOutBtn) signOutBtn.style.display = "inline-flex";
+    } catch (_) {
+      if (existingToken) {
         portal.classList.add("authenticated");
-        if (userNameLabel) userNameLabel.textContent = sess.user.name || "Student";
         if (signOutBtn) signOutBtn.style.display = "inline-flex";
       } else {
         portal.classList.remove("authenticated");
       }
-    } catch (_) {
-      portal.classList.remove("authenticated");
     }
   } else {
     portal.classList.remove("authenticated");
@@ -8034,6 +8043,8 @@ function initAuthGateway() {
     signOutBtn.addEventListener("click", () => {
       if (confirm("Sign out of Project Aura? The portal will be locked until you sign back in.")) {
         localStorage.removeItem("aura_auth_session");
+        localStorage.removeItem("token");
+        localStorage.removeItem("aura_student_profile");
         portal.classList.remove("authenticated");
         signOutBtn.style.display = "none";
         if (userNameLabel) userNameLabel.textContent = "Sign In";
