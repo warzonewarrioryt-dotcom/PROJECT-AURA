@@ -11098,4 +11098,96 @@ textarea:focus {
   background: linear-gradient(135deg, rgba(194, 155, 72, 0.22), rgba(0, 240, 255, 0.08)) !important;
   border-color: rgba(194, 155, 72, 0.45) !important;
   box-shadow: 0 8px 24px rgba(194, 155, 72, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ── 5. FUTURISTIC CYBERNETIC AI ROBOT & DEEP BLURRED BACKDROP ── */
+.cute-robot-backdrop-blur {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(8, 16, 32, 0.88) 0%, rgba(2, 4, 10, 0.96) 100%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+  backdrop-filter: blur(32px) saturate(200%) !important;
+}
+
+.cute-robot-card.futuristic-robot-chassis {
+  background: rgba(10, 16, 32, 0.92) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.45) !important;
+  box-shadow: 0 0 60px rgba(0, 240, 255, 0.22), 0 24px 64px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.futuristic-cyber-head {
+  background: linear-gradient(145deg, #16243E, #0A1224) !important;
+  border: 2px solid rgba(0, 240, 255, 0.6) !important;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.35), inset 0 2px 8px rgba(0, 240, 255, 0.4) !important;
+}
+
+.futuristic-cyber-visor {
+  background: #020612 !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.75) !important;
+  box-shadow: 0 0 24px rgba(0, 240, 255, 0.4), inset 0 0 18px rgba(0, 240, 255, 0.3) !important;
+}
+
+.cyber-scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 240, 255, 0.08) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.cyber-eye {
+  background: #00F0FF !important;
+  box-shadow: 0 0 16px #00F0FF, 0 0 32px rgba(0, 240, 255, 0.8) !important;
+}
+
+.cyber-glint {
+  background: #FFFFFF !important;
+  box-shadow: 0 0 6px #FFFFFF !important;
+}
+
+.cyber-reactor-core {
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.4) 0%, rgba(10, 16, 32, 0.8) 70%) !important;
+  border: 1.5px solid rgba(0, 240, 255, 0.6) !important;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5) !important;
+}
+
+.cyber-neural-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #00F0FF;
+  text-transform: uppercase;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  padding: 5px 14px;
+  border-radius: 20px;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+}
+
+.cyber-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00F0FF;
+  box-shadow: 0 0 10px #00F0FF;
+  animation: cyberDotPulse 1.2s infinite alternate;
+}
+
+@keyframes cyberDotPulse {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.3); opacity: 1; }
+}
+
+.futuristic-transcript-hud {
+  background: rgba(3, 7, 18, 0.85) !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  color: #00F0FF !important;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 240, 255, 0.1) !important;
+  font-family: var(--font-mono), monospace !important;
 }

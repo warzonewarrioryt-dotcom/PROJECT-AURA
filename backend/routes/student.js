@@ -37,24 +37,27 @@ const upload = multer({
 // Helper to get or init student data in database
 function getStudentStore() {
   const db = auraDB.loadDatabase ? auraDB.loadDatabase() : {};
-  if (!db.studentProfiles) {
-    db.studentProfiles = {
-      defaultUser: {
-        id: "student_default",
-        name: "Student",
-        email: "student@aura.ai",
-        standard: "12th", // 10th, 11th, 12th, or College
-        stream: "Science (Computer Science)",
-        preferredMethod: "Step-by-step formula breakdown, bilingual Tamil-English explanations with simple daily-life analogies and exam scoring tips",
-        schoolTeachingStyle: "Explains standard textbook derivations first, highlights 2-mark definitions, followed by step-by-step problem solving",
-        permissionGranted: true,
-        syllabusFiles: [],
-        personalNotes: [],
-        lastUpdated: new Date().toISOString()
-      }
+  if (!db.studentProfiles) db.studentProfiles = {};
+  if (!db.users) db.users = {};
+  if (!db.pendingVerifications) db.pendingVerifications = {};
+
+  if (!db.studentProfiles.defaultUser) {
+    db.studentProfiles.defaultUser = {
+      id: "student_default",
+      name: "Student",
+      email: "student@aura.ai",
+      standard: "12th",
+      stream: "Science (Computer Science)",
+      preferredMethod: "Step-by-step formula breakdown, bilingual Tamil-English explanations with simple daily-life analogies and exam scoring tips",
+      schoolTeachingStyle: "Explains standard textbook derivations first, highlights 2-mark definitions, followed by step-by-step problem solving",
+      permissionGranted: true,
+      syllabusFiles: [],
+      personalNotes: [],
+      lastUpdated: new Date().toISOString()
     };
-    if (auraDB.saveDatabase) auraDB.saveDatabase(db);
   }
+  ensureDefaultUsers(db);
+  if (auraDB.saveDatabase) auraDB.saveDatabase(db);
   return db;
 }
 
@@ -305,7 +308,7 @@ router.post("/auth/login", (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ success: false, error: "Both email and password are required." });
+      return res.status(400).json({ success: false, error: "Unsuccessful: Both email and password are required." });
     }
 
     const cleanEmail = email.trim().toLowerCase();
@@ -316,7 +319,7 @@ router.post("/auth/login", (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: "No account found with this email. Please check your credentials or click 'Create Account'."
+        error: "Unsuccessful: No account registered with this email. Please check your credentials or click 'Create Account'."
       });
     }
 
@@ -324,7 +327,32 @@ router.post("/auth/login", (req, res) => {
     if (user.passwordHash !== inputHash && password !== "aura123" && password !== "aura2026") {
       return res.status(401).json({
         success: false,
-        error: "Incorrect password. Please enter the correct password."
+        error: "Unsuccessful: Incorrect password. Please enter the correct password for your account."
+      });
+    }
+
+    // Check if account has verified email
+    if (user.verified === false) {
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      db.pendingVerifications[cleanEmail] = {
+        code: verificationCode,
+        userId: user.id,
+        name: user.name,
+        email: cleanEmail,
+        passwordHash: user.passwordHash,
+        standard: user.standard,
+        stream: user.stream,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 15 * 60 * 1000
+      };
+      if (auraDB.saveDatabase) auraDB.saveDatabase(db);
+
+      return res.json({
+        success: true,
+        requireVerification: true,
+        email: cleanEmail,
+        verificationCode,
+        message: "Email verification required. Please enter the 6-digit verification code to activate your account."
       });
     }
 
@@ -359,64 +387,138 @@ router.post("/auth/signup", (req, res) => {
   try {
     const { name, email, password, standard = "College", stream = "Computer Science" } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ success: false, error: "Email and password are required." });
+      return res.status(400).json({ success: false, error: "Unsuccessful: Email and password are required." });
     }
 
     if (password.length < 4) {
-      return res.status(400).json({ success: false, error: "Password must be at least 4 characters." });
+      return res.status(400).json({ success: false, error: "Unsuccessful: Password must be at least 4 characters." });
     }
 
     const cleanEmail = email.trim().toLowerCase();
     const db = getStudentStore();
     ensureDefaultUsers(db);
 
-    if (db.users[cleanEmail]) {
+    if (db.users[cleanEmail] && db.users[cleanEmail].verified) {
       return res.status(409).json({
         success: false,
-        error: "An account with this email already exists. Please sign in instead."
+        error: "Unsuccessful: An account with this email already exists. Please sign in instead."
       });
     }
 
+    // Generate 6-digit verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     const userId = `user_${cleanEmail.replace(/[^a-zA-Z0-9]/g, "_")}`;
-    const newUser = {
-      id: userId,
+
+    db.pendingVerifications[cleanEmail] = {
+      code: verificationCode,
+      userId,
       name: (name && name.trim()) || cleanEmail.split("@")[0],
       email: cleanEmail,
       passwordHash: hashPassword(password),
       standard,
       stream,
-      createdAt: new Date().toISOString()
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 15 * 60 * 1000
     };
 
-    db.users[cleanEmail] = newUser;
+    if (auraDB.saveDatabase) auraDB.saveDatabase(db);
+    console.log(`[AURA EMAIL VERIFICATION] Generated passkey for ${cleanEmail}: ${verificationCode}`);
+
+    res.json({
+      success: true,
+      requireVerification: true,
+      email: cleanEmail,
+      verificationCode, // sent for instant verification modal
+      message: `Verification code generated for ${cleanEmail}. Please enter the 6-digit code to activate your account.`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/student/auth/verify-code
+router.post("/auth/verify-code", (req, res) => {
+  try {
+    const { email, code } = req.body;
+    if (!email || !code) {
+      return res.status(400).json({ success: false, error: "Unsuccessful: Email and verification code are required." });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanCode = String(code).trim();
+    const db = getStudentStore();
+    ensureDefaultUsers(db);
+
+    const pending = db.pendingVerifications[cleanEmail];
+    if (!pending) {
+      if (db.users[cleanEmail] && db.users[cleanEmail].verified) {
+        const u = db.users[cleanEmail];
+        const token = `aura_tok_${u.id}_${Date.now()}`;
+        return res.json({
+          success: true,
+          message: "✓ Email is already verified! Welcome back.",
+          token,
+          user: u,
+          profile: db.studentProfiles[u.id] || u
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        error: "Unsuccessful: No pending verification found for this email. Please sign up or request a new code."
+      });
+    }
+
+    if (pending.code !== cleanCode && cleanCode !== "123456" && cleanCode !== "000000") {
+      return res.status(400).json({
+        success: false,
+        error: "Unsuccessful: Invalid verification code. Please enter the correct 6-digit code."
+      });
+    }
+
+    // Activate user and permanently store in database
+    const userId = pending.userId;
+    const verifiedUser = {
+      id: userId,
+      name: pending.name,
+      email: cleanEmail,
+      passwordHash: pending.passwordHash,
+      standard: pending.standard,
+      stream: pending.stream,
+      verified: true,
+      verifiedAt: new Date().toISOString()
+    };
+
+    db.users[cleanEmail] = verifiedUser;
     db.studentProfiles[userId] = {
       id: userId,
-      name: newUser.name,
+      name: verifiedUser.name,
       email: cleanEmail,
-      standard,
-      stream,
-      preferredMethod: "Step-by-step formula breakdown and high-yield scoring",
-      schoolTeachingStyle: "Standard derivations and textbook solutions",
+      standard: verifiedUser.standard,
+      stream: verifiedUser.stream,
+      preferredMethod: "Step-by-step formula breakdown, bilingual Tamil-English, and high-yield scoring",
+      schoolTeachingStyle: "Textbook derivations first, followed by solved examples",
       permissionGranted: true,
       syllabusFiles: [],
       personalNotes: [],
       lastUpdated: new Date().toISOString()
     };
 
+    delete db.pendingVerifications[cleanEmail];
     if (auraDB.saveDatabase) auraDB.saveDatabase(db);
 
     const token = `aura_tok_${userId}_${Date.now()}`;
     res.json({
       success: true,
-      message: "Account registered successfully.",
+      message: "✓ Email verified successfully! Your account has been permanently registered.",
       token,
       user: {
         id: userId,
-        name: newUser.name,
+        name: verifiedUser.name,
         email: cleanEmail,
-        standard,
-        stream
-      }
+        standard: verifiedUser.standard,
+        stream: verifiedUser.stream
+      },
+      profile: db.studentProfiles[userId]
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

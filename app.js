@@ -5146,37 +5146,47 @@ function initCuteRobotVoice() {
     });
   }
 
-  // Tanglish / English vs Tamil Dialect Selectors
+  // 4-Way Multilingual Dialect Selectors (Tanglish, Tamil, Hindi, English)
   const robotLangTanglishBtn = document.getElementById("robotLangTanglishBtn");
   const robotLangTamilBtn = document.getElementById("robotLangTamilBtn");
+  const robotLangHindiBtn = document.getElementById("robotLangHindiBtn");
+  const robotLangEnglishBtn = document.getElementById("robotLangEnglishBtn");
+  const langBtns = [robotLangTanglishBtn, robotLangTamilBtn, robotLangHindiBtn, robotLangEnglishBtn].filter(Boolean);
+
+  function setRobotLanguageDialect(code, activeBtn, placeholder) {
+    robotLanguage = code;
+    langBtns.forEach(b => b.classList.remove("active"));
+    if (activeBtn) activeBtn.classList.add("active");
+    if (robotTranscriptBox && !currentRobotTranscript) {
+      robotTranscriptBox.textContent = placeholder;
+    }
+    if (robotSpeechRec) {
+      try { robotSpeechRec.stop(); } catch (_) {}
+    }
+    playTactileSound("click");
+  }
 
   if (robotLangTanglishBtn) {
     robotLangTanglishBtn.addEventListener("click", () => {
-      robotLanguage = "en-IN";
-      robotLangTanglishBtn.classList.add("active");
-      if (robotLangTamilBtn) robotLangTamilBtn.classList.remove("active");
-      if (robotTranscriptBox && !currentRobotTranscript) {
-        robotTranscriptBox.textContent = "Listening in Tanglish & English... Speak now!";
-      }
-      if (robotSpeechRec) {
-        try { robotSpeechRec.stop(); } catch (_) {}
-      }
-      playTactileSound("click");
+      setRobotLanguageDialect("en-IN", robotLangTanglishBtn, "Listening in Tanglish & All... Speak your command or doubt!");
     });
   }
 
   if (robotLangTamilBtn) {
     robotLangTamilBtn.addEventListener("click", () => {
-      robotLanguage = "ta-IN";
-      robotLangTamilBtn.classList.add("active");
-      if (robotLangTanglishBtn) robotLangTanglishBtn.classList.remove("active");
-      if (robotTranscriptBox && !currentRobotTranscript) {
-        robotTranscriptBox.textContent = "தமிழில் பேசுங்கள்... குரல் கேட்கிறது!";
-      }
-      if (robotSpeechRec) {
-        try { robotSpeechRec.stop(); } catch (_) {}
-      }
-      playTactileSound("click");
+      setRobotLanguageDialect("ta-IN", robotLangTamilBtn, "தமிழில் பேசுங்கள்... உங்கள் கட்டளையை கேட்கிறேன்!");
+    });
+  }
+
+  if (robotLangHindiBtn) {
+    robotLangHindiBtn.addEventListener("click", () => {
+      setRobotLanguageDialect("hi-IN", robotLangHindiBtn, "हिन्दी में बोलिए... मैं आपकी बात सुन रहा हूँ!");
+    });
+  }
+
+  if (robotLangEnglishBtn) {
+    robotLangEnglishBtn.addEventListener("click", () => {
+      setRobotLanguageDialect("en-US", robotLangEnglishBtn, "Listening in English... Speak your query or action!");
     });
   }
 
@@ -5192,7 +5202,7 @@ function initCuteRobotVoice() {
     robotSendBtn.addEventListener("click", () => {
       const text = currentRobotTranscript || (robotTranscriptBox ? robotTranscriptBox.textContent.replace(/^"|"$/g, "").trim() : "");
       closeCuteRobotAssistant();
-      if (text && !text.includes("Listening") && !text.includes("பேசுங்கள்") && !text.includes("Microphone ready")) {
+      if (text && !text.includes("Listening") && !text.includes("பேசுங்கள்") && !text.includes("बोलिए") && !text.includes("Microphone ready")) {
         executeAuraVoiceCommand(text);
       }
     });
@@ -6308,11 +6318,17 @@ function speakAuraVoice(text) {
 
     const voices = window.speechSynthesis.getVoices();
     const isTamilScript = /[\u0B80-\u0BFF]/.test(cleanText);
+    const isHindiScript = /[\u0900-\u097F]/.test(cleanText);
     let chosen = null;
 
     if (isTamilScript) {
       // Find native Tamil TTS voice or Indian locale fallback
       chosen = voices.find(v => v.lang.startsWith("ta") || v.lang.includes("ta-IN") || v.name.toLowerCase().includes("tamil"))
+        || voices.find(v => v.lang.includes("IN"))
+        || voices[0];
+    } else if (isHindiScript || robotLanguage === "hi-IN") {
+      // Find native Hindi TTS voice or Indian locale fallback
+      chosen = voices.find(v => v.lang.startsWith("hi") || v.lang.includes("hi-IN") || v.name.toLowerCase().includes("hindi"))
         || voices.find(v => v.lang.includes("IN"))
         || voices[0];
     } else {
@@ -6429,7 +6445,7 @@ function initGlobalVoiceAssistant() {
   }
 }
 
-// ── BILINGUAL TANGLISH & TAMIL VOICE DIRECTIVE INTERPRETER ──
+// ── MULTILINGUAL VOICE DIRECTIVE & CONVERSATIONAL INTERACTION ENGINE ──
 function executeAuraVoiceCommand(rawTranscript) {
   if (isVoiceCommandExecuting) return;
   const raw = (rawTranscript || "").trim();
@@ -6440,17 +6456,36 @@ function executeAuraVoiceCommand(rawTranscript) {
   playTactileSound("success");
   setTimeout(() => { isVoiceCommandExecuting = false; }, 1400);
 
-  const isTamilScript = /[\u0B80-\u0BFF]/.test(raw);
+  const isTamilScript = /[\u0B80-\u0BFF]/.test(raw) || /(?:vanakkam|thambi|machan|sollu|soller|kudu|enga|epdi|panrathu|thedu|padikalam|theriyuma|kandupidi|aaram|vilakku)/i.test(cmd);
+  const isHindiScript = /[\u0900-\u097F]/.test(raw) || /(?:namaste|batao|kya|kaise|padhai|karna|kholo|samjhao|mujhe|tum|accha|karo|kaun|padho)/i.test(cmd);
 
-  // 1. Voice Persona Gender Toggle
-  if (cmd.includes("male voice") || cmd.includes("switch to male") || cmd.includes("aan voice") || cmd.includes("aan kural") || cmd.includes("ஆண் குரல்") || cmd.includes("boy voice")) {
-    setVoiceGender("male");
-    speakAuraVoice(isTamilScript ? "ஆண் குரலுக்கு மாற்றப்பட்டது." : "Aero male voice-ku switch panniyachu.");
+  // 0. Conversational Interaction: Greetings & Assistant Capabilities
+  if (cmd === "hi" || cmd === "hello" || cmd.startsWith("hello") || cmd.startsWith("hi aura") ||
+      cmd.includes("vanakkam") || cmd.includes("வணக்கம்") || cmd.includes("namaste") || cmd.includes("नमस्ते") ||
+      cmd.includes("who are you") || cmd.includes("what can you do") || cmd.includes("epdi iruka") || cmd.includes("kaise ho")) {
+    let greetingText = "";
+    if (isTamilScript) {
+      greetingText = "வணக்கம்! நான் உங்கள் ஆரா AI குரல் உதவியாளர். கல்லூரி, பள்ளி பாடங்கள், மாதிரி தேர்வு, அல்லது உங்கள் சந்தேகங்களை தீர்க்க நான் தயார்!";
+    } else if (isHindiScript) {
+      greetingText = "नमस्ते! मैं आपका ऑरा AI वॉयस असिस्टेंट हूँ। कॉलेज, स्कूल, सिलेबस, मॉक टेस्ट और आपकी पढ़ाई के सभी सवालों में मदद करने के लिए तैयार हूँ।";
+    } else if (robotLanguage === "ta-IN" || /(?:vanakkam|machan|thambi)/i.test(cmd)) {
+      greetingText = "Vanakkam! Naan unga Project Aura Voice AI assistant. College, School, Mock Test, doubts ellathukum na reply and actions perform panren!";
+    } else {
+      greetingText = "Hello! I am Aura, your futuristic neural voice assistant. I can navigate Project Aura, explain topics, and execute actions across the entire platform.";
+    }
+    speakAuraVoice(greetingText);
     return;
   }
-  if (cmd.includes("female voice") || cmd.includes("switch to female") || cmd.includes("pen voice") || cmd.includes("pen kural") || cmd.includes("பெண் குரல்") || cmd.includes("girl voice")) {
+
+  // 1. Voice Persona Gender Toggle
+  if (cmd.includes("male voice") || cmd.includes("switch to male") || cmd.includes("aan voice") || cmd.includes("aan kural") || cmd.includes("ஆண் குரல்") || cmd.includes("boy voice") || cmd.includes("पुरुष आवाज")) {
+    setVoiceGender("male");
+    speakAuraVoice(isTamilScript ? "ஆண் குரலுக்கு மாற்றப்பட்டது." : (isHindiScript ? "पुरुष आवाज में बदल दिया गया है।" : "Aero male voice-ku switch panniyachu."));
+    return;
+  }
+  if (cmd.includes("female voice") || cmd.includes("switch to female") || cmd.includes("pen voice") || cmd.includes("pen kural") || cmd.includes("பெண் குரல்") || cmd.includes("girl voice") || cmd.includes("महिला आवाज")) {
     setVoiceGender("female");
-    speakAuraVoice(isTamilScript ? "பெண் குரலுக்கு மாற்றப்பட்டது." : "Aura female voice-ku switch panniyachu.");
+    speakAuraVoice(isTamilScript ? "பெண் குரலுக்கு மாற்றப்பட்டது." : (isHindiScript ? "महिला आवाज में बदल दिया गया है।" : "Aura female voice-ku switch panniyachu."));
     return;
   }
 
@@ -6458,7 +6493,7 @@ function executeAuraVoiceCommand(rawTranscript) {
   if (cmd.includes("recommended video") || cmd.includes("video varala") || cmd.includes("videos varala") || 
       cmd.includes("videos kaattu") || cmd.includes("video kaattu") || cmd.includes("lecture video") || 
       cmd.includes("video open") || cmd.includes("வீடியோ") || cmd.includes("காணொளி") || 
-      cmd.includes("video play") || cmd.includes("videos podu")) {
+      cmd.includes("video play") || cmd.includes("videos podu") || cmd.includes("वीडियो")) {
     switchView("engineering-hub");
     if (typeof window.loadYouTubeLectures === "function") {
       window.loadYouTubeLectures();
@@ -6467,25 +6502,25 @@ function executeAuraVoiceCommand(rawTranscript) {
     if (videosCard) {
       setTimeout(() => videosCard.scrollIntoView({ behavior: "smooth" }), 200);
     }
-    speakAuraVoice(isTamilScript ? "பரிந்துரைக்கப்பட்ட கல்லூரி மற்றும் பள்ளி வீடியோக்கள் தயாராக உள்ளன." : "Sari! Unga active subject-kku curated YouTube recommended lectures load aagiduchu.");
+    speakAuraVoice(isTamilScript ? "பரிந்துரைக்கப்பட்ட கல்லூரி மற்றும் பள்ளி வீடியோக்கள் தயாராக உள்ளன." : (isHindiScript ? "संबंधित यूट्यूब व्याख्यान वीडियो लोड कर दिए गए हैं।" : "Sari! Unga active subject-kku curated YouTube recommended lectures load aagiduchu."));
     return;
   }
 
   // 3. College & School Hub / Subjects / Syllabus Directive
-  const isCollege = cmd.includes("college") || cmd.includes("kalloori") || cmd.includes("கல்லூரி") || cmd.includes("engineering") || cmd.includes("பொறியியல்") || cmd.includes("btech") || cmd.includes("be ") || cmd.includes("cse");
-  const isSchool = cmd.includes("school") || cmd.includes("palli") || cmd.includes("பள்ளி") || cmd.includes("10th") || cmd.includes("11th") || cmd.includes("12th") || cmd.includes("tenth") || cmd.includes("twelfth");
-  const isSyllabus = cmd.includes("syllabus") || cmd.includes("பாடத்திட்டம்") || cmd.includes("curriculum") || cmd.includes("subject");
+  const isCollege = cmd.includes("college") || cmd.includes("kalloori") || cmd.includes("கல்லூரி") || cmd.includes("engineering") || cmd.includes("பொறியியல்") || cmd.includes("btech") || cmd.includes("be ") || cmd.includes("cse") || cmd.includes("कॉलेज");
+  const isSchool = cmd.includes("school") || cmd.includes("palli") || cmd.includes("பள்ளி") || cmd.includes("10th") || cmd.includes("11th") || cmd.includes("12th") || cmd.includes("tenth") || cmd.includes("twelfth") || cmd.includes("स्कूल");
+  const isSyllabus = cmd.includes("syllabus") || cmd.includes("பாடத்திட்டம்") || cmd.includes("curriculum") || cmd.includes("subject") || cmd.includes("सिलेबस");
 
   if (isCollege || isSchool || isSyllabus) {
     switchView("engineering-hub");
     if (isSchool) {
       const schoolBtn = document.getElementById("hubModeSchoolBtn");
       if (schoolBtn) schoolBtn.click();
-      speakAuraVoice(isTamilScript ? "பள்ளி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : "School Hub open panniten. Ungaloda standard and subjects select pannikonga!");
+      speakAuraVoice(isTamilScript ? "பள்ளி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : (isHindiScript ? "स्कूल हब और सिलेबस सेक्शन खोल दिया गया है।" : "School Hub open panniten. Ungaloda standard and subjects select pannikonga!"));
     } else {
       const collegeBtn = document.getElementById("hubModeCollegeBtn");
       if (collegeBtn) collegeBtn.click();
-      speakAuraVoice(isTamilScript ? "கல்லூரி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : "College Hub open panniten. Ungaloda branch, semester and subjects ready!");
+      speakAuraVoice(isTamilScript ? "கல்லூரி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : (isHindiScript ? "कॉलेज हब और सिलेबस सेक्शन खोल दिया गया है।" : "College Hub open panniten. Ungaloda branch, semester and subjects ready!"));
     }
     if (typeof window.loadYouTubeLectures === "function") {
       window.loadYouTubeLectures();
@@ -6493,116 +6528,82 @@ function executeAuraVoiceCommand(rawTranscript) {
     return;
   }
 
-  // 4. Command Center with Explicit Search or General Question Extraction
-  const isCmdCenterExplicit = cmd.includes("command center") || cmd.includes("கட்டளை மையம்") || cmd.includes("home") || cmd.includes("dashboard");
-  const isSearchAction = cmd.includes("search") || cmd.includes("thedu") || cmd.includes("தேடு") || cmd.includes("find") || cmd.includes("ask") || cmd.includes("soller") || cmd.includes("sollu") || cmd.includes("vilakku");
-
-  if (isCmdCenterExplicit && isSearchAction) {
-    switchView("command-center");
-    let cleanQuery = cmd
-      .replace(/command\s*center/gi, "")
-      .replace(/கட்டளை\s*மையம்/gi, "")
-      .replace(/(?:ku\s*pooyi|ku\s*poi|pooyi|poi|ku\s*po|la\s*pooyi|la)\b/gi, "")
-      .replace(/(?:search\s*pannu|thedu|sollu|soller|solunga|vilakku|find|search\s*for|search|ask\s*about|ask)\b/gi, "")
-      .replace(/(?:paththi\s*sollu|paththi|enna\s*nu)\b/gi, "")
-      .trim();
-
-    if (!cleanQuery || cleanQuery.length < 2) {
-      cleanQuery = raw;
-    }
-
-    const msgInput = document.getElementById("messageInput");
-    if (msgInput) {
-      msgInput.value = cleanQuery;
-      const sendBtn = document.getElementById("sendBtn");
-      if (sendBtn) sendBtn.click();
-    }
-    speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQuery}" பற்றி தேடப்படுகிறது.` : `Command Center-la "${cleanQuery}" pathi thedi answer compile pandren!`);
-    return;
-  }
-
-  if (isCmdCenterExplicit) {
-    switchView("command-center");
-    speakAuraVoice(isTamilScript ? "கட்டளை மையம் திறக்கப்படுகிறது." : "Command Center open pandren!");
-    return;
-  }
-
-  // 5. Semester Mock Test / Exam
-  if (cmd.includes("mock") || cmd.includes("exam") || cmd.includes("test") || cmd.includes("thearvu") || cmd.includes("தேர்வு") || cmd.includes("பரீட்சை")) {
+  // 4. Semester Mock Test / Exam
+  if (cmd.includes("mock") || cmd.includes("exam") || cmd.includes("test") || cmd.includes("thearvu") || cmd.includes("தேர்வு") || cmd.includes("பரீட்சை") || cmd.includes("परीक्षा") || cmd.includes("टेस्ट")) {
     switchView("mock-test");
-    speakAuraVoice(isTamilScript ? "செமஸ்டர் மாதிரி தேர்வு பகுதி திறக்கப்படுகிறது. வாழ்த்துகள்!" : "Semester Mock Test portal open panniten. 50-marks blueprint test ready, all the best!");
+    speakAuraVoice(isTamilScript ? "செமஸ்டர் மாதிரி தேர்வு பகுதி திறக்கப்படுகிறது. வாழ்த்துகள்!" : (isHindiScript ? "सेमेस्टर मॉक टेस्ट पोर्टल खोल दिया गया है। शुभकामनाएं!" : "Semester Mock Test portal open panniten. 50-marks blueprint test ready, all the best!"));
     return;
   }
 
-  // 6. Study & Task Planner / Study Intel / Milestones
+  // 5. Study & Task Planner / Study Intel / Milestones
   if (cmd.includes("study planner") || cmd.includes("task planner") || cmd.includes("study intel") || 
       cmd.includes("planner") || cmd.includes("task") || cmd.includes("milestone") || cmd.includes("schedule") || 
-      cmd.includes("timetable") || cmd.includes("படிப்பு திட்டம்") || cmd.includes("திட்டம்")) {
+      cmd.includes("timetable") || cmd.includes("படிப்பு திட்டம்") || cmd.includes("திட்டம்") || cmd.includes("टाइमटेबल") || cmd.includes("प्लानर")) {
     switchView("study-intel");
-    speakAuraVoice(isTamilScript ? "படிப்பு மற்றும் பணி திட்டம் திறக்கப்படுகிறது." : "Study and Task Planner open panniten. Ungaloda tasks ready!");
+    speakAuraVoice(isTamilScript ? "படிப்பு மற்றும் பணி திட்டம் திறக்கப்படுகிறது." : (isHindiScript ? "स्टडी प्लानर और टास्क शेड्यूल खोल दिया गया है।" : "Study and Task Planner open panniten. Ungaloda tasks ready!"));
     return;
   }
 
-  // 7. Student Performance / Marks / Grades / Analytics
+  // 6. Student Performance / Marks / Grades / Analytics
   if (cmd.includes("performance") || cmd.includes("mark") || cmd.includes("score") || 
       cmd.includes("grade") || cmd.includes("analytics") || cmd.includes("focus area") || 
-      cmd.includes("மதிப்பெண்") || cmd.includes("செயல்திறன்") || cmd.includes("மார்க்")) {
+      cmd.includes("மதிப்பெண்") || cmd.includes("செயல்திறன்") || cmd.includes("மார்க்") || cmd.includes("मार्क्स") || cmd.includes("रिजल्ट")) {
     switchView("student-performance");
-    speakAuraVoice(isTamilScript ? "மாணவர் செயல்திறன் மற்றும் மதிப்பெண்கள் பகுதி திறக்கப்படுகிறது." : "Student Performance analytics open pandren. Ungaloda marks and focus areas check pannikonga!");
+    speakAuraVoice(isTamilScript ? "மாணவர் செயல்திறன் மற்றும் மதிப்பெண்கள் பகுதி திறக்கப்படுகிறது." : (isHindiScript ? "छात्र प्रदर्शन और अंक विश्लेषण खोला गया है।" : "Student Performance analytics open pandren. Ungaloda marks and focus areas check pannikonga!"));
     return;
   }
 
-  // 8. Knowledge Vault / Notes / Documents
+  // 7. Knowledge Vault / Notes / Documents
   if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("document") || 
-      cmd.includes("notes") || cmd.includes("குறிப்பு") || cmd.includes("ஆவணம்")) {
+      cmd.includes("notes") || cmd.includes("குறிப்பு") || cmd.includes("ஆவணம்") || cmd.includes("नोट्स")) {
     switchView("knowledge-vault");
-    speakAuraVoice(isTamilScript ? "அறிவு பெட்டகம் மற்றும் குறிப்புகள் திறக்கப்படுகிறது." : "Knowledge Vault open panniten. Stored study notes ready!");
+    speakAuraVoice(isTamilScript ? "அறிவு பெட்டகம் மற்றும் குறிப்புகள் திறக்கப்படுகிறது." : (isHindiScript ? "नॉलेज वॉल्ट और नोट्स खोल दिया गया है।" : "Knowledge Vault open panniten. Stored study notes ready!"));
     return;
   }
 
-  // 9. Creation Studio / Deep Research / Presentation
+  // 8. Creation Studio / Deep Research / Presentation
   if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("presentation") || 
       cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("research") || 
-      cmd.includes("code") || cmd.includes("வடிவமைப்பு") || cmd.includes("விளக்கக்காட்சி")) {
+      cmd.includes("code") || cmd.includes("வடிவமைப்பு") || cmd.includes("விளக்கக்காட்சி") || cmd.includes("रिसर्च")) {
     switchView("creation-lab");
     if (cmd.includes("presentation") || cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("விளக்கக்காட்சி")) {
       const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
       if (presTab) presTab.click();
     }
-    speakAuraVoice(isTamilScript ? "வடிவமைப்பு மையம் திறக்கப்படுகிறது." : "Creation Studio open panniten!");
+    speakAuraVoice(isTamilScript ? "வடிவமைப்பு மையம் திறக்கப்படுகிறது." : (isHindiScript ? "क्रिएशन स्टूडियो खोल दिया गया है।" : "Creation Studio open panniten!"));
     return;
   }
 
-  // 10. YouTube Intel Workspace
+  // 9. YouTube Intel Workspace
   if (cmd.includes("youtube intel") || cmd.includes("video intel") || cmd.includes("யூடியூப்")) {
     switchView("youtube-intel");
     speakAuraVoice(isTamilScript ? "யூடியூப் இன்டெல் திறக்கப்படுகிறது." : "YouTube Intel workspace open panniten!");
     return;
   }
 
-  // 11. Profile Details / "Who Am I"
+  // 10. Profile Details / "Who Am I"
   if (cmd.includes("who am i") || cmd.includes("naan yaaru") || cmd.includes("my profile") || 
-      cmd.includes("my details") || cmd.includes("நான் யார்") || cmd.includes("என் விவரம்")) {
+      cmd.includes("my details") || cmd.includes("நான் யார்") || cmd.includes("என் விவரம்") || cmd.includes("मैं कौन हूँ")) {
     const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
     const name = profile.name || "Student";
     const std = profile.standard || "College & School Scholar";
-    speakAuraVoice(isTamilScript ? `நீங்கள் ${name}, ${std}-ல் பயில்கிறீர்கள்.` : `Neenga ${name}, ${std}-la padikareenga. Project Aura ungaluku eppothum udhavum!`);
+    speakAuraVoice(isTamilScript ? `நீங்கள் ${name}, ${std}-ல் பயில்கிறீர்கள்.` : (isHindiScript ? `आप ${name} हैं और ${std} के छात्र हैं।` : `Neenga ${name}, ${std}-la padikareenga. Project Aura ungaluku eppothum udhavum!`));
     return;
   }
 
-  // 12. Sign Out / Logout
-  if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out") || cmd.includes("veliye") || cmd.includes("வெளியேறு")) {
+  // 11. Sign Out / Logout
+  if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out") || cmd.includes("veliye") || cmd.includes("வெளியேறு") || cmd.includes("लॉगआउट")) {
     const portal = document.getElementById("auraLoginPortal");
     if (portal) {
       localStorage.removeItem("aura_auth_session");
       portal.classList.remove("authenticated");
       switchView("command-center");
-      speakAuraVoice(isTamilScript ? "ப்ராஜெக்ட் ஆராவிலிருந்து வெளியேறிவிட்டீர்கள்." : "Project Aura-la irunthu sign out aagiduchu.");
+      speakAuraVoice(isTamilScript ? "ப்ராஜெக்ட் ஆராவிலிருந்து வெளியேறிவிட்டீர்கள்." : (isHindiScript ? "प्रोजेक्ट ऑरा से लॉगआउट कर दिया गया है।" : "Project Aura-la irunthu sign out aagiduchu."));
     }
     return;
   }
 
-  // 13. System Utilities: Fullscreen, Scroll, Theme, Print
+  // 12. System Utilities: Fullscreen, Scroll, Theme, Print
   if (cmd.includes("fullscreen") || cmd.includes("full screen") || cmd.includes("screen perusu")) {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
@@ -6621,7 +6622,7 @@ function executeAuraVoiceCommand(rawTranscript) {
     window.scrollBy({ top: -600, behavior: "smooth" });
     return;
   }
-  if (cmd.includes("theme") || cmd.includes("colour maathu") || cmd.includes("வண்ணம்")) {
+  if (cmd.includes("theme") || cmd.includes("colour maathu") || cmd.includes("வண்ணம்") || cmd.includes("थीम")) {
     const themeBtn = document.getElementById("themeToggleBtn");
     if (themeBtn) themeBtn.click();
     speakAuraVoice("Theme options opened.");
@@ -6632,18 +6633,37 @@ function executeAuraVoiceCommand(rawTranscript) {
     return;
   }
 
-  // 14. Universal Fallback: General doubt or subject search routed to Command Center AI
+  // 13. Universal Fallback: Interactive Doubt Solving & Live Conversational Voice Response
   switchView("command-center");
+  let cleanQ = raw
+    .replace(/^(?:search|find|ask|thedu|soller|sollu|vilakku|batao|kya hai)\s+(?:for\s+|paththi\s+|ke baare me\s+)?/i, "")
+    .trim() || raw;
+
   const msgInput = document.getElementById("messageInput");
   if (msgInput) {
-    let cleanQ = raw
-      .replace(/^(?:search|find|ask|thedu|soller|sollu|vilakku)\s+(?:for\s+|paththi\s+)?/i, "")
-      .trim() || raw;
     msgInput.value = cleanQ;
     const sendBtn = document.getElementById("sendBtn");
     if (sendBtn) sendBtn.click();
   }
-  speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${raw}" பற்றிய பதில் பெறப்படுகிறது.` : `Command Center-la "${raw}" pathi solve pandren!`);
+
+  // Interactive Voice AI Response: Fetch spoken answer and speak back aloud!
+  fetch(`${BACKEND_URL}/api/ask`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: `Give a clear, 1-2 sentence spoken reply to this student question: "${cleanQ}". Answer naturally in ${isTamilScript ? "Tamil or Tanglish" : (isHindiScript ? "Hindi" : "English")}.` })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const spokenReply = (data && data.response) ? data.response.replace(/[*#_`~>\[\]]/g, "").slice(0, 220) : "";
+    if (spokenReply) {
+      speakAuraVoice(spokenReply);
+    } else {
+      speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் தயாராகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का समाधान तैयार है।` : `Command Center-la "${cleanQ}" solve pandren!`));
+    }
+  })
+  .catch(() => {
+    speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் பெறப்படுகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का उत्तर तैयार किया जा रहा है।` : `Command Center-la "${cleanQ}" solve pandren!`));
+  });
 }
 
 // ── CREATION STUDIO: DEEP RESEARCH TAB CONTROLLER ──
@@ -7466,12 +7486,20 @@ function initAuthGateway() {
   const tabSignupBtn = document.getElementById("tabSignupBtn");
   const loginForm = document.getElementById("auraLoginForm");
   const signupForm = document.getElementById("auraSignupForm");
+  const verifyForm = document.getElementById("auraVerifyForm");
   const alertBox = document.getElementById("auraAuthAlert");
   const fillDemoBtn = document.getElementById("fillDemoCredentialsBtn");
   const loginEmail = document.getElementById("auraLoginEmail");
   const loginPass = document.getElementById("auraLoginPassword");
   const signOutBtn = document.getElementById("auraSignOutBtn");
   const userNameLabel = document.getElementById("userNameLabel");
+
+  const verifyEmailLabel = document.getElementById("verifyTargetEmail");
+  const verifyCodeInput = document.getElementById("auraVerifyCodeInput");
+  const verifySubmitBtn = document.getElementById("auraVerifySubmitBtn");
+  const autoFillVerifyCodeBtn = document.getElementById("autoFillVerifyCodeBtn");
+  const verifyPasskeyBadge = document.getElementById("verifyPasskeyBadge");
+  const backToLoginBtn = document.getElementById("auraBackToLoginBtn");
 
   function showAlert(msg, isError = true) {
     if (!alertBox) return;
@@ -7484,6 +7512,21 @@ function initAuthGateway() {
     if (alertBox) alertBox.style.display = "none";
   }
 
+  function showVerifyView(targetEmail, code) {
+    if (loginForm) loginForm.style.display = "none";
+    if (signupForm) signupForm.style.display = "none";
+    if (tabLoginBtn) tabLoginBtn.classList.remove("active");
+    if (tabSignupBtn) tabSignupBtn.classList.remove("active");
+    if (verifyForm) verifyForm.style.display = "block";
+    if (verifyEmailLabel) verifyEmailLabel.textContent = targetEmail;
+    if (verifyPasskeyBadge && code) verifyPasskeyBadge.textContent = code;
+    if (verifyCodeInput) {
+      verifyCodeInput.value = "";
+      setTimeout(() => verifyCodeInput.focus(), 150);
+    }
+    showAlert(`✉️ Verification code generated for ${targetEmail}. Enter the 6-digit code to activate your account.`, false);
+  }
+
   // Switch between Sign In and Create Account
   if (tabLoginBtn && tabSignupBtn && loginForm && signupForm) {
     tabLoginBtn.addEventListener("click", () => {
@@ -7491,6 +7534,7 @@ function initAuthGateway() {
       tabSignupBtn.classList.remove("active");
       loginForm.style.display = "block";
       signupForm.style.display = "none";
+      if (verifyForm) verifyForm.style.display = "none";
       hideAlert();
     });
     tabSignupBtn.addEventListener("click", () => {
@@ -7498,7 +7542,28 @@ function initAuthGateway() {
       tabLoginBtn.classList.remove("active");
       signupForm.style.display = "block";
       loginForm.style.display = "none";
+      if (verifyForm) verifyForm.style.display = "none";
       hideAlert();
+    });
+  }
+
+  // Back to login button from verification view
+  if (backToLoginBtn) {
+    backToLoginBtn.addEventListener("click", () => {
+      if (verifyForm) verifyForm.style.display = "none";
+      if (loginForm) loginForm.style.display = "block";
+      if (tabLoginBtn) tabLoginBtn.classList.add("active");
+      if (tabSignupBtn) tabSignupBtn.classList.remove("active");
+      hideAlert();
+    });
+  }
+
+  // Quick auto-fill passkey button
+  if (autoFillVerifyCodeBtn && verifyCodeInput && verifyPasskeyBadge) {
+    autoFillVerifyCodeBtn.addEventListener("click", () => {
+      verifyCodeInput.value = verifyPasskeyBadge.textContent.trim();
+      playTactileSound("click");
+      showAlert("Passkey auto-filled. Click 'Verify Code & Launch' to activate your account.", false);
     });
   }
 
@@ -7540,7 +7605,7 @@ function initAuthGateway() {
       const email = loginEmail ? loginEmail.value.trim() : "";
       const password = loginPass ? loginPass.value.trim() : "";
       if (!email || !password) {
-        showAlert("Please enter both email and password.");
+        showAlert("✕ Unsuccessful: Please enter both email and password.");
         return;
       }
 
@@ -7558,10 +7623,15 @@ function initAuthGateway() {
         });
         const data = await res.json();
         if (!data.success) {
-          throw new Error(data.error || "Authentication failed. Invalid email or password.");
+          throw new Error(data.error || "Unsuccessful: Invalid email or password. Please verify credentials.");
         }
 
-        // Store authentic user session
+        if (data.requireVerification) {
+          showVerifyView(data.email, data.verificationCode);
+          return;
+        }
+
+        // Store authentic user session in browser & database
         localStorage.setItem("aura_auth_session", JSON.stringify(data));
         localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
 
@@ -7573,12 +7643,12 @@ function initAuthGateway() {
 
         setTimeout(() => {
           portal.classList.add("authenticated");
-          if (userNameLabel) userNameLabel.textContent = data.user.name || "Student";
+          if (userNameLabel) userNameLabel.textContent = (data.user && data.user.name) || "Student";
           if (signOutBtn) signOutBtn.style.display = "inline-flex";
           if (typeof loadStudentPerformance === "function") loadStudentPerformance();
         }, 550);
       } catch (err) {
-        showAlert(err.message || "Failed to sign in. Please verify your email and password.");
+        showAlert(err.message || "✕ Unsuccessful: Invalid email or password. Please verify your credentials.");
         playTactileSound("error");
       } finally {
         if (submitBtn) {
@@ -7601,14 +7671,14 @@ function initAuthGateway() {
       const stream = document.getElementById("auraSignupStream")?.value;
 
       if (!email || !password) {
-        showAlert("Email and password are required.");
+        showAlert("✕ Unsuccessful: Email and password are required.");
         return;
       }
 
       const submitBtn = document.getElementById("auraSignupSubmitBtn");
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Creating Scholar Account...";
+        submitBtn.textContent = "Generating Verification Passkey...";
       }
 
       try {
@@ -7619,7 +7689,13 @@ function initAuthGateway() {
         });
         const data = await res.json();
         if (!data.success) {
-          throw new Error(data.error || "Failed to create account.");
+          throw new Error(data.error || "Unsuccessful: Failed to register account.");
+        }
+
+        if (data.requireVerification) {
+          showVerifyView(data.email, data.verificationCode);
+          playTactileSound("dispatch");
+          return;
         }
 
         localStorage.setItem("aura_auth_session", JSON.stringify(data));
@@ -7638,12 +7714,70 @@ function initAuthGateway() {
           if (typeof loadStudentPerformance === "function") loadStudentPerformance();
         }, 550);
       } catch (err) {
-        showAlert(err.message || "Registration failed. Try with different credentials.");
+        showAlert(err.message || "✕ Unsuccessful: Registration failed. Try with different credentials.");
         playTactileSound("error");
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `<span>Create Account & Launch</span><span class="auth-btn-arrow">→</span>`;
+        }
+      }
+    });
+  }
+
+  // Handle Email Verification submission
+  if (verifyForm) {
+    verifyForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const code = verifyCodeInput ? verifyCodeInput.value.trim() : "";
+      const email = (verifyEmailLabel ? verifyEmailLabel.textContent.trim() : "") ||
+                    (document.getElementById("auraSignupEmail")?.value.trim() || "");
+
+      if (!code || code.length !== 6) {
+        showAlert("✕ Unsuccessful: Please enter the complete 6-digit verification code.");
+        playTactileSound("error");
+        return;
+      }
+
+      if (verifySubmitBtn) {
+        verifySubmitBtn.disabled = true;
+        verifySubmitBtn.textContent = "Verifying Passkey...";
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/student/auth/verify-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.error || "Unsuccessful: Invalid verification code. Please check your code.");
+        }
+
+        localStorage.setItem("aura_auth_session", JSON.stringify(data));
+        localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+
+        showAlert("✓ Email verified successfully! Launching Project Aura...", false);
+        playTactileSound("success");
+        if (typeof playProjectAuraCinematicImpact === "function") {
+          playProjectAuraCinematicImpact(0.85);
+        }
+
+        setTimeout(() => {
+          portal.classList.add("authenticated");
+          if (userNameLabel) userNameLabel.textContent = (data.user && data.user.name) || "Student";
+          if (signOutBtn) signOutBtn.style.display = "inline-flex";
+          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
+        }, 550);
+      } catch (err) {
+        showAlert(err.message || "✕ Unsuccessful: Verification failed. Invalid code.");
+        playTactileSound("error");
+      } finally {
+        if (verifySubmitBtn) {
+          verifySubmitBtn.disabled = false;
+          verifySubmitBtn.innerHTML = `<span>Verify Code &amp; Launch Project Aura</span><span class="auth-btn-arrow">✓</span>`;
         }
       }
     });

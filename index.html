@@ -106,6 +106,37 @@
         </button>
       </form>
 
+      <!-- EMAIL VERIFICATION FORM -->
+      <form id="auraVerifyForm" class="auth-form-card" style="display:none;" autocomplete="off">
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="font-size:26px; margin-bottom:4px;">✉️</div>
+          <div style="font-size:15px; font-weight:800; color:var(--text-primary);">Verify Your Email Address</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.4;">
+            A 6-digit verification code has been generated for <strong id="verifyTargetEmail" style="color:var(--accent-gold);"></strong>. Enter the code below to activate your account:
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraVerifyCodeInput">6-Digit Verification Code / Passkey</label>
+          <input type="text" id="auraVerifyCodeInput" class="auth-glass-input" placeholder="e.g. 842109" maxlength="6" style="text-align:center; font-size:22px; font-weight:800; letter-spacing:0.25em; color:var(--accent-cyan);" required />
+        </div>
+
+        <button type="submit" id="auraVerifySubmitBtn" class="auth-submit-glow-btn">
+          <span>Verify Code &amp; Launch Project Aura</span>
+          <span class="auth-btn-arrow">✓</span>
+        </button>
+
+        <div class="auth-demo-shortcut" id="autoFillVerifyCodeBtn" style="margin-top:10px; cursor:pointer;" title="Click to auto-enter the generated passkey">
+          <span>🔑 Quick Passkey: <strong id="verifyPasskeyBadge">842109</strong> (Click to auto-fill)</span>
+        </div>
+
+        <div style="text-align:center; margin-top:12px;">
+          <button type="button" id="auraBackToLoginBtn" style="background:none; border:none; color:var(--text-secondary); font-size:12px; cursor:pointer; text-decoration:underline;">
+            ← Back to Sign In
+          </button>
+        </div>
+      </form>
+
       <div class="auth-footer-note">
         <span>🔒 Authentic Academic Protocol · User-Isolated Device Analytics</span>
       </div>
@@ -2133,73 +2164,84 @@
   <!-- =======================================================
        5. CUTE ROBOT VOICE ASSISTANT MODAL (MIC TRIGGERED)
   ======================================================= -->
+  <!-- =======================================================
+       5. FUTURISTIC CYBERNETIC ROBOT VOICE ASSISTANT MODAL (MIC TRIGGERED)
+  ======================================================= -->
   <div class="cute-robot-overlay" id="cuteRobotModal">
     <div class="cute-robot-backdrop-blur" id="robotBackdropBlur"></div>
-    <div class="cute-robot-card" id="cuteRobotCard">
+    <div class="cute-robot-card futuristic-robot-chassis" id="cuteRobotCard">
 
-
-      <!-- Floating Antenna with Pulse Light -->
+      <!-- Quantum Cyber Beacon Antenna -->
       <div class="robot-antenna">
         <div class="antenna-bulb" id="antennaBulb"></div>
         <div class="antenna-stick"></div>
       </div>
 
-      <!-- Sound Wave Rings -->
+      <!-- Holographic Sonic Wave Rings -->
       <div class="robot-sound-rings" id="robotSoundRings">
         <span></span><span></span><span></span>
       </div>
 
-      <!-- Cute Head -->
-      <div class="robot-head" id="robotHead">
+      <!-- Futuristic Robot Head -->
+      <div class="robot-head futuristic-cyber-head" id="robotHead">
         <div class="robot-ear robot-ear-left"></div>
         <div class="robot-ear robot-ear-right"></div>
 
-        <!-- Visor LED Face -->
-        <div class="robot-visor" id="robotVisor">
+        <!-- Visor LED Cyber HUD Screen -->
+        <div class="robot-visor futuristic-cyber-visor" id="robotVisor">
+          <div class="cyber-scanline-overlay"></div>
           <div class="robot-blush blush-left"></div>
           <div class="robot-blush blush-right"></div>
 
           <div class="robot-eyes-row" id="robotEyesRow">
-            <div class="cute-eye eye-left" id="robotEyeLeft">
-              <span class="eye-glint"></span>
+            <div class="cute-eye eye-left cyber-eye" id="robotEyeLeft">
+              <span class="eye-glint cyber-glint"></span>
             </div>
-            <div class="cute-eye eye-right" id="robotEyeRight">
-              <span class="eye-glint"></span>
+            <div class="cute-eye eye-right cyber-eye" id="robotEyeRight">
+              <span class="eye-glint cyber-glint"></span>
             </div>
           </div>
 
-          <div class="robot-mouth" id="robotMouth"></div>
+          <div class="robot-mouth cyber-mouth" id="robotMouth"></div>
         </div>
       </div>
 
-      <!-- Floating Body & Little Hands -->
+      <!-- Floating Cybernetic Body & Chest Reactor -->
       <div class="robot-body" id="robotBody">
         <div class="robot-hand hand-left"></div>
-        <div class="robot-chest-core">
+        <div class="robot-chest-core cyber-reactor-core">
           <span class="chest-heart-pulse">◈</span>
         </div>
         <div class="robot-hand hand-right"></div>
       </div>
 
-      <!-- Voice Persona Gender Switcher -->
-      <div class="robot-voice-gender-pill-row" style="display:flex; gap:8px; justify-content:center; margin-bottom:8px;">
-        <button type="button" class="robot-gender-pill-btn active" id="robotVoiceFemaleBtn">♀ Female Voice</button>
-        <button type="button" class="robot-gender-pill-btn" id="robotVoiceMaleBtn">♂ Male Voice</button>
+      <!-- Futuristic Neural Status Badge -->
+      <div class="cyber-neural-status-badge">
+        <span class="cyber-pulse-dot"></span>
+        <span>QUANTUM NEURAL VOICE AI · ONLINE</span>
       </div>
 
-      <!-- Dialect Selector: Tanglish/English vs Tamil -->
-      <div class="robot-voice-lang-pill-row" style="display:flex; gap:8px; justify-content:center; margin-bottom:12px;">
-        <button type="button" class="robot-gender-pill-btn active" id="robotLangTanglishBtn">🌐 Tanglish / English</button>
-        <button type="button" class="robot-gender-pill-btn" id="robotLangTamilBtn">🇮🇳 தமிழ் (Tamil)</button>
+      <!-- Voice Persona Gender Switcher -->
+      <div class="robot-voice-gender-pill-row" style="display:flex; gap:8px; justify-content:center; margin-bottom:4px;">
+        <button type="button" class="robot-gender-pill-btn active" id="robotVoiceFemaleBtn">♀ Aura Female</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotVoiceMaleBtn">♂ Aero Male</button>
+      </div>
+
+      <!-- Multilingual Dialect Selector -->
+      <div class="robot-voice-lang-pill-row" style="display:flex; gap:6px; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+        <button type="button" class="robot-gender-pill-btn active" id="robotLangTanglishBtn">🌐 Tanglish / All</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangTamilBtn">🇮🇳 தமிழ்</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangHindiBtn">🇮🇳 हिन्दी</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangEnglishBtn">🇬🇧 English</button>
       </div>
 
       <!-- Status & Transcript -->
-      <div class="robot-status-caption" id="robotStatusCaption">Aura Voice Intelligence (Auto-executes on pause)</div>
-      <div class="robot-transcript-box" id="robotTranscriptBox">Speak in Tanglish, Tamil or English... I will auto-execute when you stop speaking!</div>
+      <div class="robot-status-caption" id="robotStatusCaption">Futuristic AI Voice Intelligence (Auto-executes on pause)</div>
+      <div class="robot-transcript-box futuristic-transcript-hud" id="robotTranscriptBox">Speak in any language (English, Tanglish, Tamil, Hindi)... I will listen and act!</div>
 
       <!-- Action Buttons -->
       <div class="robot-controls-row">
-        <button class="btn-robot-action btn-robot-send" id="robotSendBtn">Done & Execute ↑</button>
+        <button class="btn-robot-action btn-robot-send" id="robotSendBtn">Done &amp; Execute ↑</button>
         <button class="btn-robot-action btn-robot-cancel" id="robotCancelBtn">Cancel ✕</button>
       </div>
     </div>

@@ -458,6 +458,8 @@ function getFiles() {
 ========================================== */
 
 module.exports = {
+    loadDatabase,
+    saveDatabase,
 
     createConversation,
     getConversations,
