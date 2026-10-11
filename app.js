@@ -1271,7 +1271,10 @@ function switchView(viewKey) {
   if (viewKey === "mock-test") initSemesterMockTest();
   if (viewKey === "engineering-hub") {
     if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
-    else if (typeof initEngineeringHub === "function") initEngineeringHub();
+    if (typeof initEngineeringHub === "function") initEngineeringHub();
+    if (typeof window.loadYouTubeLectures === "function") {
+      window.loadYouTubeLectures();
+    }
   }
 
   closeMobileSidebar();
@@ -4949,6 +4952,8 @@ const robotCancelBtn = document.getElementById("robotCancelBtn");
 let robotSpeechRec = null;
 let robotExpressionInterval = null;
 let currentRobotTranscript = "";
+let robotLanguage = "en-IN"; // Defaults to en-IN for natural Tanglish & Indian English
+let robotSilenceTimer = null;
 
 function setCuteRobotExpression(expression) {
   if (!robotEyeLeft || !robotEyeRight || !robotMouth) return;
@@ -4980,12 +4985,19 @@ function openCuteRobotAssistant() {
   if (!cuteRobotModal) return;
   cuteRobotModal.classList.add("active");
   currentRobotTranscript = "";
+  if (robotSilenceTimer) {
+    clearTimeout(robotSilenceTimer);
+    robotSilenceTimer = null;
+  }
+
   if (robotTranscriptBox) {
-    robotTranscriptBox.textContent = "Listening to your voice... Speak a directive!";
+    robotTranscriptBox.textContent = robotLanguage === "ta-IN" 
+      ? "தமிழில் பேசுங்கள்... பேசி முடித்ததும் தானாக செயல்படும்!" 
+      : "Listening in Tanglish, Tamil & English... Speak your command!";
     robotTranscriptBox.style.color = "var(--text-secondary)";
   }
   if (robotStatusCaption) {
-    robotStatusCaption.textContent = "Aura Robot is Listening...";
+    robotStatusCaption.textContent = robotLanguage === "ta-IN" ? "ஆரா குரல் கேட்கிறது... ✦" : "Aura Voice Intelligence Listening... ✦";
   }
 
   setCuteRobotExpression("listening");
@@ -5016,7 +5028,7 @@ function openCuteRobotAssistant() {
       robotSpeechRec = new SpeechRec();
       robotSpeechRec.continuous = true;
       robotSpeechRec.interimResults = true;
-      robotSpeechRec.lang = "en-US";
+      robotSpeechRec.lang = robotLanguage;
 
       robotSpeechRec.onresult = (e) => {
         let finalTxt = "";
@@ -5036,20 +5048,45 @@ function openCuteRobotAssistant() {
             robotTranscriptBox.style.color = "var(--text-primary)";
           }
           if (robotStatusCaption) {
-            robotStatusCaption.textContent = "I heard that! ✧";
+            robotStatusCaption.textContent = "I heard that! (Auto-executing when you pause) ✧";
           }
           setCuteRobotExpression("happy");
+
+          // USER PAUSE AUTO-CLOSE & IMMEDIATE EXECUTION:
+          // Detect student stopping speech (850ms pause) -> automatically close modal and run command!
+          if (robotSilenceTimer) clearTimeout(robotSilenceTimer);
+          robotSilenceTimer = setTimeout(() => {
+            if (cuteRobotModal && cuteRobotModal.classList.contains("active") && currentRobotTranscript) {
+              const cmdToExecute = currentRobotTranscript.trim();
+              if (cmdToExecute && !cmdToExecute.includes("Listening") && !cmdToExecute.includes("பேசுங்கள்")) {
+                if (robotStatusCaption) {
+                  robotStatusCaption.textContent = "Analyzing & Executing directive... ✧";
+                }
+                closeCuteRobotAssistant();
+                executeAuraVoiceCommand(cmdToExecute);
+              }
+            }
+          }, 850);
         }
       };
 
       robotSpeechRec.onerror = (err) => {
         console.warn("[SPEECH REC NOTE]", err.error);
         if (robotTranscriptBox && !currentRobotTranscript) {
-          robotTranscriptBox.textContent = "Microphone ready. Speak or edit directive below.";
+          robotTranscriptBox.textContent = "Microphone ready. Speak in Tanglish or Tamil.";
         }
       };
 
       robotSpeechRec.onend = () => {
+        // If user finished speech and modal is active, auto-close and execute
+        if (cuteRobotModal && cuteRobotModal.classList.contains("active") && currentRobotTranscript) {
+          const cmdToExecute = currentRobotTranscript.trim();
+          if (cmdToExecute && !cmdToExecute.includes("Listening") && !cmdToExecute.includes("பேசுங்கள்")) {
+            closeCuteRobotAssistant();
+            executeAuraVoiceCommand(cmdToExecute);
+            return;
+          }
+        }
         if (cuteRobotModal && cuteRobotModal.classList.contains("active") && !currentRobotTranscript) {
           try { robotSpeechRec.start(); } catch (_) { }
         }
@@ -5068,6 +5105,10 @@ function openCuteRobotAssistant() {
 }
 
 function closeCuteRobotAssistant() {
+  if (robotSilenceTimer) {
+    clearTimeout(robotSilenceTimer);
+    robotSilenceTimer = null;
+  }
   if (!cuteRobotModal) return;
   cuteRobotModal.classList.remove("active");
   if (robotExpressionInterval) {
@@ -5091,10 +5132,52 @@ function initCuteRobotVoice() {
   const robotFemaleBtn = document.getElementById("robotVoiceFemaleBtn");
   const robotMaleBtn = document.getElementById("robotVoiceMaleBtn");
   if (robotFemaleBtn) {
-    robotFemaleBtn.addEventListener("click", () => setVoiceGender("female"));
+    robotFemaleBtn.addEventListener("click", () => {
+      setVoiceGender("female");
+      robotFemaleBtn.classList.add("active");
+      if (robotMaleBtn) robotMaleBtn.classList.remove("active");
+    });
   }
   if (robotMaleBtn) {
-    robotMaleBtn.addEventListener("click", () => setVoiceGender("male"));
+    robotMaleBtn.addEventListener("click", () => {
+      setVoiceGender("male");
+      robotMaleBtn.classList.add("active");
+      if (robotFemaleBtn) robotFemaleBtn.classList.remove("active");
+    });
+  }
+
+  // Tanglish / English vs Tamil Dialect Selectors
+  const robotLangTanglishBtn = document.getElementById("robotLangTanglishBtn");
+  const robotLangTamilBtn = document.getElementById("robotLangTamilBtn");
+
+  if (robotLangTanglishBtn) {
+    robotLangTanglishBtn.addEventListener("click", () => {
+      robotLanguage = "en-IN";
+      robotLangTanglishBtn.classList.add("active");
+      if (robotLangTamilBtn) robotLangTamilBtn.classList.remove("active");
+      if (robotTranscriptBox && !currentRobotTranscript) {
+        robotTranscriptBox.textContent = "Listening in Tanglish & English... Speak now!";
+      }
+      if (robotSpeechRec) {
+        try { robotSpeechRec.stop(); } catch (_) {}
+      }
+      playTactileSound("click");
+    });
+  }
+
+  if (robotLangTamilBtn) {
+    robotLangTamilBtn.addEventListener("click", () => {
+      robotLanguage = "ta-IN";
+      robotLangTamilBtn.classList.add("active");
+      if (robotLangTanglishBtn) robotLangTanglishBtn.classList.remove("active");
+      if (robotTranscriptBox && !currentRobotTranscript) {
+        robotTranscriptBox.textContent = "தமிழில் பேசுங்கள்... குரல் கேட்கிறது!";
+      }
+      if (robotSpeechRec) {
+        try { robotSpeechRec.stop(); } catch (_) {}
+      }
+      playTactileSound("click");
+    });
   }
 
   if (robotCancelBtn) {
@@ -5109,7 +5192,7 @@ function initCuteRobotVoice() {
     robotSendBtn.addEventListener("click", () => {
       const text = currentRobotTranscript || (robotTranscriptBox ? robotTranscriptBox.textContent.replace(/^"|"$/g, "").trim() : "");
       closeCuteRobotAssistant();
-      if (text && !text.includes("Listening to your voice") && !text.includes("Microphone ready")) {
+      if (text && !text.includes("Listening") && !text.includes("பேசுங்கள்") && !text.includes("Microphone ready")) {
         executeAuraVoiceCommand(text);
       }
     });
@@ -5945,15 +6028,31 @@ function initEngineeringHub() {
     });
   }
 
-  // YouTube Video Recommendations
-  async function loadYouTubeLectures() {
+  // YouTube Video Recommendations (Globally Accessible Engine)
+  window.loadYouTubeLectures = async function(subjectOverride) {
+    const engVideosListGrid = document.getElementById("engVideosListGrid");
+    const engVideoLangSelect = document.getElementById("engVideoLangSelect");
+    const engVideoLangTag = document.getElementById("engVideoLangTag");
     if (!engVideosListGrid) return;
-    const lang = engVideoLangSelect ? engVideoLangSelect.value : "Tamil";
+
+    const lang = (engVideoLangSelect && engVideoLangSelect.value) ? engVideoLangSelect.value : "Tamil";
     if (engVideoLangTag) engVideoLangTag.textContent = `Language: ${lang}`;
 
-    const currentSubj = engineeringHubState.activeSubject || collegeAndSchoolState.activeSubject || "Core Engineering Subject";
+    const currentSubj = subjectOverride || 
+      (typeof collegeAndSchoolState !== "undefined" && collegeAndSchoolState.activeSubject) ||
+      (typeof engineeringHubState !== "undefined" && engineeringHubState.activeSubject) ||
+      "Data Structures & Algorithms";
 
-    engVideosListGrid.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">Searching YouTube for high-rated ${lang} lectures for <strong>${escapeHtml(currentSubj)}</strong>...</div>`;
+    const currentBranch = (typeof collegeAndSchoolState !== "undefined" && collegeAndSchoolState.activeCollegeBranch) ||
+      (typeof engineeringHubState !== "undefined" && engineeringHubState.activeBranch) ||
+      "CSE";
+
+    engVideosListGrid.innerHTML = `
+      <div style="text-align:center; padding:20px; color:var(--text-secondary); display:flex; flex-direction:column; align-items:center; gap:8px;">
+        <div style="width:12px; height:12px; border-radius:50%; background:var(--accent-gold); box-shadow:0 0 12px var(--accent-gold);"></div>
+        <div style="font-size:12px;">Searching YouTube for high-rated <strong>${escapeHtml(lang)}</strong> lectures for <strong>${escapeHtml(currentSubj)}</strong>...</div>
+      </div>
+    `;
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/videos`, {
@@ -5962,36 +6061,45 @@ function initEngineeringHub() {
         body: JSON.stringify({
           subject: currentSubj,
           language: lang,
-          branch: engineeringHubState.activeBranch
+          branch: currentBranch
         })
       });
 
       const data = await res.json();
-      if (!data.success || !data.videos) throw new Error("Could not load videos");
+      if (!data.success || !data.videos || data.videos.length === 0) {
+        throw new Error("No video results returned");
+      }
 
       engVideosListGrid.innerHTML = data.videos.map(v => `
-        <div style="display:flex; gap:12px; padding:10px; background:rgba(255,255,255,0.02); border:1px solid var(--border-subtle); border-radius:var(--radius-md); align-items:center;">
-          <img src="${escapeHtml(v.thumbnail)}" style="width:110px; height:68px; object-fit:cover; border-radius:6px;" alt="Video thumbnail" />
+        <div class="eng-video-item-card" style="display:flex; gap:12px; padding:10px; background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:var(--radius-md); align-items:center; transition:all 0.2s ease;">
+          <img src="${escapeHtml(v.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300')}" style="width:110px; height:68px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid rgba(255,255,255,0.08);" alt="Video thumbnail" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300'" />
           <div style="flex:1; min-width:0;">
-            <div style="font-size:13px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(v.title)}</div>
-            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(v.channel)} · <span style="color:var(--accent-gold); font-weight:600;">${escapeHtml(v.language)}</span></div>
-            <p style="font-size:11px; color:var(--text-tertiary); margin:4px 0 0 0; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${escapeHtml(v.description)}</p>
+            <div style="font-size:13px; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(v.title)}">${escapeHtml(v.title)}</div>
+            <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">
+              📺 <strong>${escapeHtml(v.channel)}</strong> · <span style="color:var(--accent-gold); font-weight:700;">${escapeHtml(v.language || lang)}</span>
+            </div>
+            <p style="font-size:11px; color:var(--text-tertiary); margin:4px 0 0 0; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${escapeHtml(v.description || 'Verified curriculum lecture & exam walkthrough.')}</p>
           </div>
-          <div style="display:flex; flex-direction:column; gap:4px;">
-            <button class="btn-vault-action" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url || '')}', '${escapeHtml(v.title || '').replace(/'/g, "\\'")}', '${escapeHtml(v.channel || '').replace(/'/g, "\\'")}')" style="white-space:nowrap; font-size:11px;">
+          <div style="display:flex; flex-direction:column; gap:4px; flex-shrink:0;">
+            <button type="button" class="btn-vault-action" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url || '')}', '${escapeHtml(v.title || '').replace(/'/g, "\\'")}', '${escapeHtml(v.channel || '').replace(/'/g, "\\'")}')" style="white-space:nowrap; font-size:11px; background:var(--accent-gold); color:#000; font-weight:700; padding:6px 12px; border-radius:6px;">
               ▷ In-App
             </button>
-            <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="white-space:nowrap; font-size:11px; text-decoration:none; text-align:center;">
+            <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="white-space:nowrap; font-size:11px; text-decoration:none; text-align:center; padding:5px 10px;">
               ↗ YouTube
             </a>
           </div>
         </div>
       `).join("");
     } catch (err) {
-      engVideosListGrid.innerHTML = `<div style="color:var(--text-secondary); padding:16px; text-align:center;">Video recommendations currently unavailable for ${escapeHtml(currentSubj)}.</div>`;
+      engVideosListGrid.innerHTML = `
+        <div style="color:var(--text-secondary); padding:16px; text-align:center; background:rgba(255,255,255,0.02); border-radius:8px;">
+          <div style="font-size:12px; margin-bottom:6px;">Recommended videos ready for ${escapeHtml(currentSubj)}</div>
+          <button type="button" class="btn-vault-action" onclick="window.loadYouTubeLectures('${escapeHtml(currentSubj)}')" style="font-size:11px; padding:4px 12px; background:var(--accent-gold); color:#000; font-weight:700; border-radius:6px; cursor:pointer;">🔄 Reload Videos</button>
+        </div>
+      `;
     }
-  }
-  window.loadYouTubeLectures = loadYouTubeLectures;
+  };
+  const loadYouTubeLectures = window.loadYouTubeLectures;
 
   // Live filter colleges by search query
   const engCollegeSearchInput = document.getElementById("engCollegeSearchInput");
@@ -6199,18 +6307,34 @@ function speakAuraVoice(text) {
     utterance.pitch = state.voiceGender === "female" ? 1.05 : 0.95;
 
     const voices = window.speechSynthesis.getVoices();
+    const isTamilScript = /[\u0B80-\u0BFF]/.test(cleanText);
     let chosen = null;
-    if (state.voiceGender === "female") {
-      chosen = voices.find(v => v.lang.startsWith("en") && 
-        (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Female") || v.name.includes("Google US English"))) 
-        || voices.find(v => v.lang.startsWith("en")) 
+
+    if (isTamilScript) {
+      // Find native Tamil TTS voice or Indian locale fallback
+      chosen = voices.find(v => v.lang.startsWith("ta") || v.lang.includes("ta-IN") || v.name.toLowerCase().includes("tamil"))
+        || voices.find(v => v.lang.includes("IN"))
         || voices[0];
     } else {
-      chosen = voices.find(v => v.lang.startsWith("en") && 
-        (v.name.includes("David") || v.name.includes("Daniel") || v.name.includes("Guy") || v.name.includes("George") || v.name.includes("Male") || v.name.includes("Google UK English Male"))) 
-        || voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("zira") && !v.name.toLowerCase().includes("samantha")) 
-        || voices[0];
+      // For Tanglish and English, use Indian English voice (en-IN) for accurate Tamil/Tanglish pronunciation
+      const indianVoice = voices.find(v => (v.lang === "en-IN" || v.lang.includes("IN")) &&
+        (state.voiceGender === "female" ? (!v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("female")) : (v.name.toLowerCase().includes("male"))));
+
+      if (indianVoice) {
+        chosen = indianVoice;
+      } else if (state.voiceGender === "female") {
+        chosen = voices.find(v => v.lang.startsWith("en") && 
+          (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Female") || v.name.includes("Google US English"))) 
+          || voices.find(v => v.lang.startsWith("en")) 
+          || voices[0];
+      } else {
+        chosen = voices.find(v => v.lang.startsWith("en") && 
+          (v.name.includes("David") || v.name.includes("Daniel") || v.name.includes("Guy") || v.name.includes("George") || v.name.includes("Male") || v.name.includes("Google UK English Male"))) 
+          || voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("zira") && !v.name.toLowerCase().includes("samantha")) 
+          || voices[0];
+      }
     }
+
     if (chosen) utterance.voice = chosen;
 
     utterance.onend = () => {
@@ -6251,7 +6375,7 @@ function initGlobalVoiceAssistant() {
   auraVoiceRecognition = new SpeechRecognition();
   auraVoiceRecognition.continuous = false;
   auraVoiceRecognition.interimResults = true;
-  auraVoiceRecognition.lang = "en-US";
+  auraVoiceRecognition.lang = "en-IN"; // Set to en-IN for natural Tanglish & Indian English recognition
 
   let accumulatedSpeech = "";
 
@@ -6283,13 +6407,13 @@ function initGlobalVoiceAssistant() {
     }
     accumulatedSpeech = (finalPart || interimPart || "").trim();
 
-    // Debounce silence: wait for student to finish speaking patiently
+    // Debounce silence: when student finishes speaking (850ms pause), auto-stop and execute
     if (voiceSilenceTimer) clearTimeout(voiceSilenceTimer);
     voiceSilenceTimer = setTimeout(() => {
       if (isAuraVoiceActive && accumulatedSpeech) {
         try { auraVoiceRecognition.stop(); } catch (_) {}
       }
-    }, 1100);
+    }, 850);
   };
 
   if (globalVoiceBtn) {
@@ -6305,145 +6429,221 @@ function initGlobalVoiceAssistant() {
   }
 }
 
+// ── BILINGUAL TANGLISH & TAMIL VOICE DIRECTIVE INTERPRETER ──
 function executeAuraVoiceCommand(rawTranscript) {
   if (isVoiceCommandExecuting) return;
-  const cmd = (rawTranscript || "").toLowerCase().trim();
-  if (!cmd) return;
+  const raw = (rawTranscript || "").trim();
+  if (!raw) return;
 
+  const cmd = raw.toLowerCase().replace(/[.,?!;:_]/g, " ").replace(/\s+/g, " ").trim();
   isVoiceCommandExecuting = true;
   playTactileSound("success");
-  setTimeout(() => { isVoiceCommandExecuting = false; }, 1600);
+  setTimeout(() => { isVoiceCommandExecuting = false; }, 1400);
 
-  // 1. Voice gender toggle commands
-  if (cmd.includes("male voice") || cmd.includes("switch to male") || cmd.includes("set male voice")) {
+  const isTamilScript = /[\u0B80-\u0BFF]/.test(raw);
+
+  // 1. Voice Persona Gender Toggle
+  if (cmd.includes("male voice") || cmd.includes("switch to male") || cmd.includes("aan voice") || cmd.includes("aan kural") || cmd.includes("ஆண் குரல்") || cmd.includes("boy voice")) {
     setVoiceGender("male");
-    speakAuraVoice("Voice persona switched to Aero Male Voice.");
+    speakAuraVoice(isTamilScript ? "ஆண் குரலுக்கு மாற்றப்பட்டது." : "Aero male voice-ku switch panniyachu.");
     return;
   }
-  if (cmd.includes("female voice") || cmd.includes("switch to female") || cmd.includes("set female voice")) {
+  if (cmd.includes("female voice") || cmd.includes("switch to female") || cmd.includes("pen voice") || cmd.includes("pen kural") || cmd.includes("பெண் குரல்") || cmd.includes("girl voice")) {
     setVoiceGender("female");
-    speakAuraVoice("Voice persona switched to Aura Female Voice.");
+    speakAuraVoice(isTamilScript ? "பெண் குரலுக்கு மாற்றப்பட்டது." : "Aura female voice-ku switch panniyachu.");
     return;
   }
 
-  // 2. Navigation Commands across the entire project
-  if (cmd.includes("college") || cmd.includes("school") || cmd.includes("engineering")) {
+  // 2. Recommended YouTube Videos Directive
+  if (cmd.includes("recommended video") || cmd.includes("video varala") || cmd.includes("videos varala") || 
+      cmd.includes("videos kaattu") || cmd.includes("video kaattu") || cmd.includes("lecture video") || 
+      cmd.includes("video open") || cmd.includes("வீடியோ") || cmd.includes("காணொளி") || 
+      cmd.includes("video play") || cmd.includes("videos podu")) {
     switchView("engineering-hub");
-    speakAuraVoice("Opening College and School Hub.");
+    if (typeof window.loadYouTubeLectures === "function") {
+      window.loadYouTubeLectures();
+    }
+    const videosCard = document.getElementById("engVideosCard");
+    if (videosCard) {
+      setTimeout(() => videosCard.scrollIntoView({ behavior: "smooth" }), 200);
+    }
+    speakAuraVoice(isTamilScript ? "பரிந்துரைக்கப்பட்ட கல்லூரி மற்றும் பள்ளி வீடியோக்கள் தயாராக உள்ளன." : "Sari! Unga active subject-kku curated YouTube recommended lectures load aagiduchu.");
     return;
   }
-  if (cmd.includes("command center") && (cmd.includes("search") || cmd.includes("find") || cmd.includes("ask"))) {
+
+  // 3. College & School Hub / Subjects / Syllabus Directive
+  const isCollege = cmd.includes("college") || cmd.includes("kalloori") || cmd.includes("கல்லூரி") || cmd.includes("engineering") || cmd.includes("பொறியியல்") || cmd.includes("btech") || cmd.includes("be ") || cmd.includes("cse");
+  const isSchool = cmd.includes("school") || cmd.includes("palli") || cmd.includes("பள்ளி") || cmd.includes("10th") || cmd.includes("11th") || cmd.includes("12th") || cmd.includes("tenth") || cmd.includes("twelfth");
+  const isSyllabus = cmd.includes("syllabus") || cmd.includes("பாடத்திட்டம்") || cmd.includes("curriculum") || cmd.includes("subject");
+
+  if (isCollege || isSchool || isSyllabus) {
+    switchView("engineering-hub");
+    if (isSchool) {
+      const schoolBtn = document.getElementById("hubModeSchoolBtn");
+      if (schoolBtn) schoolBtn.click();
+      speakAuraVoice(isTamilScript ? "பள்ளி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : "School Hub open panniten. Ungaloda standard and subjects select pannikonga!");
+    } else {
+      const collegeBtn = document.getElementById("hubModeCollegeBtn");
+      if (collegeBtn) collegeBtn.click();
+      speakAuraVoice(isTamilScript ? "கல்லூரி பாடத்திட்டம் பகுதி திறக்கப்படுகிறது." : "College Hub open panniten. Ungaloda branch, semester and subjects ready!");
+    }
+    if (typeof window.loadYouTubeLectures === "function") {
+      window.loadYouTubeLectures();
+    }
+    return;
+  }
+
+  // 4. Command Center with Explicit Search or General Question Extraction
+  const isCmdCenterExplicit = cmd.includes("command center") || cmd.includes("கட்டளை மையம்") || cmd.includes("home") || cmd.includes("dashboard");
+  const isSearchAction = cmd.includes("search") || cmd.includes("thedu") || cmd.includes("தேடு") || cmd.includes("find") || cmd.includes("ask") || cmd.includes("soller") || cmd.includes("sollu") || cmd.includes("vilakku");
+
+  if (isCmdCenterExplicit && isSearchAction) {
     switchView("command-center");
-    const query = cmd.replace(/.*(?:search|find|ask)\s+(?:for\s+)?/i, "").trim() || rawTranscript;
+    let cleanQuery = cmd
+      .replace(/command\s*center/gi, "")
+      .replace(/கட்டளை\s*மையம்/gi, "")
+      .replace(/(?:ku\s*pooyi|ku\s*poi|pooyi|poi|ku\s*po|la\s*pooyi|la)\b/gi, "")
+      .replace(/(?:search\s*pannu|thedu|sollu|soller|solunga|vilakku|find|search\s*for|search|ask\s*about|ask)\b/gi, "")
+      .replace(/(?:paththi\s*sollu|paththi|enna\s*nu)\b/gi, "")
+      .trim();
+
+    if (!cleanQuery || cleanQuery.length < 2) {
+      cleanQuery = raw;
+    }
+
     const msgInput = document.getElementById("messageInput");
     if (msgInput) {
-      msgInput.value = query;
+      msgInput.value = cleanQuery;
       const sendBtn = document.getElementById("sendBtn");
       if (sendBtn) sendBtn.click();
     }
-    speakAuraVoice(`Searching Command Center for ${query}`);
+    speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQuery}" பற்றி தேடப்படுகிறது.` : `Command Center-la "${cleanQuery}" pathi thedi answer compile pandren!`);
     return;
   }
-  if (cmd.includes("command center") || cmd.includes("home") || cmd.includes("dashboard")) {
+
+  if (isCmdCenterExplicit) {
     switchView("command-center");
-    speakAuraVoice("Navigating to Command Center.");
+    speakAuraVoice(isTamilScript ? "கட்டளை மையம் திறக்கப்படுகிறது." : "Command Center open pandren!");
     return;
   }
-  if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("write") || cmd.includes("code")) {
-    switchView("creation-lab");
-    speakAuraVoice("Opening Creation Studio.");
-    return;
-  }
-  if (cmd.includes("presentation") || cmd.includes("slides") || cmd.includes("pptx")) {
-    switchView("creation-lab");
-    const presTabBtn = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
-    if (presTabBtn) presTabBtn.click();
-    speakAuraVoice("Opening Presentation Deck Studio.");
-    return;
-  }
-  if (cmd.includes("vault") || cmd.includes("documents") || cmd.includes("knowledge")) {
-    switchView("knowledge-vault");
-    speakAuraVoice("Opening Knowledge Vault.");
-    return;
-  }
-  if (cmd.includes("study") || cmd.includes("planner") || cmd.includes("tasks") || cmd.includes("milestone")) {
-    switchView("study-intel");
-    speakAuraVoice("Opening Study and Task Planner.");
-    return;
-  }
-  if (cmd.includes("mock") || cmd.includes("exam") || cmd.includes("test")) {
+
+  // 5. Semester Mock Test / Exam
+  if (cmd.includes("mock") || cmd.includes("exam") || cmd.includes("test") || cmd.includes("thearvu") || cmd.includes("தேர்வு") || cmd.includes("பரீட்சை")) {
     switchView("mock-test");
-    speakAuraVoice("Opening Semester Mock Test.");
+    speakAuraVoice(isTamilScript ? "செமஸ்டர் மாதிரி தேர்வு பகுதி திறக்கப்படுகிறது. வாழ்த்துகள்!" : "Semester Mock Test portal open panniten. 50-marks blueprint test ready, all the best!");
     return;
   }
-  if (cmd.includes("performance") || cmd.includes("analytics") || cmd.includes("marks") || cmd.includes("grade")) {
+
+  // 6. Study & Task Planner / Study Intel / Milestones
+  if (cmd.includes("study planner") || cmd.includes("task planner") || cmd.includes("study intel") || 
+      cmd.includes("planner") || cmd.includes("task") || cmd.includes("milestone") || cmd.includes("schedule") || 
+      cmd.includes("timetable") || cmd.includes("படிப்பு திட்டம்") || cmd.includes("திட்டம்")) {
+    switchView("study-intel");
+    speakAuraVoice(isTamilScript ? "படிப்பு மற்றும் பணி திட்டம் திறக்கப்படுகிறது." : "Study and Task Planner open panniten. Ungaloda tasks ready!");
+    return;
+  }
+
+  // 7. Student Performance / Marks / Grades / Analytics
+  if (cmd.includes("performance") || cmd.includes("mark") || cmd.includes("score") || 
+      cmd.includes("grade") || cmd.includes("analytics") || cmd.includes("focus area") || 
+      cmd.includes("மதிப்பெண்") || cmd.includes("செயல்திறன்") || cmd.includes("மார்க்")) {
     switchView("student-performance");
-    speakAuraVoice("Opening Student Performance Analytics.");
+    speakAuraVoice(isTamilScript ? "மாணவர் செயல்திறன் மற்றும் மதிப்பெண்கள் பகுதி திறக்கப்படுகிறது." : "Student Performance analytics open pandren. Ungaloda marks and focus areas check pannikonga!");
     return;
   }
-  if (cmd.includes("youtube") || cmd.includes("video")) {
+
+  // 8. Knowledge Vault / Notes / Documents
+  if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("document") || 
+      cmd.includes("notes") || cmd.includes("குறிப்பு") || cmd.includes("ஆவணம்")) {
+    switchView("knowledge-vault");
+    speakAuraVoice(isTamilScript ? "அறிவு பெட்டகம் மற்றும் குறிப்புகள் திறக்கப்படுகிறது." : "Knowledge Vault open panniten. Stored study notes ready!");
+    return;
+  }
+
+  // 9. Creation Studio / Deep Research / Presentation
+  if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("presentation") || 
+      cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("research") || 
+      cmd.includes("code") || cmd.includes("வடிவமைப்பு") || cmd.includes("விளக்கக்காட்சி")) {
+    switchView("creation-lab");
+    if (cmd.includes("presentation") || cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("விளக்கக்காட்சி")) {
+      const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
+      if (presTab) presTab.click();
+    }
+    speakAuraVoice(isTamilScript ? "வடிவமைப்பு மையம் திறக்கப்படுகிறது." : "Creation Studio open panniten!");
+    return;
+  }
+
+  // 10. YouTube Intel Workspace
+  if (cmd.includes("youtube intel") || cmd.includes("video intel") || cmd.includes("யூடியூப்")) {
     switchView("youtube-intel");
-    speakAuraVoice("Opening YouTube Intelligence.");
+    speakAuraVoice(isTamilScript ? "யூடியூப் இன்டெல் திறக்கப்படுகிறது." : "YouTube Intel workspace open panniten!");
     return;
   }
-  if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out")) {
+
+  // 11. Profile Details / "Who Am I"
+  if (cmd.includes("who am i") || cmd.includes("naan yaaru") || cmd.includes("my profile") || 
+      cmd.includes("my details") || cmd.includes("நான் யார்") || cmd.includes("என் விவரம்")) {
+    const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+    const name = profile.name || "Student";
+    const std = profile.standard || "College & School Scholar";
+    speakAuraVoice(isTamilScript ? `நீங்கள் ${name}, ${std}-ல் பயில்கிறீர்கள்.` : `Neenga ${name}, ${std}-la padikareenga. Project Aura ungaluku eppothum udhavum!`);
+    return;
+  }
+
+  // 12. Sign Out / Logout
+  if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out") || cmd.includes("veliye") || cmd.includes("வெளியேறு")) {
     const portal = document.getElementById("auraLoginPortal");
     if (portal) {
       localStorage.removeItem("aura_auth_session");
       portal.classList.remove("authenticated");
       switchView("command-center");
-      speakAuraVoice("Signing out of Project Aura.");
+      speakAuraVoice(isTamilScript ? "ப்ராஜெக்ட் ஆராவிலிருந்து வெளியேறிவிட்டீர்கள்." : "Project Aura-la irunthu sign out aagiduchu.");
     }
     return;
   }
 
-  // 3. Desktop & System Utility Voice Commands
-  if (cmd.includes("fullscreen") || cmd.includes("full screen")) {
+  // 13. System Utilities: Fullscreen, Scroll, Theme, Print
+  if (cmd.includes("fullscreen") || cmd.includes("full screen") || cmd.includes("screen perusu")) {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
-      speakAuraVoice("Fullscreen mode activated.");
+      speakAuraVoice("Fullscreen activated.");
     } else {
       document.exitFullscreen().catch(() => {});
-      speakAuraVoice("Exiting fullscreen.");
+      speakAuraVoice("Fullscreen closed.");
     }
     return;
   }
-  if (cmd.includes("scroll down")) {
+  if (cmd.includes("scroll down") || cmd.includes("keezha")) {
     window.scrollBy({ top: 600, behavior: "smooth" });
     return;
   }
-  if (cmd.includes("scroll up")) {
+  if (cmd.includes("scroll up") || cmd.includes("mela")) {
     window.scrollBy({ top: -600, behavior: "smooth" });
     return;
   }
-  if (cmd.includes("print") || cmd.includes("save pdf")) {
+  if (cmd.includes("theme") || cmd.includes("colour maathu") || cmd.includes("வண்ணம்")) {
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) themeBtn.click();
+    speakAuraVoice("Theme options opened.");
+    return;
+  }
+  if (cmd.includes("print") || cmd.includes("pdf")) {
     window.print();
     return;
   }
-  if (cmd.includes("theme") || cmd.includes("toggle theme")) {
-    const themeBtn = document.getElementById("themeToggleBtn");
-    if (themeBtn) themeBtn.click();
-    speakAuraVoice("Opening theme selector.");
-    return;
-  }
-  if (cmd.includes("my profile") || cmd.includes("who am i")) {
-    const authBtn = document.getElementById("userAuthBtn");
-    if (authBtn) authBtn.click();
-    const stored = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
-    const summary = stored.name ? `You are logged in as ${stored.name}, studying ${stored.standard || 'College'}.` : "You are logged in as Scholar.";
-    speakAuraVoice(summary);
-    return;
-  }
 
-  // 4. Fallback: Search / Direct Question dispatched ONCE to Command Center AI
+  // 14. Universal Fallback: General doubt or subject search routed to Command Center AI
   switchView("command-center");
   const msgInput = document.getElementById("messageInput");
   if (msgInput) {
-    const cleanQuery = rawTranscript.replace(/^(?:search|find|ask)\s+(?:for\s+)?/i, "").trim() || rawTranscript;
-    msgInput.value = cleanQuery;
+    let cleanQ = raw
+      .replace(/^(?:search|find|ask|thedu|soller|sollu|vilakku)\s+(?:for\s+|paththi\s+)?/i, "")
+      .trim() || raw;
+    msgInput.value = cleanQ;
     const sendBtn = document.getElementById("sendBtn");
     if (sendBtn) sendBtn.click();
   }
+  speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${raw}" பற்றிய பதில் பெறப்படுகிறது.` : `Command Center-la "${raw}" pathi solve pandren!`);
 }
 
 // ── CREATION STUDIO: DEEP RESEARCH TAB CONTROLLER ──
@@ -6934,8 +7134,8 @@ async function fetchCollegeSubjects() {
     const badge = document.getElementById("engSubjectCountBadge");
     if (badge) badge.textContent = `${subjects.length} Subjects Enrolled`;
 
-    grid.innerHTML = subjects.map(s => `
-      <div class="eng-subject-card" onclick="selectCollegeSubject('${escapeHtml(s)}')">
+    grid.innerHTML = subjects.map((s, idx) => `
+      <div class="eng-subject-card ${idx === 0 ? 'active' : ''}" onclick="selectCollegeSubject('${escapeHtml(s)}')">
         <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(s)}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary);">
           <span>✦ Core Theory</span>
@@ -6943,6 +7143,11 @@ async function fetchCollegeSubjects() {
         </div>
       </div>
     `).join("");
+
+    // Auto-select first subject and trigger its recommended YouTube lectures
+    if (subjects.length > 0) {
+      selectCollegeSubject(subjects[0]);
+    }
   } catch (err) {
     grid.innerHTML = '<div style="grid-column:1/-1; color:#EF4444; padding:12px;">Could not load subjects.</div>';
   }
@@ -6950,10 +7155,24 @@ async function fetchCollegeSubjects() {
 
 window.selectCollegeSubject = function(subjectName) {
   collegeAndSchoolState.activeSubject = subjectName;
+  if (typeof engineeringHubState !== "undefined") {
+    engineeringHubState.activeSubject = subjectName;
+    engineeringHubState.activeBranch = collegeAndSchoolState.activeCollegeBranch;
+  }
+
+  document.querySelectorAll("#engCollegeSubjectsGrid .eng-subject-card").forEach(c => {
+    c.classList.toggle("active", c.textContent.includes(subjectName));
+  });
+
   const activeTitle = document.getElementById("engActiveSubjectTitle");
   if (activeTitle) activeTitle.textContent = subjectName;
 
-  // Trigger Notes and Videos
+  // Immediately fetch & display recommended YouTube video lectures for this subject
+  if (typeof window.loadYouTubeLectures === "function") {
+    window.loadYouTubeLectures(subjectName);
+  }
+
+  // Trigger Notes and PYQ synthesis
   const generateNotesBtn = document.getElementById("engGenerateNotesBtn");
   if (generateNotesBtn) generateNotesBtn.click();
   playTactileSound("click");
@@ -6995,8 +7214,8 @@ function loadSchoolStandardData() {
 
   const list = schoolSubjects[collegeAndSchoolState.activeSchoolStandard] || schoolSubjects.STD_12_SCI;
 
-  grid.innerHTML = list.map(item => `
-    <div class="eng-subject-card" onclick="selectSchoolSubject('${escapeHtml(item.name)}')">
+  grid.innerHTML = list.map((item, idx) => `
+    <div class="eng-subject-card ${idx === 0 ? 'active' : ''}" onclick="selectSchoolSubject('${escapeHtml(item.name)}')">
       <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(item.name)}</div>
       <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary);">
         <span>${item.weight}</span>
@@ -7004,12 +7223,19 @@ function loadSchoolStandardData() {
       </div>
     </div>
   `).join("");
+
+  // Auto-select first school subject and load recommended videos
+  if (list.length > 0) {
+    selectSchoolSubject(list[0].name);
+  }
 }
 
 window.selectSchoolSubject = function(subjectName) {
   collegeAndSchoolState.activeSubject = subjectName;
   const cleanName = subjectName.split('(')[0].trim();
-  engineeringHubState.activeSubject = cleanName;
+  if (typeof engineeringHubState !== "undefined") {
+    engineeringHubState.activeSubject = cleanName;
+  }
 
   document.querySelectorAll("#schoolSubjectsGrid .eng-subject-card").forEach(c => {
     c.classList.toggle("active", c.textContent.includes(cleanName));
@@ -7025,8 +7251,9 @@ window.selectSchoolSubject = function(subjectName) {
     input.value = `Explain high-yield board exam questions and derivations for ${cleanName}.`;
   }
 
+  // Load recommended videos for this school subject
   if (typeof window.loadYouTubeLectures === "function") {
-    window.loadYouTubeLectures();
+    window.loadYouTubeLectures(cleanName);
   }
   playTactileSound("click");
 };
@@ -7442,6 +7669,8 @@ function initAura3CoreModules() {
   if (typeof initAuthGateway === "function") initAuthGateway();
   if (typeof initGlobalVoiceAssistant === "function") initGlobalVoiceAssistant();
   if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
+  if (typeof initEngineeringHub === "function") initEngineeringHub();
+  if (typeof window.loadYouTubeLectures === "function") window.loadYouTubeLectures();
   if (typeof initKnowledgeVaultTopicIngest === "function") initKnowledgeVaultTopicIngest();
   if (typeof initYouTubeUrlDecoder === "function") initYouTubeUrlDecoder();
   if (typeof initStudentAuthModal === "function") initStudentAuthModal();
