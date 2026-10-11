@@ -67,6 +67,8 @@ router.get("/", (req, res) => {
 --------------------------------------------------------- */
 router.get("/performance", (req, res) => {
   try {
+    const requestedUserId = req.query.userId || req.headers["x-user-id"];
+
     // Helper for realistic grading scale (under 25 marks on a 50-mark test is explicitly FOCUS NEEDED)
     function computeRealisticGrade(earned, total = 50) {
       if (!total || total <= 0) total = 50;
@@ -79,8 +81,13 @@ router.get("/performance", (req, res) => {
       return "B (Pass / Average)";
     }
 
-    const activities = auraDB.getActivities(300);
-    const mockResults = activities
+    const activities = auraDB.getActivities(500);
+    // Filter activities strictly by userId so users never see other students' or friends' mock test scores
+    const filteredActivities = requestedUserId
+      ? activities.filter(a => a.metadata?.userId === requestedUserId)
+      : [];
+
+    const mockResults = filteredActivities
       .filter(a => a.type === "mock_graded" || a.type === "quiz_result")
       .map(a => {
         const earned = a.metadata?.earnedMarks ?? a.metadata?.score ?? 0;
@@ -90,6 +97,7 @@ router.get("/performance", (req, res) => {
         const subjName = a.metadata?.subject || a.metadata?.topic || "Semester Assessment";
         return {
           id: a.id,
+          userId: a.metadata?.userId,
           subject: subjName,
           group: a.metadata?.group || a.metadata?.branch || "Engineering",
           semester: a.metadata?.semester || 1,
@@ -110,59 +118,11 @@ router.get("/performance", (req, res) => {
         };
       });
 
-    // If no real tests taken yet, provide realistic baseline examples so student sees UI immediately
-    const records = mockResults.length > 0 ? mockResults : [
-      {
-        id: "mock_demo_1",
-        subject: "12th Physics — Electromagnetic Induction & AC",
-        group: "12th Standard Board Exam",
-        semester: 2,
-        earnedMarks: 21,
-        totalMarks: 50,
-        percentage: 42,
-        grade: "FOCUS NEEDED",
-        focusTopics: [
-          {
-            topic: "LCR Series Circuit Resonance & Q-Factor Derivation",
-            importance: "Guaranteed 5-mark Board Question",
-            guidance: "Review phasor diagram and derive expression for resonant frequency and quality factor.",
-            pdfUrl: "/api/quiz/engineering/notes?subject=Electromagnetic%20Induction&format=pdf",
-            browserSearchUrl: "https://www.google.com/search?q=LCR+Series+Circuit+Resonance+Derivation+Class+12+PDF"
-          },
-          {
-            topic: "Faraday's Laws & Lenz's Law Energy Conservation",
-            importance: "Frequent 2-mark & 3-mark Question",
-            guidance: "Formulate magnetic flux change equations and justify how Lenz's law obeys conservation of energy.",
-            pdfUrl: "/api/quiz/engineering/notes?subject=Faraday%20Lenz%20Law&format=pdf",
-            browserSearchUrl: "https://www.google.com/search?q=Faradays+Lenz+Law+Class+12+Notes+PDF"
-          }
-        ],
-        timestamp: new Date(Date.now() - 86400000 * 1).toISOString()
-      },
-      {
-        id: "mock_demo_2",
-        subject: "Data Structures & Algorithms",
-        group: "College Engineering (CSE)",
-        semester: 3,
-        earnedMarks: 39,
-        totalMarks: 50,
-        percentage: 78,
-        grade: "A (Very Good)",
-        focusTopics: [
-          {
-            topic: "Graph Shortest Path (Dijkstra vs Bellman-Ford)",
-            importance: "High Probability 13-mark Exam Question",
-            guidance: "Review edge relaxation proofs, greedy choice property, and negative cycle detection.",
-            pdfUrl: "/api/quiz/engineering/notes?subject=Data%20Structures%20Algorithms&format=pdf",
-            browserSearchUrl: "https://www.google.com/search?q=Dijkstra+Bellman+Ford+algorithm+notes+pdf"
-          }
-        ],
-        timestamp: new Date(Date.now() - 86400000 * 3).toISOString()
-      }
-    ];
+    // Provide user-specific records
+    const records = mockResults;
 
     const totalPct = records.reduce((acc, r) => acc + (r.percentage || 0), 0);
-    const avgPercentage = Math.round(totalPct / Math.max(1, records.length));
+    const avgPercentage = records.length > 0 ? Math.round(totalPct / records.length) : 0;
 
     // Identify weak subjects (< 80%)
     const weakItems = records.filter(r => r.percentage < 80);
@@ -170,11 +130,12 @@ router.get("/performance", (req, res) => {
 
     res.json({
       success: true,
+      userId: requestedUserId || "anonymous",
       records,
       stats: {
         totalTestsTaken: records.length,
         averagePercentage: avgPercentage,
-        highestScore: Math.max(...records.map(r => r.percentage)),
+        highestScore: records.length > 0 ? Math.max(...records.map(r => r.percentage)) : 0,
         strongSubjectsCount: strongItems.length,
         needsFocusCount: weakItems.length
       }
@@ -190,8 +151,10 @@ router.get("/performance", (req, res) => {
 --------------------------------------------------------- */
 router.post("/mock", (req, res) => {
   try {
-    const { subject, group, semester, earnedMarks, totalMarks, percentage, grade, focusTopics, examinerReport } = req.body;
+    const { subject, group, semester, earnedMarks, totalMarks, percentage, grade, focusTopics, examinerReport, userId } = req.body;
+    const effectiveUserId = userId || req.headers["x-user-id"] || "anonymous";
     auraDB.addActivity("mock_graded", `Semester Mock Exam: ${subject} (${earnedMarks}/${totalMarks} - ${percentage}%) [${grade || "A"}]`, {
+      userId: effectiveUserId,
       subject,
       group: group || "Engineering",
       semester: semester || 1,

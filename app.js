@@ -22,6 +22,7 @@ const state = {
   totalCommands: 0,
   isRecording: false,
   speechRecognition: null,
+  voiceGender: localStorage.getItem("aura_voice_gender") || "female",
   soundEnabled: localStorage.getItem("aura_sound_enabled") !== "false",
   bootFinished: true,
   currentTask: "Awaiting Directive",
@@ -29,6 +30,22 @@ const state = {
   spatial3dEnabled: true,
   tasks: JSON.parse(localStorage.getItem("aura_tasks") || "[]")
 };
+
+function getActiveUserId() {
+  const sess = localStorage.getItem("aura_auth_session");
+  if (sess) {
+    try {
+      const parsed = JSON.parse(sess);
+      if (parsed.user && parsed.user.id) return parsed.user.id;
+    } catch (_) {}
+  }
+  let deviceUid = localStorage.getItem("aura_device_uid");
+  if (!deviceUid) {
+    deviceUid = "dev_" + Math.random().toString(36).substring(2, 10) + "_" + Date.now();
+    localStorage.setItem("aura_device_uid", deviceUid);
+  }
+  return deviceUid;
+}
 
 /* =========================================================
    1. REAL AUDIO ENGINE & PROJECT AURA CINEMATIC IMPACT SYNTHESIZER
@@ -4595,10 +4612,15 @@ function initSemesterMockTest() {
     }
 
     try {
+      const activeUid = getActiveUserId();
       const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/grade-mock`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-user-id": activeUid
+        },
         body: JSON.stringify({
+          userId: activeUid,
           subject: mockExamState.currentPaper?.subject,
           group: mockGroupSelect ? mockGroupSelect.value : "Engineering",
           branch: mockBranchSelect ? mockBranchSelect.value : "CSE",
@@ -4693,7 +4715,10 @@ async function loadStudentPerformance() {
   const perfHistoryContainer = document.getElementById("perfHistoryContainer");
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/analytics/performance`);
+    const activeUid = getActiveUserId();
+    const res = await fetch(`${BACKEND_URL}/api/analytics/performance?userId=${encodeURIComponent(activeUid)}`, {
+      headers: { "x-user-id": activeUid }
+    });
     const data = await res.json();
     if (!data.success) return;
 
@@ -5063,6 +5088,15 @@ function initCuteRobotVoice() {
     });
   }
 
+  const robotFemaleBtn = document.getElementById("robotVoiceFemaleBtn");
+  const robotMaleBtn = document.getElementById("robotVoiceMaleBtn");
+  if (robotFemaleBtn) {
+    robotFemaleBtn.addEventListener("click", () => setVoiceGender("female"));
+  }
+  if (robotMaleBtn) {
+    robotMaleBtn.addEventListener("click", () => setVoiceGender("male"));
+  }
+
   if (robotCancelBtn) {
     robotCancelBtn.addEventListener("click", closeCuteRobotAssistant);
   }
@@ -5076,8 +5110,7 @@ function initCuteRobotVoice() {
       const text = currentRobotTranscript || (robotTranscriptBox ? robotTranscriptBox.textContent.replace(/^"|"$/g, "").trim() : "");
       closeCuteRobotAssistant();
       if (text && !text.includes("Listening to your voice") && !text.includes("Microphone ready")) {
-        if (messageInput) messageInput.value = text;
-        dispatchCommand();
+        executeAuraVoiceCommand(text);
       }
     });
   }
@@ -5918,14 +5951,16 @@ function initEngineeringHub() {
     const lang = engVideoLangSelect ? engVideoLangSelect.value : "Tamil";
     if (engVideoLangTag) engVideoLangTag.textContent = `Language: ${lang}`;
 
-    engVideosListGrid.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">Searching YouTube for high-rated ${lang} lectures...</div>`;
+    const currentSubj = engineeringHubState.activeSubject || collegeAndSchoolState.activeSubject || "Core Engineering Subject";
+
+    engVideosListGrid.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-secondary);">Searching YouTube for high-rated ${lang} lectures for <strong>${escapeHtml(currentSubj)}</strong>...</div>`;
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/videos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: engineeringHubState.activeSubject,
+          subject: currentSubj,
           language: lang,
           branch: engineeringHubState.activeBranch
         })
@@ -5953,9 +5988,10 @@ function initEngineeringHub() {
         </div>
       `).join("");
     } catch (err) {
-      engVideosListGrid.innerHTML = `<div style="color:var(--text-secondary); padding:16px; text-align:center;">Video recommendations currently unavailable.</div>`;
+      engVideosListGrid.innerHTML = `<div style="color:var(--text-secondary); padding:16px; text-align:center;">Video recommendations currently unavailable for ${escapeHtml(currentSubj)}.</div>`;
     }
   }
+  window.loadYouTubeLectures = loadYouTubeLectures;
 
   // Live filter colleges by search query
   const engCollegeSearchInput = document.getElementById("engCollegeSearchInput");
@@ -6116,19 +6152,75 @@ document.addEventListener("click", function (event) {
 // ── VOICE ASSISTANT ENGINE (TWO-WAY SPEECH & DESKTOP CONTROL) ──
 let auraVoiceRecognition = null;
 let isAuraVoiceActive = false;
+let isVoiceCommandExecuting = false;
+let voiceSilenceTimer = null;
+
+function updateVoiceGenderUI() {
+  const icon = document.getElementById("voiceGenderIcon");
+  const label = document.getElementById("voiceGenderLabel");
+  const isFemale = state.voiceGender === "female";
+  if (icon) {
+    icon.textContent = isFemale ? "♀" : "♂";
+    icon.style.color = isFemale ? "#FF4081" : "#00E5FF";
+  }
+  if (label) {
+    label.textContent = isFemale ? "Aura (Female)" : "Aero (Male)";
+  }
+  const fBtn = document.getElementById("robotVoiceFemaleBtn");
+  const mBtn = document.getElementById("robotVoiceMaleBtn");
+  if (fBtn && mBtn) {
+    fBtn.classList.toggle("active", isFemale);
+    mBtn.classList.toggle("active", !isFemale);
+  }
+}
+
+function setVoiceGender(gender) {
+  state.voiceGender = gender === "male" ? "male" : "female";
+  localStorage.setItem("aura_voice_gender", state.voiceGender);
+  updateVoiceGenderUI();
+  playTactileSound("click");
+}
 
 function speakAuraVoice(text) {
   if (!window.speechSynthesis || state.soundEnabled === false) return;
   try {
+    // Mute microphone while speaking so no echo feedback loops occur
+    if (auraVoiceRecognition && isAuraVoiceActive) {
+      try { auraVoiceRecognition.stop(); } catch (_) {}
+    }
+    if (robotSpeechRec) {
+      try { robotSpeechRec.stop(); } catch (_) {}
+    }
+
     window.speechSynthesis.cancel();
-    // Clean text of markdown before speaking
     const cleanText = text.replace(/[*#_`~>\[\]]/g, "").replace(/https?:\/\/\S+/g, "").slice(0, 320);
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    utterance.rate = 1.0;
+    utterance.pitch = state.voiceGender === "female" ? 1.05 : 0.95;
+
     const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("Zira"))) || voices[0];
-    if (preferredVoice) utterance.voice = preferredVoice;
+    let chosen = null;
+    if (state.voiceGender === "female") {
+      chosen = voices.find(v => v.lang.startsWith("en") && 
+        (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Female") || v.name.includes("Google US English"))) 
+        || voices.find(v => v.lang.startsWith("en")) 
+        || voices[0];
+    } else {
+      chosen = voices.find(v => v.lang.startsWith("en") && 
+        (v.name.includes("David") || v.name.includes("Daniel") || v.name.includes("Guy") || v.name.includes("George") || v.name.includes("Male") || v.name.includes("Google UK English Male"))) 
+        || voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("zira") && !v.name.toLowerCase().includes("samantha")) 
+        || voices[0];
+    }
+    if (chosen) utterance.voice = chosen;
+
+    utterance.onend = () => {
+      // Re-enable listening in cute robot modal if still open
+      const modal = document.getElementById("cuteRobotModal");
+      if (modal && modal.classList.contains("active") && robotSpeechRec) {
+        try { robotSpeechRec.start(); } catch (_) {}
+      }
+    };
+
     window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.warn("[VOICE SYNTHESIS ERROR]", err);
@@ -6137,8 +6229,16 @@ function speakAuraVoice(text) {
 
 function initGlobalVoiceAssistant() {
   const globalVoiceBtn = document.getElementById("globalVoiceAssistantBtn");
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const genderBtn = document.getElementById("voiceGenderToggleBtn");
 
+  if (genderBtn) {
+    genderBtn.addEventListener("click", () => {
+      setVoiceGender(state.voiceGender === "female" ? "male" : "female");
+    });
+  }
+  updateVoiceGenderUI();
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     if (globalVoiceBtn) {
       globalVoiceBtn.addEventListener("click", () => {
@@ -6150,11 +6250,14 @@ function initGlobalVoiceAssistant() {
 
   auraVoiceRecognition = new SpeechRecognition();
   auraVoiceRecognition.continuous = false;
-  auraVoiceRecognition.interimResults = false;
+  auraVoiceRecognition.interimResults = true;
   auraVoiceRecognition.lang = "en-US";
+
+  let accumulatedSpeech = "";
 
   auraVoiceRecognition.onstart = () => {
     isAuraVoiceActive = true;
+    accumulatedSpeech = "";
     if (globalVoiceBtn) globalVoiceBtn.classList.add("listening");
     playTactileSound("click");
   };
@@ -6162,12 +6265,31 @@ function initGlobalVoiceAssistant() {
   auraVoiceRecognition.onend = () => {
     isAuraVoiceActive = false;
     if (globalVoiceBtn) globalVoiceBtn.classList.remove("listening");
+    if (accumulatedSpeech && accumulatedSpeech.trim()) {
+      executeAuraVoiceCommand(accumulatedSpeech.trim());
+      accumulatedSpeech = "";
+    }
   };
 
   auraVoiceRecognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript.trim();
-    if (!transcript) return;
-    executeAuraVoiceCommand(transcript);
+    let finalPart = "";
+    let interimPart = "";
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalPart += event.results[i][0].transcript;
+      } else {
+        interimPart += event.results[i][0].transcript;
+      }
+    }
+    accumulatedSpeech = (finalPart || interimPart || "").trim();
+
+    // Debounce silence: wait for student to finish speaking patiently
+    if (voiceSilenceTimer) clearTimeout(voiceSilenceTimer);
+    voiceSilenceTimer = setTimeout(() => {
+      if (isAuraVoiceActive && accumulatedSpeech) {
+        try { auraVoiceRecognition.stop(); } catch (_) {}
+      }
+    }, 1100);
   };
 
   if (globalVoiceBtn) {
@@ -6184,18 +6306,47 @@ function initGlobalVoiceAssistant() {
 }
 
 function executeAuraVoiceCommand(rawTranscript) {
-  const cmd = rawTranscript.toLowerCase();
-  playTactileSound("success");
+  if (isVoiceCommandExecuting) return;
+  const cmd = (rawTranscript || "").toLowerCase().trim();
+  if (!cmd) return;
 
-  // 1. Navigation Commands
-  if (cmd.includes("command center") || cmd.includes("home")) {
-    switchView("command-center");
-    speakAuraVoice("Navigating to Command Center.");
+  isVoiceCommandExecuting = true;
+  playTactileSound("success");
+  setTimeout(() => { isVoiceCommandExecuting = false; }, 1600);
+
+  // 1. Voice gender toggle commands
+  if (cmd.includes("male voice") || cmd.includes("switch to male") || cmd.includes("set male voice")) {
+    setVoiceGender("male");
+    speakAuraVoice("Voice persona switched to Aero Male Voice.");
     return;
   }
+  if (cmd.includes("female voice") || cmd.includes("switch to female") || cmd.includes("set female voice")) {
+    setVoiceGender("female");
+    speakAuraVoice("Voice persona switched to Aura Female Voice.");
+    return;
+  }
+
+  // 2. Navigation Commands across the entire project
   if (cmd.includes("college") || cmd.includes("school") || cmd.includes("engineering")) {
     switchView("engineering-hub");
     speakAuraVoice("Opening College and School Hub.");
+    return;
+  }
+  if (cmd.includes("command center") && (cmd.includes("search") || cmd.includes("find") || cmd.includes("ask"))) {
+    switchView("command-center");
+    const query = cmd.replace(/.*(?:search|find|ask)\s+(?:for\s+)?/i, "").trim() || rawTranscript;
+    const msgInput = document.getElementById("messageInput");
+    if (msgInput) {
+      msgInput.value = query;
+      const sendBtn = document.getElementById("sendBtn");
+      if (sendBtn) sendBtn.click();
+    }
+    speakAuraVoice(`Searching Command Center for ${query}`);
+    return;
+  }
+  if (cmd.includes("command center") || cmd.includes("home") || cmd.includes("dashboard")) {
+    switchView("command-center");
+    speakAuraVoice("Navigating to Command Center.");
     return;
   }
   if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("write") || cmd.includes("code")) {
@@ -6208,13 +6359,6 @@ function executeAuraVoiceCommand(rawTranscript) {
     const presTabBtn = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
     if (presTabBtn) presTabBtn.click();
     speakAuraVoice("Opening Presentation Deck Studio.");
-    return;
-  }
-  if (cmd.includes("research")) {
-    switchView("creation-lab");
-    const resTabBtn = document.querySelector('.creation-tab-btn[data-tab="research"]');
-    if (resTabBtn) resTabBtn.click();
-    speakAuraVoice("Opening Deep Research.");
     return;
   }
   if (cmd.includes("vault") || cmd.includes("documents") || cmd.includes("knowledge")) {
@@ -6242,8 +6386,18 @@ function executeAuraVoiceCommand(rawTranscript) {
     speakAuraVoice("Opening YouTube Intelligence.");
     return;
   }
+  if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out")) {
+    const portal = document.getElementById("auraLoginPortal");
+    if (portal) {
+      localStorage.removeItem("aura_auth_session");
+      portal.classList.remove("authenticated");
+      switchView("command-center");
+      speakAuraVoice("Signing out of Project Aura.");
+    }
+    return;
+  }
 
-  // 2. Desktop & System Utility Voice Commands
+  // 3. Desktop & System Utility Voice Commands
   if (cmd.includes("fullscreen") || cmd.includes("full screen")) {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
@@ -6256,17 +6410,14 @@ function executeAuraVoiceCommand(rawTranscript) {
   }
   if (cmd.includes("scroll down")) {
     window.scrollBy({ top: 600, behavior: "smooth" });
-    speakAuraVoice("Scrolling down.");
     return;
   }
   if (cmd.includes("scroll up")) {
     window.scrollBy({ top: -600, behavior: "smooth" });
-    speakAuraVoice("Scrolling up.");
     return;
   }
   if (cmd.includes("print") || cmd.includes("save pdf")) {
     window.print();
-    speakAuraVoice("Opening print dialog.");
     return;
   }
   if (cmd.includes("theme") || cmd.includes("toggle theme")) {
@@ -6275,24 +6426,24 @@ function executeAuraVoiceCommand(rawTranscript) {
     speakAuraVoice("Opening theme selector.");
     return;
   }
-  if (cmd.includes("my profile") || cmd.includes("my stored details") || cmd.includes("who am i")) {
+  if (cmd.includes("my profile") || cmd.includes("who am i")) {
     const authBtn = document.getElementById("userAuthBtn");
     if (authBtn) authBtn.click();
     const stored = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
-    const summary = stored.name ? `You are logged in as ${stored.name}, studying ${stored.standard || '12th'}.` : "You are currently exploring as guest student. Open account modal to configure your profile.";
+    const summary = stored.name ? `You are logged in as ${stored.name}, studying ${stored.standard || 'College'}.` : "You are logged in as Scholar.";
     speakAuraVoice(summary);
     return;
   }
 
-  // 3. Fallback: Dispatch to Command Center AI
+  // 4. Fallback: Search / Direct Question dispatched ONCE to Command Center AI
   switchView("command-center");
   const msgInput = document.getElementById("messageInput");
   if (msgInput) {
-    msgInput.value = rawTranscript;
+    const cleanQuery = rawTranscript.replace(/^(?:search|find|ask)\s+(?:for\s+)?/i, "").trim() || rawTranscript;
+    msgInput.value = cleanQuery;
     const sendBtn = document.getElementById("sendBtn");
     if (sendBtn) sendBtn.click();
   }
-  speakAuraVoice(`Processing your directive: "${rawTranscript.slice(0, 40)}"`);
 }
 
 // ── CREATION STUDIO: DEEP RESEARCH TAB CONTROLLER ──
@@ -6857,9 +7008,25 @@ function loadSchoolStandardData() {
 
 window.selectSchoolSubject = function(subjectName) {
   collegeAndSchoolState.activeSubject = subjectName;
+  const cleanName = subjectName.split('(')[0].trim();
+  engineeringHubState.activeSubject = cleanName;
+
+  document.querySelectorAll("#schoolSubjectsGrid .eng-subject-card").forEach(c => {
+    c.classList.toggle("active", c.textContent.includes(cleanName));
+  });
+
+  const activeTitle = document.getElementById("engActiveSubjectTitle");
+  if (activeTitle) {
+    activeTitle.textContent = cleanName;
+  }
+
   const input = document.getElementById("schoolDoubtInput");
   if (input) {
-    input.value = `Explain high-yield board exam questions and derivations for ${subjectName.split('(')[0].trim()}.`;
+    input.value = `Explain high-yield board exam questions and derivations for ${cleanName}.`;
+  }
+
+  if (typeof window.loadYouTubeLectures === "function") {
+    window.loadYouTubeLectures();
   }
   playTactileSound("click");
 };
@@ -7063,11 +7230,218 @@ document.addEventListener("click", (e) => {
 
 
 
+// ── MANDATORY LIQUID GLASS LOGIN & SIGNUP PORTAL GATEWAY ──
+function initAuthGateway() {
+  const portal = document.getElementById("auraLoginPortal");
+  if (!portal) return;
+
+  const tabLoginBtn = document.getElementById("tabLoginBtn");
+  const tabSignupBtn = document.getElementById("tabSignupBtn");
+  const loginForm = document.getElementById("auraLoginForm");
+  const signupForm = document.getElementById("auraSignupForm");
+  const alertBox = document.getElementById("auraAuthAlert");
+  const fillDemoBtn = document.getElementById("fillDemoCredentialsBtn");
+  const loginEmail = document.getElementById("auraLoginEmail");
+  const loginPass = document.getElementById("auraLoginPassword");
+  const signOutBtn = document.getElementById("auraSignOutBtn");
+  const userNameLabel = document.getElementById("userNameLabel");
+
+  function showAlert(msg, isError = true) {
+    if (!alertBox) return;
+    alertBox.textContent = msg;
+    alertBox.className = `auth-alert-box ${isError ? 'error' : 'success'}`;
+    alertBox.style.display = "block";
+  }
+
+  function hideAlert() {
+    if (alertBox) alertBox.style.display = "none";
+  }
+
+  // Switch between Sign In and Create Account
+  if (tabLoginBtn && tabSignupBtn && loginForm && signupForm) {
+    tabLoginBtn.addEventListener("click", () => {
+      tabLoginBtn.classList.add("active");
+      tabSignupBtn.classList.remove("active");
+      loginForm.style.display = "block";
+      signupForm.style.display = "none";
+      hideAlert();
+    });
+    tabSignupBtn.addEventListener("click", () => {
+      tabSignupBtn.classList.add("active");
+      tabLoginBtn.classList.remove("active");
+      signupForm.style.display = "block";
+      loginForm.style.display = "none";
+      hideAlert();
+    });
+  }
+
+  // Quick Demo credentials fill
+  if (fillDemoBtn && loginEmail && loginPass) {
+    fillDemoBtn.addEventListener("click", () => {
+      loginEmail.value = "manikandan@aura.ai";
+      loginPass.value = "aura123";
+      playTactileSound("click");
+      showAlert("Demo credentials loaded! Click 'Sign In to Project Aura' to continue.", false);
+    });
+  }
+
+  // Check active session on startup
+  const existingSession = localStorage.getItem("aura_auth_session");
+  if (existingSession) {
+    try {
+      const sess = JSON.parse(existingSession);
+      if (sess && sess.user) {
+        portal.classList.add("authenticated");
+        if (userNameLabel) userNameLabel.textContent = sess.user.name || "Student";
+        if (signOutBtn) signOutBtn.style.display = "inline-flex";
+      } else {
+        portal.classList.remove("authenticated");
+      }
+    } catch (_) {
+      portal.classList.remove("authenticated");
+    }
+  } else {
+    portal.classList.remove("authenticated");
+    if (signOutBtn) signOutBtn.style.display = "none";
+  }
+
+  // Handle Login submission
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const email = loginEmail ? loginEmail.value.trim() : "";
+      const password = loginPass ? loginPass.value.trim() : "";
+      if (!email || !password) {
+        showAlert("Please enter both email and password.");
+        return;
+      }
+
+      const submitBtn = document.getElementById("auraLoginSubmitBtn");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Verifying Credentials...";
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/student/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.error || "Authentication failed. Invalid email or password.");
+        }
+
+        // Store authentic user session
+        localStorage.setItem("aura_auth_session", JSON.stringify(data));
+        localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+
+        showAlert("✓ Authentication successful! Initializing Project Aura...", false);
+        playTactileSound("success");
+        if (typeof playProjectAuraCinematicImpact === "function") {
+          playProjectAuraCinematicImpact(0.85);
+        }
+
+        setTimeout(() => {
+          portal.classList.add("authenticated");
+          if (userNameLabel) userNameLabel.textContent = data.user.name || "Student";
+          if (signOutBtn) signOutBtn.style.display = "inline-flex";
+          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
+        }, 550);
+      } catch (err) {
+        showAlert(err.message || "Failed to sign in. Please verify your email and password.");
+        playTactileSound("error");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Sign In to Project Aura</span><span class="auth-btn-arrow">→</span>`;
+        }
+      }
+    });
+  }
+
+  // Handle Signup submission
+  if (signupForm) {
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const name = document.getElementById("auraSignupName")?.value.trim();
+      const email = document.getElementById("auraSignupEmail")?.value.trim();
+      const password = document.getElementById("auraSignupPassword")?.value.trim();
+      const standard = document.getElementById("auraSignupStandard")?.value;
+      const stream = document.getElementById("auraSignupStream")?.value;
+
+      if (!email || !password) {
+        showAlert("Email and password are required.");
+        return;
+      }
+
+      const submitBtn = document.getElementById("auraSignupSubmitBtn");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating Scholar Account...";
+      }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/student/auth/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, standard, stream })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.error || "Failed to create account.");
+        }
+
+        localStorage.setItem("aura_auth_session", JSON.stringify(data));
+        localStorage.setItem("aura_student_profile", JSON.stringify(data.user));
+
+        showAlert("✓ Account registered successfully! Welcome to Project Aura.", false);
+        playTactileSound("success");
+        if (typeof playProjectAuraCinematicImpact === "function") {
+          playProjectAuraCinematicImpact(0.85);
+        }
+
+        setTimeout(() => {
+          portal.classList.add("authenticated");
+          if (userNameLabel) userNameLabel.textContent = data.user.name || "Student";
+          if (signOutBtn) signOutBtn.style.display = "inline-flex";
+          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
+        }, 550);
+      } catch (err) {
+        showAlert(err.message || "Registration failed. Try with different credentials.");
+        playTactileSound("error");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Create Account & Launch</span><span class="auth-btn-arrow">→</span>`;
+        }
+      }
+    });
+  }
+
+  // Handle Sign Out
+  if (signOutBtn) {
+    signOutBtn.addEventListener("click", () => {
+      if (confirm("Sign out of Project Aura? The portal will be locked until you sign back in.")) {
+        localStorage.removeItem("aura_auth_session");
+        portal.classList.remove("authenticated");
+        signOutBtn.style.display = "none";
+        if (userNameLabel) userNameLabel.textContent = "Sign In";
+        switchView("command-center");
+        playTactileSound("click");
+      }
+    });
+  }
+}
+
 // ── ENSURE AURA 3.0 MODULES INITIALIZE ON PAGE LOAD ──
 function initAura3CoreModules() {
+  if (typeof initAuthGateway === "function") initAuthGateway();
   if (typeof initGlobalVoiceAssistant === "function") initGlobalVoiceAssistant();
   if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
-  if (typeof initCreationStudioResearch === "function") initCreationStudioResearch();
   if (typeof initKnowledgeVaultTopicIngest === "function") initKnowledgeVaultTopicIngest();
   if (typeof initYouTubeUrlDecoder === "function") initYouTubeUrlDecoder();
   if (typeof initStudentAuthModal === "function") initStudentAuthModal();

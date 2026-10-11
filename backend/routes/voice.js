@@ -14,13 +14,21 @@ const elevenlabsService = require("../services/elevenlabs");
 --------------------------------------------------------- */
 router.post("/speak", async (req, res) => {
   try {
-    const { text, voiceId } = req.body;
+    const { text, voiceId, gender = "female" } = req.body;
     if (!text || !text.trim()) {
       return res.status(400).json({ success: false, error: "Text is required." });
     }
 
-    const result = await elevenlabsService.textToSpeech(text, voiceId);
-    res.json(result);
+    // Default high-quality male and female voice IDs for ElevenLabs
+    const FEMALE_VOICE = "21m00Tcm4TlvDq8ikWAM"; // Rachel
+    const MALE_VOICE = "ErXwobaYiN019PkySvjV";   // Antoni
+
+    const targetVoiceId = voiceId || (gender === "male" ? MALE_VOICE : FEMALE_VOICE);
+    const result = await elevenlabsService.textToSpeech(text, targetVoiceId);
+    res.json({
+      ...result,
+      gender: gender === "male" ? "male" : "female"
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

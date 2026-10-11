@@ -20,6 +20,99 @@
 <body data-theme="rose-olive">
 
   <!-- =======================================================
+       AUTHENTICATION GATEWAY: LIQUID GLASS LOGIN & SIGNUP PORTAL
+       Enforces mandatory authentication before granting access to Project Aura
+  ======================================================= -->
+  <div id="auraLoginPortal" class="aura-auth-portal-overlay">
+    <div class="aura-auth-glass-container">
+      <div class="auth-brand-badge">
+        <div class="auth-brand-icon">◈</div>
+        <div class="auth-brand-text">
+          <div class="auth-brand-title">PROJECT AURA 3.0</div>
+          <div class="auth-brand-sub">Neural Academic &amp; Personal Operating System</div>
+        </div>
+      </div>
+
+      <!-- Auth Switcher Tabs -->
+      <div class="auth-tabs-row">
+        <button class="auth-tab-btn active" id="tabLoginBtn" type="button">Sign In</button>
+        <button class="auth-tab-btn" id="tabSignupBtn" type="button">Create Account</button>
+      </div>
+
+      <!-- Error / Success Alert -->
+      <div id="auraAuthAlert" class="auth-alert-box" style="display:none;"></div>
+
+      <!-- SIGN IN FORM -->
+      <form id="auraLoginForm" class="auth-form-card" autocomplete="on">
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraLoginEmail">Email Address</label>
+          <input type="email" id="auraLoginEmail" class="auth-glass-input" placeholder="e.g. manikandan@aura.ai" required autocomplete="email" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraLoginPassword">Password</label>
+          <input type="password" id="auraLoginPassword" class="auth-glass-input" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+        <button type="submit" id="auraLoginSubmitBtn" class="auth-submit-glow-btn">
+          <span>Sign In to Project Aura</span>
+          <span class="auth-btn-arrow">→</span>
+        </button>
+
+        <div class="auth-demo-shortcut" id="fillDemoCredentialsBtn" title="Click to autofill lead scholar credentials">
+          <span>⚡ Quick Fill Demo: <strong>manikandan@aura.ai</strong> / <strong>aura123</strong></span>
+        </div>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="auraSignupForm" class="auth-form-card" style="display:none;" autocomplete="on">
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupName">Full Name</label>
+          <input type="text" id="auraSignupName" class="auth-glass-input" placeholder="e.g. Manikandan" required autocomplete="name" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupEmail">Email Address</label>
+          <input type="email" id="auraSignupEmail" class="auth-glass-input" placeholder="e.g. student@college.edu" required autocomplete="email" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupPassword">Password</label>
+          <input type="password" id="auraSignupPassword" class="auth-glass-input" placeholder="Create a password (min 4 chars)" minlength="4" required autocomplete="new-password" />
+        </div>
+        <div class="auth-input-row" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="auth-input-group">
+            <label class="auth-label" for="auraSignupStandard">Academic Level</label>
+            <select id="auraSignupStandard" class="auth-glass-select">
+              <option value="College">College / Engineering</option>
+              <option value="12th">12th Standard</option>
+              <option value="11th">11th Standard</option>
+              <option value="10th">10th Standard</option>
+            </select>
+          </div>
+          <div class="auth-input-group">
+            <label class="auth-label" for="auraSignupStream">Stream / Dept</label>
+            <select id="auraSignupStream" class="auth-glass-select">
+              <option value="CSE">Computer Science &amp; Engg</option>
+              <option value="AI & DS">Artificial Intelligence &amp; Data Science</option>
+              <option value="ECE">Electronics &amp; Comm Engg</option>
+              <option value="EEE">Electrical &amp; Electronics</option>
+              <option value="Mechanical">Mechanical Engineering</option>
+              <option value="Civil">Civil Engineering</option>
+              <option value="Science">School Science Stream</option>
+              <option value="Commerce">School Commerce Stream</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" id="auraSignupSubmitBtn" class="auth-submit-glow-btn">
+          <span>Create Account &amp; Launch</span>
+          <span class="auth-btn-arrow">→</span>
+        </button>
+      </form>
+
+      <div class="auth-footer-note">
+        <span>🔒 Authentic Academic Protocol · User-Isolated Device Analytics</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
        LIVE DYNAMIC CANVAS (CHATGPT 6 ASTRA LIVE THEMES)
   ======================================================= -->
   <canvas id="liveThemeCanvas" class="live-theme-canvas"></canvas>
@@ -61,10 +154,6 @@
           <li class="nav-item" data-view="knowledge-vault">
             <span class="nav-icon">⧉</span>
             <span class="nav-label">Topic Knowledge Vault</span>
-          </li>
-          <li class="nav-item" data-view="research-terminal">
-            <span class="nav-icon">🌐</span>
-            <span class="nav-label">Research</span>
           </li>
           <li class="nav-item" data-view="study-intel">
             <span class="nav-icon">📖</span>
@@ -124,10 +213,21 @@
             <span class="voice-btn-label">Voice AI</span>
           </button>
 
+          <!-- Voice Gender Switcher (Female / Male) -->
+          <button class="topbar-action-btn glass-voice-gender-pill" id="voiceGenderToggleBtn" title="Switch Voice Voice: Female (Aura) / Male (Aero)">
+            <span id="voiceGenderIcon" style="color:#FF4081; font-weight:800;">♀</span>
+            <span id="voiceGenderLabel" style="font-size:11px; font-weight:700;">Aura (Female)</span>
+          </button>
+
           <!-- Student Profile & Authentication -->
           <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Authentication">
             <span class="user-avatar-glyph">👤</span>
             <span id="userNameLabel" class="user-name-text">Sign In</span>
+          </button>
+
+          <!-- Sign Out Button -->
+          <button class="topbar-action-btn glass-signout-btn" id="auraSignOutBtn" title="Sign Out of Project Aura" style="display:none;">
+            <span>⎋ Sign Out</span>
           </button>
 
           <button class="topbar-search-trigger" id="topbarSearchTrigger">
@@ -308,11 +408,11 @@
                       <span class="cc-mod-hint">RAG Vector Intelligence</span>
                     </div>
                   </button>
-                  <button class="cc-mod-card" data-view="research-terminal">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">🌐</span></div>
+                  <button class="cc-mod-card" data-view="engineering-hub">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">🎓</span></div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Deep Research</span>
-                      <span class="cc-mod-hint">Web Search &amp; Synthesis</span>
+                      <span class="cc-mod-name">College &amp; School</span>
+                      <span class="cc-mod-hint">Syllabus &amp; Lecture Hub</span>
                     </div>
                   </button>
                   <button class="cc-mod-card" data-view="quiz-engine">
@@ -547,7 +647,6 @@
                 <button class="creation-tab-btn" data-tab="coding">💻 Code</button>
                 <button class="creation-tab-btn" data-tab="scripts">🎬 Script</button>
                 <button class="creation-tab-btn" data-tab="presentation">📊 Presentation</button>
-                <button class="creation-tab-btn" data-tab="research">🌐 Deep Research</button>
                 <button class="creation-tab-btn" data-tab="social">📱 Social</button>
                 <button class="creation-tab-btn" data-tab="templates">📋 Templates</button>
               </div>
@@ -751,44 +850,7 @@
               </div>
             </div>
 
-            <!-- TAB 4B: DEEP RESEARCH (UNIFIED CREATION STUDIO RESEARCH SECTION) -->
-            <div class="creation-tab-content" id="tab-research" style="display:none;">
-              <div class="workspace-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-                  <h3 class="card-section-title" style="margin-bottom:0;">🌐 Deep Research & Multi-Source Synthesis</h3>
-                  <span class="eng-badge-pill" style="background:var(--accent-gold-soft); color:var(--accent-gold);">Tavily · Cross-AI Comparison</span>
-                </div>
-                <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-                  Conduct rigorous, multi-perspective AI investigation across scientific literature, academic archives, and web domains with verified citations.
-                </p>
-                <div class="research-search-row">
-                  <input type="text" id="creationResearchInput" class="research-input"
-                    placeholder="Enter research inquiry (e.g. Next-generation Solid-State Battery Energy Density 2026)..." />
-                  <button class="btn-generate-gemini" id="creationResearchBtn" style="width:auto; padding:0 24px;">
-                    Execute Deep Research
-                  </button>
-                </div>
-                
-                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; margin-bottom:14px;">
-                  <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">Research Mode:</span>
-                  <button class="branch-pill-btn active" id="resModeAcademic">🎓 Academic &amp; Peer-Reviewed</button>
-                  <button class="branch-pill-btn" id="resModeIndustry">🏢 Industry &amp; Market Intelligence</button>
-                  <button class="branch-pill-btn" id="resModeTechnical">⚙️ Deep Technical Architecture</button>
-                </div>
 
-                <div class="creation-crisp-card" id="creationResearchOutputContainer" style="margin-top:16px; display:none;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
-                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Multi-Perspective Research Dossier</span>
-                    <div style="display:flex; gap:6px;">
-                      <button class="btn-vault-action" id="copyCreationResearchBtn">📋 Copy Report</button>
-                      <button class="btn-vault-action" id="saveCreationResearchVaultBtn">⧉ Save to Vault</button>
-                      <button class="btn-vault-action" id="printCreationResearchBtn">🖨️ Print Dossier</button>
-                    </div>
-                  </div>
-                  <div class="dialogue-content" id="creationResearchOutputText"></div>
-                </div>
-              </div>
-            </div>
 
             <!-- TAB 5: SOCIAL -->
             <div class="creation-tab-content" id="tab-social" style="display:none;">
@@ -1845,32 +1907,7 @@
           </div>
         </section>
 
-        <!-- =====================================================
-             VIEW 7: RESEARCH STUDIO (WORKSPACE 6)
-        ===================================================== -->
-        <section class="aura-view" id="view-research-terminal">
-          <div class="view-header">
-            <div class="view-eyebrow">Deep Synthesis</div>
-            <h2 class="view-title">Research Studio</h2>
-            <p class="view-desc">Synthesize live web intelligence, academic citations, and multi-source consensus in
-              short, crisp points.</p>
-          </div>
 
-          <div class="workspace-card">
-            <h3 class="card-section-title">Execute Research Query</h3>
-            <div class="research-search-row">
-              <input type="text" id="researchQueryInput" class="research-input"
-                placeholder="Enter research inquiry (e.g. Solid state electrolyte breakthroughs in 2026)..." />
-              <button class="btn-generate-gemini" id="executeResearchBtn"
-                style="width:auto; padding:0 24px;">Research</button>
-            </div>
-
-            <div id="researchResultsContainer" style="display:none;" class="creation-crisp-card"
-              style="margin-top:20px;">
-              <div class="dialogue-content" id="researchSummaryText"></div>
-            </div>
-          </div>
-        </section>
 
         <!-- =====================================================
              VIEW 8: YOUTUBE INTEL (WORKSPACE 8)
@@ -2049,7 +2086,7 @@
         <div class="palette-item" data-view="command-center">⌘ Command Center</div>
         <div class="palette-item" data-view="creation-lab">✎ Creation Studio</div>
         <div class="palette-item" data-view="knowledge-vault">⧉ Topic Knowledge Vault</div>
-        <div class="palette-item" data-view="research-terminal">🌐 Deep Research</div>
+
         <div class="palette-item" data-view="study-intel">📖 Study &amp; Task Planner</div>
         <div class="palette-item" data-view="quiz-engine">✦ Quiz Engine</div>
         <div class="palette-item" data-view="mock-test">🏛️ Semester Mock Test</div>
@@ -2142,6 +2179,12 @@
           <span class="chest-heart-pulse">◈</span>
         </div>
         <div class="robot-hand hand-right"></div>
+      </div>
+
+      <!-- Voice Persona Gender Switcher -->
+      <div class="robot-voice-gender-pill-row" style="display:flex; gap:8px; justify-content:center; margin-bottom:12px;">
+        <button type="button" class="robot-gender-pill-btn active" id="robotVoiceFemaleBtn">♀ Female Voice</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotVoiceMaleBtn">♂ Male Voice</button>
       </div>
 
       <!-- Status & Transcript -->

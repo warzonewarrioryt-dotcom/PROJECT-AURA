@@ -9,7 +9,7 @@ function isConfigured() {
   return Boolean(process.env.YOUTUBE_API_KEY && process.env.YOUTUBE_API_KEY.trim());
 }
 
-// Curated high-relevance educational video IDs mapped across core engineering & CS subjects
+// Curated high-relevance educational video IDs mapped across core engineering, school & CS subjects
 const CURATED_SUBJECT_VIDEOS = {
   "data structures": {
     "Tamil": [
@@ -51,6 +51,54 @@ const CURATED_SUBJECT_VIDEOS = {
     "English": [
       { id: "IPv4_IPv6_EN", title: "Computer Networking Course - Beginning to Advanced", channel: "freeCodeCamp.org", desc: "Network topologies, switches, routers, CIDR, DNS, HTTP/HTTPS, and network security." },
       { id: "qiQR5rTSshw", title: "Computer Networks Lectures for Engineering", channel: "Gate Smashers", desc: "Data link protocols (Stop-and-wait, Go-Back-N), flow control, congestion management, and cryptography." }
+    ]
+  },
+  "mathematics": {
+    "Tamil": [
+      { id: "e_e07fJ85V8", title: "Engineering & 12th Mathematics: Matrices & Calculus in Tamil", channel: "Tamil Maths Academy", desc: "Step-by-step matrix eigenvalues, eigenvectors, Cayley-Hamilton theorem, and differentiation in Tamil." },
+      { id: "Vw8m6aH_VqA", title: "Differential Equations & Transforms in Tamil", channel: "Anna University Maths Hub", desc: "First order and higher order linear differential equations with clear solved university questions." }
+    ],
+    "English": [
+      { id: "WS070h7kY3I", title: "Calculus 1 Full College Course", channel: "freeCodeCamp.org", desc: "Limits, derivatives, chain rule, integration, and applications of calculus." },
+      { id: "fNk_zzaMoSs", title: "Linear Algebra & Matrices - Full University Course", channel: "3Blue1Brown", desc: "Essence of linear algebra: Vectors, linear transformations, determinants, and dot products." }
+    ]
+  },
+  "physics": {
+    "Tamil": [
+      { id: "m6x8A4V4B9o", title: "12th & Engineering Physics: Electrostatics & Optics in Tamil", channel: "Tamil Physics Tutor", desc: "Gauss law, electric flux, capacitors, Snell's law, and wave optics derivations." },
+      { id: "Q4_h2X3g_11", title: "Quantum Physics & Lasers in Tamil", channel: "Tech Science Tamil", desc: "Wave-particle duality, De Broglie hypothesis, Heisenberg uncertainty, and Einstein coefficients." }
+    ],
+    "English": [
+      { id: "bHIhgxav9LY", title: "Physics 1 - Full College Course with Practice Problems", channel: "The Organic Chemistry Tutor", desc: "Kinematics, Newton's laws, rotational dynamics, work and energy." },
+      { id: "T63zM2l2e74", title: "Electricity and Magnetism - MIT Physics 8.02", channel: "MIT OpenCourseWare", desc: "Electric fields, Gauss's law, Ampere's law, Faraday's induction, and Maxwell's equations." }
+    ]
+  },
+  "chemistry": {
+    "Tamil": [
+      { id: "c_u8A2Z5N3o", title: "12th & Engineering Chemistry: Electrochemistry & Polymers in Tamil", channel: "Tamil Chem Academy", desc: "Nernst equation, galvanic cells, corrosion control, and conducting polymers in Tamil." },
+      { id: "W9_p5Z1a_44", title: "Organic Reactions & Mechanisms in Tamil", channel: "Tamil Science Hub", desc: "Named organic reactions: Aldol condensation, Cannizzaro, and nucleophilic substitution." }
+    ],
+    "English": [
+      { id: "bC79K6V3M6E", title: "General Chemistry 1 Review Study Guide - IB, AP, & College", channel: "The Organic Chemistry Tutor", desc: "Stoichiometry, thermochemistry, electron configuration, and molecular geometry." },
+      { id: "M7e2K1k0m04", title: "Organic Chemistry 1 - Full College Course", channel: "freeCodeCamp.org", desc: "Reaction mechanisms, stereochemistry, resonance, and functional groups." }
+    ]
+  },
+  "python": {
+    "Tamil": [
+      { id: "m67-bOpOoPU", title: "Python Full Course for Beginners in Tamil", channel: "Error Makes Clever Academy", desc: "Complete Python basics: variables, loops, functions, lists, dictionaries, and OOP in Tamil." },
+      { id: "7rU4tT6eM1k", title: "Python Object Oriented Programming (OOP) in Tamil", channel: "Logic First Tamil", desc: "Classes, inheritance, polymorphism, encapsulation, and dunder methods." }
+    ],
+    "English": [
+      { id: "rfscVS0vtbw", title: "Python for Beginners - Full Course", channel: "freeCodeCamp.org", desc: "Comprehensive beginner to intermediate Python tutorial with interactive exercises." },
+      { id: "kqtD5dpn9C8", title: "Python Full Course - 12 Hours", channel: "Programming with Mosh", desc: "Production Python programming, data structures, automation, and web development." }
+    ]
+  },
+  "artificial intelligence": {
+    "Tamil": [
+      { id: "8uA3m5K1n70", title: "Artificial Intelligence & Machine Learning in Tamil", channel: "Logic First Tamil", desc: "Supervised learning, neural networks, gradient descent, and prompt engineering in Tamil." }
+    ],
+    "English": [
+      { id: "JMUxmLgw-QU", title: "Artificial Intelligence Full Course", channel: "freeCodeCamp.org", desc: "Search algorithms, reinforcement learning, deep learning, NLP, and computer vision." }
     ]
   }
 };

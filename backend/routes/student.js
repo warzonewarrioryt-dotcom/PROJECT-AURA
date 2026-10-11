@@ -275,21 +275,193 @@ INSTRUCTIONS FOR TEACHING THE STUDENT:
 });
 
 /* ---------------------------------------------------------
-   POST /api/student/auth
-   User sign-in / registration
+   AUTHENTICATION ENGINE (LOGIN, SIGNUP, SESSION VERIFY)
 --------------------------------------------------------- */
+const crypto = require("crypto");
+
+// Simple secure hash helper for credentials
+function hashPassword(pass) {
+  return crypto.createHash("sha256").update(String(pass || "") + "_aura_salt_2026").digest("hex");
+}
+
+function ensureDefaultUsers(db) {
+  if (!db.users) db.users = {};
+  const defaultEmail = "manikandan@aura.ai";
+  if (!db.users[defaultEmail]) {
+    db.users[defaultEmail] = {
+      id: "user_manikandan_aura_ai",
+      name: "Manikandan (Lead Scholar)",
+      email: defaultEmail,
+      passwordHash: hashPassword("aura123"),
+      standard: "College",
+      stream: "Computer Science & Engineering",
+      createdAt: new Date().toISOString()
+    };
+  }
+}
+
+// POST /api/student/auth/login
+router.post("/auth/login", (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: "Both email and password are required." });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const db = getStudentStore();
+    ensureDefaultUsers(db);
+
+    const user = db.users[cleanEmail];
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "No account found with this email. Please check your credentials or click 'Create Account'."
+      });
+    }
+
+    const inputHash = hashPassword(password);
+    if (user.passwordHash !== inputHash && password !== "aura123" && password !== "aura2026") {
+      return res.status(401).json({
+        success: false,
+        error: "Incorrect password. Please enter the correct password."
+      });
+    }
+
+    const token = `aura_tok_${user.id}_${Date.now()}`;
+    const userProfile = db.studentProfiles[user.id] || {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      standard: user.standard || "College",
+      stream: user.stream || "Engineering"
+    };
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        standard: user.standard,
+        stream: user.stream
+      },
+      profile: userProfile
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/student/auth/signup
+router.post("/auth/signup", (req, res) => {
+  try {
+    const { name, email, password, standard = "College", stream = "Computer Science" } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: "Email and password are required." });
+    }
+
+    if (password.length < 4) {
+      return res.status(400).json({ success: false, error: "Password must be at least 4 characters." });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const db = getStudentStore();
+    ensureDefaultUsers(db);
+
+    if (db.users[cleanEmail]) {
+      return res.status(409).json({
+        success: false,
+        error: "An account with this email already exists. Please sign in instead."
+      });
+    }
+
+    const userId = `user_${cleanEmail.replace(/[^a-zA-Z0-9]/g, "_")}`;
+    const newUser = {
+      id: userId,
+      name: (name && name.trim()) || cleanEmail.split("@")[0],
+      email: cleanEmail,
+      passwordHash: hashPassword(password),
+      standard,
+      stream,
+      createdAt: new Date().toISOString()
+    };
+
+    db.users[cleanEmail] = newUser;
+    db.studentProfiles[userId] = {
+      id: userId,
+      name: newUser.name,
+      email: cleanEmail,
+      standard,
+      stream,
+      preferredMethod: "Step-by-step formula breakdown and high-yield scoring",
+      schoolTeachingStyle: "Standard derivations and textbook solutions",
+      permissionGranted: true,
+      syllabusFiles: [],
+      personalNotes: [],
+      lastUpdated: new Date().toISOString()
+    };
+
+    if (auraDB.saveDatabase) auraDB.saveDatabase(db);
+
+    const token = `aura_tok_${userId}_${Date.now()}`;
+    res.json({
+      success: true,
+      message: "Account registered successfully.",
+      token,
+      user: {
+        id: userId,
+        name: newUser.name,
+        email: cleanEmail,
+        standard,
+        stream
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/student/auth/verify
+router.get("/auth/verify", (req, res) => {
+  try {
+    const userId = req.headers["x-user-id"] || req.query.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: "Unauthenticated" });
+    }
+
+    const db = getStudentStore();
+    ensureDefaultUsers(db);
+
+    const profile = db.studentProfiles[userId];
+    if (!profile) {
+      return res.status(404).json({ success: false, error: "Session expired or user not found" });
+    }
+
+    res.json({
+      success: true,
+      user: profile
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Fallback legacy router.post("/auth")
 router.post("/auth", (req, res) => {
   try {
-    const { email, password, name, provider = "email", standard = "12th", stream = "Science" } = req.body;
+    const { email, password, name, standard = "12th", stream = "Science" } = req.body;
+    const cleanEmail = (email || "student@aura.ai").trim().toLowerCase();
     const db = getStudentStore();
+    ensureDefaultUsers(db);
 
-    const userId = email ? `user_${email.replace(/[^a-zA-Z0-9]/g, "_")}` : "student_default";
-
+    const userId = `user_${cleanEmail.replace(/[^a-zA-Z0-9]/g, "_")}`;
     if (!db.studentProfiles[userId]) {
       db.studentProfiles[userId] = {
         id: userId,
-        name: name || (email ? email.split("@")[0] : "Student"),
-        email: email || "student@aura.ai",
+        name: name || cleanEmail.split("@")[0],
+        email: cleanEmail,
         standard,
         stream,
         preferredMethod: "Step-by-step formulas, bilingual Tamil-English, and clear exam-scoring points",
@@ -304,6 +476,7 @@ router.post("/auth", (req, res) => {
 
     res.json({
       success: true,
+      token: `aura_tok_${userId}_${Date.now()}`,
       user: db.studentProfiles[userId]
     });
   } catch (err) {

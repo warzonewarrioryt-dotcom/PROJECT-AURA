@@ -1245,7 +1245,8 @@ Return ONLY valid JSON:
 --------------------------------------------------------- */
 router.post(["/engineering/grade-mock", "/curriculum/grade-mock"], async (req, res) => {
   try {
-    const { subject, group = "Engineering", branch = "CSE", semester = 3, mockExam, questions: passedQuestions, studentAnswers = {}, selectedPartBOption = null } = req.body;
+    const { subject, group = "Engineering", branch = "CSE", semester = 3, mockExam, questions: passedQuestions, studentAnswers = {}, selectedPartBOption = null, userId } = req.body;
+    const effectiveUserId = userId || req.headers["x-user-id"] || "anonymous";
     const questions = passedQuestions || mockExam?.questions || [];
 
     const partAQuestions = questions.filter(q => q.part === "PART_A");
@@ -1385,6 +1386,7 @@ router.post(["/engineering/grade-mock", "/curriculum/grade-mock"], async (req, r
     }
 
     auraDB.addActivity("mock_graded", `Graded 50-Mark Examination: ${totalEarnedMarks}/50 (${grade})`, {
+      userId: effectiveUserId,
       subject,
       group,
       branch,
