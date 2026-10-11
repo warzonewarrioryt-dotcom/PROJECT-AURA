@@ -7744,8 +7744,8 @@ function initAuthGateway() {
       const name = document.getElementById("auraSignupName")?.value.trim();
       const email = document.getElementById("auraSignupEmail")?.value.trim();
       const password = document.getElementById("auraSignupPassword")?.value.trim();
-      const standard = document.getElementById("auraSignupStandard")?.value;
-      const stream = document.getElementById("auraSignupStream")?.value;
+      const standard = document.getElementById("auraSignupStandard")?.value || "College";
+      const stream = document.getElementById("auraSignupStream")?.value || "General";
 
       if (!email || !password) {
         showAlert("✕ Unsuccessful: Email and password are required.");
