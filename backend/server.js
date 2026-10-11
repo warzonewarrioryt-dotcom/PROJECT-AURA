@@ -73,6 +73,11 @@ app.use("/api/voice", voiceRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/auth", authRoutes);
 
+// Public Google Auth Config Route
+app.get('/api/auth/google-client-id', (req, res) => {
+  res.json({ clientId: process.env.GOOGLE_CLIENT_ID || '' });
+});
+
 /* =========================================================
    ROOT & SYSTEM STATUS
 ========================================================= */
