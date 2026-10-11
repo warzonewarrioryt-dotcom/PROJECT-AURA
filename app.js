@@ -7685,6 +7685,215 @@ function initAuthGateway() {
     });
   }
 
+  // ── OFFICIAL GOOGLE SIGN-IN & IDENTITY SERVICES (GIS) INTEGRATION ──
+  let activeGoogleClientId = "1082260667084-aura-ai-scholar.apps.googleusercontent.com";
+  let gsiInitialized = false;
+
+  async function handleGoogleCredentialResponse(response) {
+    if (!response || !response.credential) {
+      console.warn("[GOOGLE AUTH] Empty credential response received");
+      showAlert("✕ Google Sign-In was cancelled or encountered an error.");
+      return;
+    }
+
+    const credentialToken = response.credential;
+    showAlert("Verifying Google account with Project Aura...", false);
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: credentialToken, token: credentialToken })
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Google authentication failed on server.");
+      }
+
+      // Store authentic user session in browser & persistent storage
+      localStorage.setItem("aura_auth_session", JSON.stringify(data));
+      localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+
+      showAlert(`✓ Welcome, ${data.user.name}! Google authentication successful.`, false);
+      playTactileSound("success");
+      if (typeof playProjectAuraCinematicImpact === "function") {
+        playProjectAuraCinematicImpact(0.85);
+      }
+
+      setTimeout(() => {
+        portal.classList.add("authenticated");
+        if (userNameLabel) userNameLabel.textContent = data.user.name || "Student";
+        if (typeof updateTopUserName === "function") updateTopUserName(data.user.name);
+        if (signOutBtn) signOutBtn.style.display = "inline-flex";
+        if (typeof loadStudentPerformance === "function") loadStudentPerformance();
+        if (typeof updateAuthProfileDisplay === "function") updateAuthProfileDisplay();
+      }, 500);
+
+    } catch (err) {
+      console.error("[GOOGLE AUTH ERROR]", err);
+      showAlert(err.message || "✕ Unsuccessful: Failed to verify Google credentials with backend.");
+      playTactileSound("error");
+    }
+  }
+
+  function setupGoogleIdentityServices(clientId) {
+    activeGoogleClientId = clientId || activeGoogleClientId;
+    if (typeof window.google === "undefined" || !window.google.accounts || !window.google.accounts.id) {
+      return;
+    }
+
+    try {
+      window.google.accounts.id.initialize({
+        client_id: activeGoogleClientId,
+        callback: handleGoogleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        itp_support: true
+      });
+      gsiInitialized = true;
+
+      // Render hidden or fallback container button
+      const hiddenContainer = document.getElementById("gsiHiddenRenderContainer");
+      if (hiddenContainer) {
+        hiddenContainer.innerHTML = "";
+        window.google.accounts.id.renderButton(hiddenContainer, {
+          type: "standard",
+          theme: "filled_black",
+          size: "large",
+          text: "continue_with",
+          shape: "rectangular"
+        });
+      }
+    } catch (e) {
+      console.warn("[GSI INIT WARN]", e);
+    }
+  }
+
+  // Attempt to fetch client ID from server config
+  fetch(`${BACKEND_URL}/api/auth/google-client-id`)
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.clientId) activeGoogleClientId = d.clientId;
+      setupGoogleIdentityServices(activeGoogleClientId);
+    })
+    .catch(() => setupGoogleIdentityServices(activeGoogleClientId));
+
+  // Also poll GIS initialization if GSI script is loading async
+  if (typeof window.google === "undefined" || !window.google.accounts) {
+    let gsiAttempts = 0;
+    const gsiPoll = setInterval(() => {
+      gsiAttempts++;
+      if (typeof window.google !== "undefined" && window.google.accounts && window.google.accounts.id) {
+        setupGoogleIdentityServices(activeGoogleClientId);
+        clearInterval(gsiPoll);
+      } else if (gsiAttempts > 30) {
+        clearInterval(gsiPoll);
+      }
+    }, 250);
+  }
+
+  // Trigger Google Account Picker popup
+  function triggerGoogleSignInFlow() {
+    showAlert("Connecting to Google Identity Services...", false);
+    playTactileSound("click");
+
+    if (typeof window.google !== "undefined" && window.google.accounts) {
+      if (!gsiInitialized) {
+        setupGoogleIdentityServices(activeGoogleClientId);
+      }
+
+      // First try One Tap / GIS account prompt
+      if (window.google.accounts.id) {
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed()) {
+            console.warn("[GSI PROMPT NOT DISPLAYED]:", notification.getNotDisplayedReason());
+            tryOAuth2PopupOrFallback();
+          } else if (notification.isSkippedMoment()) {
+            console.warn("[GSI PROMPT SKIPPED]:", notification.getSkippedReason());
+          }
+        });
+        return;
+      }
+    }
+
+    tryOAuth2PopupOrFallback();
+  }
+
+  function tryOAuth2PopupOrFallback() {
+    // Check if google.accounts.oauth2 is available for direct popup
+    if (typeof window.google !== "undefined" && window.google.accounts && window.google.accounts.oauth2) {
+      try {
+        const tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: activeGoogleClientId,
+          scope: "email profile openid",
+          callback: async (tokenRes) => {
+            if (tokenRes && tokenRes.access_token) {
+              showAlert("Verifying Google account...", false);
+              try {
+                const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                  headers: { Authorization: `Bearer ${tokenRes.access_token}` }
+                });
+                const userInfo = await userInfoRes.json();
+                if (userInfo && userInfo.email) {
+                  const backendRes = await fetch(`${BACKEND_URL}/api/auth/google`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      token: tokenRes.access_token,
+                      email: userInfo.email,
+                      name: userInfo.name,
+                      picture: userInfo.picture,
+                      sub: userInfo.sub
+                    })
+                  });
+                  const bData = await backendRes.json();
+                  if (bData.success) {
+                    localStorage.setItem("aura_auth_session", JSON.stringify(bData));
+                    localStorage.setItem("aura_student_profile", JSON.stringify(bData.profile || bData.user));
+                    portal.classList.add("authenticated");
+                    if (userNameLabel) userNameLabel.textContent = bData.user.name || "Student";
+                    if (typeof updateTopUserName === "function") updateTopUserName(bData.user.name);
+                    if (signOutBtn) signOutBtn.style.display = "inline-flex";
+                    if (typeof loadStudentPerformance === "function") loadStudentPerformance();
+                    showAlert(`✓ Signed in as ${bData.user.name}!`, false);
+                    return;
+                  }
+                }
+              } catch (subErr) {
+                console.warn("[OAUTH2 USERINFO WARN]", subErr);
+              }
+            }
+          }
+        });
+        tokenClient.requestAccessToken({ prompt: "select_account" });
+        return;
+      } catch (oauthErr) {
+        console.warn("[OAUTH2 CLIENT ERROR]", oauthErr);
+      }
+    }
+
+    // Check if hidden rendered Google button exists to click
+    const renderedBtn = document.querySelector("#gsiHiddenRenderContainer div[role=button], #gsiHiddenRenderContainer iframe");
+    if (renderedBtn) {
+      renderedBtn.click();
+      return;
+    }
+
+    showAlert("Opening Google Account Picker... Check browser pop-up permissions if prompt is blocked.", false);
+  }
+
+  // Bind Google Sign-In buttons in Login and Signup forms
+  const googleAuthBtn = document.getElementById("googleAuthBtn");
+  const googleSignupAuthBtn = document.getElementById("googleSignupAuthBtn");
+
+  if (googleAuthBtn) {
+    googleAuthBtn.addEventListener("click", triggerGoogleSignInFlow);
+  }
+  if (googleSignupAuthBtn) {
+    googleSignupAuthBtn.addEventListener("click", triggerGoogleSignInFlow);
+  }
+
   // Check active session on startup
   const existingSession = localStorage.getItem("aura_auth_session");
   if (existingSession) {

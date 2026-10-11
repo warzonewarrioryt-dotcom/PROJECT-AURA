@@ -586,4 +586,12 @@ router.post("/auth", (req, res) => {
   }
 });
 
+// POST /api/student/auth/google (Forwarding alias to core auth engine)
+router.post("/auth/google", (req, res) => {
+  const authRoutes = require("./auth");
+  // Forward request to /api/auth/google handler directly
+  req.url = "/google";
+  return authRoutes(req, res);
+});
+
 module.exports = router;
