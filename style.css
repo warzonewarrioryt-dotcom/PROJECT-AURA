@@ -10913,6 +10913,57 @@ textarea:focus {
   color: #FFFFFF;
 }
 
+.auth-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.auth-password-wrapper .auth-glass-input,
+.auth-password-wrapper .form-textarea {
+  padding-right: 46px !important;
+  width: 100%;
+}
+
+.auth-password-toggle-btn {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  padding: 0;
+  user-select: none;
+}
+
+.auth-password-toggle-btn:hover {
+  color: var(--accent-gold);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-password-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.15s ease;
+}
+
+.auth-password-toggle-btn:hover svg {
+  transform: scale(1.12);
+}
+
 .auth-submit-glow-btn {
   height: 46px;
   margin-top: 6px;

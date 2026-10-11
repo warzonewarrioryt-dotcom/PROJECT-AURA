@@ -7315,6 +7315,8 @@ function initStudentAuthModal() {
 
   if (!userAuthBtn || !studentAuthModal) return;
 
+  if (typeof initPasswordToggleButtons === "function") initPasswordToggleButtons();
+
   userAuthBtn.addEventListener("click", () => {
     studentAuthModal.style.display = "flex";
     updateAuthProfileDisplay();
@@ -7554,10 +7556,39 @@ document.addEventListener("click", (e) => {
 
 
 
+// ── PASSWORD VISIBILITY TOGGLE (EYE SYMBOL) CONTROLLER ──
+function initPasswordToggleButtons() {
+  const eyeOpenSvg = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+  const eyeClosedSvg = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+  const toggles = [
+    { btnId: "toggleLoginPasswordBtn", inputId: "auraLoginPassword" },
+    { btnId: "toggleSignupPasswordBtn", inputId: "auraSignupPassword" },
+    { btnId: "toggleStudentModalPasswordBtn", inputId: "authPasswordInput" }
+  ];
+
+  toggles.forEach(({ btnId, inputId }) => {
+    const btn = document.getElementById(btnId);
+    const input = document.getElementById(inputId);
+    if (!btn || !input) return;
+
+    btn.onclick = () => {
+      const isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+      btn.innerHTML = isPassword ? eyeClosedSvg : eyeOpenSvg;
+      btn.setAttribute("title", isPassword ? "Hide Password" : "Show Password");
+      btn.setAttribute("aria-label", isPassword ? "Hide Password" : "Show Password");
+      if (typeof playTactileSound === "function") playTactileSound("click");
+    };
+  });
+}
+
 // ── MANDATORY LIQUID GLASS LOGIN & SIGNUP PORTAL GATEWAY ──
 function initAuthGateway() {
   const portal = document.getElementById("auraLoginPortal");
   if (!portal) return;
+
+  initPasswordToggleButtons();
 
   const tabLoginBtn = document.getElementById("tabLoginBtn");
   const tabSignupBtn = document.getElementById("tabSignupBtn");
