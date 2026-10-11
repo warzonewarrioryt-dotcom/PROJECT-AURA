@@ -67,52 +67,97 @@ router.get("/", (req, res) => {
 --------------------------------------------------------- */
 router.get("/performance", (req, res) => {
   try {
+    // Helper for realistic grading scale (under 25 marks on a 50-mark test is explicitly FOCUS NEEDED)
+    function computeRealisticGrade(earned, total = 50) {
+      if (!total || total <= 0) total = 50;
+      if (earned < (total * 0.5)) return "FOCUS NEEDED";
+      const pct = Math.round((earned / total) * 100);
+      if (pct >= 94) return "O (Outstanding)";
+      if (pct >= 85) return "A+ (Excellent)";
+      if (pct >= 75) return "A (Very Good)";
+      if (pct >= 62) return "B+ (Good)";
+      return "B (Pass / Average)";
+    }
+
     const activities = auraDB.getActivities(300);
     const mockResults = activities
       .filter(a => a.type === "mock_graded" || a.type === "quiz_result")
-      .map(a => ({
-        id: a.id,
-        subject: a.metadata?.subject || a.metadata?.topic || "Semester Assessment",
-        group: a.metadata?.group || a.metadata?.branch || "Engineering",
-        semester: a.metadata?.semester || 1,
-        earnedMarks: a.metadata?.earnedMarks ?? a.metadata?.score ?? 0,
-        totalMarks: a.metadata?.totalMarks ?? a.metadata?.total ?? 100,
-        percentage: a.metadata?.percentage || 0,
-        grade: a.metadata?.grade || "A",
-        focusTopics: a.metadata?.focusTopics || [],
-        timestamp: a.timestamp
-      }));
+      .map(a => {
+        const earned = a.metadata?.earnedMarks ?? a.metadata?.score ?? 0;
+        const total = a.metadata?.totalMarks ?? a.metadata?.total ?? 50;
+        const pct = total > 0 ? Math.round((earned / total) * 100) : 0;
+        const realisticGrade = computeRealisticGrade(earned, total);
+        const subjName = a.metadata?.subject || a.metadata?.topic || "Semester Assessment";
+        return {
+          id: a.id,
+          subject: subjName,
+          group: a.metadata?.group || a.metadata?.branch || "Engineering",
+          semester: a.metadata?.semester || 1,
+          earnedMarks: earned,
+          totalMarks: total,
+          percentage: pct,
+          grade: realisticGrade,
+          focusTopics: (a.metadata?.focusTopics && a.metadata.focusTopics.length > 0) ? a.metadata.focusTopics : [
+            {
+              topic: subjName + " — Foundational Concepts & Derivations",
+              importance: "High Priority to score above 25/50 marks",
+              guidance: "Master governing laws, 2-mark definitions, and standard diagrams.",
+              pdfUrl: `/api/quiz/engineering/notes?subject=${encodeURIComponent(subjName)}&format=pdf`,
+              browserSearchUrl: `https://www.google.com/search?q=${encodeURIComponent(subjName + " exam notes pdf solved answers")}`
+            }
+          ],
+          timestamp: a.timestamp
+        };
+      });
 
     // If no real tests taken yet, provide realistic baseline examples so student sees UI immediately
     const records = mockResults.length > 0 ? mockResults : [
       {
         id: "mock_demo_1",
-        subject: "Data Structures & Algorithms",
-        group: "Engineering (CSE)",
-        semester: 3,
-        earnedMarks: 84,
-        totalMarks: 100,
-        percentage: 84,
-        grade: "A+",
+        subject: "12th Physics — Electromagnetic Induction & AC",
+        group: "12th Standard Board Exam",
+        semester: 2,
+        earnedMarks: 21,
+        totalMarks: 50,
+        percentage: 42,
+        grade: "FOCUS NEEDED",
         focusTopics: [
-          { topic: "Graph Shortest Path (Dijkstra vs Bellman-Ford)", importance: "High Probability Exam Question", guidance: "Review edge relaxation proofs and negative cycle detection." },
-          { topic: "Red-Black Tree Rotations", importance: "Frequent 8-mark question", guidance: "Draw out the 4 recoloring and rotation cases step-by-step." }
+          {
+            topic: "LCR Series Circuit Resonance & Q-Factor Derivation",
+            importance: "Guaranteed 5-mark Board Question",
+            guidance: "Review phasor diagram and derive expression for resonant frequency and quality factor.",
+            pdfUrl: "/api/quiz/engineering/notes?subject=Electromagnetic%20Induction&format=pdf",
+            browserSearchUrl: "https://www.google.com/search?q=LCR+Series+Circuit+Resonance+Derivation+Class+12+PDF"
+          },
+          {
+            topic: "Faraday's Laws & Lenz's Law Energy Conservation",
+            importance: "Frequent 2-mark & 3-mark Question",
+            guidance: "Formulate magnetic flux change equations and justify how Lenz's law obeys conservation of energy.",
+            pdfUrl: "/api/quiz/engineering/notes?subject=Faraday%20Lenz%20Law&format=pdf",
+            browserSearchUrl: "https://www.google.com/search?q=Faradays+Lenz+Law+Class+12+Notes+PDF"
+          }
         ],
-        timestamp: new Date(Date.now() - 86400000 * 2).toISOString()
+        timestamp: new Date(Date.now() - 86400000 * 1).toISOString()
       },
       {
         id: "mock_demo_2",
-        subject: "Discrete Mathematics",
-        group: "Engineering (CSE)",
+        subject: "Data Structures & Algorithms",
+        group: "College Engineering (CSE)",
         semester: 3,
-        earnedMarks: 76,
-        totalMarks: 100,
-        percentage: 76,
-        grade: "A",
+        earnedMarks: 39,
+        totalMarks: 50,
+        percentage: 78,
+        grade: "A (Very Good)",
         focusTopics: [
-          { topic: "Recurrence Relations using Generating Functions", importance: "Repeated University 16-mark topic", guidance: "Practice homogenous vs particular solution equations." }
+          {
+            topic: "Graph Shortest Path (Dijkstra vs Bellman-Ford)",
+            importance: "High Probability 13-mark Exam Question",
+            guidance: "Review edge relaxation proofs, greedy choice property, and negative cycle detection.",
+            pdfUrl: "/api/quiz/engineering/notes?subject=Data%20Structures%20Algorithms&format=pdf",
+            browserSearchUrl: "https://www.google.com/search?q=Dijkstra+Bellman+Ford+algorithm+notes+pdf"
+          }
         ],
-        timestamp: new Date(Date.now() - 86400000 * 5).toISOString()
+        timestamp: new Date(Date.now() - 86400000 * 3).toISOString()
       }
     ];
 

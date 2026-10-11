@@ -33,6 +33,7 @@ const filesRoutes = require("./routes/files");
 const quizRoutes = require("./routes/quiz");
 const analyticsRoutes = require("./routes/analytics");
 const voiceRoutes = require("./routes/voice");
+const studentRoutes = require("./routes/student");
 
 /* =========================================================
    MIDDLEWARE
@@ -68,6 +69,7 @@ app.use("/api/vault", filesRoutes);
 app.use("/api/quiz", quizRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/voice", voiceRoutes);
+app.use("/api/student", studentRoutes);
 
 /* =========================================================
    ROOT & SYSTEM STATUS

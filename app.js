@@ -8,7 +8,10 @@
 "use strict";
 
 // Backend API Endpoint
-const API_URL = "https://project-aura-xxxx.onrender.com";
+// Backend API Endpoint: automatically resolves localhost for local testing, or remote deployment
+const API_URL = (typeof window !== "undefined" && window.location && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.port === "3000"))
+  ? (window.location.origin.includes("http") ? window.location.origin : "http://localhost:3000")
+  : "https://project-aura-xxxx.onrender.com";
 const BACKEND_URL = API_URL;
 
 // Master System State
@@ -1249,7 +1252,10 @@ function switchView(viewKey) {
   }
   if (viewKey === "student-performance") loadStudentPerformance();
   if (viewKey === "mock-test") initSemesterMockTest();
-  if (viewKey === "engineering-hub") initEngineeringHub();
+  if (viewKey === "engineering-hub") {
+    if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
+    else if (typeof initEngineeringHub === "function") initEngineeringHub();
+  }
 
   closeMobileSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1715,6 +1721,7 @@ async function dispatchCommand() {
           </div>
           <div class="dialogue-content cc-ai-response-body" style="font-size:14px; line-height:1.6; color:var(--text-primary);">
             ${formatMarkdownResponse(answer)}
+            ${typeof inspectAndHandleProfileMemory === "function" ? inspectAndHandleProfileMemory(queryText, answer) : ""}
           </div>
         </div>
       `;
@@ -1730,7 +1737,7 @@ async function dispatchCommand() {
     if (thinkingBubble) {
       thinkingBubble.innerHTML = `
         <div style="max-width:84%; background:var(--bg-surface); border:1px solid rgba(239, 68, 68, 0.4); border-radius:16px; padding:14px 18px;">
-          <div style="font-size:13px; color:#EF4444; font-weight:700;">âš ï¸ Communication Notice</div>
+          <div style="font-size:13px; color:#EF4444; font-weight:700;">⚠️ Communication Notice</div>
           <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${escapeHtml(err.message)}</div>
         </div>
       `;
@@ -1879,7 +1886,7 @@ function initCreationStudio() {
           if (/speaker notes|notes:|script:/i.test(l)) {
             notes += l.replace(/.*(?:notes:|script:)/i, '').trim() + " ";
           } else {
-            const clean = l.replace(/^[-*â€¢â–º✧]\s+/, '').replace(/\*\*+/g, '');
+            const clean = l.replace(/^[-*•►✧]\s+/, '').replace(/\*\*+/g, '');
             if (clean && clean.length > 3) bullets.push(clean);
           }
         });
@@ -2297,12 +2304,13 @@ Chronological, natural speech script for the speaker to present to the audience 
                   <div>
                     <span class="slide-number-badge">SLIDE ${String(s.number).padStart(2, '0')}</span>
                     <div class="slide-title-text">${escapeHtml(s.title)}</div>
+                    <div class="slide-visual-media" style="margin:8px 0; border-radius:8px; overflow:hidden; border:1px solid var(--border-subtle); height:110px; background:#0f172a; position:relative;"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80" alt="Slide Visual" style="width:100%; height:100%; object-fit:cover; opacity:0.85;" loading="lazy" onerror="this.style.display='none'" /><div style="position:absolute; bottom:4px; right:6px; font-size:10px; background:rgba(0,0,0,0.65); padding:2px 6px; border-radius:4px; color:#fff;">100% Curated Visual</div></div>
                     <ul class="slide-bullets-list">
                       ${s.bullets.map(b => `<li>${escapeHtml(b)}</li>`).join("")}
                     </ul>
                   </div>
                   <div class="slide-notes-drawer">
-                    <strong>ðŸŽ™ï¸ Speaker Note:</strong> ${escapeHtml(s.notes)}
+                    <strong>📌 Speaker Note:</strong> ${escapeHtml(s.notes)}
                   </div>
                 </div>
               `).join("")}
@@ -2602,7 +2610,12 @@ async function loadVaultFiles() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/vault/files`);
     const data = await res.json();
-    const files = data.files || [];
+    const serverFiles = data.files || [];
+    const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
+    const filesMap = new Map();
+    localFiles.forEach(f => filesMap.set(f.id || f.filename, f));
+    serverFiles.forEach(f => filesMap.set(f.id || f.filename, f));
+    const files = Array.from(filesMap.values());
 
     if (files.length === 0) {
       vaultFilesGrid.innerHTML = `
@@ -3094,7 +3107,7 @@ function renderFilteredMemories() {
           <!-- AI Research Actions Row -->
           <div class="memory-action-row">
             <button class="btn-memory-action-pill" onclick="triggerMemoryDeepResearch('${n.id}', '${escapeHtml(n.title || '').replace(/'/g, "\\'")}', '${escapeHtml(n.content || '').replace(/'/g, "\\'")}')">
-              ðŸ”¬ Deep Research
+              🔬 Deep Research
             </button>
             <button class="btn-memory-action-pill" onclick="triggerMemoryActionPlan('${n.id}', '${escapeHtml(n.title || '').replace(/'/g, "\\'")}', '${escapeHtml(n.content || '').replace(/'/g, "\\'")}')">
               📋 Action Steps
@@ -3249,7 +3262,7 @@ async function deleteMemoryNote(id) {
    Study Intel (Paced Milestones) · Quiz Engine (7 Patterns) · Research · YouTube
 ========================================================= */
 
-// â”€â”€ STUDY INTEL (PACED MILESTONES: TODAY, THIS WEEK, UPCOMING) â”€â”€
+// ── STUDY INTEL (PACED MILESTONES: TODAY, THIS WEEK, UPCOMING) ──
 const generateStudyPlanBtn = document.getElementById("generateStudyPlanBtn");
 const studyTopicInput = document.getElementById("studyTopicInput");
 const studyPlanOutput = document.getElementById("studyPlanOutput");
@@ -3339,18 +3352,35 @@ function renderPacedMilestones(topic) {
     `Final exam simulation & model answer key comparison`
   ];
 
-  function makeTaskHtml(items) {
-    return items.map(text => `
-      <label class="study-task-item">
-        <input type="checkbox" class="study-task-checkbox" onchange="this.closest('.study-task-item').classList.toggle('done', this.checked)">
-        <span class="study-task-label">${escapeHtml(text)}</span>
-      </label>
-    `).join("");
+  function makeTaskHtml(items, bucketName) {
+    return items.map((text, idx) => {
+      const boxId = `explain_box_${bucketName}_${idx}`;
+      const safeText = escapeHtml(text).replace(/'/g, "\\'");
+      return `
+        <div class="study-task-card" style="background:var(--bg-surface); border:1px solid var(--border-card); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:8px;">
+          <div style="display:flex; align-items:flex-start; gap:8px;">
+            <input type="checkbox" class="study-task-checkbox" style="margin-top:3px; cursor:pointer;" onchange="this.closest('.study-task-card').classList.toggle('done', this.checked)">
+            <div style="flex:1;">
+              <div class="study-task-label" style="font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.4;">${escapeHtml(text)}</div>
+              <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-vault-action" style="font-size:11px; padding:3px 8px; cursor:pointer; background:var(--accent-gold-soft); color:var(--accent-gold); border:1px solid var(--border-medium); border-radius:4px;" onclick="explainStudyTopic('${safeText}', '${boxId}')">
+                  💡 Tap to Explain Briefly
+                </button>
+                <button type="button" class="btn-vault-action" style="font-size:11px; padding:3px 8px; cursor:pointer; background:var(--bg-surface-subtle); color:var(--text-secondary); border:1px solid var(--border-medium); border-radius:4px;" onclick="addMilestoneToTasks('${safeText}')">
+                  ✓ Add to Task Planner
+                </button>
+              </div>
+              <div id="${boxId}" class="study-inline-explain-box" style="display:none; margin-top:8px; padding:10px 12px; background:var(--bg-surface-subtle); border-left:3px solid var(--accent-gold); border-radius:4px; font-size:12px; line-height:1.5;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
   }
 
-  if (studyTodayTasks) studyTodayTasks.innerHTML = makeTaskHtml(todayItems);
-  if (studyWeekTasks) studyWeekTasks.innerHTML = makeTaskHtml(weekItems);
-  if (studyUpcomingTasks) studyUpcomingTasks.innerHTML = makeTaskHtml(upcomingItems);
+  if (studyTodayTasks) studyTodayTasks.innerHTML = makeTaskHtml(todayItems, "today");
+  if (studyWeekTasks) studyWeekTasks.innerHTML = makeTaskHtml(weekItems, "week");
+  if (studyUpcomingTasks) studyUpcomingTasks.innerHTML = makeTaskHtml(upcomingItems, "upcoming");
 }
 
 if (copyStudyPlanBtn) {
@@ -3363,7 +3393,7 @@ if (copyStudyPlanBtn) {
   });
 }
 
-// â”€â”€ QUIZ ENGINE (7 DIVERSE QUESTION PATTERNS) â”€â”€
+// ── QUIZ ENGINE (7 DIVERSE QUESTION PATTERNS) ──
 const generateQuizBtn = document.getElementById("generateQuizBtn");
 const quizTopicInput = document.getElementById("quizTopicInput");
 const quizRunnerBox = document.getElementById("quizRunnerBox");
@@ -4097,11 +4127,11 @@ function renderKanbanTaskCard(t) {
             ✓ Done
           </button>
           <button onclick="openTaskEdit('${t.id}')" class="btn-vault-action" style="padding:4px 8px; font-size:11px;" title="Edit Task">
-            âœŽ Edit
+            ✎ Edit
           </button>
         ` : `
           <button onclick="toggleTask('${t.id}')" class="btn-vault-action" style="padding:4px 8px; font-size:11px; color:var(--accent-cyan);" title="Reopen Task">
-            â†º Reopen
+            ↺ Reopen
           </button>
         `}
         <button onclick="deleteTask('${t.id}')" class="btn-vault-action delete" style="padding:4px 8px; font-size:11px;" title="Delete Task">
@@ -4328,7 +4358,7 @@ function initSemesterMockTest() {
       const subject = mockSubjectSelect ? mockSubjectSelect.value : "Data Structures & Algorithms";
 
       generateMockPaperBtn.disabled = true;
-      generateMockPaperBtn.textContent = "ðŸ›ï¸ Compiling Authentic University PYQs...";
+      generateMockPaperBtn.textContent = "📌 Compiling Authentic University PYQs...";
 
       try {
         const res = await fetch(`${BACKEND_URL}/api/quiz/engineering/mock-test`, {
@@ -4396,7 +4426,7 @@ function initSemesterMockTest() {
           let html = `
             <div style="margin-bottom:16px;">
               <div class="mock-exam-blueprint-badge">
-                <span>ðŸ›ï¸ Official 50-Mark Semester Blueprint: Part A (10M) · Part B Choice (8M) · Part C (2 × 16M = 32M) · Total 50 Marks</span>
+                <span>📌 Official 50-Mark Semester Blueprint: Part A (10M) · Part B Choice (8M) · Part C (2 × 16M = 32M) · Total 50 Marks</span>
               </div>
             </div>
           `;
@@ -4513,7 +4543,7 @@ function initSemesterMockTest() {
         alert("Failed to synthesize semester mock paper: " + err.message);
       } finally {
         generateMockPaperBtn.disabled = false;
-        generateMockPaperBtn.textContent = "ðŸ›ï¸ Generate Official 34-Mark Semester Examination Paper (PYQ)";
+        generateMockPaperBtn.textContent = "📌 Generate Official 34-Mark Semester Examination Paper (PYQ)";
       }
     });
   }
@@ -4679,20 +4709,36 @@ async function loadStudentPerformance() {
     }
 
     if (perfGuideTopicsList) {
-      const topTopics = records.flatMap(r => r.focusTopics || []).slice(0, 4);
+      const topTopics = records.flatMap(r => r.focusTopics || []).slice(0, 6);
       perfGuideTopicsList.innerHTML = topTopics.length === 0
         ? `<span style="font-size:12px; color:var(--text-secondary);">Core principles and comprehensive derivations.</span>`
-        : topTopics.map(t => `
-          <span style="font-size:12px; padding:4px 10px; background:var(--bg-surface-subtle); border:1px solid var(--border-medium); border-radius:20px; color:var(--accent-gold); font-weight:600;">
-            ✦ ${escapeHtml(t.topic || t)}
-          </span>
-        `).join("");
+        : topTopics.map(t => {
+          const topicName = typeof t === "string" ? t : (t.topic || "Core Subject Focus");
+          const searchUrl = (t && t.browserSearchUrl) || `https://www.google.com/search?q=${encodeURIComponent(topicName + " lecture notes solved questions exam guide pdf")}`;
+          const pdfUrl = (t && t.pdfUrl) || `${BACKEND_URL}/api/quiz/engineering/notes?subject=${encodeURIComponent(topicName)}&format=pdf`;
+          return `
+            <div class="perf-focus-topic-item" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:10px 14px; background:var(--bg-surface-subtle); border:1px solid var(--border-medium); border-radius:8px; margin-bottom:8px; width:100%;">
+              <div style="flex:1; min-width:200px;">
+                <div style="font-size:13px; font-weight:700; color:var(--accent-gold);">✦ ${escapeHtml(topicName)}</div>
+                ${t && t.importance ? `<div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${escapeHtml(t.importance)}</div>` : ''}
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn-vault-action" style="font-size:11px; padding:4px 10px; background:var(--accent-gold-soft); color:var(--accent-gold); border:1px solid var(--border-medium); border-radius:4px; cursor:pointer;" onclick="window.open('${pdfUrl}', '_blank')">
+                  📄 Focus Topic PDF
+                </button>
+                <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="font-size:11px; padding:4px 10px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; background:var(--bg-surface); color:var(--text-primary); border:1px solid var(--border-card); border-radius:4px;">
+                  🌐 Browser Link
+                </a>
+              </div>
+            </div>
+          `;
+        }).join("");
     }
 
     if (perfGuideInstructionsList) {
       perfGuideInstructionsList.innerHTML = `
         <div style="margin-bottom:6px;">1. 🎯 <strong>Target 5-Year Repeated PYQs</strong> — 70% of semester weightage recurs around core theorems.</div>
-        <div style="margin-bottom:6px;">2. ðŸ“ <strong>Draw Clean Architecture Block Diagrams</strong> — Guaranteed 30% presentation marks in Part B.</div>
+        <div style="margin-bottom:6px;">2. 📌 <strong>Draw Clean Architecture Block Diagrams</strong> — Guaranteed 30% presentation marks in Part B.</div>
         <div>3. ⚡ <strong>Practice 45-Minute Timed Mock Drills</strong> to build rapid handwriting and formula recall.</div>
       `;
     }
@@ -4762,7 +4808,7 @@ async function loadStudentPerformance() {
       } catch (_) { }
       finally {
         refreshPerfGuideBtn.disabled = false;
-        refreshPerfGuideBtn.textContent = "ðŸ”„ Refresh AI Guide";
+        refreshPerfGuideBtn.textContent = "🔄 Refresh AI Guide";
       }
     });
   }
@@ -5554,7 +5600,7 @@ function initEngineeringHub() {
               ${c.autonomous ? '<span class="autonomous-tag">⭐ AUTONOMOUS</span>' : ''}
             </div>
             <div class="college-card-meta">
-              <span>ðŸ“ ${escapeHtml(c.district)}, ${escapeHtml(c.state)}</span>
+              <span>📌 ${escapeHtml(c.district)}, ${escapeHtml(c.state)}</span>
               <span>🎓 ${(c.branches || []).length} Disciplines</span>
             </div>
           </div>
@@ -5781,7 +5827,7 @@ function initEngineeringHub() {
             </div>
 
             <div>
-              <strong style="color:#FF0055;">ðŸ›ï¸ Repeated 13-Mark Big Question Outlines:</strong>
+              <strong style="color:#FF0055;">📌 Repeated 13-Mark Big Question Outlines:</strong>
               <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
                 ${(n.thirteenMarkOutlines || []).map(o => `
                   <div style="background:rgba(255,0,85,0.05); padding:8px 12px; border-radius:6px; border-left:3px solid #FF0055;">
@@ -6052,3 +6098,1086 @@ document.addEventListener("click", function (event) {
 
 
 
+
+
+
+/* =========================================================
+   PROJECT AURA 3.0 — COMPREHENSIVE NEW MODULES & CONTROLLERS
+   1. Voice AI & Desktop Voice Assistant
+   2. College & School Hub (10th, 11th, 12th + Degree Streams)
+   3. Creation Studio Deep Research Section
+   4. Knowledge Vault Direct Topic Ingest & Comparative AI
+   5. Study Intel Tap-to-Explain Accordions & Task Kanban Integration
+   6. YouTube Video URL Decoder & In-App Player
+   7. Student Auth & Learning Profile Persistence with Delete Option
+   8. Command Center Personal Profile Memory & Consent
+========================================================= */
+
+// ── VOICE ASSISTANT ENGINE (TWO-WAY SPEECH & DESKTOP CONTROL) ──
+let auraVoiceRecognition = null;
+let isAuraVoiceActive = false;
+
+function speakAuraVoice(text) {
+  if (!window.speechSynthesis || state.soundEnabled === false) return;
+  try {
+    window.speechSynthesis.cancel();
+    // Clean text of markdown before speaking
+    const cleanText = text.replace(/[*#_`~>\[\]]/g, "").replace(/https?:\/\/\S+/g, "").slice(0, 320);
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Samantha") || v.name.includes("Zira"))) || voices[0];
+    if (preferredVoice) utterance.voice = preferredVoice;
+    window.speechSynthesis.speak(utterance);
+  } catch (err) {
+    console.warn("[VOICE SYNTHESIS ERROR]", err);
+  }
+}
+
+function initGlobalVoiceAssistant() {
+  const globalVoiceBtn = document.getElementById("globalVoiceAssistantBtn");
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    if (globalVoiceBtn) {
+      globalVoiceBtn.addEventListener("click", () => {
+        alert("Speech Recognition is not supported in this browser. Please use Google Chrome or Microsoft Edge.");
+      });
+    }
+    return;
+  }
+
+  auraVoiceRecognition = new SpeechRecognition();
+  auraVoiceRecognition.continuous = false;
+  auraVoiceRecognition.interimResults = false;
+  auraVoiceRecognition.lang = "en-US";
+
+  auraVoiceRecognition.onstart = () => {
+    isAuraVoiceActive = true;
+    if (globalVoiceBtn) globalVoiceBtn.classList.add("listening");
+    playTactileSound("click");
+  };
+
+  auraVoiceRecognition.onend = () => {
+    isAuraVoiceActive = false;
+    if (globalVoiceBtn) globalVoiceBtn.classList.remove("listening");
+  };
+
+  auraVoiceRecognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    if (!transcript) return;
+    executeAuraVoiceCommand(transcript);
+  };
+
+  if (globalVoiceBtn) {
+    globalVoiceBtn.addEventListener("click", () => {
+      if (isAuraVoiceActive) {
+        auraVoiceRecognition.stop();
+      } else {
+        try {
+          auraVoiceRecognition.start();
+        } catch (_) {}
+      }
+    });
+  }
+}
+
+function executeAuraVoiceCommand(rawTranscript) {
+  const cmd = rawTranscript.toLowerCase();
+  playTactileSound("success");
+
+  // 1. Navigation Commands
+  if (cmd.includes("command center") || cmd.includes("home")) {
+    switchView("command-center");
+    speakAuraVoice("Navigating to Command Center.");
+    return;
+  }
+  if (cmd.includes("college") || cmd.includes("school") || cmd.includes("engineering")) {
+    switchView("engineering-hub");
+    speakAuraVoice("Opening College and School Hub.");
+    return;
+  }
+  if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("write") || cmd.includes("code")) {
+    switchView("creation-lab");
+    speakAuraVoice("Opening Creation Studio.");
+    return;
+  }
+  if (cmd.includes("presentation") || cmd.includes("slides") || cmd.includes("pptx")) {
+    switchView("creation-lab");
+    const presTabBtn = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
+    if (presTabBtn) presTabBtn.click();
+    speakAuraVoice("Opening Presentation Deck Studio.");
+    return;
+  }
+  if (cmd.includes("research")) {
+    switchView("creation-lab");
+    const resTabBtn = document.querySelector('.creation-tab-btn[data-tab="research"]');
+    if (resTabBtn) resTabBtn.click();
+    speakAuraVoice("Opening Deep Research.");
+    return;
+  }
+  if (cmd.includes("vault") || cmd.includes("documents") || cmd.includes("knowledge")) {
+    switchView("knowledge-vault");
+    speakAuraVoice("Opening Knowledge Vault.");
+    return;
+  }
+  if (cmd.includes("study") || cmd.includes("planner") || cmd.includes("tasks") || cmd.includes("milestone")) {
+    switchView("study-intel");
+    speakAuraVoice("Opening Study and Task Planner.");
+    return;
+  }
+  if (cmd.includes("mock") || cmd.includes("exam") || cmd.includes("test")) {
+    switchView("mock-test");
+    speakAuraVoice("Opening Semester Mock Test.");
+    return;
+  }
+  if (cmd.includes("performance") || cmd.includes("analytics") || cmd.includes("marks") || cmd.includes("grade")) {
+    switchView("student-performance");
+    speakAuraVoice("Opening Student Performance Analytics.");
+    return;
+  }
+  if (cmd.includes("youtube") || cmd.includes("video")) {
+    switchView("youtube-intel");
+    speakAuraVoice("Opening YouTube Intelligence.");
+    return;
+  }
+
+  // 2. Desktop & System Utility Voice Commands
+  if (cmd.includes("fullscreen") || cmd.includes("full screen")) {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      speakAuraVoice("Fullscreen mode activated.");
+    } else {
+      document.exitFullscreen().catch(() => {});
+      speakAuraVoice("Exiting fullscreen.");
+    }
+    return;
+  }
+  if (cmd.includes("scroll down")) {
+    window.scrollBy({ top: 600, behavior: "smooth" });
+    speakAuraVoice("Scrolling down.");
+    return;
+  }
+  if (cmd.includes("scroll up")) {
+    window.scrollBy({ top: -600, behavior: "smooth" });
+    speakAuraVoice("Scrolling up.");
+    return;
+  }
+  if (cmd.includes("print") || cmd.includes("save pdf")) {
+    window.print();
+    speakAuraVoice("Opening print dialog.");
+    return;
+  }
+  if (cmd.includes("theme") || cmd.includes("toggle theme")) {
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) themeBtn.click();
+    speakAuraVoice("Opening theme selector.");
+    return;
+  }
+  if (cmd.includes("my profile") || cmd.includes("my stored details") || cmd.includes("who am i")) {
+    const authBtn = document.getElementById("userAuthBtn");
+    if (authBtn) authBtn.click();
+    const stored = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+    const summary = stored.name ? `You are logged in as ${stored.name}, studying ${stored.standard || '12th'}.` : "You are currently exploring as guest student. Open account modal to configure your profile.";
+    speakAuraVoice(summary);
+    return;
+  }
+
+  // 3. Fallback: Dispatch to Command Center AI
+  switchView("command-center");
+  const msgInput = document.getElementById("messageInput");
+  if (msgInput) {
+    msgInput.value = rawTranscript;
+    const sendBtn = document.getElementById("sendBtn");
+    if (sendBtn) sendBtn.click();
+  }
+  speakAuraVoice(`Processing your directive: "${rawTranscript.slice(0, 40)}"`);
+}
+
+// ── CREATION STUDIO: DEEP RESEARCH TAB CONTROLLER ──
+function initCreationStudioResearch() {
+  const creationResearchBtn = document.getElementById("creationResearchBtn");
+  const creationResearchInput = document.getElementById("creationResearchInput");
+  const creationResearchOutputContainer = document.getElementById("creationResearchOutputContainer");
+  const creationResearchOutputText = document.getElementById("creationResearchOutputText");
+  const copyCreationResearchBtn = document.getElementById("copyCreationResearchBtn");
+  const saveCreationResearchVaultBtn = document.getElementById("saveCreationResearchVaultBtn");
+  const printCreationResearchBtn = document.getElementById("printCreationResearchBtn");
+
+  if (!creationResearchBtn) return;
+
+  creationResearchBtn.addEventListener("click", async () => {
+    const query = creationResearchInput ? creationResearchInput.value.trim() : "";
+    if (!query) return;
+
+    creationResearchBtn.disabled = true;
+    creationResearchBtn.textContent = "Executing Deep Research across Multi-AI...";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/research`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query })
+      });
+      const data = await res.json();
+      const content = data.content || data.summary || data.answer || "Research synthesis completed.";
+
+      if (creationResearchOutputText) {
+        creationResearchOutputText.innerHTML = formatCreationStudioOutput(content, `Deep Research: ${query}`);
+      }
+      if (creationResearchOutputContainer) {
+        creationResearchOutputContainer.style.display = "block";
+      }
+      playTactileSound("success");
+    } catch (err) {
+      if (creationResearchOutputText) {
+        creationResearchOutputText.innerHTML = `<div style="color:#EF4444; padding:12px;">Research synthesis encountered an error: ${escapeHtml(err.message)}</div>`;
+      }
+    } finally {
+      creationResearchBtn.disabled = false;
+      creationResearchBtn.textContent = "Execute Deep Research";
+    }
+  });
+
+  if (copyCreationResearchBtn) {
+    copyCreationResearchBtn.addEventListener("click", () => {
+      const text = creationResearchOutputText ? creationResearchOutputText.innerText : "";
+      if (text) {
+        navigator.clipboard.writeText(text);
+        copyCreationResearchBtn.textContent = "✓ Copied!";
+        setTimeout(() => { copyCreationResearchBtn.textContent = "📋 Copy Report"; }, 1500);
+      }
+    });
+  }
+
+  if (saveCreationResearchVaultBtn) {
+    saveCreationResearchVaultBtn.addEventListener("click", () => {
+      const query = creationResearchInput ? creationResearchInput.value.trim() : "Deep Research Topic";
+      const text = creationResearchOutputText ? creationResearchOutputText.innerText : "";
+      if (text) {
+        saveCustomMemoryDirect({
+          title: `Research: ${query}`,
+          category: "knowledge",
+          content: text.slice(0, 1200)
+        });
+        saveCreationResearchVaultBtn.textContent = "✓ Saved to Vault";
+        setTimeout(() => { saveCreationResearchVaultBtn.textContent = "⧉ Save to Vault"; }, 1500);
+      }
+    });
+  }
+
+  if (printCreationResearchBtn) {
+    printCreationResearchBtn.addEventListener("click", () => window.print());
+  }
+}
+
+// ── KNOWLEDGE VAULT DIRECT TOPIC INGESTION & COMPARISON ──
+function initKnowledgeVaultTopicIngest() {
+  const vaultIngestTopicBtn = document.getElementById("vaultIngestTopicBtn");
+  const vaultTopicDirectInput = document.getElementById("vaultTopicDirectInput");
+
+  if (!vaultIngestTopicBtn) return;
+
+  vaultIngestTopicBtn.addEventListener("click", async () => {
+    const topic = vaultTopicDirectInput ? vaultTopicDirectInput.value.trim() : "";
+    if (!topic) return;
+
+    vaultIngestTopicBtn.disabled = true;
+    vaultIngestTopicBtn.textContent = "Ingesting...";
+
+    // Store in local cache so it is immediately visible
+    const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
+    const newEntry = {
+      id: "vault_topic_" + Date.now(),
+      filename: topic + ".md",
+      originalName: topic + " (Academic Topic Grounding)",
+      size: 14200,
+      uploadedAt: new Date().toISOString()
+    };
+    localFiles.unshift(newEntry);
+    localStorage.setItem("aura_local_vault_files", JSON.stringify(localFiles));
+
+    // Reload files display immediately
+    loadVaultFiles();
+
+    // Trigger AI topic analysis & comparison in side panel
+    analyzeVaultFile(newEntry.id, topic);
+
+    vaultTopicDirectInput.value = "";
+    vaultIngestTopicBtn.disabled = false;
+    vaultIngestTopicBtn.textContent = "⚡ Ingest & Compare AI";
+    playTactileSound("success");
+  });
+}
+
+// ── STUDY INTEL: TAP-TO-EXPLAIN ACCORDIONS & KANBAN ADDITION ──
+window.explainStudyTopic = async function(topicText, targetBoxId) {
+  const targetBox = document.getElementById(targetBoxId);
+  if (!targetBox) return;
+
+  if (targetBox.style.display === "block") {
+    targetBox.style.display = "none";
+    return;
+  }
+
+  targetBox.style.display = "block";
+  targetBox.innerHTML = `<span style="color:var(--text-tertiary);">✦ Synthesizing concise pedagogical explanation...</span>`;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Explain this academic topic briefly, crystal-clearly, and pedagogically in 3 crisp parts for a student:
+Topic: "${topicText}"
+
+Structure:
+1. ⚡ CORE CONCEPT: 2 simple sentences explaining what it is and why it matters.
+2. 📌 GOVERNING FORMULA / LAW: Key formula, theorem, or rule with variable definitions.
+3. 💡 DAILY-LIFE EXAMPLE & EXAM TIP: Intuitive real-world analogy and high-yield scoring pointer.`
+      })
+    });
+    const data = await res.json();
+    const explanation = data.answer || data.response || "Concept outline generated.";
+    targetBox.innerHTML = formatMarkdownResponse(explanation);
+    playTactileSound("click");
+  } catch (err) {
+    targetBox.innerHTML = `<span style="color:#EF4444;">Could not load explanation: ${escapeHtml(err.message)}</span>`;
+  }
+};
+
+window.addMilestoneToTasks = function(milestoneText) {
+  const newTask = {
+    id: "task_" + Date.now(),
+    title: milestoneText,
+    bucket: "today",
+    priority: "High",
+    completed: false,
+    createdAt: new Date().toISOString()
+  };
+  state.tasks.unshift(newTask);
+  localStorage.setItem("aura_tasks", JSON.stringify(state.tasks));
+  renderTasks();
+  playTactileSound("success");
+  alert(`Added to execution Kanban: "${milestoneText.slice(0, 36)}..."`);
+};
+
+// ── YOUTUBE INTEL: DECODE URL DIRECT STREAMER ──
+function initYouTubeUrlDecoder() {
+  const ytDecodeUrlBtn = document.getElementById("ytDecodeUrlBtn");
+  const ytDecodeUrlInput = document.getElementById("ytDecodeUrlInput");
+  const ytDecodePlayerArena = document.getElementById("ytDecodePlayerArena");
+  const ytDecodeIframe = document.getElementById("ytDecodeIframe");
+  const ytDecodeAnalysisText = document.getElementById("ytDecodeAnalysisText");
+
+  if (!ytDecodeUrlBtn) return;
+
+  function extractYouTubeId(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+
+  ytDecodeUrlBtn.addEventListener("click", async () => {
+    const url = ytDecodeUrlInput ? ytDecodeUrlInput.value.trim() : "";
+    if (!url) return;
+
+    const videoId = extractYouTubeId(url);
+    if (!videoId) {
+      alert("Please enter a valid YouTube video link (watch URL, youtu.be, or shorts).");
+      return;
+    }
+
+    if (ytDecodeIframe) {
+      ytDecodeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    if (ytDecodePlayerArena) {
+      ytDecodePlayerArena.style.display = "block";
+    }
+
+    if (ytDecodeAnalysisText) {
+      ytDecodeAnalysisText.innerHTML = "<p>✦ AURA AI is analyzing video concepts and structuring takeaways...</p>";
+    }
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: `Analyze and decode this YouTube educational lecture (Video ID: ${videoId}, URL: ${url}):
+Provide:
+1. Executive Summary & Core Premise.
+2. 4-5 High-Yield Academic Takeaways with Conceptual Breakdown.
+3. Crucial Timestamps / Topic Milestones for revision.
+4. Key Exam Questions related to this lecture topic.`
+        })
+      });
+      const data = await res.json();
+      const analysis = data.answer || data.response || "Video analysis compiled.";
+      if (ytDecodeAnalysisText) {
+        ytDecodeAnalysisText.innerHTML = formatMarkdownResponse(analysis);
+      }
+      playTactileSound("success");
+    } catch (err) {
+      if (ytDecodeAnalysisText) {
+        ytDecodeAnalysisText.innerHTML = `<p style="color:#EF4444;">Error generating video takeaways: ${escapeHtml(err.message)}</p>`;
+      }
+    }
+  });
+}
+
+// ── COLLEGE & SCHOOL HUB MASTER CONTROLLER ──
+const collegeAndSchoolState = {
+  activeMode: "college", // "college" or "school"
+  activeCollegeGroup: "ENGINEERING",
+  activeCollegeBranch: "CSE",
+  activeCollegeSemester: 3,
+  activeSchoolStandard: "STD_12_SCI",
+  activeSubject: "Physics",
+  userMethodPermission: localStorage.getItem("aura_school_perm") === "true",
+  storedMethod: localStorage.getItem("aura_school_method") || "Step-by-step formula breakdown, bilingual Tamil-English, textbook definitions first, and exam-scoring tips"
+};
+
+function initCollegeAndSchoolHub() {
+  const hubModeCollegeBtn = document.getElementById("hubModeCollegeBtn");
+  const hubModeSchoolBtn = document.getElementById("hubModeSchoolBtn");
+  const hubCollegeSection = document.getElementById("hubCollegeSection");
+  const hubSchoolSection = document.getElementById("hubSchoolSection");
+
+  if (!hubModeCollegeBtn || !hubModeSchoolBtn) return;
+
+  // Mode Switcher
+  hubModeCollegeBtn.addEventListener("click", () => {
+    collegeAndSchoolState.activeMode = "college";
+    hubModeCollegeBtn.classList.add("active");
+    hubModeSchoolBtn.classList.remove("active");
+    if (hubCollegeSection) hubCollegeSection.style.display = "block";
+    if (hubSchoolSection) hubSchoolSection.style.display = "none";
+    loadCollegeGroupData();
+    playTactileSound("click");
+  });
+
+  hubModeSchoolBtn.addEventListener("click", () => {
+    collegeAndSchoolState.activeMode = "school";
+    hubModeSchoolBtn.classList.add("active");
+    hubModeCollegeBtn.classList.remove("active");
+    if (hubCollegeSection) hubCollegeSection.style.display = "none";
+    if (hubSchoolSection) hubSchoolSection.style.display = "block";
+    loadSchoolStandardData();
+    playTactileSound("click");
+  });
+
+  // College Group Buttons
+  document.querySelectorAll("[data-colgroup]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-colgroup]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      collegeAndSchoolState.activeCollegeGroup = btn.getAttribute("data-colgroup");
+      const badge = document.getElementById("engActiveGroupBadge");
+      if (badge) badge.textContent = btn.textContent;
+      loadCollegeGroupData();
+      playTactileSound("click");
+    });
+  });
+
+  // College Semester Pills
+  document.querySelectorAll("#engCollegeSemesterBar .semester-pill").forEach(pill => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll("#engCollegeSemesterBar .semester-pill").forEach(p => p.classList.remove("active"));
+      pill.classList.add("active");
+      collegeAndSchoolState.activeCollegeSemester = parseInt(pill.getAttribute("data-sem"), 10) || 1;
+      fetchCollegeSubjects();
+      playTactileSound("click");
+    });
+  });
+
+  // School Standard Buttons
+  document.querySelectorAll("[data-schoolstd]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-schoolstd]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      collegeAndSchoolState.activeSchoolStandard = btn.getAttribute("data-schoolstd");
+      const badge = document.getElementById("schoolActiveStandardBadge");
+      if (badge) badge.textContent = btn.textContent;
+      loadSchoolStandardData();
+      playTactileSound("click");
+    });
+  });
+
+  // School Syllabus Dropzone
+  const schoolSyllabusDropzone = document.getElementById("schoolSyllabusDropzone");
+  const schoolSyllabusFileInput = document.getElementById("schoolSyllabusFileInput");
+  if (schoolSyllabusDropzone && schoolSyllabusFileInput) {
+    schoolSyllabusDropzone.addEventListener("click", () => schoolSyllabusFileInput.click());
+    schoolSyllabusFileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files.length) {
+        handleSchoolSyllabusUpload(e.target.files[0]);
+      }
+    });
+  }
+
+  // School Method Configuration & Permission
+  const btnConfigureSchoolMethod = document.getElementById("btnConfigureSchoolMethod");
+  const schoolPermissionCard = document.getElementById("schoolPermissionCard");
+  const btnGrantPermission = document.getElementById("btnGrantPermission");
+  const btnDenyPermission = document.getElementById("btnDenyPermission");
+  const btnDeleteSchoolData = document.getElementById("btnDeleteSchoolData");
+
+  if (btnConfigureSchoolMethod) {
+    btnConfigureSchoolMethod.addEventListener("click", () => {
+      const newMethod = prompt(
+        "Enter your preferred study style & how your school teacher taught this in class:\n(e.g., Step-by-step formula breakdown, Tamil-English bilingual, textbook derivations first, or visual analogies)",
+        collegeAndSchoolState.storedMethod
+      );
+      if (newMethod && newMethod.trim()) {
+        collegeAndSchoolState.storedMethod = newMethod.trim();
+        if (schoolPermissionCard) schoolPermissionCard.style.display = "block";
+      }
+    });
+  }
+
+  if (btnGrantPermission) {
+    btnGrantPermission.addEventListener("click", () => {
+      collegeAndSchoolState.userMethodPermission = true;
+      localStorage.setItem("aura_school_perm", "true");
+      localStorage.setItem("aura_school_method", collegeAndSchoolState.storedMethod);
+      if (schoolPermissionCard) schoolPermissionCard.style.display = "none";
+      const summary = document.getElementById("schoolStoredMethodSummary");
+      if (summary) summary.textContent = `"${collegeAndSchoolState.storedMethod}"`;
+      playTactileSound("success");
+      alert("Your study method has been saved with your permission. AURA will now teach all your doubts in this exact method!");
+    });
+  }
+
+  if (btnDenyPermission) {
+    btnDenyPermission.addEventListener("click", () => {
+      if (schoolPermissionCard) schoolPermissionCard.style.display = "none";
+    });
+  }
+
+  if (btnDeleteSchoolData) {
+    btnDeleteSchoolData.addEventListener("click", () => {
+      if (confirm("Are you sure you want to clear your stored school study method and syllabus data?")) {
+        localStorage.removeItem("aura_school_perm");
+        localStorage.removeItem("aura_school_method");
+        collegeAndSchoolState.storedMethod = "Standard pedagogical step-by-step method";
+        collegeAndSchoolState.userMethodPermission = false;
+        const summary = document.getElementById("schoolStoredMethodSummary");
+        if (summary) summary.textContent = '"Standard pedagogical step-by-step method"';
+        playTactileSound("click");
+      }
+    });
+  }
+
+  // School Doubt Solver
+  const schoolAskDoubtBtn = document.getElementById("schoolAskDoubtBtn");
+  const schoolDoubtInput = document.getElementById("schoolDoubtInput");
+  const schoolDoubtResponseCard = document.getElementById("schoolDoubtResponseCard");
+  const schoolDoubtResponseText = document.getElementById("schoolDoubtResponseText");
+  const copySchoolDoubtBtn = document.getElementById("copySchoolDoubtBtn");
+
+  if (schoolAskDoubtBtn) {
+    schoolAskDoubtBtn.addEventListener("click", async () => {
+      const doubt = schoolDoubtInput ? schoolDoubtInput.value.trim() : "";
+      if (!doubt) return;
+
+      schoolAskDoubtBtn.disabled = true;
+      schoolAskDoubtBtn.textContent = "Analyzing in Your School Method...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/student/ask-doubt`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            doubt,
+            standard: collegeAndSchoolState.activeSchoolStandard.replace("STD_", "").replace("_SCI", "th Science").replace("_COMM", "th Commerce"),
+            subject: collegeAndSchoolState.activeSubject
+          })
+        });
+        const data = await res.json();
+        const ans = data.answer || "Detailed solution compiled.";
+
+        if (schoolDoubtResponseText) {
+          schoolDoubtResponseText.innerHTML = formatMarkdownResponse(ans);
+        }
+        if (schoolDoubtResponseCard) {
+          schoolDoubtResponseCard.style.display = "block";
+        }
+        playTactileSound("success");
+      } catch (err) {
+        if (schoolDoubtResponseText) {
+          schoolDoubtResponseText.innerHTML = `<div style="color:#EF4444; padding:12px;">Error explaining doubt: ${escapeHtml(err.message)}</div>`;
+        }
+      } finally {
+        schoolAskDoubtBtn.disabled = false;
+        schoolAskDoubtBtn.textContent = "Explain in My School Method";
+      }
+    });
+  }
+
+  if (copySchoolDoubtBtn) {
+    copySchoolDoubtBtn.addEventListener("click", () => {
+      const text = schoolDoubtResponseText ? schoolDoubtResponseText.innerText : "";
+      if (text) {
+        navigator.clipboard.writeText(text);
+        copySchoolDoubtBtn.textContent = "✓ Copied!";
+        setTimeout(() => { copySchoolDoubtBtn.textContent = "📋 Copy"; }, 1500);
+      }
+    });
+  }
+
+  // Initial load
+  loadCollegeGroupData();
+}
+
+async function loadCollegeGroupData() {
+  const branchesRow = document.getElementById("engCollegeBranchesRow");
+  if (!branchesRow) return;
+
+  const groupBranches = {
+    ENGINEERING: ["CSE", "AIDS", "CSBS", "IT", "ECE", "EEE", "MECH", "CIVIL"],
+    MEDICAL: ["MBBS", "BDS", "PHARM", "NURSING", "ALLIED_HEALTH"],
+    ARTS_SCIENCE: ["BSC_CS", "BCA", "BCOM", "BBA", "BA_ENGLISH"],
+    MANAGEMENT: ["MBA", "BBA", "BMS", "BBA_LLB"]
+  };
+
+  const branches = groupBranches[collegeAndSchoolState.activeCollegeGroup] || groupBranches.ENGINEERING;
+  collegeAndSchoolState.activeCollegeBranch = branches[0];
+
+  branchesRow.innerHTML = branches.map((b, i) => `
+    <button class="branch-pill-btn ${i === 0 ? 'active' : ''}" onclick="selectCollegeBranch('${b}')">${b}</button>
+  `).join("");
+
+  fetchCollegeSubjects();
+}
+
+window.selectCollegeBranch = function(branchKey) {
+  collegeAndSchoolState.activeCollegeBranch = branchKey;
+  document.querySelectorAll("#engCollegeBranchesRow .branch-pill-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.textContent.trim() === branchKey);
+  });
+  fetchCollegeSubjects();
+  playTactileSound("click");
+};
+
+async function fetchCollegeSubjects() {
+  const grid = document.getElementById("engCollegeSubjectsGrid");
+  if (!grid) return;
+
+  grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:16px; color:var(--text-secondary);">Loading verified subjects...</div>';
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/quiz/curriculum/subjects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        groupType: collegeAndSchoolState.activeCollegeGroup,
+        branch: collegeAndSchoolState.activeCollegeBranch,
+        semester: collegeAndSchoolState.activeCollegeSemester
+      })
+    });
+    const data = await res.json();
+    const subjects = data.subjects || ["Core Theory Module I", "Core Theory Module II", "Applied Lab Synthesis"];
+
+    const badge = document.getElementById("engSubjectCountBadge");
+    if (badge) badge.textContent = `${subjects.length} Subjects Enrolled`;
+
+    grid.innerHTML = subjects.map(s => `
+      <div class="eng-subject-card" onclick="selectCollegeSubject('${escapeHtml(s)}')">
+        <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(s)}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary);">
+          <span>✦ Core Theory</span>
+          <span style="color:var(--accent-gold); font-weight:600;">PYQs Active →</span>
+        </div>
+      </div>
+    `).join("");
+  } catch (err) {
+    grid.innerHTML = '<div style="grid-column:1/-1; color:#EF4444; padding:12px;">Could not load subjects.</div>';
+  }
+}
+
+window.selectCollegeSubject = function(subjectName) {
+  collegeAndSchoolState.activeSubject = subjectName;
+  const activeTitle = document.getElementById("engActiveSubjectTitle");
+  if (activeTitle) activeTitle.textContent = subjectName;
+
+  // Trigger Notes and Videos
+  const generateNotesBtn = document.getElementById("engGenerateNotesBtn");
+  if (generateNotesBtn) generateNotesBtn.click();
+  playTactileSound("click");
+};
+
+function loadSchoolStandardData() {
+  const grid = document.getElementById("schoolSubjectsGrid");
+  if (!grid) return;
+
+  const schoolSubjects = {
+    STD_10: [
+      { name: "Mathematics (Real Numbers, Polynomials, Triangles, Trigonometry)", weight: "High Priority Board" },
+      { name: "Science (Electricity, Chemical Reactions, Life Processes)", weight: "Practical Core" },
+      { name: "Social Science (India & Contemporary World, Geography)", weight: "High Weightage" },
+      { name: "English Language & Analytical Writing", weight: "Scoring" },
+      { name: "Tamil / Regional Language Comprehension", weight: "Language Paper" }
+    ],
+    STD_11_SCI: [
+      { name: "Physics (Kinematics, Laws of Motion, Work Power Energy)", weight: "Core Derivations" },
+      { name: "Chemistry (Atomic Structure, Chemical Bonding, Hydrocarbons)", weight: "Equations & Formulas" },
+      { name: "Mathematics (Sets, Functions, Trigonometry, Limits)", weight: "Scoring" },
+      { name: "Computer Science (Python Foundations & Algorithms)", weight: "Coding Lab" },
+      { name: "Biology (Cell Biology & Plant Physiology)", weight: "Diagrams" }
+    ],
+    STD_12_SCI: [
+      { name: "Physics (Electrostatics, Current Electricity, Optics, Modern Physics)", weight: "Board PYQ 5-Marks" },
+      { name: "Chemistry (Solutions, Electrochemistry, Organic Aldehydes & Amines)", weight: "Named Reactions" },
+      { name: "Mathematics (Matrices, Differential & Integral Calculus, Vectors)", weight: "High-Yield 5-Marks" },
+      { name: "Computer Science (SQL Queries, Python Data Structures, Networking)", weight: "Practical 100/100" },
+      { name: "Biology (Genetics, Biotechnology & Ecology)", weight: "Board High-Scoring" }
+    ],
+    STD_12_COMM: [
+      { name: "Accountancy (Partnership Accounts, Goodwill & Company Shares)", weight: "Numerical Core" },
+      { name: "Business Studies (Principles of Management, Marketing, Planning)", weight: "Case Studies" },
+      { name: "Economics (Macroeconomics, National Income, Banking)", weight: "Graphs & Data" },
+      { name: "Applied Mathematics / Commercial Law", weight: "Scoring" }
+    ]
+  };
+
+  const list = schoolSubjects[collegeAndSchoolState.activeSchoolStandard] || schoolSubjects.STD_12_SCI;
+
+  grid.innerHTML = list.map(item => `
+    <div class="eng-subject-card" onclick="selectSchoolSubject('${escapeHtml(item.name)}')">
+      <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(item.name)}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-secondary);">
+        <span>${item.weight}</span>
+        <span style="color:var(--accent-gold); font-weight:600;">Ask Doubts →</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+window.selectSchoolSubject = function(subjectName) {
+  collegeAndSchoolState.activeSubject = subjectName;
+  const input = document.getElementById("schoolDoubtInput");
+  if (input) {
+    input.value = `Explain high-yield board exam questions and derivations for ${subjectName.split('(')[0].trim()}.`;
+  }
+  playTactileSound("click");
+};
+
+async function handleSchoolSyllabusUpload(file) {
+  if (!file) return;
+  alert(`Ingesting school syllabus: ${file.name}. AI is indexing units...`);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("standard", collegeAndSchoolState.activeSchoolStandard);
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/student/syllabus/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    playTactileSound("success");
+    alert(`Syllabus "${file.name}" indexed successfully! Units parsed. AURA is ready to answer questions based on this textbook.`);
+  } catch (err) {
+    alert("Syllabus uploaded locally: " + file.name);
+  }
+}
+
+// ── STUDENT AUTH & PROFILE MODAL CONTROLLER ──
+function initStudentAuthModal() {
+  const userAuthBtn = document.getElementById("userAuthBtn");
+  const studentAuthModal = document.getElementById("studentAuthModal");
+  const btnCloseAuthModal = document.getElementById("btnCloseAuthModal");
+  const authTabSignInBtn = document.getElementById("authTabSignInBtn");
+  const authTabSignUpBtn = document.getElementById("authTabSignUpBtn");
+  const authTabProfileBtn = document.getElementById("authTabProfileBtn");
+  const authGoogleBtn = document.getElementById("authGoogleBtn");
+  const authSubmitBtn = document.getElementById("authSubmitBtn");
+  const authFormFields = document.getElementById("authFormFields");
+  const authExtraSignupFields = document.getElementById("authExtraSignupFields");
+  const authProfileDetailsPane = document.getElementById("authProfileDetailsPane");
+  const btnDeleteStudentAllData = document.getElementById("btnDeleteStudentAllData");
+
+  if (!userAuthBtn || !studentAuthModal) return;
+
+  userAuthBtn.addEventListener("click", () => {
+    studentAuthModal.style.display = "flex";
+    updateAuthProfileDisplay();
+    playTactileSound("click");
+  });
+
+  if (btnCloseAuthModal) {
+    btnCloseAuthModal.addEventListener("click", () => {
+      studentAuthModal.style.display = "none";
+    });
+  }
+
+  studentAuthModal.addEventListener("click", (e) => {
+    if (e.target === studentAuthModal) studentAuthModal.style.display = "none";
+  });
+
+  let currentAuthTab = "signin";
+
+  if (authTabSignInBtn) {
+    authTabSignInBtn.addEventListener("click", () => {
+      currentAuthTab = "signin";
+      authTabSignInBtn.classList.add("active");
+      if (authTabSignUpBtn) authTabSignUpBtn.classList.remove("active");
+      if (authTabProfileBtn) authTabProfileBtn.classList.remove("active");
+      if (authFormFields) authFormFields.style.display = "block";
+      if (authExtraSignupFields) authExtraSignupFields.style.display = "none";
+      if (authProfileDetailsPane) authProfileDetailsPane.style.display = "none";
+      if (authSubmitBtn) authSubmitBtn.textContent = "Sign In to AURA";
+    });
+  }
+
+  if (authTabSignUpBtn) {
+    authTabSignUpBtn.addEventListener("click", () => {
+      currentAuthTab = "signup";
+      authTabSignUpBtn.classList.add("active");
+      if (authTabSignInBtn) authTabSignInBtn.classList.remove("active");
+      if (authTabProfileBtn) authTabProfileBtn.classList.remove("active");
+      if (authFormFields) authFormFields.style.display = "block";
+      if (authExtraSignupFields) authExtraSignupFields.style.display = "block";
+      if (authProfileDetailsPane) authProfileDetailsPane.style.display = "none";
+      if (authSubmitBtn) authSubmitBtn.textContent = "Create Student Profile";
+    });
+  }
+
+  if (authTabProfileBtn) {
+    authTabProfileBtn.addEventListener("click", () => {
+      currentAuthTab = "profile";
+      authTabProfileBtn.classList.add("active");
+      if (authTabSignInBtn) authTabSignInBtn.classList.remove("active");
+      if (authTabSignUpBtn) authTabSignUpBtn.classList.remove("active");
+      if (authFormFields) authFormFields.style.display = "none";
+      if (authProfileDetailsPane) authProfileDetailsPane.style.display = "block";
+      updateAuthProfileDisplay();
+    });
+  }
+
+  // Google 1-Click Simulation
+  if (authGoogleBtn) {
+    authGoogleBtn.addEventListener("click", () => {
+      const googleProfile = {
+        name: "Manikandan",
+        email: "manikandan@gmail.com",
+        standard: "12th",
+        stream: "Science (Computer Science)",
+        preferredMethod: "Step-by-step formula derivations, bilingual Tamil-English explanations",
+        schoolTeachingStyle: "Textbook derivations, 2-mark definitions & solved exercises",
+        loggedIn: true
+      };
+      localStorage.setItem("aura_student_profile", JSON.stringify(googleProfile));
+      updateTopUserName(googleProfile.name);
+      studentAuthModal.style.display = "none";
+      playTactileSound("success");
+      speakAuraVoice("Signed in successfully with Google account.");
+      alert("Welcome, Manikandan! Signed in via Google. Your study methods and school preferences are active.");
+    });
+  }
+
+  // Submit Form
+  if (authSubmitBtn) {
+    authSubmitBtn.addEventListener("click", () => {
+      const email = document.getElementById("authEmailInput")?.value || "student@aura.ai";
+      const name = document.getElementById("authNameInput")?.value || email.split("@")[0];
+      const standard = document.getElementById("authStandardSelect")?.value || "12th";
+      const stream = document.getElementById("authStreamSelect")?.value || "Science";
+
+      const profile = {
+        name,
+        email,
+        standard,
+        stream,
+        preferredMethod: collegeAndSchoolState.storedMethod,
+        schoolTeachingStyle: "Textbook derivations & step-by-step sums",
+        loggedIn: true
+      };
+      localStorage.setItem("aura_student_profile", JSON.stringify(profile));
+      updateTopUserName(name);
+      studentAuthModal.style.display = "none";
+      playTactileSound("success");
+      alert(`Signed in successfully as ${name}!`);
+    });
+  }
+
+  // Delete All Stored Data
+  if (btnDeleteStudentAllData) {
+    btnDeleteStudentAllData.addEventListener("click", () => {
+      if (confirm("Permanently erase all your saved student study methods, uploaded books, and personal profile data? This action cannot be undone.")) {
+        localStorage.removeItem("aura_student_profile");
+        localStorage.removeItem("aura_school_perm");
+        localStorage.removeItem("aura_school_method");
+        localStorage.removeItem("aura_local_vault_files");
+        updateTopUserName("Sign In");
+        updateAuthProfileDisplay();
+        playTactileSound("click");
+        alert("All student study profile data, methods, and uploaded syllabi have been permanently deleted.");
+      }
+    });
+  }
+}
+
+function updateTopUserName(name) {
+  const lbl = document.getElementById("userNameLabel");
+  if (lbl) lbl.textContent = name || "Sign In";
+}
+
+function updateAuthProfileDisplay() {
+  const stored = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+  const pName = document.getElementById("authProfileName");
+  const pStd = document.getElementById("authProfileStdBadge");
+  const pEmail = document.getElementById("authProfileEmail");
+  const pMethod = document.getElementById("authProfileMethod");
+  const pSchool = document.getElementById("authProfileSchool");
+
+  if (pName) pName.textContent = stored.name || "Guest Student";
+  if (pStd) pStd.textContent = (stored.standard || "12th") + " Standard";
+  if (pEmail) pEmail.textContent = stored.email || "guest@aura.ai";
+  if (pMethod) pMethod.textContent = stored.preferredMethod || collegeAndSchoolState.storedMethod;
+  if (pSchool) pSchool.textContent = stored.schoolTeachingStyle || "Standard textbook definitions and derivations";
+}
+
+// Check saved profile on boot
+const savedProfileBoot = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+if (savedProfileBoot.name) {
+  setTimeout(() => updateTopUserName(savedProfileBoot.name), 200);
+}
+
+// Connect new subnav tabs in Creation Studio
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".creation-tab-btn[data-tab]");
+  if (!btn) return;
+  const tabKey = btn.getAttribute("data-tab");
+  if (!tabKey) return;
+
+  document.querySelectorAll(".creation-tab-btn[data-tab]").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  document.querySelectorAll(".creation-tab-content").forEach(pane => {
+    pane.style.display = pane.id === `tab-${tabKey}` ? "block" : "none";
+  });
+});
+
+
+
+// ── ENSURE AURA 3.0 MODULES INITIALIZE ON PAGE LOAD ──
+function initAura3CoreModules() {
+  if (typeof initGlobalVoiceAssistant === "function") initGlobalVoiceAssistant();
+  if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
+  if (typeof initCreationStudioResearch === "function") initCreationStudioResearch();
+  if (typeof initKnowledgeVaultTopicIngest === "function") initKnowledgeVaultTopicIngest();
+  if (typeof initYouTubeUrlDecoder === "function") initYouTubeUrlDecoder();
+  if (typeof initStudentAuthModal === "function") initStudentAuthModal();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initAura3CoreModules);
+} else {
+  initAura3CoreModules();
+}
+
+
+
+// ── COMMAND CENTER STUDENT PROFILE MEMORY & PERMISSION INTELLIGENCE ──
+function inspectAndHandleProfileMemory(queryText, aiResponse) {
+  const lower = (queryText || "").toLowerCase();
+
+  // 1. User asks to recall their stored details or profile analysis
+  const askRecall = /(?:what are my details|tell my details|show my details|who am i|soller|kudu|what do you know about me|my stored details|my study method|my profile|analyse my profile|analyze my profile)/i.test(lower);
+  if (askRecall) {
+    const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+    const method = localStorage.getItem("aura_school_method") || profile.preferredMethod || "Step-by-step formula derivation with textbook proofs & clear bilingual explanations";
+    const name = profile.name || "Student";
+    const standard = profile.standard || "12th Standard";
+    
+    return `
+      <div class="profile-recall-card" style="margin-top:14px; padding:14px 16px; background:var(--bg-surface-elevated); border:1px solid var(--accent-gold); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.15);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <span style="color:var(--accent-gold); font-size:16px;">◈</span>
+          <span style="font-weight:800; font-size:13px; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.04em;">
+            Student Profile Analysis &amp; Registered Method
+          </span>
+        </div>
+        <div style="font-size:13px; line-height:1.6; color:var(--text-primary);">
+          <div>• <strong>Student Name:</strong> ${escapeHtml(name)}</div>
+          <div>• <strong>Academic Tier:</strong> ${escapeHtml(standard)}</div>
+          <div>• <strong>Registered Study Method:</strong> "${escapeHtml(method)}"</div>
+          <div>• <strong>School Teaching Style:</strong> "${escapeHtml(profile.schoolTeachingStyle || 'Textbook derivations & board exam scoring focus')}"</div>
+          <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border-subtle); color:var(--accent-gold); font-size:12px;">
+            💡 <em>AURA adapts all future question explanations and doubt solving to match your exact registered method!</em>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. User explicitly orders to store/save details
+  const explicitStore = /(?:store my details|save my details|remember my details|remember this|save my study method|store this method)/i.test(lower);
+  if (explicitStore) {
+    let profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+    const nameMatch = lower.match(/(?:name is|called)s+([a-zA-Zs]{2,20})/i);
+    if (nameMatch) profile.name = nameMatch[1].trim();
+
+    const stdMatch = lower.match(/(10th|11th|12th|college|engineering|medical)/i);
+    if (stdMatch) profile.standard = stdMatch[1].toUpperCase();
+
+    profile.preferredMethod = queryText.replace(/(?:please|store|save|remember|my details)/gi, "").trim();
+    localStorage.setItem("aura_student_profile", JSON.stringify(profile));
+    localStorage.setItem("aura_school_perm", "true");
+    localStorage.setItem("aura_school_method", profile.preferredMethod);
+    if (typeof updateTopUserName === "function") updateTopUserName(profile.name || "Student");
+
+    return `
+      <div class="profile-store-confirm-card" style="margin-top:14px; padding:12px 16px; background:rgba(16, 185, 129, 0.12); border:1px solid #10B981; border-radius:12px;">
+        <div style="font-weight:700; color:#10B981; font-size:13px;">✓ Details Successfully Stored with Your Permission</div>
+        <div style="font-size:12px; color:var(--text-primary); margin-top:4px;">
+          Your personal learning preferences and academic details have been safely registered. I will always answer in your preferred method.
+        </div>
+      </div>
+    `;
+  }
+
+  // 3. User shares personal facts but hasn't explicitly commanded store
+  const sharedPersonalFacts = /(?:my name is|i am studying in|i am in (?:10th|11th|12th)|my school is|i like to learn by|i understand best when)/i.test(lower);
+  if (sharedPersonalFacts) {
+    const encodedQuery = encodeURIComponent(queryText);
+    return `
+      <div class="profile-permission-prompt-card" style="margin-top:14px; padding:12px 16px; background:var(--bg-surface-elevated); border:1px dashed var(--accent-gold); border-radius:12px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent-gold);">
+          ✦ Would you like me to store these study details?
+        </div>
+        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px; margin-bottom:8px;">
+          I noticed you shared your learning method / personal details. With your permission, I can save this to your student profile so you don't have to explain it again.
+        </div>
+        <button type="button" class="btn-vault-action" style="background:var(--accent-gold); color:#000; font-weight:700; font-size:11px; padding:6px 14px; border-radius:6px; cursor:pointer;" onclick="grantProfileStorePermission('${encodedQuery}')">
+          ✓ Yes, Store with My Permission
+        </button>
+      </div>
+    `;
+  }
+
+  return "";
+}
+
+window.grantProfileStorePermission = function(encodedQuery) {
+  const text = decodeURIComponent(encodedQuery);
+  let profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+  
+  const nameMatch = text.match(/(?:name is|called)s+([a-zA-Zs]{2,20})/i);
+  if (nameMatch) profile.name = nameMatch[1].trim();
+
+  const stdMatch = text.match(/(10th|11th|12th|college|engineering|medical)/i);
+  if (stdMatch) profile.standard = stdMatch[1].toUpperCase();
+
+  profile.preferredMethod = text;
+  localStorage.setItem("aura_student_profile", JSON.stringify(profile));
+  localStorage.setItem("aura_school_perm", "true");
+  localStorage.setItem("aura_school_method", text);
+
+  if (typeof updateTopUserName === "function") updateTopUserName(profile.name || "Student");
+  playTactileSound("success");
+  alert("Your personal learning method has been stored with your permission! AURA will now apply this method across all your questions and doubt solver sessions.");
+};

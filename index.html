@@ -85,8 +85,8 @@
           </li>
           <li class="nav-item" data-view="engineering-hub">
             <span class="nav-icon">🎓</span>
-            <span class="nav-label">Engineering Hub</span>
-            <span class="nav-badge">AI</span>
+            <span class="nav-label">College & School</span>
+            <span class="nav-badge">Hub</span>
           </li>
           <li class="nav-item" data-view="youtube-intel">
             <span class="nav-icon">▷</span>
@@ -118,6 +118,18 @@
         </div>
 
         <div class="topbar-right">
+          <!-- Voice Assistant Global Controller -->
+          <button class="topbar-voice-btn" id="globalVoiceAssistantBtn" title="AURA Voice Assistant (Talk or Control Desktop)">
+            <span class="voice-wave-dot"></span>
+            <span class="voice-btn-label">Voice AI</span>
+          </button>
+
+          <!-- Student Profile & Authentication -->
+          <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Authentication">
+            <span class="user-avatar-glyph">👤</span>
+            <span id="userNameLabel" class="user-name-text">Sign In</span>
+          </button>
+
           <button class="topbar-search-trigger" id="topbarSearchTrigger">
             <span>Ask or search anything...</span>
             <span class="search-shortcut-kbd">⌘K</span>
@@ -535,6 +547,7 @@
                 <button class="creation-tab-btn" data-tab="coding">💻 Code</button>
                 <button class="creation-tab-btn" data-tab="scripts">🎬 Script</button>
                 <button class="creation-tab-btn" data-tab="presentation">📊 Presentation</button>
+                <button class="creation-tab-btn" data-tab="research">🌐 Deep Research</button>
                 <button class="creation-tab-btn" data-tab="social">📱 Social</button>
                 <button class="creation-tab-btn" data-tab="templates">📋 Templates</button>
               </div>
@@ -738,6 +751,45 @@
               </div>
             </div>
 
+            <!-- TAB 4B: DEEP RESEARCH (UNIFIED CREATION STUDIO RESEARCH SECTION) -->
+            <div class="creation-tab-content" id="tab-research" style="display:none;">
+              <div class="workspace-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                  <h3 class="card-section-title" style="margin-bottom:0;">🌐 Deep Research & Multi-Source Synthesis</h3>
+                  <span class="eng-badge-pill" style="background:var(--accent-gold-soft); color:var(--accent-gold);">Tavily · Cross-AI Comparison</span>
+                </div>
+                <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+                  Conduct rigorous, multi-perspective AI investigation across scientific literature, academic archives, and web domains with verified citations.
+                </p>
+                <div class="research-search-row">
+                  <input type="text" id="creationResearchInput" class="research-input"
+                    placeholder="Enter research inquiry (e.g. Next-generation Solid-State Battery Energy Density 2026)..." />
+                  <button class="btn-generate-gemini" id="creationResearchBtn" style="width:auto; padding:0 24px;">
+                    Execute Deep Research
+                  </button>
+                </div>
+                
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; margin-bottom:14px;">
+                  <span style="font-size:11px; font-weight:700; color:var(--text-secondary);">Research Mode:</span>
+                  <button class="branch-pill-btn active" id="resModeAcademic">🎓 Academic &amp; Peer-Reviewed</button>
+                  <button class="branch-pill-btn" id="resModeIndustry">🏢 Industry &amp; Market Intelligence</button>
+                  <button class="branch-pill-btn" id="resModeTechnical">⚙️ Deep Technical Architecture</button>
+                </div>
+
+                <div class="creation-crisp-card" id="creationResearchOutputContainer" style="margin-top:16px; display:none;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Multi-Perspective Research Dossier</span>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="copyCreationResearchBtn">📋 Copy Report</button>
+                      <button class="btn-vault-action" id="saveCreationResearchVaultBtn">⧉ Save to Vault</button>
+                      <button class="btn-vault-action" id="printCreationResearchBtn">🖨️ Print Dossier</button>
+                    </div>
+                  </div>
+                  <div class="dialogue-content" id="creationResearchOutputText"></div>
+                </div>
+              </div>
+            </div>
+
             <!-- TAB 5: SOCIAL -->
             <div class="creation-tab-content" id="tab-social" style="display:none;">
               <div class="workspace-card">
@@ -915,8 +967,17 @@
                 <div class="vault-upload-dropzone" id="vaultDropzone">
                   <input type="file" id="vaultFileInput" style="display:none;" />
                   <div class="vault-dropzone-icon">⧉</div>
-                  <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Upload Files to Ground AURA</h4>
-                  <p style="font-size:13px; color:var(--text-secondary);">Drag & drop PDF, DOCX, TXT, or click to browse</p>
+                  <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Upload Document or Ingest Academic Topic</h4>
+                  <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">Drag &amp; drop PDF, DOCX, TXT, or click to browse</p>
+                  
+                  <div style="display:flex; gap:8px; width:100%; max-width:520px; margin:0 auto;" onclick="event.stopPropagation();">
+                    <input type="text" id="vaultTopicDirectInput" class="research-input"
+                      placeholder="Or enter topic to ground (e.g. 12th Physics Electrostatics, OS Concurrency)..."
+                      style="margin-bottom:0; font-size:12px; height:38px;" />
+                    <button class="btn-generate-gemini" id="vaultIngestTopicBtn" style="width:auto; padding:0 18px; font-size:12px; white-space:nowrap;">
+                      ⚡ Ingest &amp; Compare AI
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Selected / Uploaded Files Shelf (Visible to User!) -->
@@ -1547,113 +1608,167 @@
         ===================================================== -->
         <section class="aura-view" id="view-engineering-hub">
           <div class="view-header">
-            <div class="view-eyebrow">Academic University System</div>
-            <h2 class="view-title">Engineering Hub</h2>
-            <p class="view-desc">Select engineering colleges across Tamil Nadu, Kerala, Karnataka, and AP with district
-              filters. Access 100% accurate semester subjects, generate AI study notes (PDF format), and watch curated
-              YouTube lectures in your preferred language.</p>
+            <div class="view-eyebrow">Academic &amp; School Intelligence</div>
+            <h2 class="view-title">College &amp; School Hub</h2>
+            <p class="view-desc">Switch seamlessly between College Higher Education (Engineering, Medical, Arts &amp; Science, Management) and School Curricula (10th, 11th &amp; 12th Standards). Ingest syllabus books, configure personalized teaching styles, and access authentic subjects with notes and video lectures.</p>
+            
+            <!-- Hub Mode Selector: College vs School -->
+            <div class="hub-mode-selector-bar" style="margin-top:16px; display:flex; gap:12px;">
+              <button class="branch-pill-btn active" id="hubModeCollegeBtn" style="padding:8px 20px; font-size:13px; font-weight:700;">
+                🎓 College Academic Hub
+              </button>
+              <button class="branch-pill-btn" id="hubModeSchoolBtn" style="padding:8px 20px; font-size:13px; font-weight:700;">
+                🏫 School Hub (10th, 11th &amp; 12th)
+              </button>
+            </div>
           </div>
 
-          <!-- 1. State & District College Directory Card -->
-          <div class="engineering-header-card">
-            <div class="eng-title-row">
-              <div class="eng-title-headline">
-                <span>🏛️</span>
-                <span>Colleges Directory & University Affiliations</span>
+          <!-- PANE A: COLLEGE ACADEMIC HUB -->
+          <div id="hubCollegeSection">
+            <!-- Academic Groups Selector -->
+            <div class="workspace-card">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>🎓</span>
+                  <span>Academic Degree Streams</span>
+                </div>
+                <span class="eng-badge-pill" id="engActiveGroupBadge">Engineering &amp; Technology</span>
               </div>
-              <span class="eng-badge-pill" id="engActiveCollegeBadge">Anna University / CEG Chennai</span>
-            </div>
-            <p class="eng-subline">Browse engineering colleges across southern states. Select your institution to reveal
-              verified disciplines and syllabus subjects.</p>
+              <p class="eng-subline">Select your degree stream to inspect verified university curricula, generate AI revision notes, and stream curated lectures.</p>
 
-            <!-- State & District & Autonomous Filters -->
-            <div class="college-filters-row">
-              <div>
-                <label
-                  style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Select
-                  State</label>
-                <select id="engStateSelect" class="college-filter-select" title="Select State"
-                  aria-label="Select State">
-                  <option value="Tamil Nadu" selected>Tamil Nadu</option>
-                  <option value="Kerala">Kerala</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Andhra Pradesh">Andhra Pradesh</option>
-                </select>
+              <!-- Academic Streams Buttons -->
+              <div class="college-filters-row" style="margin-top:12px; gap:8px; display:flex; flex-wrap:wrap;">
+                <button class="branch-pill-btn active" data-colgroup="ENGINEERING">💻 Engineering &amp; Tech</button>
+                <button class="branch-pill-btn" data-colgroup="MEDICAL">🩺 Medical &amp; Health</button>
+                <button class="branch-pill-btn" data-colgroup="ARTS_SCIENCE">🎨 Arts, Science &amp; Commerce</button>
+                <button class="branch-pill-btn" data-colgroup="MANAGEMENT">💼 Management &amp; Law</button>
               </div>
 
-              <div>
-                <label
-                  style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Filter
-                  by District</label>
-                <select id="engDistrictSelect" class="college-filter-select" title="Filter by District"
-                  aria-label="Filter by District">
-                  <option value="">All Districts</option>
-                </select>
+              <!-- Disciplines & Semesters -->
+              <div style="margin-top:16px;">
+                <div class="eng-section-title">Offered Degree Majors / Branches</div>
+                <div class="branch-pills-row" id="engCollegeBranchesRow"></div>
               </div>
 
-              <div>
-                <label
-                  style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Institution
-                  Type</label>
-                <select id="engCollegeTypeSelect" class="college-filter-select" title="Institution Type"
-                  aria-label="Institution Type">
-                  <option value="all" selected>All Colleges</option>
-                  <option value="autonomous">⭐ Autonomous Only</option>
-                  <option value="university">🏛️ University Campuses</option>
-                  <option value="deemed">🏢 Deemed Universities</option>
-                </select>
+              <div style="margin-top:16px;">
+                <div class="eng-section-title">Semester / Year</div>
+                <div class="semester-selector-bar" id="engCollegeSemesterBar">
+                  <button class="semester-pill" data-sem="1">Sem 1</button>
+                  <button class="semester-pill" data-sem="2">Sem 2</button>
+                  <button class="semester-pill active" data-sem="3">Sem 3</button>
+                  <button class="semester-pill" data-sem="4">Sem 4</button>
+                  <button class="semester-pill" data-sem="5">Sem 5</button>
+                  <button class="semester-pill" data-sem="6">Sem 6</button>
+                  <button class="semester-pill" data-sem="7">Sem 7</button>
+                  <button class="semester-pill" data-sem="8">Sem 8</button>
+                </div>
               </div>
 
-              <div style="flex:1; min-width:200px;">
-                <label
-                  style="font-size:11px; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:4px;">Quick
-                  Search Colleges</label>
-                <input type="text" id="engCollegeSearchInput" class="college-filter-select"
-                  placeholder="Search college name, district, autonomous..."
-                  style="width:100%; height:40px; border-radius:var(--radius-sm);" />
+              <!-- Accurate Subjects Grid -->
+              <div style="margin-top:20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+                  <div class="eng-section-title" style="margin-bottom:0;">100% Verified University Syllabus Subjects</div>
+                  <span id="engSubjectCountBadge" class="subject-count-indicator">6 Subjects Enrolled</span>
+                </div>
+                <div class="engineering-subjects-grid" id="engCollegeSubjectsGrid"></div>
               </div>
             </div>
-
-            <!-- College Cards Shelf -->
-            <div class="colleges-cards-grid" id="collegesCardsGrid"></div>
           </div>
 
-          <!-- 2. Groups & Semester Selector for Selected College -->
-          <div class="workspace-card" style="margin-top:20px;">
-            <div class="eng-title-row">
-              <h3 class="card-section-title" style="margin-bottom:0;">Departments & Semester Selection</h3>
-              <span class="eng-badge-pill" id="engSelectedBranchSemPill">CSE · SEMESTER 3</span>
-            </div>
+          <!-- PANE B: SCHOOL HUB (10th, 11th & 12th STANDARDS) -->
+          <div id="hubSchoolSection" style="display:none;">
+            <!-- Standards & Streams Selector -->
+            <div class="workspace-card">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>🏫</span>
+                  <span>School Standards (10th, 11th &amp; 12th Board)</span>
+                </div>
+                <span class="eng-badge-pill" id="schoolActiveStandardBadge">12th Standard Board</span>
+              </div>
+              
+              <!-- Standard selection pills -->
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+                <button class="branch-pill-btn" data-schoolstd="STD_10">🎒 10th Standard (SSLC / CBSE)</button>
+                <button class="branch-pill-btn" data-schoolstd="STD_11_SCI">🧪 11th Standard — Science</button>
+                <button class="branch-pill-btn active" data-schoolstd="STD_12_SCI">🎓 12th Standard — Science (Board)</button>
+                <button class="branch-pill-btn" data-schoolstd="STD_12_COMM">📊 12th Standard — Commerce</button>
+              </div>
 
-            <!-- Branch Pills -->
-            <div style="margin-top:14px;">
-              <div class="eng-section-title">Offered Disciplines in this College</div>
-              <div class="branch-pills-row" id="engCollegeBranchesRow"></div>
-            </div>
-
-            <!-- Semester Pills -->
-            <div style="margin-top:14px;">
-              <div class="eng-section-title">Select Semester</div>
-              <div class="semester-selector-bar" id="engCollegeSemesterBar">
-                <button class="semester-pill" data-sem="1">Sem 1</button>
-                <button class="semester-pill" data-sem="2">Sem 2</button>
-                <button class="semester-pill active" data-sem="3">Sem 3</button>
-                <button class="semester-pill" data-sem="4">Sem 4</button>
-                <button class="semester-pill" data-sem="5">Sem 5</button>
-                <button class="semester-pill" data-sem="6">Sem 6</button>
-                <button class="semester-pill" data-sem="7">Sem 7</button>
-                <button class="semester-pill" data-sem="8">Sem 8</button>
+              <!-- Accurate School Subjects Shelf -->
+              <div style="margin-top:18px;">
+                <div class="eng-section-title">Standard Curriculum Subjects</div>
+                <div class="engineering-subjects-grid" id="schoolSubjectsGrid"></div>
               </div>
             </div>
 
-            <!-- Accurate Subjects Grid -->
-            <div style="margin-top:18px;">
-              <div
-                style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-                <div class="eng-section-title" style="margin-bottom:0;">100% Accurate University Syllabus Subjects</div>
-                <span id="engSubjectCountBadge" class="subject-count-indicator">6 Subjects Enrolled</span>
+            <!-- School Command Center & Books / Syllabus Ingestion Card -->
+            <div class="workspace-card" style="margin-top:20px; border-left:4px solid var(--accent-gold);">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>📚</span>
+                  <span>School Ingestion &amp; Teaching Method Command Center</span>
+                </div>
+                <span class="eng-badge-pill" id="schoolProfileSavedBadge" style="background:rgba(16, 185, 129, 0.15); color:#10B981;">Method Configured</span>
               </div>
-              <div class="engineering-subjects-grid" id="engCollegeSubjectsGrid"></div>
+              <p class="eng-subline">Upload your school book manuals or syllabus PDF. AURA will analyze chapters, ask how your school teacher taught you, request your permission to store your method, and teach your doubts in that exact personalized manner!</p>
+
+              <!-- Upload Syllabus Box -->
+              <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; align-items:center;">
+                <div class="vault-upload-dropzone" id="schoolSyllabusDropzone" style="flex:1; min-width:260px; padding:20px; cursor:pointer;">
+                  <input type="file" id="schoolSyllabusFileInput" style="display:none;" />
+                  <div style="font-size:24px; margin-bottom:4px;">📥</div>
+                  <h4 style="font-size:14px; font-weight:700; margin-bottom:2px;">Upload 10th / 11th / 12th Book or Syllabus PDF</h4>
+                  <p style="font-size:12px; color:var(--text-secondary); margin:0;">PDF, DOCX, or scanned textbook chapters</p>
+                </div>
+
+                <div style="flex:1; min-width:280px; background:var(--bg-surface-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+                  <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; margin-bottom:6px;">Your Stored Teaching Method</div>
+                  <div id="schoolStoredMethodSummary" style="font-size:12px; color:var(--text-primary); line-height:1.5; margin-bottom:8px;">
+                    "Step-by-step formula breakdown, bilingual Tamil-English, textbook definitions first, and exam-scoring tips."
+                  </div>
+                  <div style="display:flex; gap:8px;">
+                    <button class="btn-vault-action" id="btnConfigureSchoolMethod">⚙️ Reconfigure Method</button>
+                    <button class="btn-vault-action delete" id="btnDeleteSchoolData" style="color:#EF4444;">🗑️ Clear Data</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Permission Prompt Card (Shown when configuring method) -->
+              <div id="schoolPermissionCard" style="display:none; margin-top:16px; padding:16px; background:var(--bg-surface-elevated); border:1px solid var(--accent-gold); border-radius:var(--radius-md);">
+                <div style="font-size:13px; font-weight:700; color:var(--accent-gold); margin-bottom:6px;">
+                  🔒 Permission Confirmation
+                </div>
+                <p id="schoolPermissionText" style="font-size:13px; color:var(--text-primary); line-height:1.5; margin-bottom:12px;">
+                  "Your preferred study method and your school teaching style will be securely stored with your permission. Do you grant permission?"
+                </p>
+                <div style="display:flex; gap:10px;">
+                  <button class="btn-generate-gemini" id="btnGrantPermission" style="width:auto; padding:8px 20px;">
+                    ✓ Grant Permission &amp; Store My Method
+                  </button>
+                  <button class="btn-yt-external" id="btnDenyPermission">Cancel</button>
+                </div>
+              </div>
+
+              <!-- School Interactive Doubt Arena -->
+              <div style="margin-top:20px;">
+                <h4 style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Ask Any Doubt, Sum, or Concept (Taught in Your School's Method)</h4>
+                <div class="research-search-row">
+                  <input type="text" id="schoolDoubtInput" class="research-input"
+                    placeholder="Enter doubt or problem (e.g. Find electric field due to dipole at axial point or solve quadratic equation)..." />
+                  <button class="btn-generate-gemini" id="schoolAskDoubtBtn" style="width:auto; padding:0 24px;">
+                    Explain in My School Method
+                  </button>
+                </div>
+
+                <div id="schoolDoubtResponseCard" class="creation-crisp-card" style="display:none; margin-top:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Personalized School Explanation</span>
+                    <button class="btn-vault-action" id="copySchoolDoubtBtn">📋 Copy</button>
+                  </div>
+                  <div class="dialogue-content" id="schoolDoubtResponseText"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1781,6 +1896,40 @@
               style="font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; display:none;">
             </div>
             <div class="youtube-video-grid" id="ytVideoResultsGrid"></div>
+          </div>
+
+          <!-- DECODE THE URL VIDEOS SECTION -->
+          <div class="workspace-card" style="margin-top:20px; border-left:4px solid #FF0055;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h3 class="card-section-title" style="margin-bottom:2px;">🎬 Decode the URL Videos (Direct Stream &amp; AI Breakdown)</h3>
+                <p style="font-size:12px; color:var(--text-secondary); margin:0;">Paste any YouTube video link (watch URL, shorts, youtu.be). AURA will instantly stream the video inside the project and break down key timestamps and study notes.</p>
+              </div>
+              <span class="eng-badge-pill" style="background:rgba(255, 0, 85, 0.12); color:#FF0055;">Direct Stream</span>
+            </div>
+
+            <div class="research-search-row" style="margin-top:12px;">
+              <input type="text" id="ytDecodeUrlInput" class="research-input"
+                placeholder="Paste YouTube Video URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...)..." />
+              <button class="btn-generate-gemini" id="ytDecodeUrlBtn" style="width:auto; padding:0 24px; background:#FF0055; border-color:#FF0055;">
+                ▶ Decode &amp; Play Video
+              </button>
+            </div>
+
+            <div id="ytDecodePlayerArena" style="display:none; margin-top:16px;">
+              <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap:16px;" id="ytDecodeDualGrid">
+                <!-- Video Player Frame -->
+                <div style="border-radius:12px; overflow:hidden; background:#000; aspect-ratio:16/9; position:relative;">
+                  <iframe id="ytDecodeIframe" style="width:100%; height:100%; border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+
+                <!-- AI Video Deconstruction -->
+                <div class="creation-crisp-card" style="margin-top:0;">
+                  <div style="font-size:12px; font-weight:800; color:#FF0055; text-transform:uppercase; margin-bottom:6px;">✦ AI Video Takeaways &amp; Concepts</div>
+                  <div id="ytDecodeAnalysisText" class="dialogue-content" style="font-size:13px; line-height:1.5;"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2003,6 +2152,118 @@
       <div class="robot-controls-row">
         <button class="btn-robot-action btn-robot-send" id="robotSendBtn">Done & Execute ↑</button>
         <button class="btn-robot-action btn-robot-cancel" id="robotCancelBtn">Cancel ✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       STUDENT AUTHENTICATION & PROFILE DATA MODAL
+  ======================================================= -->
+  <div class="doc-reader-modal" id="studentAuthModal" style="display:none;">
+    <div class="doc-reader-box" style="max-width:540px; border-radius:18px;">
+      <div class="doc-reader-header" style="border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:20px;">👤</span>
+          <div>
+            <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;" id="authModalTitle">Student Account &amp; Profile</h3>
+            <span style="font-size:11px; color:var(--text-secondary);">Save study methods, school syllabus &amp; personal context</span>
+          </div>
+        </div>
+        <button class="btn-vault-action delete" id="btnCloseAuthModal">✕</button>
+      </div>
+
+      <div style="padding:20px;">
+        <!-- Auth Tabs: Sign In / Create Account / Manage Profile -->
+        <div class="creation-subnav-tabs" style="margin-bottom:16px; display:flex; gap:8px;">
+          <button class="branch-pill-btn active" id="authTabSignInBtn">Sign In</button>
+          <button class="branch-pill-btn" id="authTabSignUpBtn">Create Account</button>
+          <button class="branch-pill-btn" id="authTabProfileBtn">My Stored Data</button>
+        </div>
+
+        <!-- Google 1-Click Simulation Button -->
+        <button id="authGoogleBtn" class="btn-google-sign-in" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 16px; border-radius:10px; border:1px solid var(--border-medium); background:var(--bg-surface-subtle); color:var(--text-primary); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:14px; transition:all 0.15s ease;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div style="text-align:center; font-size:11px; color:var(--text-tertiary); margin-bottom:14px; position:relative;">
+          <span>— or use email —</span>
+        </div>
+
+        <!-- Form Fields -->
+        <div id="authFormFields">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:11px;">Email Address</label>
+            <input type="email" id="authEmailInput" class="form-textarea" placeholder="student@example.com" style="height:40px; min-height:auto;" />
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:11px;">Password</label>
+            <input type="password" id="authPasswordInput" class="form-textarea" placeholder="••••••••" style="height:40px; min-height:auto;" />
+          </div>
+
+          <!-- Extra sign-up fields -->
+          <div id="authExtraSignupFields" style="display:none;">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" style="font-size:11px;">Your Name</label>
+              <input type="text" id="authNameInput" class="form-textarea" placeholder="e.g. Arun Kumar" style="height:40px; min-height:auto;" />
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11px;">Standard / Year</label>
+                <select id="authStandardSelect" class="form-textarea" style="height:40px; min-height:auto;">
+                  <option value="10th">10th Standard (SSLC/CBSE)</option>
+                  <option value="11th">11th Standard</option>
+                  <option value="12th" selected>12th Standard Board</option>
+                  <option value="College">College / Engineering</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11px;">Stream / Group</label>
+                <select id="authStreamSelect" class="form-textarea" style="height:40px; min-height:auto;">
+                  <option value="Science (Maths/Bio)">Science (Maths/Bio)</option>
+                  <option value="Science (Computer Science)" selected>Computer Science</option>
+                  <option value="Commerce &amp; Accountancy">Commerce</option>
+                  <option value="Arts &amp; Humanities">Arts &amp; Humanities</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-generate-gemini" id="authSubmitBtn" style="width:100%; padding:10px; font-weight:700;">
+            Sign In to AURA
+          </button>
+        </div>
+
+        <!-- Stored Profile Management Pane -->
+        <div id="authProfileDetailsPane" style="display:none;">
+          <div style="background:var(--bg-surface-subtle); border-radius:12px; padding:14px; border:1px solid var(--border-subtle); margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:13px; font-weight:700; color:var(--text-primary);" id="authProfileName">Student Profile</span>
+              <span class="eng-badge-pill" id="authProfileStdBadge">12th Standard</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">
+              <strong>Email:</strong> <span id="authProfileEmail">student@aura.ai</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">
+              <strong>Stored Learning Method:</strong> <span id="authProfileMethod">Step-by-step formulas, bilingual Tamil-English, textbook definitions first.</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary);">
+              <strong>School Teaching Style:</strong> <span id="authProfileSchool">Standard textbook derivations, 2-mark definitions &amp; solved exercises.</span>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--border-subtle); padding-top:14px;">
+            <div style="font-size:12px; font-weight:700; color:#EF4444; margin-bottom:6px;">Privacy &amp; Data Control</div>
+            <p style="font-size:11px; color:var(--text-secondary); margin-bottom:10px;">
+              You can permanently delete your saved study methodology, uploaded school books, and personal memory profile anytime.
+            </p>
+            <button class="btn-vault-action delete" id="btnDeleteStudentAllData" style="width:100%; padding:10px; color:#EF4444; border-color:rgba(239, 68, 68, 0.4); font-weight:700;">
+              🗑️ Permanently Delete All My Stored Study Data &amp; Methods
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -453,6 +453,46 @@ const MASTER_CURRICULUM = {
         8: ["Enterprise Leadership & Strategy", "Global Supply Chain Networks", "Strategic Financial Valuation", "Organizational Agility & Change", "Business Advisory Practicum", "Senior Capstone Defense"]
       }
     }
+  },
+
+  // ── GROUP 4: SCHOOL EDUCATION (10TH, 11TH & 12TH STANDARDS) ──
+  SCHOOL: {
+    STD_10: {
+      name: "10th Standard (SSLC / CBSE Board)",
+      icon: "🎒",
+      subjectCount: 5,
+      semesters: {
+        1: ["Mathematics (Algebra, Geometry, Trigonometry)", "Science (Physics, Chemistry, Biology)", "Social Science (History & Geography)", "English Language & Literature", "Tamil / Regional Language"],
+        2: ["Mathematics (Statistics, Probability, Mensuration)", "Science (Electricity, Carbon Compounds, Heredity)", "Social Science (Civics, Economics & Maps)", "English Analytical Writing", "Language Revision & Board PYQ"]
+      }
+    },
+    STD_11_SCI: {
+      name: "11th Standard — Science (Physics, Chemistry, Maths, Bio/CS)",
+      icon: "🧪",
+      subjectCount: 5,
+      semesters: {
+        1: ["Physics (Kinematics, Laws of Motion, Work Power Energy)", "Chemistry (Atomic Structure, Chemical Bonding, Periodic Trends)", "Mathematics (Sets, Relations, Trigonometry, Complex Numbers)", "Biology / Computer Science (Python Basics)", "General English Communication"],
+        2: ["Physics (Thermodynamics, Waves & Oscillations, Gravitation)", "Chemistry (Equilibrium, Redox Reactions, Organic Chemistry)", "Mathematics (Calculus, Conic Sections, Probability)", "Biology (Human Physiology) / Computer Science (Algorithms)", "English Board Core"]
+      }
+    },
+    STD_12_SCI: {
+      name: "12th Standard — Science (Board Exam Focus)",
+      icon: "🎓",
+      subjectCount: 5,
+      semesters: {
+        1: ["Physics (Electrostatics, Current Electricity, Magnetism)", "Chemistry (Solutions, Electrochemistry, Chemical Kinetics)", "Mathematics (Matrices, Determinants, Differential Calculus)", "Biology (Genetics & Reproduction) / Computer Science (SQL & Python)", "English Core"],
+        2: ["Physics (Electromagnetic Induction, Optics, Modern Physics, Semiconductors)", "Chemistry (Coordination Compounds, Aldehydes, Amines, Biomolecules)", "Mathematics (Integral Calculus, Differential Equations, Vectors & 3D)", "Biology (Ecology & Biotechnology) / Computer Science (Computer Networks)", "English Board Exam Preparation"]
+      }
+    },
+    STD_12_COMM: {
+      name: "12th Standard — Commerce & Economics",
+      icon: "📊",
+      subjectCount: 5,
+      semesters: {
+        1: ["Accountancy (Partnership Accounts, Goodwill & Reconstitution)", "Business Studies (Principles of Management, Planning & Staffing)", "Economics (Microeconomics, National Income Accounting)", "Applied Mathematics / Business Maths", "English Core"],
+        2: ["Accountancy (Company Accounts, Debentures, Cash Flow)", "Business Studies (Financial Management, Marketing & Consumer Protection)", "Economics (Macroeconomics, Money & Banking, Indian Economic Development)", "Commercial Law / Computer Applications", "English Board Exam Synthesis"]
+      }
+    }
   }
 };
 
@@ -545,6 +585,17 @@ router.get("/curriculum/groups", (req, res) => {
         icon: MASTER_CURRICULUM.ARTS_SCIENCE[k].icon,
         subjectCount: MASTER_CURRICULUM.ARTS_SCIENCE[k].subjectCount || 6
       }))
+    },
+    {
+      id: "SCHOOL",
+      name: "School Education (10th, 11th & 12th Board)",
+      icon: "🏫",
+      disciplines: Object.keys(MASTER_CURRICULUM.SCHOOL).map(k => ({
+        id: k,
+        name: MASTER_CURRICULUM.SCHOOL[k].name,
+        icon: MASTER_CURRICULUM.SCHOOL[k].icon,
+        subjectCount: MASTER_CURRICULUM.SCHOOL[k].subjectCount || 5
+      }))
     }
   ];
 
@@ -564,7 +615,8 @@ router.post(["/curriculum/subjects", "/engineering/subjects"], (req, res) => {
 
     let groupData = MASTER_CURRICULUM[groupType];
     if (!groupData) {
-      if (groupType.includes("MANAGE") || groupType.includes("BUSINESS")) groupData = MASTER_CURRICULUM.MANAGEMENT;
+      if (groupType.includes("SCHOOL") || groupType.includes("10") || groupType.includes("11") || groupType.includes("12")) groupData = MASTER_CURRICULUM.SCHOOL;
+      else if (groupType.includes("MANAGE") || groupType.includes("BUSINESS")) groupData = MASTER_CURRICULUM.MANAGEMENT;
       else if (groupType.includes("MEDIC") || groupType.includes("HEALTH")) groupData = MASTER_CURRICULUM.MEDICAL;
       else if (groupType.includes("ART") || groupType.includes("SCI")) groupData = MASTER_CURRICULUM.ARTS_SCIENCE;
       else groupData = MASTER_CURRICULUM.ENGINEERING;
@@ -1317,15 +1369,31 @@ router.post(["/engineering/grade-mock", "/curriculum/grade-mock"], async (req, r
     const totalEarnedMarks = Math.min(50, partAMarksEarned + partBMarksEarned + partCMarksEarned);
     const percentage = Math.round((totalEarnedMarks / 50) * 100);
 
-    let grade = "RA";
-    if (percentage >= 90) grade = "O (Outstanding)";
-    else if (percentage >= 80) grade = "A+ (Excellent)";
-    else if (percentage >= 70) grade = "A (Very Good)";
-    else if (percentage >= 60) grade = "B+ (Good)";
-    else if (percentage >= 50) grade = "B (Above Average)";
-    else grade = "RA (Re-Appear / Needs Revision)";
+    let grade = "FOCUS NEEDED";
+    if (totalEarnedMarks < 25) {
+      grade = "FOCUS NEEDED";
+    } else if (percentage >= 94) {
+      grade = "O (Outstanding)";
+    } else if (percentage >= 85) {
+      grade = "A+ (Excellent)";
+    } else if (percentage >= 75) {
+      grade = "A (Very Good)";
+    } else if (percentage >= 62) {
+      grade = "B+ (Good)";
+    } else {
+      grade = "B (Pass / Average)";
+    }
 
-    auraDB.addActivity("mock_graded", `Graded 50-Mark Examination: ${totalEarnedMarks}/50 (${grade})`);
+    auraDB.addActivity("mock_graded", `Graded 50-Mark Examination: ${totalEarnedMarks}/50 (${grade})`, {
+      subject,
+      group,
+      branch,
+      semester,
+      earnedMarks: totalEarnedMarks,
+      totalMarks: 50,
+      percentage,
+      grade
+    });
 
     res.json({
       success: true,

@@ -10520,3 +10520,208 @@ textarea:focus {
   border-color: var(--border-focus) !important;
   box-shadow: 0 0 0 1px var(--border-focus) !important;
 }
+
+/* =========================================================
+   PROJECT AURA 3.0 — RESPONSIVE PERFECTION & NEW HUBS
+   Universal Phone (<768px, <480px) & Laptop Optimization
+========================================================= */
+
+/* Topbar Voice & User Profile Buttons */
+.topbar-voice-btn,
+.topbar-user-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  background: var(--bg-surface-subtle) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.topbar-voice-btn:hover,
+.topbar-user-btn:hover {
+  background: var(--bg-surface-hover) !important;
+  border-color: var(--border-medium) !important;
+  transform: translateY(-1px) !important;
+}
+
+.voice-wave-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  display: inline-block;
+  animation: auraPulseGreen 1.8s infinite;
+}
+
+.topbar-voice-btn.listening .voice-wave-dot {
+  background: #EF4444;
+  animation: auraPulseRed 0.8s infinite;
+}
+
+@keyframes auraPulseGreen {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+@keyframes auraPulseRed {
+  0% { transform: scale(0.8); opacity: 0.8; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.8); opacity: 0.8; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Hub Mode Selector */
+.hub-mode-selector-bar .branch-pill-btn {
+  border-radius: 10px !important;
+  transition: all 0.15s ease !important;
+}
+
+.hub-mode-selector-bar .branch-pill-btn.active {
+  background: var(--active-bg) !important;
+  color: var(--active-text) !important;
+  border-color: var(--border-focus) !important;
+}
+
+/* Study Intel Tap to Explain Accordions */
+.study-explain-box {
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-primary);
+  animation: auraFadeSlideDown 0.2s ease;
+}
+
+@keyframes auraFadeSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.study-explain-toggle-btn {
+  font-size: 11px;
+  color: var(--accent-gold);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.study-explain-toggle-btn:hover {
+  text-decoration: underline;
+}
+
+/* RESPONSIVE LAYOUT OVERRIDES (Phones & Tablets) */
+@media (max-width: 900px) {
+  #view-command-center .cc-layout {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  #view-command-center .cc-chat-col {
+    min-height: 520px !important;
+  }
+
+  #view-command-center .cc-module-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  #view-command-center .cc-hero {
+    padding: 20px 18px 14px 18px !important;
+  }
+
+  #view-command-center .cc-headline {
+    font-size: 26px !important;
+  }
+
+  .vault-2col-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #engArenaDualGrid,
+  #ytDecodeDualGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .aura-views-wrapper {
+    padding: 12px 10px 40px 10px !important;
+  }
+
+  .aura-topbar {
+    padding: 0 10px !important;
+    gap: 6px !important;
+  }
+
+  .topbar-breadcrumbs {
+    display: none !important;
+  }
+
+  .topbar-search-trigger {
+    display: none !important;
+  }
+
+  .topbar-voice-btn .voice-btn-label,
+  .topbar-user-btn .user-name-text {
+    display: none !important;
+  }
+
+  #view-command-center .cc-module-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tasks-kanban-board {
+    grid-template-columns: 1fr !important;
+  }
+
+  .creation-subnav-tabs,
+  .vault-subtabs,
+  .semester-selector-bar {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+  }
+
+  .creation-tab-btn,
+  .vault-subtab-btn,
+  .semester-pill {
+    flex-shrink: 0 !important;
+  }
+
+  .workspace-card {
+    padding: 14px !important;
+  }
+
+  .research-search-row {
+    flex-direction: column !important;
+  }
+
+  .research-search-row button {
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  .doc-reader-box {
+    margin: 10px !important;
+    max-height: 90vh !important;
+  }
+}
