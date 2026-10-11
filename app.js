@@ -11,7 +11,7 @@
 // Backend API Endpoint: automatically resolves localhost for local testing, or remote deployment
 const API_URL = (typeof window !== "undefined" && window.location && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.port === "3000"))
   ? (window.location.origin.includes("http") ? window.location.origin : "http://localhost:3000")
-  : "https://project-aura-xxxx.onrender.com";
+  : "https://project-aura-hush.onrender.com";
 const BACKEND_URL = API_URL;
 
 // Master System State
