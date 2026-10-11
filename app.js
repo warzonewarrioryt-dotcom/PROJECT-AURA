@@ -7392,28 +7392,105 @@ function initStudentAuthModal() {
     });
   }
 
-  // Submit Form
+  // Submit Form: Real Persistent PBKDF2 Authentication Integration
   if (authSubmitBtn) {
-    authSubmitBtn.addEventListener("click", () => {
-      const email = document.getElementById("authEmailInput")?.value || "student@aura.ai";
-      const name = document.getElementById("authNameInput")?.value || email.split("@")[0];
-      const standard = document.getElementById("authStandardSelect")?.value || "12th";
-      const stream = document.getElementById("authStreamSelect")?.value || "Science";
+    authSubmitBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById("authEmailInput");
+      const passwordInput = document.getElementById("authPasswordInput");
+      const nameInput = document.getElementById("authNameInput");
+      const standardSelect = document.getElementById("authStandardSelect");
+      const streamSelect = document.getElementById("authStreamSelect");
 
-      const profile = {
-        name,
-        email,
-        standard,
-        stream,
-        preferredMethod: collegeAndSchoolState.storedMethod,
-        schoolTeachingStyle: "Textbook derivations & step-by-step sums",
-        loggedIn: true
-      };
-      localStorage.setItem("aura_student_profile", JSON.stringify(profile));
-      updateTopUserName(name);
-      studentAuthModal.style.display = "none";
-      playTactileSound("success");
-      alert(`Signed in successfully as ${name}!`);
+      const email = (emailInput?.value || "").trim();
+      const password = (passwordInput?.value || "").trim();
+      const name = (nameInput?.value || "").trim();
+      const standard = standardSelect?.value || "12th";
+      const stream = streamSelect?.value || "Science";
+
+      if (!email) {
+        alert("✕ Please enter your email address.");
+        if (emailInput) emailInput.focus();
+        return;
+      }
+      if (!password) {
+        alert("✕ Please enter your password.");
+        if (passwordInput) passwordInput.focus();
+        return;
+      }
+
+      authSubmitBtn.disabled = true;
+
+      try {
+        if (currentAuthTab === "signup") {
+          authSubmitBtn.textContent = "Creating Account...";
+          const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password, standard, stream })
+          });
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            // Block access on invalid credentials or registration failure
+            playTactileSound("error");
+            alert(data.error || "✕ Registration Unsuccessful: Invalid credentials or email already registered.");
+            return;
+          }
+
+          // Store user session ONLY upon true backend success
+          localStorage.setItem("aura_auth_session", JSON.stringify(data));
+          localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+
+          const portal = document.getElementById("auraLoginPortal");
+          if (portal) portal.classList.add("authenticated");
+          updateTopUserName(data.user.name || "Student");
+          updateAuthProfileDisplay();
+
+          studentAuthModal.style.display = "none";
+          playTactileSound("success");
+          speakAuraVoice(`Welcome to Project Aura, ${data.user.name}!`);
+          alert(`✓ Welcome, ${data.user.name}! Account registered and verified successfully.`);
+
+        } else {
+          // Sign In branch
+          authSubmitBtn.textContent = "Verifying Credentials...";
+          const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json();
+
+          if (!res.ok || !data.success) {
+            // Block access on invalid credentials
+            playTactileSound("error");
+            alert(data.error || "✕ Sign In Unsuccessful: Invalid email or password.");
+            return;
+          }
+
+          // Store user session ONLY upon true backend success
+          localStorage.setItem("aura_auth_session", JSON.stringify(data));
+          localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
+
+          const portal = document.getElementById("auraLoginPortal");
+          if (portal) portal.classList.add("authenticated");
+          updateTopUserName(data.user.name || "Student");
+          updateAuthProfileDisplay();
+
+          studentAuthModal.style.display = "none";
+          playTactileSound("success");
+          speakAuraVoice(`Welcome back, ${data.user.name}!`);
+          alert(`✓ Sign In successful! Welcome back, ${data.user.name}.`);
+        }
+      } catch (err) {
+        console.error("[STUDENT AUTH ERROR]", err);
+        playTactileSound("error");
+        alert("✕ Connection error: Authentication server is unreachable. Please verify backend is running.");
+      } finally {
+        authSubmitBtn.disabled = false;
+        authSubmitBtn.textContent = currentAuthTab === "signup" ? "Create Student Profile" : "Sign In to AURA";
+      }
     });
   }
 
