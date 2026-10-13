@@ -278,6 +278,78 @@ INSTRUCTIONS FOR TEACHING THE STUDENT:
 });
 
 /* ---------------------------------------------------------
+   POST /api/student/material-doubt
+   Context-Constrained Doubt Solver Engine
+   Strict Grounding Rule: The AI must strictly solve and explain
+   the answer using ONLY the formulas, notation, and methods given
+   in the uploaded study material context.
+--------------------------------------------------------- */
+router.post("/material-doubt", async (req, res) => {
+  try {
+    const {
+      question,
+      materialText,
+      fileName = "Uploaded Study Material",
+      strictGrounding = true,
+      standard = "12th",
+      subject = "General",
+      conversationHistory = []
+    } = req.body;
+
+    if (!question || !question.trim()) {
+      return res.status(400).json({ success: false, error: "Please enter your doubt or question." });
+    }
+
+    const contextSnippet = materialText && materialText.trim().length > 0
+      ? materialText.trim().substring(0, 20000)
+      : "Standard textbook formulas for " + standard + " " + subject;
+
+    const systemPrompt = `You are AURA's Context-Constrained Academic Doubt Solver and Master Tutor.
+You are assisting a student analyzing their uploaded study material: "${fileName}" for ${standard} ${subject}.
+
+CORE GROUNDING RULE:
+${strictGrounding ? "STRICT GROUNDING ENFORCED: You MUST solve, derive, and explain the answer using STRICTLY and ONLY the formulas, definitions, theorems, notation, and step-by-step methods present in the provided Study Material Context below. If a particular theorem, numerical constant, or formula is NOT present in the uploaded material, clearly highlight: '[Note: This specific step is supplemented beyond your notes]' and state exactly what section or formula is missing." : "Explain the solution clearly using standard textbook pedagogy."}
+
+PEDAGOGICAL FORMAT FOR SOLUTIONS:
+1. 📌 Grounded Source Citation: Mention which topic or formula from the notes applies.
+2. 📝 Given Data & Symbolic Notation: List known quantities using the exact symbols from the material.
+3. 📐 Governing Formula: Write down the explicit formula and units.
+4. 🔢 Step-by-Step Derivation / Substitution: Show full arithmetic and algebraic steps without skipping.
+5. 🎯 Boxed Final Answer: State the final value with proper SI units.
+6. 💡 Exam Tip (2-Marks / 5-Marks Scoring Tip): Share how to present this on the examination sheet for maximum marks.`;
+
+    const userPrompt = `STUDY MATERIAL CONTEXT:
+\"\"\"
+${contextSnippet}
+\"\"\"
+
+STUDENT'S QUESTION / DOUBT:
+\"${question}\"
+
+Provide a complete, step-by-step, meticulously grounded explanation.`;
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      ...conversationHistory.slice(-4),
+      { role: "user", content: userPrompt }
+    ];
+
+    const aiRes = await aiRouterService.executeAIFallback(messages);
+    const answer = aiRes.text || aiRes.content || "Solution compiled based on your study material.";
+
+    res.json({
+      success: true,
+      answer,
+      fileName,
+      strictGrounding,
+      provider: aiRes.provider || "Aura Neural"
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/* ---------------------------------------------------------
    AUTHENTICATION ENGINE (LOGIN, SIGNUP, SESSION VERIFY)
 --------------------------------------------------------- */
 const crypto = require("crypto");

@@ -218,7 +218,7 @@
             <span class="nav-icon">📊</span>
             <span class="nav-label">Performance</span>
           </li>
-          <li class="nav-item" data-view="engineering-hub">
+          <li class="nav-item" data-view="academic-hub-workspace">
             <span class="nav-icon">🎓</span>
             <span class="nav-label">College & School</span>
             <span class="nav-badge">Hub</span>
@@ -1714,119 +1714,90 @@
              offered groups, semester, 100% accurate subjects, AI study notes,
              and language-preferred YouTube videos!
         ===================================================== -->
-        <section class="aura-view" id="view-engineering-hub">
+        <section class="aura-view" id="academic-hub-workspace">
           <div class="view-header">
-            <div class="view-eyebrow">Academic &amp; School Intelligence</div>
-            <h2 class="view-title">College &amp; School Hub</h2>
-            <p class="view-desc">Switch seamlessly between College Higher Education (Engineering, Medical, Arts &amp; Science, Management) and School Curricula (10th, 11th &amp; 12th Standards). Ingest syllabus books, configure personalized teaching styles, and access authentic subjects with notes and video lectures.</p>
+            <div class="view-eyebrow">Academic &amp; Curriculum Intelligence Suite</div>
+            <h2 class="view-title">Academic Hub</h2>
+            <p class="view-desc">Unified academic command center integrating verified Tamil Nadu &amp; CBSE School Curricula (10th, 11th, 12th Standards across Science, Commerce &amp; Arts), the Higher Education College Platform (Regulation 2021), and an AI Study Material Analyzer with strict context-constrained doubt solving.</p>
             
-            <!-- Hub Mode Selector: College vs School -->
-            <div class="hub-mode-selector-bar" style="margin-top:16px; display:flex; gap:12px;">
-              <button class="branch-pill-btn active" id="hubModeCollegeBtn" style="padding:8px 20px; font-size:13px; font-weight:700;">
-                🎓 College Academic Hub
+            <!-- Modern 3-Way Sub-Navigation Switcher -->
+            <div class="academic-subnav-bar">
+              <button class="academic-subnav-btn active" id="tabAcademicSchool">
+                <span>🏫</span> School Hub
+                <span class="tab-badge">10th, 11th, 12th</span>
               </button>
-              <button class="branch-pill-btn" id="hubModeSchoolBtn" style="padding:8px 20px; font-size:13px; font-weight:700;">
-                🏫 School Hub (10th, 11th &amp; 12th)
+              <button class="academic-subnav-btn" id="tabAcademicCollege">
+                <span>🎓</span> College Curriculum
+                <span class="tab-badge">Regulation 2021</span>
+              </button>
+              <button class="academic-subnav-btn" id="tabAcademicMaterial">
+                <span>📄</span> Material AI Doubt Solver
+                <span class="tab-badge">Exact Grounding</span>
               </button>
             </div>
           </div>
 
-          <!-- PANE A: COLLEGE ACADEMIC HUB -->
-          <div id="hubCollegeSection">
-            <!-- Academic Groups Selector -->
-            <div class="workspace-card">
-              <div class="eng-title-row">
-                <div class="eng-title-headline">
-                  <span>🎓</span>
-                  <span>Academic Degree Streams</span>
-                </div>
-                <span class="eng-badge-pill" id="engActiveGroupBadge">Engineering &amp; Technology</span>
-              </div>
-              <p class="eng-subline">Select your degree stream to inspect verified university curricula, generate AI revision notes, and stream curated lectures.</p>
-
-              <!-- Academic Streams Buttons -->
-              <div class="college-filters-row" style="margin-top:12px; gap:8px; display:flex; flex-wrap:wrap;">
-                <button class="branch-pill-btn active" data-colgroup="ENGINEERING">💻 Engineering &amp; Tech</button>
-                <button class="branch-pill-btn" data-colgroup="MEDICAL">🩺 Medical &amp; Health</button>
-                <button class="branch-pill-btn" data-colgroup="ARTS_SCIENCE">🎨 Arts, Science &amp; Commerce</button>
-                <button class="branch-pill-btn" data-colgroup="MANAGEMENT">💼 Management &amp; Law</button>
-              </div>
-
-              <!-- Disciplines & Semesters -->
-              <div style="margin-top:16px;">
-                <div class="eng-section-title">Offered Degree Majors / Branches</div>
-                <div class="branch-pills-row" id="engCollegeBranchesRow"></div>
-              </div>
-
-              <div style="margin-top:16px;">
-                <div class="eng-section-title">Semester / Year</div>
-                <div class="semester-selector-bar" id="engCollegeSemesterBar">
-                  <button class="semester-pill" data-sem="1">Sem 1</button>
-                  <button class="semester-pill" data-sem="2">Sem 2</button>
-                  <button class="semester-pill active" data-sem="3">Sem 3</button>
-                  <button class="semester-pill" data-sem="4">Sem 4</button>
-                  <button class="semester-pill" data-sem="5">Sem 5</button>
-                  <button class="semester-pill" data-sem="6">Sem 6</button>
-                  <button class="semester-pill" data-sem="7">Sem 7</button>
-                  <button class="semester-pill" data-sem="8">Sem 8</button>
-                </div>
-              </div>
-
-              <!-- Accurate Subjects Grid -->
-              <div style="margin-top:20px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-                  <div class="eng-section-title" style="margin-bottom:0;">100% Verified University Syllabus Subjects</div>
-                  <span id="engSubjectCountBadge" class="subject-count-indicator">6 Subjects Enrolled</span>
-                </div>
-                <div class="engineering-subjects-grid" id="engCollegeSubjectsGrid"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PANE B: SCHOOL HUB (10th, 11th & 12th STANDARDS) -->
-          <div id="hubSchoolSection" style="display:none;">
-            <!-- Standards & Streams Selector -->
+          <!-- PANE A: SCHOOL HUB (10th, 11th & 12th STANDARDS) -->
+          <div id="sectionAcademicSchool" class="academic-pane">
             <div class="workspace-card">
               <div class="eng-title-row">
                 <div class="eng-title-headline">
                   <span>🏫</span>
-                  <span>School Standards (10th, 11th &amp; 12th Board)</span>
+                  <span>School Standards Curriculum Explorer</span>
                 </div>
-                <span class="eng-badge-pill" id="schoolActiveStandardBadge">12th Standard Board</span>
+                <span class="eng-badge-pill" id="schoolActiveFilterBadge">12th Standard — Bio-Maths</span>
               </div>
-              
-              <!-- Standard selection pills -->
-              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-                <button class="branch-pill-btn" data-schoolstd="STD_10">🎒 10th Standard (SSLC / CBSE)</button>
-                <button class="branch-pill-btn" data-schoolstd="STD_11_SCI">🧪 11th Standard — Science</button>
-                <button class="branch-pill-btn active" data-schoolstd="STD_12_SCI">🎓 12th Standard — Science (Board)</button>
-                <button class="branch-pill-btn" data-schoolstd="STD_12_COMM">📊 12th Standard — Commerce</button>
+              <p class="eng-subline">Explore verified Tamil Nadu State Board (Samacheer Kalvi) &amp; CBSE syllabus breakdown, core units, high-yield board exam formulas, and chapter summaries.</p>
+
+              <!-- Standard Selection Row -->
+              <div class="school-selector-container">
+                <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.06em;">Select Class / Standard:</div>
+                <div class="school-chips-row" id="schoolStandardChipsRow">
+                  <button class="school-std-pill" data-schoolstd="STD_10">🎒 10th Standard (SSLC &amp; CBSE)</button>
+                  <button class="school-std-pill" data-schoolstd="STD_11">🧬 11th Standard</button>
+                  <button class="school-std-pill active" data-schoolstd="STD_12">🎓 12th Standard (Higher Secondary Board)</button>
+                </div>
+
+                <!-- 11th & 12th Stream / Group Selector -->
+                <div id="schoolGroupSelectorBox" style="margin-top:4px;">
+                  <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Select Stream / Group:</div>
+                  <div class="school-chips-row" id="schoolGroupChipsRow">
+                    <button class="school-group-pill active" data-schoolgroup="BIO_MATHS">🌿 Bio-Maths Group (Maths, Physics, Chem, Bio)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMP_SCI">💻 Computer Science Group (Maths, Physics, Chem, CS)</button>
+                    <button class="school-group-pill" data-schoolgroup="PURE_SCI">🔬 Pure Science Group (Physics, Chem, Botany, Zoology)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMMERCE">📊 Commerce Group (Accountancy, Commerce, Eco, BM/CA)</button>
+                    <button class="school-group-pill" data-schoolgroup="ARTS">🎨 Arts &amp; Humanities (History, Pol Sci, Eco, Geo)</button>
+                  </div>
+                </div>
               </div>
 
-              <!-- Accurate School Subjects Shelf -->
-              <div style="margin-top:18px;">
-                <div class="eng-section-title">Standard Curriculum Subjects</div>
-                <div class="engineering-subjects-grid" id="schoolSubjectsGrid"></div>
+              <!-- School Subjects Grid (Populated dynamically) -->
+              <div style="margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                  <div class="eng-section-title" style="margin-bottom:0;" id="schoolSubjectsTitle">Curriculum Subjects &amp; High-Yield Units</div>
+                  <span class="subject-count-indicator" id="schoolSubjectsCountBadge">5 Subjects Available</span>
+                </div>
+                <div class="school-subjects-grid" id="academicSchoolGrid"></div>
               </div>
             </div>
 
-            <!-- School Command Center & Books / Syllabus Ingestion Card -->
+            <!-- School Command Center & Books / Teaching Style Ingestion -->
             <div class="workspace-card" style="margin-top:20px; border-left:4px solid var(--accent-gold);">
               <div class="eng-title-row">
                 <div class="eng-title-headline">
                   <span>📚</span>
-                  <span>School Ingestion &amp; Teaching Method Command Center</span>
+                  <span>School Method Command Center &amp; Quick Doubt Solver</span>
                 </div>
                 <span class="eng-badge-pill" id="schoolProfileSavedBadge" style="background:rgba(16, 185, 129, 0.15); color:#10B981;">Method Configured</span>
               </div>
-              <p class="eng-subline">Upload your school book manuals or syllabus PDF. AURA will analyze chapters, ask how your school teacher taught you, request your permission to store your method, and teach your doubts in that exact personalized manner!</p>
+              <p class="eng-subline">Upload your textbook chapters or configure how your school teacher solves problems. AURA personalizes explanations to your school's exact marking schemes.</p>
 
-              <!-- Upload Syllabus Box -->
+              <!-- Upload Syllabus Box & Method Summary -->
               <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; align-items:center;">
                 <div class="vault-upload-dropzone" id="schoolSyllabusDropzone" style="flex:1; min-width:260px; padding:20px; cursor:pointer;">
                   <input type="file" id="schoolSyllabusFileInput" style="display:none;" />
                   <div style="font-size:24px; margin-bottom:4px;">📥</div>
-                  <h4 style="font-size:14px; font-weight:700; margin-bottom:2px;">Upload 10th / 11th / 12th Book or Syllabus PDF</h4>
+                  <h4 style="font-size:14px; font-weight:700; margin-bottom:2px;">Upload 10th / 11th / 12th Textbook or Syllabus PDF</h4>
                   <p style="font-size:12px; color:var(--text-secondary); margin:0;">PDF, DOCX, or scanned textbook chapters</p>
                 </div>
 
@@ -1875,6 +1846,156 @@
                     <button class="btn-vault-action" id="copySchoolDoubtBtn">📋 Copy</button>
                   </div>
                   <div class="dialogue-content" id="schoolDoubtResponseText"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANE B: COLLEGE & DEGREE HUB (EMBEDDED PLATFORM) -->
+          <div id="sectionAcademicCollege" class="academic-pane" style="display:none;">
+            <div class="college-embed-wrapper">
+              <div class="college-embed-toolbar">
+                <div class="college-toolbar-title">
+                  <span style="font-size:18px;">🎓</span>
+                  <div>
+                    <span>Tamil Nadu College &amp; Degree Curriculum Platform</span>
+                    <span style="font-size:11px; font-weight:600; color:var(--accent-gold); margin-left:8px; background:rgba(194, 155, 72, 0.12); padding:2px 8px; border-radius:4px; border:1px solid rgba(194, 155, 72, 0.25);">Anna University Regulation 2021 &amp; State Universities</span>
+                  </div>
+                </div>
+                <div class="college-toolbar-controls">
+                  <button class="school-btn-action" id="btnReloadCollegeIframe" title="Reload Platform">
+                    🔄 Reload
+                  </button>
+                  <button class="school-btn-action" id="btnFullscreenCollegeIframe" title="Toggle Fullscreen">
+                    ⛶ Fullscreen
+                  </button>
+                  <button class="school-btn-action primary" id="btnOpenStandaloneCollege" title="Open in New Tab">
+                    ↗ Open Standalone
+                  </button>
+                </div>
+              </div>
+
+              <!-- Iframe embedding curriculum-platform with min-h-[85vh], borderless, dark-slate background -->
+              <iframe id="collegeCurriculumIframe" src="./curriculum-platform/index.html" class="college-embed-iframe" style="min-height:85vh; height:85vh; width:100%; border:none; background:#0d0f12; display:block;" title="Tamil Nadu Higher Education Curriculum Platform" allow="fullscreen"></iframe>
+            </div>
+          </div>
+
+          <!-- PANE C: MATERIAL ANALYZER & CONTEXT-GROUNDED AI DOUBT SOLVER -->
+          <div id="sectionAcademicMaterial" class="academic-pane" style="display:none;">
+            <div class="material-analyzer-container">
+              <!-- Left Sidebar: File Ingestion & Presets -->
+              <div class="material-sidebar-panel">
+                <!-- Dropzone Box -->
+                <div class="material-dropzone-box" id="materialDropzone">
+                  <input type="file" id="materialFileInput" accept=".pdf,.docx,.txt,.md,.json,.csv,image/*" style="display:none;" />
+                  <div style="font-size:32px; margin-bottom:8px;">📑</div>
+                  <h4 style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">Upload Notes or Question Bank</h4>
+                  <p style="font-size:11.5px; color:var(--text-secondary); margin:0 0 10px 0;">Drag &amp; drop PDF, DOCX, TXT, or handwritten notes</p>
+                  <button class="school-btn-action primary" style="pointer-events:none;">Choose Document</button>
+                </div>
+
+                <!-- Active Document Details Card -->
+                <div class="workspace-card" id="materialActiveDocCard" style="padding:14px; margin:0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase;">Active Grounded Material</span>
+                    <span class="school-card-badge" id="materialDocTypeBadge">PDF Notes</span>
+                  </div>
+                  <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px; word-break:break-all;" id="materialActiveDocName">
+                    12th_Physics_Electrostatics_Formulas.pdf
+                  </div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-bottom:10px;" id="materialActiveDocMeta">
+                    2,450 words · 8 Formulas Detected · Ready for RAG
+                  </div>
+                  
+                  <!-- Strict Grounding Toggle -->
+                  <div style="background:var(--bg-surface-subtle); padding:10px 12px; border-radius:6px; border:1px solid var(--border-subtle); display:flex; align-items:flex-start; gap:8px;">
+                    <input type="checkbox" id="strictGroundingToggle" checked style="margin-top:2px; accent-color:var(--accent-gold); cursor:pointer;" />
+                    <label for="strictGroundingToggle" style="font-size:11.5px; color:var(--text-primary); cursor:pointer; line-height:1.4;">
+                      <strong style="color:var(--accent-gold);">Strict Grounding Rule:</strong> Solve strictly using ONLY formulas &amp; methods from this document.
+                    </label>
+                  </div>
+
+                  <!-- Collapsible Content Preview Toggle -->
+                  <button class="school-btn-action" id="btnToggleDocPreview" style="width:100%; justify-content:center; margin-top:10px;">
+                    👁️ Inspect Extracted Text Context
+                  </button>
+                  <div id="materialExtractedPreview" style="display:none; margin-top:8px; max-height:180px; overflow-y:auto; font-size:11.5px; font-family:var(--font-mono); background:#060A12; border:1px solid var(--border-subtle); padding:8px; border-radius:6px; color:#A7F3D0; white-space:pre-wrap;"></div>
+                </div>
+
+                <!-- High-Yield Sample Material Presets -->
+                <div class="workspace-card" style="padding:14px; margin:0;">
+                  <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:8px;">
+                    Or Try High-Yield Sample Material:
+                  </div>
+                  <div class="material-presets-list">
+                    <button class="material-preset-btn active" data-preset="PHYSICS_12">
+                      <div class="preset-title">⚡ 12th Physics: Electrostatics &amp; Gauss Law</div>
+                      <div class="preset-desc">Coulomb's Law, Electric Dipole, Axial &amp; Equatorial Fields, Gauss Flux</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="MATHS_10">
+                      <div class="preset-title">📐 10th Maths: Quadratic Equations &amp; AP</div>
+                      <div class="preset-desc">Roots by formula, Discriminant condition, AP sum &amp; nth term formulas</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="CSE_COLLEGE">
+                      <div class="preset-title">💻 CS3301: Trees, Traversals &amp; Graph Search</div>
+                      <div class="preset-desc">AVL tree rotations, BFS/DFS, Dijkstra shortest path time complexities</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="COMMERCE_12">
+                      <div class="preset-title">📊 12th Commerce: Partnership &amp; Goodwill</div>
+                      <div class="preset-desc">Super Profit Method, Capitalization, Sacrifice Ratio on Partner Admission</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Area: Interactive Context-Constrained Chat -->
+              <div class="grounded-chat-card">
+                <div class="grounded-chat-header">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:16px;">🤖</span>
+                    <div>
+                      <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">AURA Context-Constrained Doubt Solver</div>
+                      <div style="font-size:11px; color:#10B981;" id="groundedSolverStatus">● Grounded in Active Material (Zero Hallucination Mode)</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:8px;">
+                    <button class="school-btn-action" id="btnClearMaterialChat">🗑️ Clear Chat</button>
+                  </div>
+                </div>
+
+                <!-- Chat Stream -->
+                <div class="grounded-chat-stream" id="groundedChatStream">
+                  <!-- Initial Welcome Message from AI -->
+                  <div class="grounded-msg-row ai">
+                    <div class="grounded-msg-bubble">
+                      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid rgba(255, 255, 255, 0.08); padding-bottom:6px;">
+                        <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ AURA Grounded Tutor</span>
+                        <span style="font-size:10px; color:var(--text-tertiary);">RAG Engine Ready</span>
+                      </div>
+                      <p style="margin:0 0 8px 0;">Hello! I am your <strong>Context-Constrained Academic Doubt Solver</strong>. I have indexed your study notes and formulas.</p>
+                      <p style="margin:0; font-size:12.5px; color:var(--text-secondary);">Ask any numerical sum, derivation, or conceptual question. I will solve it <strong>strictly using the notation, formulas, and methods in your uploaded notes</strong>, with step-by-step arithmetic reduction and exam-scoring tips!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Controls, Chips & Input Bar -->
+                <div class="grounded-chat-controls">
+                  <!-- Quick Prompt Chips -->
+                  <div class="grounded-chips-bar">
+                    <button class="grounded-quick-chip" data-quick="Derive the governing formula step-by-step using notation from the notes.">⚡ Derive Governing Formula</button>
+                    <button class="grounded-quick-chip" data-quick="Solve a numerical problem step-by-step with given data, formula, and final boxed answer.">🔢 Step-by-Step Numerical Sum</button>
+                    <button class="grounded-quick-chip" data-quick="What are the essential 2-mark definitions and units in this material?">📝 List 2-Mark Definitions</button>
+                    <button class="grounded-quick-chip" data-quick="Explain the key intuition of this concept in simple bilingual Tanglish (Tamil-English).">🌐 Tanglish Explanation</button>
+                  </div>
+
+                  <!-- Input Row -->
+                  <div class="grounded-input-row">
+                    <input type="text" id="materialQuestionInput" class="grounded-text-input" placeholder="Ask any question, math sum, or derivation grounded in your material..." />
+                    <button id="btnAskMaterialDoubt" class="grounded-btn-send">
+                      <span>Solve with AI</span>
+                      <span>→</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

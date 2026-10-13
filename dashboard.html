@@ -1,15 +1,2507 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting to Project Aura Dashboard...</title>
-  <script>
-    // Redirect to main Project Aura interface
-    window.location.replace('/');
-  </script>
+  <title>PROJECT AURA — Personal AI Operating System</title>
+  <meta name="description"
+    content="Project Aura is a premium personal AI operating system and intelligent student platform delivering multi-provider intelligence, academic excellence, and contextual workflows.">
+  <!-- Three.js CDN for 3D Cinematic Intro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#07090e; color:#ffffff; font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;">
-  <div>Loading Project Aura Dashboard...</div>
+
+<body data-theme="rose-olive">
+
+  <!-- =======================================================
+       AUTHENTICATION GATEWAY: LIQUID GLASS LOGIN & SIGNUP PORTAL
+       Enforces mandatory authentication before granting access to Project Aura
+  ======================================================= -->
+  <div id="auraLoginPortal" class="aura-auth-portal-overlay">
+    <div class="aura-auth-glass-container">
+      <div class="auth-brand-badge">
+        <div class="auth-brand-icon">◈</div>
+        <div class="auth-brand-text">
+          <div class="auth-brand-title">PROJECT AURA 3.0</div>
+          <div class="auth-brand-sub">Neural Academic &amp; Personal Operating System</div>
+        </div>
+      </div>
+
+      <!-- Auth Switcher Tabs -->
+      <div class="auth-tabs-row">
+        <button class="auth-tab-btn active" id="tabLoginBtn" type="button">Sign In</button>
+        <button class="auth-tab-btn" id="tabSignupBtn" type="button">Create Account</button>
+      </div>
+
+      <!-- Error / Success Alert -->
+      <div id="auraAuthAlert" class="auth-alert-box" style="display:none;"></div>
+
+      <!-- SIGN IN FORM -->
+      <form id="auraLoginForm" class="auth-form-card" autocomplete="on">
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraLoginEmail">Email Address</label>
+          <input type="email" id="auraLoginEmail" class="auth-glass-input" placeholder="e.g. manikandan@aura.ai" required autocomplete="email" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraLoginPassword">Password</label>
+          <div class="auth-password-wrapper">
+            <input type="password" id="auraLoginPassword" class="auth-glass-input" placeholder="Enter your password" required autocomplete="current-password" />
+            <button type="button" class="auth-password-toggle-btn" id="toggleLoginPasswordBtn" title="Show Password" aria-label="Toggle password visibility">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" id="auraLoginSubmitBtn" class="auth-submit-glow-btn">
+          <span>Sign In to Project Aura</span>
+          <span class="auth-btn-arrow">→</span>
+        </button>
+
+        <!-- Cyberpunk Stylish Divider -->
+        <div class="auth-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Dedicated Container for Official Google Button -->
+        <div id="googleBtnContainer" style="width: 100%; display: flex; justify-content: center; margin-top: 12px;"></div>
+
+        <div class="auth-demo-shortcut" id="fillDemoCredentialsBtn" title="Click to autofill lead scholar credentials">
+          <span>⚡ Quick Fill Demo: <strong>manikandan@aura.ai</strong> / <strong>aura123</strong></span>
+        </div>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="auraSignupForm" class="auth-form-card" style="display:none;" autocomplete="on">
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupName">Full Name</label>
+          <input type="text" id="auraSignupName" class="auth-glass-input" placeholder="e.g. Manikandan" required autocomplete="name" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupEmail">Email Address</label>
+          <input type="email" id="auraSignupEmail" class="auth-glass-input" placeholder="e.g. student@college.edu" required autocomplete="email" />
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupPassword">Password</label>
+          <div class="auth-password-wrapper">
+            <input type="password" id="auraSignupPassword" class="auth-glass-input" placeholder="Create a password (min 4 chars)" minlength="4" required autocomplete="new-password" />
+            <button type="button" class="auth-password-toggle-btn" id="toggleSignupPasswordBtn" title="Show Password" aria-label="Toggle password visibility">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraSignupStandard">Academic Level</label>
+          <select id="auraSignupStandard" class="auth-glass-select">
+            <option value="College">College / Engineering</option>
+            <option value="12th">12th Standard</option>
+            <option value="11th">11th Standard</option>
+            <option value="10th">10th Standard</option>
+          </select>
+        </div>
+        <button type="submit" id="auraSignupSubmitBtn" class="auth-submit-glow-btn">
+          <span>Create Account &amp; Launch</span>
+          <span class="auth-btn-arrow">→</span>
+        </button>
+
+        <!-- Cyberpunk Stylish Divider -->
+        <div class="auth-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Dedicated Container for Official Google Button -->
+        <div id="googleSignupBtnContainer" style="width: 100%; display: flex; justify-content: center; margin-top: 12px;"></div>
+      </form>
+
+      <!-- Hidden Container for Google GIS anchor if needed -->
+      <div id="gsiHiddenRenderContainer" style="display:none;" aria-hidden="true"></div>
+
+      <!-- EMAIL VERIFICATION FORM -->
+      <form id="auraVerifyForm" class="auth-form-card" style="display:none;" autocomplete="off">
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="font-size:26px; margin-bottom:4px;">✉️</div>
+          <div style="font-size:15px; font-weight:800; color:var(--text-primary);">Verify Your Email Address</div>
+          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.4;">
+            A 6-digit verification code has been generated for <strong id="verifyTargetEmail" style="color:var(--accent-gold);"></strong>. Enter the code below to activate your account:
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label" for="auraVerifyCodeInput">6-Digit Verification Code / Passkey</label>
+          <input type="text" id="auraVerifyCodeInput" class="auth-glass-input" placeholder="e.g. 842109" maxlength="6" style="text-align:center; font-size:22px; font-weight:800; letter-spacing:0.25em; color:var(--accent-cyan);" required />
+        </div>
+
+        <button type="submit" id="auraVerifySubmitBtn" class="auth-submit-glow-btn">
+          <span>Verify Code &amp; Launch Project Aura</span>
+          <span class="auth-btn-arrow">✓</span>
+        </button>
+
+        <div class="auth-demo-shortcut" id="autoFillVerifyCodeBtn" style="margin-top:10px; cursor:pointer;" title="Click to auto-enter the generated passkey">
+          <span>🔑 Quick Passkey: <strong id="verifyPasskeyBadge">842109</strong> (Click to auto-fill)</span>
+        </div>
+
+        <div style="text-align:center; margin-top:12px;">
+          <button type="button" id="auraBackToLoginBtn" style="background:none; border:none; color:var(--text-secondary); font-size:12px; cursor:pointer; text-decoration:underline;">
+            ← Back to Sign In
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer-note">
+        <span>🔒 Authentic Academic Protocol · User-Isolated Device Analytics</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       LIVE DYNAMIC CANVAS (CHATGPT 6 ASTRA LIVE THEMES)
+  ======================================================= -->
+  <canvas id="liveThemeCanvas" class="live-theme-canvas"></canvas>
+
+  <!-- =======================================================
+       2. MASTER APPLICATION SHELL
+  ======================================================= -->
+  <div class="aura-shell">
+    <!-- Mobile Drawer Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <!-- 3D Spatial Grid & Depth Matrix -->
+    <div class="spatial-3d-grid-plane" id="spatial3dGridPlane" aria-hidden="true"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="aura-sidebar" id="auraSidebar">
+      <div class="sidebar-brand-header">
+        <div class="brand-link" id="brandHomeLink">
+          <div class="brand-monogram">◈</div>
+          <div class="brand-text-block">
+            <span class="brand-title">PROJECT AURA</span>
+            <span class="brand-subtitle">AI SYSTEM</span>
+          </div>
+        </div>
+        <span class="sidebar-version-pill">3.0</span>
+      </div>
+
+      <div class="sidebar-nav-container">
+        <div class="nav-section-title">Workspaces</div>
+        <ul class="nav-list">
+          <li class="nav-item active" data-view="command-center">
+            <span class="nav-icon">⌘</span>
+            <span class="nav-label">Command Center</span>
+          </li>
+          <li class="nav-item" data-view="creation-lab">
+            <span class="nav-icon">✎</span>
+            <span class="nav-label">Creation Studio</span>
+            <span class="nav-badge">AI</span>
+          </li>
+          <li class="nav-item" data-view="knowledge-vault">
+            <span class="nav-icon">⧉</span>
+            <span class="nav-label">Topic Knowledge Vault</span>
+          </li>
+          <li class="nav-item" data-view="study-intel">
+            <span class="nav-icon">📖</span>
+            <span class="nav-label">Study & Task Planner</span>
+          </li>
+          <li class="nav-item" data-view="quiz-engine">
+            <span class="nav-icon">✦</span>
+            <span class="nav-label">Quiz Engine</span>
+          </li>
+          <li class="nav-item" data-view="mock-test">
+            <span class="nav-icon">🏛️</span>
+            <span class="nav-label">Semester Mock Test</span>
+            <span class="nav-badge">PYQ</span>
+          </li>
+          <li class="nav-item" data-view="student-performance">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Performance</span>
+          </li>
+          <li class="nav-item" data-view="academic-hub-workspace">
+            <span class="nav-icon">🎓</span>
+            <span class="nav-label">College & School</span>
+            <span class="nav-badge">Hub</span>
+          </li>
+          <li class="nav-item" data-view="youtube-intel">
+            <span class="nav-icon">▷</span>
+            <span class="nav-label">YouTube</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-controls" style="margin-left:auto;">
+          <button class="footer-icon-btn" id="soundToggleBtn" title="Toggle Sound">♫</button>
+          <button class="footer-icon-btn" id="sidebarSearchBtn" title="Command Palette (⌘K)">⌘</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <main class="aura-main-stage">
+
+      <!-- TOPBAR -->
+      <header class="aura-topbar">
+        <div class="topbar-left">
+          <button class="mobile-nav-toggle" id="mobileNavToggleBtn">☰</button>
+          <div class="topbar-breadcrumbs">
+            <span class="crumb-root">PROJECT AURA</span>
+            <span class="crumb-divider">/</span>
+            <span class="crumb-active" id="breadcrumbCurrent">Command Center</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Voice Assistant Global Controller -->
+          <button class="topbar-voice-btn" id="globalVoiceAssistantBtn" title="AURA Voice Assistant (Talk or Control Desktop)">
+            <span class="voice-wave-dot"></span>
+            <span class="voice-btn-label">Voice AI</span>
+          </button>
+
+          <!-- Voice Gender Switcher (Female / Male) -->
+          <button class="topbar-action-btn glass-voice-gender-pill" id="voiceGenderToggleBtn" title="Switch Voice Voice: Female (Aura) / Male (Aero)">
+            <span id="voiceGenderIcon" style="color:#FF4081; font-weight:800;">♀</span>
+            <span id="voiceGenderLabel" style="font-size:11px; font-weight:700;">Aura (Female)</span>
+          </button>
+
+          <!-- Student Profile & Authentication -->
+          <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Authentication">
+            <span class="user-avatar-glyph">👤</span>
+            <span id="userNameLabel" class="user-name-text">Sign In</span>
+          </button>
+
+          <!-- Sign Out Button -->
+          <button class="topbar-action-btn glass-signout-btn" id="auraSignOutBtn" title="Sign Out of Project Aura" style="display:none;">
+            <span>⎋ Sign Out</span>
+          </button>
+
+          <button class="topbar-search-trigger" id="topbarSearchTrigger">
+            <span>Ask or search anything...</span>
+            <span class="search-shortcut-kbd">⌘K</span>
+          </button>
+
+          <div class="topbar-pill-badge" id="spatial3dBadge">
+            <span class="pulse-dot-green"></span>
+            <span>Online</span>
+          </div>
+
+          <div class="topbar-clock" id="osClock">--:--:--</div>
+
+          <!-- Minimalist Theme Switcher -->
+          <div class="theme-switcher-wrap" id="themeSwitcherWrap">
+            <button class="topbar-theme-btn" id="themeToggleBtn" title="Theme Selector">
+              <span class="theme-icon-swatch">◐</span>
+              <span id="activeThemeName">Rose & Olive</span>
+              <span style="font-size:9px; opacity:0.6;">▼</span>
+            </button>
+            <div class="theme-popover-dropdown" id="themePopoverDropdown">
+              <div class="theme-popover-title">Curated Minimalist Palettes</div>
+              <div class="theme-options-grid">
+                <div class="theme-option-card active" data-theme="rose-olive">
+                  <div class="theme-preview-dots">
+                    <span style="background:#c9a0a0;"></span>
+                    <span style="background:#8a8f6b;"></span>
+                    <span style="background:#1E1A1B;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">1. Rose & Olive</div>
+                    <div class="theme-desc">Rose (#c9a0a0) & Olive (#8a8f6b)</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="rose-olive-light">
+                  <div class="theme-preview-dots">
+                    <span style="background:#c9a0a0;"></span>
+                    <span style="background:#8a8f6b;"></span>
+                    <span style="background:#FAF6F6;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">Rose & Olive (Light)</div>
+                    <div class="theme-desc">Rose (#c9a0a0) & Olive Light UI</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="lavender-beige">
+                  <div class="theme-preview-dots">
+                    <span style="background:#a89bbe;"></span>
+                    <span style="background:#dbc3a8;"></span>
+                    <span style="background:#1B1924;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">2. Lavender & Beige</div>
+                    <div class="theme-desc">Lavender (#a89bbe) & Beige (#dbc3a8)</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="lavender-beige-light">
+                  <div class="theme-preview-dots">
+                    <span style="background:#a89bbe;"></span>
+                    <span style="background:#dbc3a8;"></span>
+                    <span style="background:#F8F6F2;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">Lavender & Beige (Light)</div>
+                    <div class="theme-desc">Lavender (#a89bbe) & Beige Light UI</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="sage-cream">
+                  <div class="theme-preview-dots">
+                    <span style="background:#a3b18a;"></span>
+                    <span style="background:#f2e8cf;"></span>
+                    <span style="background:#24301B;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">3. Sage & Cream</div>
+                    <div class="theme-desc">Sage (#a3b18a) & Cream (#f2e8cf)</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="sage-cream-dark">
+                  <div class="theme-preview-dots">
+                    <span style="background:#a3b18a;"></span>
+                    <span style="background:#f2e8cf;"></span>
+                    <span style="background:#121811;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">Sage & Cream (Dark)</div>
+                    <div class="theme-desc">Botanical Sage & Warm Cream Dark</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="cyber-obsidian">
+                  <div class="theme-preview-dots">
+                    <span style="background:#090A0D;"></span>
+                    <span style="background:#1C1F2B;"></span>
+                    <span style="background:#C9A45C;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">Minimal Obsidian</div>
+                    <div class="theme-desc">Matte Charcoal & Champagne Gold</div>
+                  </div>
+                </div>
+                <div class="theme-option-card" data-theme="minimal-light">
+                  <div class="theme-preview-dots">
+                    <span style="background:#F9F9FB;"></span>
+                    <span style="background:#FFFFFF;"></span>
+                    <span style="background:#111827;"></span>
+                  </div>
+                  <div class="theme-option-info">
+                    <div class="theme-name">Minimal Light</div>
+                    <div class="theme-desc">Pure Paper & Deep Ink</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </header>
+
+      <div class="aura-stage-scroll">
+        <!-- =====================================================
+             VIEW 1: COMMAND CENTER — REDESIGNED
+             Layout: Hero → Chat Stream → Input (sticky bottom)
+        ===================================================== -->
+        <section class="aura-view active" id="view-command-center">
+          <div class="cc-layout">
+
+            <!-- ── LEFT: CHAT COLUMN ── -->
+            <div class="cc-chat-col">
+
+              <!-- Greeting Hero (hides when chat starts) -->
+              <div class="cc-hero" id="ccHero">
+                <div class="cc-hero-badge">
+                  <span class="hero-badge-dot"></span>
+                  <span class="hero-badge-text">PROJECT AURA // WORKSPACE OS</span>
+                  <span class="hero-badge-version">v3.0</span>
+                </div>
+
+                <div class="cc-greeting" id="heroGreeting">Good evening.</div>
+                <h1 class="cc-headline">What would you like to <span class="cc-aura-word">accomplish today?</span></h1>
+                <p class="cc-subline">Orchestrating multi-model reasoning, autonomous deep research, persistent neural
+                  memory &amp; executive synthesis in one focused workspace.</p>
+
+                <!-- Clean Minimalist Telemetry Strip -->
+                <div class="cc-telemetry-strip">
+                  <div class="cc-tel-chip">
+                    <span class="pulse-dot-green"></span>
+                    <span class="tel-label">System:</span>
+                    <span class="tel-val">Operational</span>
+                  </div>
+                  <div class="cc-tel-chip">
+                    <span class="pulse-dot-green"></span>
+                    <span class="tel-label">Engine:</span>
+                    <span class="tel-val">Multi-Model AI</span>
+                  </div>
+                  <div class="cc-tel-chip">
+                    <span class="tel-icon">⧉</span>
+                    <span class="tel-label">Knowledge Vault:</span>
+                    <span class="tel-val">Connected</span>
+                  </div>
+                </div>
+
+                <!-- Quick Module Cards -->
+                <div class="cc-module-grid">
+                  <button class="cc-mod-card" data-view="creation-lab">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✎</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Creation Studio</span>
+                      <span class="cc-mod-hint">Documents &amp; Code</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="knowledge-vault">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">⧉</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Knowledge Vault</span>
+                      <span class="cc-mod-hint">RAG Vector Intelligence</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="engineering-hub">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">🎓</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">College &amp; School</span>
+                      <span class="cc-mod-hint">Syllabus &amp; Lecture Hub</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="quiz-engine">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✦</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Quiz Engine</span>
+                      <span class="cc-mod-hint">PYQ &amp; Exam Simulator</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="memory-cortex">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">◈</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Memory Cortex</span>
+                      <span class="cc-mod-hint">Persistent Neural State</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="study-intel">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">📖</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Study Intel</span>
+                      <span class="cc-mod-hint">Active Recall Matrix</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="youtube-intel">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">▷</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">YouTube Intel</span>
+                      <span class="cc-mod-hint">Video Transcript AI</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="tasks">
+                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✓</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Task Matrix</span>
+                      <span class="cc-mod-hint">Autonomous Pipelines</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── CHAT HISTORY STREAM (above input) ── -->
+              <div class="cc-chat-stream" id="ccChatStream">
+                <!-- Messages are injected here by JS -->
+              </div>
+
+              <!-- Legacy directive stage (kept for compatibility) -->
+              <div class="active-directive-stage" id="activeDirectiveStage" style="display:none;">
+                <div class="directive-header-card" id="directiveHeaderCard">
+                  <div class="directive-meta-top">
+                    <span class="directive-tag-pill">◈ ACTIVE DIRECTIVE</span>
+                    <div class="directive-status-telemetry" id="directiveTelemetry">
+                      <span class="pulse-dot-green" id="directivePulseDot"></span>
+                      <span id="directiveStatusText">EXECUTING DIRECTIVE</span>
+                      <span id="directiveLatencyText">· 0.0s</span>
+                    </div>
+                  </div>
+                  <h3 class="directive-query-title" id="directiveQueryTitle">Query text</h3>
+                </div>
+                <div class="thinking-animation-box" id="thinkingAnimationBox" style="display:none;">
+                  <div class="thinking-visual-row">
+                    <div class="thinking-core-orb">◈</div>
+                    <div class="thinking-text-group">
+                      <div class="thinking-status-headline" id="thinkingHeadline">Analyzing Directive...</div>
+                      <div class="thinking-status-sub" id="thinkingSub">Engaging reasoning pipeline · <span
+                          id="thinkingTimer">0.0s</span></div>
+                    </div>
+                  </div>
+                  <div class="thinking-synapse-track">
+                    <div class="thinking-synapse-beam"></div>
+                  </div>
+                </div>
+                <div class="directive-resolution-dossier" id="directiveResolutionDossier" style="display:none;">
+                  <div class="dossier-header-bar">
+                    <div class="dossier-provider-badge" id="dossierProviderBadge">✦ CHATGPT (OPENAI)</div>
+                    <div class="dossier-actions-toolbar">
+                      <button class="btn-dossier-tool" id="copyDossierBtn">📋 Copy</button>
+                      <button class="btn-dossier-tool" id="saveVaultDossierBtn">⧉ Save</button>
+                      <button class="btn-dossier-tool" id="newDirectiveBtn">✕ Clear</button>
+                    </div>
+                  </div>
+                  <div class="dossier-content-body" id="dossierContentBody"></div>
+                </div>
+              </div>
+              <div class="command-dialogue-stream" id="chatMessages" style="display:none;"></div>
+
+              <!-- ── STICKY INPUT AREA (bottom of chat col) ── -->
+              <div class="cc-input-zone" id="ccInputZone">
+
+                <!-- Cognitive Pipeline (compact) -->
+                <div class="cc-pipeline" id="ccPipeline">
+                  <div class="cc-pipe-step active" id="pipeUnderstanding"><span class="cc-pipe-dot"></span>Understanding
+                  </div>
+                  <span class="cc-pipe-arrow">›</span>
+                  <div class="cc-pipe-step" id="pipeReasoning"><span class="cc-pipe-dot"></span>Reasoning</div>
+                  <span class="cc-pipe-arrow">›</span>
+                  <div class="cc-pipe-step" id="pipeSynthesizing"><span class="cc-pipe-dot"></span>Synthesizing</div>
+                  <span class="cc-pipe-arrow">›</span>
+                  <div class="cc-pipe-step" id="pipeCompleted"><span class="cc-pipe-dot"></span>Ready</div>
+                </div>
+
+                <!-- File Attachment Preview Strip -->
+                <div class="cc-attach-strip" id="ccAttachStrip" style="display:none;"></div>
+
+                <!-- Input Card -->
+                <div class="cc-input-card">
+                  <textarea id="messageInput" class="cc-textarea"
+                    placeholder="Ask PROJECT AURA anything — attach files, voice input, or type..." rows="1"></textarea>
+
+                  <div class="cc-input-toolbar">
+                    <div class="cc-tools-left">
+                      <button class="cc-tool-btn" id="vaultAttachBtn" title="Attach File">
+                        <span>📎</span>
+                      </button>
+                      <input type="file" id="composerFileInput" multiple accept="*/*" style="display:none;" />
+
+                      <button class="cc-tool-btn" id="voiceBtn" title="Voice Input">
+                        <span id="voiceIcon">🎙</span>
+                      </button>
+
+                      <button class="cc-tool-btn" id="spatialTiltToggleBtn" title="3D Tilt">
+                        <span>◈</span>
+                      </button>
+                    </div>
+
+                    <button class="cc-send-btn" id="sendBtn" title="Send (Enter)">↑</button>
+                  </div>
+                </div>
+
+                <!-- Suggestion Chips -->
+                <div class="cc-chips-row">
+
+                  <button class="cc-chip" data-prompt="Summarize quantum computing architecture principles">⚡
+                    Quantum</button>
+                  <button class="cc-chip" data-prompt="Analyze the core themes in the uploaded documents">⧉ Analyze
+                    Docs</button>
+                  <button class="cc-chip"
+                    data-prompt="Research recent breakthroughs in solid-state battery technology">🌐 Research</button>
+                  <button class="cc-chip" data-prompt="Create a 5-question quiz on machine learning algorithms">✦
+                    Quiz</button>
+                  <button class="cc-chip" data-prompt="Remember that my priority this week is Project Aura 3.0 launch">◈
+                    Memory</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── RIGHT: COMPANION PANEL ── -->
+            <div class="cc-companion-panel">
+
+              <!-- Minimalist Intelligence Showcase -->
+              <div class="cc-intel-card" id="projectAuraVisualContainer">
+                <div class="cc-intel-header">
+                  <div class="cc-intel-brand">
+                    <span class="cc-intel-glyph">◈</span>
+                    <div class="cc-intel-meta">
+                      <span class="cc-intel-title">Project Aura</span>
+                      <span class="cc-intel-subtitle">Workspace OS v3.0</span>
+                    </div>
+                  </div>
+                  <span class="cc-intel-status-pill">Active</span>
+                </div>
+                <div class="cc-intel-metric-grid">
+                  <div class="cc-metric-box">
+                    <span class="cc-metric-num">3</span>
+                    <span class="cc-metric-label">AI Providers</span>
+                  </div>
+                  <div class="cc-metric-box">
+                    <span class="cc-metric-num">12</span>
+                    <span class="cc-metric-label">Workspaces</span>
+                  </div>
+                  <div class="cc-metric-box">
+                    <span class="cc-metric-num">&lt;1.2s</span>
+                    <span class="cc-metric-label">Latency</span>
+                  </div>
+                </div>
+                <!-- Compatibility handles for script references -->
+                <div style="display:none;" aria-hidden="true">
+                  <img id="projectAuraVisualImg" alt="" src="" />
+                </div>
+              </div>
+
+              <!-- AI Companion Core -->
+              <div class="companion-card" id="auraCompanionCard">
+                <div class="companion-header">
+                  <div class="companion-status-pill">
+                    <span class="pulse-dot-green" id="coreStateDot"></span>
+                    <span id="coreStateText">READY</span>
+                  </div>
+                  <div class="companion-core-toggle">
+                    <span class="core-toggle-pill active" id="coreToggleAuraBtn">AURA ◈</span>
+                  </div>
+                </div>
+                <div class="companion-visual-stage" id="auraCoreWidget">
+                  <canvas id="coreCanvas" width="300" height="150"></canvas>
+                </div>
+                <div class="companion-meta-list">
+                  <div class="meta-row">
+                    <span class="meta-label">Primary Engine</span>
+                    <span class="meta-value" id="compEngineVal">Gemini 1.5 Pro</span>
+                  </div>
+                  <div class="meta-row">
+                    <span class="meta-label">Neural State</span>
+                    <span class="meta-value" id="compCoreVal">Synchronized</span>
+                  </div>
+                  <div class="meta-row">
+                    <span class="meta-label">Cognitive Focus</span>
+                    <span class="meta-value" id="contextCurrentTask">Awaiting Directive</span>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /cc-companion-panel -->
+          </div><!-- /cc-layout -->
+        </section>
+
+        <!-- =====================================================
+             VIEW 2: CREATION STUDIO (WORKSPACE 7) — REVAMPED
+        ===================================================== -->
+        <section class="aura-view" id="view-creation-lab">
+          <div class="view-header">
+            <div class="view-eyebrow">Executive Intelligence</div>
+            <h2 class="view-title">Creation Studio</h2>
+            <p class="view-desc">Synthesize executive documents, clean production code, technical scripts, and punchy
+              strategic pitches with natural emojis and points.</p>
+          </div>
+
+          <div class="creation-studio-layout">
+            <!-- Format & Length Control Bar -->
+            <div
+              style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+              <div class="creation-subnav-tabs" style="margin-bottom:0; flex-wrap:wrap;">
+                <button class="creation-tab-btn active" data-tab="writing">✍️ Write</button>
+                <button class="creation-tab-btn" data-tab="coding">💻 Code</button>
+                <button class="creation-tab-btn" data-tab="scripts">🎬 Script</button>
+                <button class="creation-tab-btn" data-tab="presentation">📊 Presentation</button>
+                <button class="creation-tab-btn" data-tab="social">📱 Social</button>
+                <button class="creation-tab-btn" data-tab="templates">📋 Templates</button>
+              </div>
+
+              <!-- Short & Crisp / Detailed Toggle -->
+              <div
+                style="display:flex; align-items:center; gap:8px; background:var(--bg-surface-subtle); padding:4px 8px; border-radius:var(--radius-pill); border:1px solid var(--border-subtle);">
+                <span
+                  style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Length:</span>
+                <button class="branch-pill-btn active" id="creationLengthShortBtn"
+                  style="padding:4px 12px; font-size:11px;">⚡ Short & Crisp</button>
+                <button class="branch-pill-btn" id="creationLengthLongBtn" style="padding:4px 12px; font-size:11px;">📖
+                  Detailed Deep-Dive</button>
+              </div>
+            </div>
+
+            <!-- TAB 1: WRITE -->
+            <div class="creation-tab-content active" id="tab-writing">
+              <div class="workspace-card">
+                <h3 class="card-section-title">✍️ Executive Writing, Articles & Formal Briefs</h3>
+                <div class="form-group">
+                  <label class="form-label">Writing Format</label>
+                  <select id="writingFormatSelect" class="form-textarea" title="Writing Format"
+                    aria-label="Writing Format" style="min-height:auto; height:42px; margin-bottom:12px;">
+                    <option value="Executive Brief">Executive Brief / Memo</option>
+                    <option value="Research Article">Academic / Technical Article</option>
+                    <option value="Formal Email">Professional Formal Email</option>
+                    <option value="Analytical Essay">Structured Analytical Essay</option>
+                    <option value="Project Report">Formal Project Status Report</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Subject or Key Directives</label>
+                  <input type="text" id="writingTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. Next-generation autonomous AI architecture roadmap for 2026..." />
+                </div>
+                <button class="btn-generate-gemini" id="generateWritingBtn"
+                  style="width:auto; padding:10px 24px;">Synthesize Document</button>
+
+                <div class="creation-crisp-card" id="writingOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Formatted
+                      Creation Result</span>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="copyWritingBtn">📋 Copy</button>
+                      <button class="btn-vault-action" id="exportWritingMdBtn">📥 Markdown</button>
+                      <button class="btn-vault-action" id="exportWritingTxtBtn">📄 TXT</button>
+                      <button class="btn-vault-action" id="printWritingBtn">🖨️ Print</button>
+                    </div>
+                  </div>
+                  <div class="dialogue-content" id="writingOutputText"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: CODE -->
+            <div class="creation-tab-content" id="tab-coding" style="display:none;">
+              <div class="workspace-card">
+                <h3 class="card-section-title">💻 Production Code, Algorithms & Debugging</h3>
+                <div class="form-group">
+                  <label class="form-label">Language & Stack</label>
+                  <select id="codingLangSelect" class="form-textarea" title="Language & Stack"
+                    aria-label="Language & Stack" style="min-height:auto; height:42px; margin-bottom:12px;">
+                    <option value="JavaScript / Node.js">JavaScript / Node.js</option>
+                    <option value="TypeScript">TypeScript</option>
+                    <option value="Python">Python</option>
+                    <option value="C++">C++</option>
+                    <option value="Java">Java</option>
+                    <option value="SQL / Database">SQL / Database Architecture</option>
+                    <option value="HTML / CSS">HTML5 / Modern CSS</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Specification or Problem Statement</label>
+                  <input type="text" id="codingTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. Implement LRU Cache with O(1) get and put in TypeScript with tests..." />
+                </div>
+                <button class="btn-generate-gemini" id="generateCodeBtn" style="width:auto; padding:10px 24px;">Generate
+                  Production Code</button>
+                <div class="creation-crisp-card" id="codingOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Generated
+                      Code</span>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="copyCodeBtn">📋 Copy Code</button>
+                      <button class="btn-vault-action" id="exportCodeBtn">📥 Export File</button>
+                    </div>
+                  </div>
+                  <pre class="dialogue-content" id="codingOutputText"
+                    style="font-family:var(--font-mono); font-size:12px; white-space:pre-wrap;"></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: SCRIPTS -->
+            <div class="creation-tab-content" id="tab-scripts" style="display:none;">
+              <div class="workspace-card">
+                <h3 class="card-section-title">🎬 Video, Podcast & Dialogue Scripts</h3>
+                <div class="form-group">
+                  <label class="form-label">Format</label>
+                  <select id="scriptFormatSelect" class="form-textarea" title="Script Format" aria-label="Script Format"
+                    style="min-height:auto; height:42px; margin-bottom:12px;">
+                    <option value="YouTube Video (5-10 min)">YouTube Educational Video</option>
+                    <option value="Short / Reel (60 sec)">Viral Short / Reel (60s Hook + Value)</option>
+                    <option value="Podcast Interview">Podcast Two-Host Discussion</option>
+                    <option value="Keynote Presentation">Tech Keynote Speech</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Topic or Premise</label>
+                  <input type="text" id="scriptTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. How neural network backpropagation actually works from first principles..." />
+                </div>
+                <button class="btn-generate-gemini" id="generateScriptBtn" style="width:auto; padding:10px 24px;">Draft
+                  Script</button>
+                <div class="creation-crisp-card" id="scriptOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Script
+                      Outline</span>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="copyScriptBtn">📋 Copy Script</button>
+                      <button class="btn-vault-action" id="exportScriptMdBtn">📥 Markdown</button>
+                    </div>
+                  </div>
+                  <div class="dialogue-content" id="scriptOutputText"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: PRESENTATION (AI SCRIPT + SLIDE BLUEPRINT + PPTX DOWNLOAD) -->
+            <div class="creation-tab-content" id="tab-presentation" style="display:none;">
+              <div class="workspace-card">
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                  <h3 class="card-section-title" style="margin-bottom:0;">📊 AI Presentation Deck, Speech Script & PPTX
+                    Generator</h3>
+                  <span class="eng-badge-pill" style="background:var(--accent-gold-soft); color:var(--accent-gold);">PptxGenJS ·
+                    Multi-Slide Export</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Presentation Topic or Key Objective</label>
+                  <input type="text" id="presTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. Autonomous AI Agents for Healthcare: Architecture, Ethics, and Roadmap..." />
+                </div>
+                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+                  <div style="flex:1; min-width:180px;">
+                    <label class="form-label">Slide Count</label>
+                    <select id="presSlideCountSelect" class="form-textarea" title="Slide Count" aria-label="Slide Count"
+                      style="min-height:auto; height:40px;">
+                      <option value="6">6 Slides (Quick Pitch)</option>
+                      <option value="8" selected>8 Slides (Standard Presentation)</option>
+                      <option value="10">10 Slides (Deep Comprehensive)</option>
+                    </select>
+                  </div>
+                  <div style="flex:1; min-width:180px;">
+                    <label class="form-label">Visual Theme for PPTX</label>
+                    <select id="presThemeSelect" class="form-textarea" title="Visual Theme for PPTX"
+                      aria-label="Visual Theme for PPTX" style="min-height:auto; height:40px;">
+                      <option value="cyber-dark" selected>Sleek Cyber Dark (Project Aura Palette)</option>
+                      <option value="minimal-light">Clean Executive Ivory / Gold</option>
+                      <option value="modern-tech">Vibrant Electric Blue & Cyan</option>
+                    </select>
+                  </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                  <button class="btn-generate-gemini" id="generatePresBtn" style="width:auto; padding:10px 24px;">⚡
+                    Synthesize Deck & Speech Script</button>
+                  <button class="btn-vault-action" id="directPptxBtn"
+                    style="padding:10px 18px; color:#10B981; border-color:rgba(16, 185, 129, 0.4); display:none;">
+                    📥 Download PPTX File (.pptx)
+                  </button>
+                </div>
+
+                <div class="creation-crisp-card" id="presOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px; flex-wrap:wrap; gap:8px;">
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <button class="branch-pill-btn active" id="btnPresViewSlides"
+                        style="font-size:11px; padding:4px 12px;">📊 Slide Deck Outlines</button>
+                      <button class="branch-pill-btn" id="btnPresViewScript"
+                        style="font-size:11px; padding:4px 12px;">🎙️ Spoken Presentation Script</button>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="downloadPptxFileBtn"
+                        style="color:var(--accent-gold); font-weight:700;">📥 Download PPTX (.pptx)</button>
+                      <button class="btn-vault-action" id="copyPresBtn">📋 Copy</button>
+                      <button class="btn-vault-action" id="printPresBtn">🖨️ Print Slides</button>
+                    </div>
+                  </div>
+
+                  <div id="presSlidesViewContainer">
+                    <div class="creation-cards-flow" id="presOutputText"></div>
+                  </div>
+                  <div id="presScriptViewContainer" style="display:none;">
+                    <div class="creation-cards-flow" id="presScriptOutputText"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- TAB 5: SOCIAL -->
+            <div class="creation-tab-content" id="tab-social" style="display:none;">
+              <div class="workspace-card">
+                <h3 class="card-section-title">📱 Social Posts & High-Engagement Content</h3>
+                <div class="form-group">
+                  <label class="form-label">Platform</label>
+                  <select id="socialPlatformSelect" class="form-textarea" title="Social Platform"
+                    aria-label="Social Platform" style="min-height:auto; height:42px; margin-bottom:12px;">
+                    <option value="LinkedIn Post">LinkedIn Thought Leadership Post (Hook + Insights + Framework)
+                    </option>
+                    <option value="Twitter / X Thread">Twitter / X 5-Tweet Viral Thread</option>
+                    <option value="Instagram Caption">Instagram Educational Carousel Caption</option>
+                    <option value="YouTube Title & Description">YouTube High-CTR Title, Hooks & Description</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Subject or Achievement</label>
+                  <input type="text" id="socialTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. Key learnings from building a real-time AI operating system..." />
+                </div>
+                <button class="btn-generate-gemini" id="generateSocialBtn"
+                  style="width:auto; padding:10px 24px;">Generate Social Content</button>
+                <div class="creation-crisp-card" id="socialOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Formatted
+                      Social Copy</span>
+                    <button class="btn-vault-action" id="copySocialBtn">📋 Copy</button>
+                  </div>
+                  <div class="creation-cards-flow" id="socialOutputText"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 6: TEMPLATES (CATEGORIZED PLATFORM AI: FIGMA, CANVA, SPLINE, NOTION, SOCIAL, ACADEMIC) -->
+            <div class="creation-tab-content" id="tab-templates" style="display:none;">
+              <div class="workspace-card">
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+                  <div>
+                    <h3 class="card-section-title" style="margin-bottom:2px;">📋 Platform AI Templates & Design Systems
+                    </h3>
+                    <p style="font-size:12px; color:var(--text-secondary); margin:0;">Synthesize structured frameworks
+                      for Figma, Canva, Spline 3D, Webflow, Notion, and Academic Systems.</p>
+                  </div>
+                </div>
+
+                <!-- Template Category Pills -->
+                <div class="creation-subnav-tabs" id="templateCategoryBar" style="margin-bottom:16px; flex-wrap:wrap;">
+                  <button class="creation-tab-btn active" data-tplcat="all">All Platforms</button>
+                  <button class="creation-tab-btn" data-tplcat="figma">🎨 Figma UI/UX</button>
+                  <button class="creation-tab-btn" data-tplcat="canva">🪄 Canva Decks</button>
+                  <button class="creation-tab-btn" data-tplcat="spline">🔮 Spline 3D & Webflow</button>
+                  <button class="creation-tab-btn" data-tplcat="notion">📝 Notion OS</button>
+                  <button class="creation-tab-btn" data-tplcat="creator">📱 Creator Kits</button>
+                  <button class="creation-tab-btn" data-tplcat="academic">🎓 Academic IEEE</button>
+                </div>
+
+                <!-- Interactive Platform Template Cards Shelf -->
+                <div class="tpl-cards-shelf" id="templateCardsShelf">
+                  <!-- Dynamically populated or selectable cards -->
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                  <label class="form-label">Selected Template Specification</label>
+                  <select id="templateTypeSelect" class="form-textarea" title="Selected Template Specification"
+                    aria-label="Selected Template Specification"
+                    style="min-height:auto; height:42px; margin-bottom:12px;">
+                    <optgroup label="🎨 Figma & UI/UX Systems">
+                      <option value="Figma Design System & Token Spec" selected>Figma Design System Specification &
+                        Token Hierarchy</option>
+                      <option value="Mobile App User Flow & Wireframe Blueprint">Figma Mobile App User Flow & Wireframe
+                        Blueprint</option>
+                      <option value="SaaS Dashboard Component Architecture">Figma SaaS Component Library & Layout Matrix
+                      </option>
+                    </optgroup>
+                    <optgroup label="🪄 Canva & Pitch Decks">
+                      <option value="Canva High-Stakes Investor Pitch Deck">Canva High-Stakes Startup Investor Pitch
+                        Deck (10 Slides)</option>
+                      <option value="Canva Product Launch & Marketing Kit">Canva Product Launch Visual Campaign Outline
+                      </option>
+                      <option value="Canva Executive Infographic Blueprint">Canva Infographic Data Storytelling
+                        Structure</option>
+                    </optgroup>
+                    <optgroup label="🔮 Spline 3D & Webflow">
+                      <option value="Spline 3D Interactive Hero Scene Prompt">Spline 3D Interactive Web Scene Structure
+                        & Lighting</option>
+                      <option value="Webflow High-Converting Landing Page Spec">Webflow Landing Page Component & CMS
+                        Architecture</option>
+                      <option value="3D Product Showcase Experience Spec">3D Interactive Product Showcase Experience
+                        Blueprint</option>
+                    </optgroup>
+                    <optgroup label="📝 Notion & Productivity">
+                      <option value="Notion Second Brain & Knowledge Management OS">Notion Second Brain OS & Para Method
+                        Architecture</option>
+                      <option value="Notion Agile Sprint & Engineering Roadmap">Notion Engineering Sprint Tracker & Task
+                        Matrix</option>
+                      <option value="Notion Academic Literature Review Base">Notion Research Papers Literature Review
+                        Matrix</option>
+                    </optgroup>
+                    <optgroup label="📱 Social Media & Creator Kits">
+                      <option value="Viral LinkedIn Carousel Framework">Viral LinkedIn Carousel 7-Slide Framework
+                      </option>
+                      <option value="YouTube 10-Min Video Architecture (Hook+Story+CTA)">YouTube High-Retention 10-Min
+                        Video Architecture</option>
+                      <option value="Instagram High-Reach Storyboard">Instagram High-Reach Educational Storyboard
+                      </option>
+                    </optgroup>
+                    <optgroup label="🎓 Academic & Engineering">
+                      <option value="IEEE Research Conference Paper Structure">IEEE Research Conference Paper Format &
+                        Methodology</option>
+                      <option value="Software Requirements Specification (SRS IEEE 830)">Software Requirements
+                        Specification (SRS) - IEEE 830</option>
+                      <option value="Engineering Laboratory Experiment Report">Comprehensive Engineering Lab Report
+                        Template</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Project Context / Specific Requirements</label>
+                  <input type="text" id="templateTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
+                    placeholder="e.g. Real-time Autonomous Drone Navigation System with edge AI..." />
+                </div>
+
+                <button class="btn-generate-gemini" id="generateTemplateBtn" style="width:auto; padding:10px 24px;">⚡
+                  Synthesize Platform Template</button>
+
+                <div class="creation-crisp-card" id="templateOutputContainer" style="margin-top:20px; display:none;">
+                  <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦
+                      Synthesized Platform Template</span>
+                    <div style="display:flex; gap:6px;">
+                      <button class="btn-vault-action" id="copyTemplateBtn">📋 Copy</button>
+                      <button class="btn-vault-action" id="exportTemplateMdBtn">📥 Markdown</button>
+                    </div>
+                  </div>
+                  <div class="creation-cards-flow" id="templateOutputText"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             VIEW 3: KNOWLEDGE VAULT (WORKSPACE 3) — REVAMPED
+             2-Column Layout: Left Shelf (Visible Files + Open/Read)
+             Right Column: Related Pages & Grounded Web Intelligence Bar
+        <!-- =====================================================
+             VIEW 3: TOPIC KNOWLEDGE VAULT & MEMORY (UNIFIED WORKSPACE)
+        ===================================================== -->
+        <section class="aura-view" id="view-knowledge-vault">
+          <div class="view-header">
+            <div class="view-eyebrow">Document Intelligence & Context</div>
+            <h2 class="view-title">Topic Knowledge Vault</h2>
+            <p class="view-desc">Ingest PDFs, Word documents, and text files. Automatically extract related academic topics, relational information, and web links upon upload, alongside long-term memory directives.</p>
+          </div>
+
+          <!-- Unified Subnav Tabs -->
+          <div class="creation-subnav-tabs" style="margin-bottom:20px; display:flex; gap:10px;">
+            <button class="creation-tab-btn active" id="kvTabDocsBtn" onclick="switchKnowledgeVaultSubTab('docs')">
+              ⧉ Documents & Grounding
+            </button>
+            <button class="creation-tab-btn" id="kvTabMemBtn" onclick="switchKnowledgeVaultSubTab('memory')">
+              ◈ Memory Cortex & Directives
+            </button>
+          </div>
+
+          <!-- SUB-PANEL 1: DOCUMENTS & AUTOMATIC TOPIC / RELATION EXTRACTION -->
+          <div id="kvSubTabDocs" class="kv-subtab-pane">
+            <div class="vault-2col-grid">
+              <!-- LEFT COLUMN: UPLOAD & VISIBLE FILES SHELF -->
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                <div class="vault-upload-dropzone" id="vaultDropzone">
+                  <input type="file" id="vaultFileInput" style="display:none;" />
+                  <div class="vault-dropzone-icon">⧉</div>
+                  <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Upload Document or Ingest Academic Topic</h4>
+                  <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">Drag &amp; drop PDF, DOCX, TXT, or click to browse</p>
+                  
+                  <div style="display:flex; gap:8px; width:100%; max-width:520px; margin:0 auto;" onclick="event.stopPropagation();">
+                    <input type="text" id="vaultTopicDirectInput" class="research-input"
+                      placeholder="Or enter topic to ground (e.g. 12th Physics Electrostatics, OS Concurrency)..."
+                      style="margin-bottom:0; font-size:12px; height:38px;" />
+                    <button class="btn-generate-gemini" id="vaultIngestTopicBtn" style="width:auto; padding:0 18px; font-size:12px; white-space:nowrap;">
+                      ⚡ Ingest &amp; Compare AI
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Selected / Uploaded Files Shelf (Visible to User!) -->
+                <div class="workspace-card">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <h3 class="card-section-title" style="margin-bottom:0;">Indexed Vault Documents</h3>
+                    <button class="btn-vault-action" id="refreshVaultFilesBtn">🔄 Refresh</button>
+                  </div>
+
+                  <div class="vault-files-grid" id="vaultFilesGrid">
+                    <!-- Dynamically populated files list -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT COLUMN: AUTOMATIC RELATED TOPICS & RELATION INFORMATION BAR -->
+              <div>
+                <div class="vault-related-bar" id="vaultRelatedTopicsBar">
+                  <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+                    <div>
+                      <div style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.08em;">✦ Auto-Generated File Relations</div>
+                      <h4 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:2px 0 0 0;" id="vaultRelatedBarTitle">Related Topics & Information</h4>
+                    </div>
+                    <span class="eng-badge-pill" id="relatedStatusPill">Auto Synced</span>
+                  </div>
+
+                  <p style="font-size:12px; color:var(--text-secondary); margin:0;">
+                    When a file is uploaded, related academic topics, relational concepts, and verified Chrome links are extracted and displayed automatically.
+                  </p>
+
+                  <div id="vaultRelatedList" style="display:flex; flex-direction:column; gap:10px;">
+                    <div style="font-size:12px; color:var(--text-tertiary); text-align:center; padding:24px 12px; background:var(--bg-surface-subtle); border-radius:var(--radius-md);">
+                      Upload or select a document to automatically reveal extracted topics, entity relations, and verified web links.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-PANEL 2: MEMORY CORTEX & STRATEGIC DIRECTIVES -->
+          <div id="kvSubTabMemory" class="kv-subtab-pane" style="display:none;">
+            <!-- Memory Category Filter Subnav & Live Search -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+              <div class="creation-subnav-tabs" id="memoryCategoryTabs" style="margin-bottom:0; flex-wrap:wrap;">
+                <button class="creation-tab-btn active" data-memcat="all">All Memories</button>
+                <button class="creation-tab-btn" data-memcat="personal">👤 Personal</button>
+                <button class="creation-tab-btn" data-memcat="study">🎓 Study &amp; Academic</button>
+                <button class="creation-tab-btn" data-memcat="projects">🚀 Projects &amp; Goals</button>
+                <button class="creation-tab-btn" data-memcat="preferences">⚙️ Preferences</button>
+                <button class="creation-tab-btn" data-memcat="notes">📌 Important Notes</button>
+                <button class="creation-tab-btn" data-memcat="knowledge">💡 Saved Knowledge</button>
+              </div>
+
+              <div style="flex:1; min-width:240px; max-width:380px;">
+                <input type="text" id="memorySearchInput" class="research-input"
+                  placeholder="🔍 Search stored memories or tags..."
+                  style="margin-bottom:0; height:38px; font-size:12px;" />
+              </div>
+            </div>
+
+            <div class="memory-layout">
+              <div class="memory-creator-card">
+                <h3 class="card-section-title">Commit New Directive</h3>
+                <div class="form-group">
+                  <label class="form-label">Directive or Subject Title</label>
+                  <input type="text" id="memoryTitleInput" class="form-textarea" style="min-height:auto; height:42px;"
+                    placeholder="e.g. End-Semester Study Routine" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Category</label>
+                  <select id="memoryCategorySelect" class="form-textarea" title="Memory Category"
+                    aria-label="Memory Category" style="min-height:auto; height:42px;">
+                    <option value="personal">👤 Personal Context</option>
+                    <option value="study" selected>🎓 Study &amp; Academic</option>
+                    <option value="projects">🚀 Projects &amp; Goals</option>
+                    <option value="preferences">⚙️ Preferences &amp; Habits</option>
+                    <option value="notes">📌 Important Notes</option>
+                    <option value="knowledge">💡 Saved Knowledge</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Memory Content</label>
+                  <textarea id="memoryContentInput" class="form-textarea"
+                    placeholder="Detail the instruction, key facts, or goal for AURA..." rows="3"></textarea>
+                </div>
+                <button class="btn-generate-gemini" id="saveMemoryBtn">Commit to Memory (with AI Analysis)</button>
+              </div>
+
+              <div class="memory-cards-grid" id="memoryNotesGrid">
+                <!-- Dynamically populated memories with AI Strategic Suggestions -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Hidden anchor for legacy memory view routing -->
+        <section class="aura-view" id="view-memory-cortex" style="display:none;"></section>
+
+        <!-- =====================================================
+             VIEW 5: STUDY INTEL (WORKSPACE 4) — PACED MILESTONES
+        ===================================================== -->
+        <section class="aura-view" id="view-study-intel">
+          <div class="view-header">
+            <div class="view-eyebrow">Academic &amp; Operational Execution</div>
+            <h2 class="view-title">Study &amp; Task Planner</h2>
+            <p class="view-desc">Synthesize paced milestone study schedules, active recall checkpoints, and track operational tasks with the execution Kanban board.</p>
+
+            <!-- Subtabs: Milestone Accelerator & Execution Kanban -->
+            <div class="vault-subtabs" style="margin-top:16px;">
+              <button class="vault-subtab-btn active" id="studySubtabMilestones" onclick="switchStudyPlannerSubTab('milestones')">
+                📖 Milestone Accelerator
+              </button>
+              <button class="vault-subtab-btn" id="studySubtabKanban" onclick="switchStudyPlannerSubTab('kanban')">
+                ✓ Execution Kanban &amp; Tasks
+              </button>
+            </div>
+          </div>
+
+          <!-- Subtab Pane 1: Milestone Accelerator -->
+          <div id="studyTabMilestonesContent" class="study-planner-pane active">
+            <div class="workspace-card">
+              <h3 class="card-section-title">Generate Paced Study Curriculum</h3>
+              <div class="research-search-row">
+                <input type="text" id="studyTopicInput" class="research-input"
+                  placeholder="Enter subject or exam topic (e.g. Distributed Operating Systems &amp; Concurrency)..." />
+                <button class="btn-generate-gemini" id="generateStudyPlanBtn" style="width:auto; padding:0 24px;">Build
+                  Paced Milestones</button>
+              </div>
+
+              <!-- Quick Study Topics -->
+              <div class="youtube-quick-row" style="margin-top:-10px; margin-bottom:18px;">
+                <span style="font-size:12px; font-weight:600; color:var(--text-secondary); margin-right:4px;">High-Yield
+                  Subjects:</span>
+                <button class="youtube-quick-pill study-quick-pill" data-topic="Data Structures &amp; Algorithms">Data
+                  Structures</button>
+                <button class="youtube-quick-pill study-quick-pill"
+                  data-topic="Computer Architecture &amp; Organization">Computer Architecture</button>
+                <button class="youtube-quick-pill study-quick-pill" data-topic="Database Management Systems (DBMS)">DBMS
+                  &amp; Normalization</button>
+                <button class="youtube-quick-pill study-quick-pill"
+                  data-topic="Discrete Mathematics &amp; Graph Theory">Discrete Math</button>
+              </div>
+
+              <!-- Paced Milestones Grid (Today, This Week, Upcoming) -->
+              <div id="studyPacedMilestonesGrid"
+                style="display:none; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin-top:20px;">
+                <!-- 1. Today's Milestones -->
+                <div class="creation-crisp-card" style="border-top:3px solid var(--accent-gold);">
+                  <div
+                    style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                    🎯 Today's Paced Milestones</div>
+                  <div id="studyTodayTasks" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <!-- 2. This Week's Focus -->
+                <div class="creation-crisp-card" style="border-top:3px solid var(--accent-gold);">
+                  <div
+                    style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                    📅 This Week's Core Focus</div>
+                  <div id="studyWeekTasks" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <!-- 3. Upcoming Syllabus Horizons -->
+                <div class="creation-crisp-card" style="border-top:3px solid #10B981;">
+                  <div
+                    style="font-size:11px; font-weight:800; color:#10B981; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">
+                    🚀 Upcoming Horizons &amp; Revision</div>
+                  <div id="studyUpcomingTasks" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+              </div>
+
+              <div id="studyPlanOutput" style="display:none; margin-top:20px;" class="creation-crisp-card">
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+                  <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Comprehensive
+                    Curriculum Blueprint</span>
+                  <button class="btn-vault-action" id="copyStudyPlanBtn">📋 Copy Blueprint</button>
+                </div>
+                <div class="dialogue-content" id="studyPlanText"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtab Pane 2: Execution Kanban & Tasks -->
+          <div id="studyTabKanbanContent" class="study-planner-pane" style="display:none;">
+            <!-- Add Task / Event Bar -->
+            <div class="workspace-card" style="margin-bottom:20px;">
+              <div style="display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:12px; align-items:center;">
+                <input type="text" id="newTaskInput" class="research-input" placeholder="Enter objective or task..."
+                  style="margin-bottom:0;" />
+
+                <select id="taskBucketSelect" class="college-filter-select" title="Task Category Bucket"
+                  aria-label="Task Category Bucket" style="min-width:140px;">
+                  <option value="today">Today's Focus</option>
+                  <option value="upcoming">Upcoming Events</option>
+                </select>
+
+                <select id="taskPrioritySelect" class="college-filter-select" title="Task Priority"
+                  aria-label="Task Priority" style="min-width:120px;">
+                  <option value="High">🔥 High Priority</option>
+                  <option value="Medium" selected>⚡ Medium</option>
+                  <option value="Low">🌱 Low</option>
+                </select>
+
+                <button class="btn-generate-gemini" id="addTaskBtn"
+                  style="width:auto; padding:10px 24px; white-space:nowrap;">
+                  + Save Task
+                </button>
+              </div>
+            </div>
+
+            <!-- 3-Column Kanban Board -->
+            <div class="tasks-kanban-board">
+              <!-- 1. Today's Focus -->
+              <div class="task-kanban-col">
+                <div class="task-col-top">
+                  <span>🎯 Today's Focus</span>
+                  <span class="task-col-badge-count" id="tasksTodayCount">0</span>
+                </div>
+                <div id="tasksTodayList" style="display:flex; flex-direction:column; gap:10px;"></div>
+              </div>
+
+              <!-- 2. Upcoming Events (Now Typable & Editable!) -->
+              <div class="task-kanban-col">
+                <div class="task-col-top">
+                  <span>📅 Upcoming Events &amp; Deadlines</span>
+                  <span class="task-col-badge-count" id="tasksUpcomingCount">0</span>
+                </div>
+                <div id="tasksUpcomingList" style="display:flex; flex-direction:column; gap:10px;"></div>
+              </div>
+
+              <!-- 3. Completed Archive -->
+              <div class="task-kanban-col">
+                <div class="task-col-top">
+                  <span>✓ Completed Archive</span>
+                  <span class="task-col-badge-count" id="tasksCompletedCount">0</span>
+                </div>
+                <div id="tasksCompletedList" style="display:flex; flex-direction:column; gap:10px;"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             VIEW 6: QUIZ ENGINE (WORKSPACE 5) — MULTI-PATTERN (7 PATTERNS)
+        ===================================================== -->
+        <section class="aura-view" id="view-quiz-engine">
+          <div class="view-header">
+            <div class="view-eyebrow">Knowledge Assessment</div>
+            <h2 class="view-title">Quiz Engine</h2>
+            <p class="view-desc">Practice 7 diverse question patterns: MCQ, True/False, Fill in the Blanks, Written
+              Short Answer, Match the Following, Scenario Problem-Solving, and Coding Challenges.</p>
+          </div>
+
+          <div class="workspace-card">
+            <h3 class="card-section-title">Create Adaptive Multi-Pattern Quiz</h3>
+            <div class="research-search-row">
+              <input type="text" id="quizTopicInput" class="research-input"
+                placeholder="Topic or source concept (e.g. Quantum Computing Fundamentals)..." />
+              <button class="btn-generate-gemini" id="generateQuizBtn" style="width:auto; padding:0 24px;">Create
+                Quiz</button>
+            </div>
+
+            <!-- Quick topic suggestions -->
+            <div class="youtube-quick-row" style="margin-top:-10px; margin-bottom:18px;">
+              <span style="font-size:12px; font-weight:600; color:var(--text-secondary); margin-right:4px;">Quick
+                Topics:</span>
+              <button class="youtube-quick-pill quiz-quick-topic" data-topic="Data Structures &amp; Algorithms">Data
+                Structures</button>
+              <button class="youtube-quick-pill quiz-quick-topic"
+                data-topic="Machine Learning &amp; Deep Neural Networks">Neural Networks</button>
+              <button class="youtube-quick-pill quiz-quick-topic"
+                data-topic="Operating Systems &amp; Process Scheduling">Operating Systems</button>
+              <button class="youtube-quick-pill quiz-quick-topic" data-topic="Database Management Systems (DBMS)">DBMS
+                &amp; SQL</button>
+              <button class="youtube-quick-pill quiz-quick-topic"
+                data-topic="Computer Networks &amp; Protocols">Networks</button>
+            </div>
+
+            <!-- Interactive Quiz Runner -->
+            <div id="quizRunnerBox" style="display:none;" class="quiz-runner-container">
+              <div class="quiz-runner-header">
+                <div class="quiz-header-meta">
+                  <span class="quiz-badge-topic" id="quizTopicBadge">◈ MACHINE LEARNING</span>
+                  <span class="quiz-badge-progress" id="quizProgressBadge">Question 1 of 5</span>
+                  <span class="quiz-badge-pattern" id="quizPatternBadge"
+                    style="font-size:11px; padding:2px 8px; border-radius:10px; background:var(--bg-surface-subtle); color:var(--accent-gold); font-weight:700;">MCQ</span>
+                </div>
+                <div style="font-size:12px; font-weight:700; color:var(--accent-gold);" id="quizScoreTracker">Score: 0
+                </div>
+              </div>
+
+              <div class="quiz-progress-track">
+                <div class="quiz-progress-fill" id="quizProgressFill" style="width: 20%;"></div>
+              </div>
+
+              <div class="quiz-question-box" id="quizQuestionText">Loading quiz question...</div>
+
+              <!-- Pattern 1: MCQ Options -->
+              <div class="quiz-options-list" id="quizOptionsContainer"></div>
+
+              <!-- Pattern 2: True / False -->
+              <div class="pattern-tf-row" id="quizTfContainer" style="display:none; margin:14px 0;">
+                <button class="btn-tf-opt" id="quizTfTrueBtn">✓ TRUE</button>
+                <button class="btn-tf-opt" id="quizTfFalseBtn">✕ FALSE</button>
+              </div>
+
+              <!-- Pattern 3: Fill in the Blank -->
+              <div class="pattern-typing-box" id="quizFillBlankContainer" style="display:none; margin:14px 0;">
+                <div class="typing-input-row">
+                  <input type="text" id="quizFillBlankInput" class="pattern-typing-input"
+                    placeholder="Type the missing keyword or value..." />
+                  <button class="btn-check-typing" id="quizFillBlankVerifyBtn">Verify ➔</button>
+                </div>
+              </div>
+
+              <!-- Pattern 4: Written Short Answer -->
+              <div class="pattern-typing-box" id="quizWrittenContainer" style="display:none; margin:14px 0;">
+                <div class="typing-input-row">
+                  <input type="text" id="quizWrittenInput" class="pattern-typing-input"
+                    placeholder="Type your answer / core technical definition..." />
+                  <button class="btn-check-typing" id="quizWrittenVerifyBtn">Verify Answer ➔</button>
+                </div>
+              </div>
+
+              <!-- Pattern 5: Match the Following -->
+              <div id="quizMatchContainer" style="display:none; margin:14px 0;">
+                <div id="quizMatchPairsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <button class="btn-check-typing" id="quizMatchVerifyBtn" style="margin-top:10px;">Verify Matches
+                  ➔</button>
+              </div>
+
+              <!-- Pattern 6: Scenario / Problem-Solving -->
+              <div id="quizScenarioContainer" style="display:none; margin:14px 0;">
+                <div id="quizScenarioPrompt"
+                  style="font-size:13px; color:var(--text-secondary); margin-bottom:8px; line-height:1.5;"></div>
+                <div class="quiz-options-list" id="quizScenarioOptionsContainer"></div>
+              </div>
+
+              <!-- Pattern 7: Coding / Technical Challenge -->
+              <div id="quizCodingContainer" style="display:none; margin:14px 0;">
+                <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">Write the missing line or
+                  fix the logic:</div>
+                <textarea id="quizCodingInput" class="form-textarea"
+                  style="font-family:var(--font-mono); font-size:12px; min-height:80px;"
+                  placeholder="// Type code here..."></textarea>
+                <button class="btn-check-typing" id="quizCodingVerifyBtn" style="margin-top:8px;">Test &amp; Submit Code
+                  ➔</button>
+              </div>
+
+              <div class="quiz-explanation-box" id="quizExplanationBox" style="display:none;">
+                <div class="quiz-explanation-icon">✦</div>
+                <div id="quizExplanationText"></div>
+              </div>
+
+              <div class="quiz-footer-actions" id="quizFooterActions" style="display:none;">
+                <span style="font-size:12px; color:var(--text-secondary);" id="quizStatusHint">Select an option to
+                  verify</span>
+                <button class="btn-generate-gemini" id="nextQuizQuestionBtn" style="width:auto; padding:0 20px;">Next
+                  Question ➔</button>
+              </div>
+            </div>
+
+            <!-- Quiz Final Summary Box -->
+            <div id="quizScoreSummaryBox" style="display:none;" class="quiz-score-summary">
+              <div class="quiz-score-badge" id="quizFinalScoreBadge">100%</div>
+              <h3 class="quiz-score-title" id="quizFinalScoreTitle">Outstanding Comprehension!</h3>
+              <p class="quiz-score-desc" id="quizFinalScoreDesc">You answered 5 out of 5 questions accurately.</p>
+              <div style="display:flex; gap:12px; margin-top:8px;">
+                <button class="btn-generate-gemini" id="retakeQuizBtn" style="width:auto; padding:0 24px;">Retake
+                  Quiz</button>
+                <button class="btn-yt-external" id="newQuizTopicBtn" style="padding:10px 20px;">Try Another
+                  Topic</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             VIEW 6A: SEMESTER MOCK TEST (SAMPLE SEMESTER) — NEW!
+             Authentic University A4 Sheet Paper Simulator
+        ===================================================== -->
+        <section class="aura-view" id="view-mock-test">
+          <div class="view-header">
+            <div class="view-eyebrow">Official University Simulator</div>
+            <h2 class="view-title">Semester Mock Examination</h2>
+            <p class="view-desc">Authentic university question papers across Engineering, Medical, and Arts & Science
+              based on Previous Year Questions (PYQs). Write answers in typing space, submit for college-standard AI
+              evaluation, and track your performance.</p>
+          </div>
+
+          <!-- Selection Dashboard -->
+          <div class="workspace-card" id="mockSelectionCard">
+            <h3 class="card-section-title">Configure University Semester Examination</h3>
+
+            <div
+              style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px; margin-top:12px;">
+              <div>
+                <label class="form-label">1. Academic Group</label>
+                <select id="mockGroupSelect" class="form-textarea" title="Academic Group" aria-label="Academic Group"
+                  style="min-height:auto; height:42px;">
+                  <option value="ENGINEERING">🎓 Engineering &amp; Technology</option>
+                  <option value="MEDICAL">🩺 Medical &amp; Health Sciences</option>
+                  <option value="ARTS_SCIENCE">📚 Arts &amp; Science</option>
+                  <option value="MANAGEMENT">💼 Management &amp; Business</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">2. College / University</label>
+                <select id="mockCollegeSelect" class="form-textarea" title="College / University"
+                  aria-label="College / University" style="min-height:auto; height:42px;">
+                  <option value="Anna University / CEG Chennai">Anna University (CEG / MIT Chennai)</option>
+                  <option value="PSG College of Technology">PSG College of Technology (Coimbatore)</option>
+                  <option value="Coimbatore Institute of Technology">Coimbatore Institute of Technology (CIT)</option>
+                  <option value="NIT Tiruchirappalli">NIT Tiruchirappalli</option>
+                  <option value="Vellore Institute of Technology">Vellore Institute of Technology (VIT)</option>
+                  <option value="SRM Institute of Science and Technology">SRM Institute (Chennai)</option>
+                  <option value="College of Engineering Trivandrum">College of Engineering Trivandrum (CET)</option>
+                  <option value="NIT Calicut">NIT Calicut (Kerala)</option>
+                  <option value="RV College of Engineering">RV College of Engineering (Bengaluru)</option>
+                  <option value="Andhra University">Andhra University (Visakhapatnam)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">3. Discipline / Department</label>
+                <select id="mockBranchSelect" class="form-textarea" title="Discipline / Department"
+                  aria-label="Discipline / Department" style="min-height:auto; height:42px;"></select>
+              </div>
+
+              <div>
+                <label class="form-label">4. Semester / Year</label>
+                <select id="mockSemesterSelect" class="form-textarea" title="Semester / Year"
+                  aria-label="Semester / Year" style="min-height:auto; height:42px;">
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3" selected>Semester 3</option>
+                  <option value="4">Semester 4</option>
+                  <option value="5">Semester 5</option>
+                  <option value="6">Semester 6</option>
+                  <option value="7">Semester 7</option>
+                  <option value="8">Semester 8</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">5. University Subject</label>
+                <select id="mockSubjectSelect" class="form-textarea" title="University Subject"
+                  aria-label="University Subject" style="min-height:auto; height:42px;"></select>
+              </div>
+            </div>
+
+            <div style="margin-top:18px; display:flex; justify-content:flex-end;">
+              <button class="btn-generate-gemini" id="generateMockPaperBtn" style="width:auto; padding:12px 28px;">
+                🏛️ Generate Official Semester Question Paper (PYQ)
+              </button>
+            </div>
+          </div>
+
+          <!-- A4 SHEET QUESTION PAPER DISPLAY -->
+          <div id="mockPaperDisplayWrapper" style="display:none; margin-top:20px;">
+            <!-- Sticky Timer Bar -->
+            <div class="a4-timer-sticky-bar">
+              <div>
+                <span style="font-size:12px; opacity:0.8;">EXAM TIMER:</span>
+                <span class="a4-timer-clock" id="mockCountdownClock">90:00</span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="btn-yt-external" id="btnCancelPaper">Cancel</button>
+                <button class="btn-generate-gemini" id="btnSubmitPaperForGrading" style="width:auto; padding:6px 18px;">
+                  🎓 Submit Examination for AI Grading
+                </button>
+              </div>
+            </div>
+
+            <!-- Authentic A4 Paper Sheet -->
+            <div class="a4-exam-paper-container" id="a4ExamSheet">
+              <div class="a4-watermark">PROJECT AURA INSTITUTE</div>
+
+              <div class="a4-paper-header">
+                <h1 class="a4-institute-title">PROJECT AURA INSTITUTE</h1>
+                <div class="a4-tutor-subtitle">AI TUTOR — UNIVERSITY END SEMESTER EXAMINATION</div>
+                <div style="font-size:12px; color:#64748b; margin-top:2px;">(Compiled from Previous Years University
+                  Papers & High Repeated Weightage)</div>
+
+                <div class="a4-meta-grid">
+                  <div>Subject: <span id="a4PaperSubject">Data Structures & Algorithms</span></div>
+                  <div>Code: <span id="a4PaperCode">AUR-CS-301</span></div>
+                  <div>Max Marks: <span id="a4PaperMarks">100 Marks</span></div>
+                </div>
+              </div>
+
+              <!-- Questions List -->
+              <div id="a4QuestionsSheetBody"></div>
+            </div>
+          </div>
+
+          <!-- AI College Manner Grading Report -->
+          <div id="mockExamGradingReportBox" class="ai-diagnosis-card" style="display:none; margin-top:24px;">
+            <div class="ai-diagnosis-top">
+              <div>
+                <div
+                  style="font-size:12px; font-weight:700; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.08em;">
+                  University Examination Board · AI Evaluation Marksheet
+                </div>
+                <h3 style="font-size:22px; font-weight:800; color:var(--text-primary); margin-top:4px;"
+                  id="mockReportSubjectTitle">
+                  Subject Name
+                </h3>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:20px;">
+                <div style="text-align:right;">
+                  <div style="font-size:11px; color:var(--text-secondary); text-transform:uppercase;">Overall Score
+                  </div>
+                  <div style="font-size:24px; font-weight:800; color:var(--text-primary);" id="mockReportScoreVal">84 /
+                    100 (84%)</div>
+                </div>
+                <div class="ai-diagnosis-grade-stamp" id="mockReportGradeBadge">
+                  <span style="font-size:13px; opacity:0.8;">GRADE</span>
+                  <span id="mockReportGradeLetter">A+</span>
+                </div>
+              </div>
+            </div>
+
+            <div
+              style="background:var(--bg-surface-subtle); padding:16px 20px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+              <div
+                style="font-size:12px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; margin-bottom:4px;">
+                🏛️ Chief Examiner's Observation
+              </div>
+              <p style="font-size:14px; color:var(--text-primary); line-height:1.5; margin:0;" id="mockReportComments">
+                Evaluation complete.
+              </p>
+            </div>
+
+            <div>
+              <h4
+                style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <span>🎯</span>
+                <span>Focus Topics for Final Semester Success</span>
+              </h4>
+              <div class="ai-focus-topics-list" id="mockReportFocusList"></div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:14px;">
+              <button class="btn-generate-gemini" id="btnGoToPerformance" style="width:auto; padding:10px 24px;">📊 View
+                in Performance Section</button>
+              <button class="btn-yt-external" id="btnNewMockExam" style="padding:10px 20px;">Take Another Mock
+                Test</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             VIEW 6B: STUDENT PERFORMANCE & ANALYTICS — NEW!
+        ===================================================== -->
+        <section class="aura-view" id="view-student-performance">
+          <div class="view-header">
+            <div class="view-eyebrow">Academic Diagnostic Matrix</div>
+            <h2 class="view-title">Performance & Analytics</h2>
+            <p class="view-desc">Semester mock test percentage records, grade history, and AI performance mentor guiding
+              you on what subject and topics to focus on.</p>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div class="perf-metrics-grid">
+            <div class="perf-metric-card">
+              <span class="perf-metric-lbl">Average Score</span>
+              <span class="perf-metric-val" id="perfAvgScore" style="color:var(--accent-gold);">82%</span>
+            </div>
+            <div class="perf-metric-card">
+              <span class="perf-metric-lbl">Mock Tests Completed</span>
+              <span class="perf-metric-val" id="perfTestsCount">2</span>
+            </div>
+            <div class="perf-metric-card">
+              <span class="perf-metric-lbl">Strong Subjects</span>
+              <span class="perf-metric-val" id="perfStrongCount" style="color:#10B981;">1</span>
+            </div>
+            <div class="perf-metric-card">
+              <span class="perf-metric-lbl">Needs Focus</span>
+              <span class="perf-metric-val" id="perfFocusCount" style="color:#F59E0B;">1</span>
+            </div>
+          </div>
+
+          <!-- AI Performance Mentor Directive -->
+          <div class="workspace-card" style="margin-bottom:20px; border-color:var(--border-medium);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ AI Performance
+                  Mentor</span>
+                <h3 class="card-section-title" style="margin-bottom:0;" id="perfGuideSubjectTitle">Focus Directive:
+                  Discrete Mathematics</h3>
+              </div>
+              <button class="btn-vault-action" id="refreshPerfGuideBtn">🔄 Refresh AI Guide</button>
+            </div>
+
+            <div
+              style="background:var(--bg-surface-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:14px;">
+              <h4 style="font-size:13px; font-weight:700; color:var(--accent-gold); margin-bottom:8px;">🎯 Priority
+                Topics to Master:</h4>
+              <div id="perfGuideTopicsList" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </div>
+
+            <div
+              style="background:rgba(217,119,6,0.08); border-left:4px solid var(--accent-gold); padding:14px 18px; border-radius:var(--radius-sm);">
+              <div style="font-size:12px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">⚡ Short
+                & Crisp Learning Instructions:</div>
+              <div id="perfGuideInstructionsList"
+                style="font-size:13px; color:var(--text-primary); margin-top:6px; line-height:1.5;"></div>
+            </div>
+          </div>
+
+          <!-- Test Marksheets History Table -->
+          <div class="workspace-card">
+            <h3 class="card-section-title">Examination Marksheets History</h3>
+            <div id="perfHistoryContainer"></div>
+          </div>
+        </section>
+
+        <!-- =====================================================
+             VIEW 6C: ENGINEERING HUB — REVAMPED!
+             Colleges in Tamil Nadu, Kerala, Karnataka, AP with district filter,
+             offered groups, semester, 100% accurate subjects, AI study notes,
+             and language-preferred YouTube videos!
+        ===================================================== -->
+        <section class="aura-view" id="academic-hub-workspace">
+          <div class="view-header">
+            <div class="view-eyebrow">Academic &amp; Curriculum Intelligence Suite</div>
+            <h2 class="view-title">Academic Hub</h2>
+            <p class="view-desc">Unified academic command center integrating verified Tamil Nadu &amp; CBSE School Curricula (10th, 11th, 12th Standards across Science, Commerce &amp; Arts), the Higher Education College Platform (Regulation 2021), and an AI Study Material Analyzer with strict context-constrained doubt solving.</p>
+            
+            <!-- Modern 3-Way Sub-Navigation Switcher -->
+            <div class="academic-subnav-bar">
+              <button class="academic-subnav-btn active" id="tabAcademicSchool">
+                <span>🏫</span> School Hub
+                <span class="tab-badge">10th, 11th, 12th</span>
+              </button>
+              <button class="academic-subnav-btn" id="tabAcademicCollege">
+                <span>🎓</span> College Curriculum
+                <span class="tab-badge">Regulation 2021</span>
+              </button>
+              <button class="academic-subnav-btn" id="tabAcademicMaterial">
+                <span>📄</span> Material AI Doubt Solver
+                <span class="tab-badge">Exact Grounding</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PANE A: SCHOOL HUB (10th, 11th & 12th STANDARDS) -->
+          <div id="sectionAcademicSchool" class="academic-pane">
+            <div class="workspace-card">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>🏫</span>
+                  <span>School Standards Curriculum Explorer</span>
+                </div>
+                <span class="eng-badge-pill" id="schoolActiveFilterBadge">12th Standard — Bio-Maths</span>
+              </div>
+              <p class="eng-subline">Explore verified Tamil Nadu State Board (Samacheer Kalvi) &amp; CBSE syllabus breakdown, core units, high-yield board exam formulas, and chapter summaries.</p>
+
+              <!-- Standard Selection Row -->
+              <div class="school-selector-container">
+                <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.06em;">Select Class / Standard:</div>
+                <div class="school-chips-row" id="schoolStandardChipsRow">
+                  <button class="school-std-pill" data-schoolstd="STD_10">🎒 10th Standard (SSLC &amp; CBSE)</button>
+                  <button class="school-std-pill" data-schoolstd="STD_11">🧬 11th Standard</button>
+                  <button class="school-std-pill active" data-schoolstd="STD_12">🎓 12th Standard (Higher Secondary Board)</button>
+                </div>
+
+                <!-- 11th & 12th Stream / Group Selector -->
+                <div id="schoolGroupSelectorBox" style="margin-top:4px;">
+                  <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Select Stream / Group:</div>
+                  <div class="school-chips-row" id="schoolGroupChipsRow">
+                    <button class="school-group-pill active" data-schoolgroup="BIO_MATHS">🌿 Bio-Maths Group (Maths, Physics, Chem, Bio)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMP_SCI">💻 Computer Science Group (Maths, Physics, Chem, CS)</button>
+                    <button class="school-group-pill" data-schoolgroup="PURE_SCI">🔬 Pure Science Group (Physics, Chem, Botany, Zoology)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMMERCE">📊 Commerce Group (Accountancy, Commerce, Eco, BM/CA)</button>
+                    <button class="school-group-pill" data-schoolgroup="ARTS">🎨 Arts &amp; Humanities (History, Pol Sci, Eco, Geo)</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- School Subjects Grid (Populated dynamically) -->
+              <div style="margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                  <div class="eng-section-title" style="margin-bottom:0;" id="schoolSubjectsTitle">Curriculum Subjects &amp; High-Yield Units</div>
+                  <span class="subject-count-indicator" id="schoolSubjectsCountBadge">5 Subjects Available</span>
+                </div>
+                <div class="school-subjects-grid" id="academicSchoolGrid"></div>
+              </div>
+            </div>
+
+            <!-- School Command Center & Books / Teaching Style Ingestion -->
+            <div class="workspace-card" style="margin-top:20px; border-left:4px solid var(--accent-gold);">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>📚</span>
+                  <span>School Method Command Center &amp; Quick Doubt Solver</span>
+                </div>
+                <span class="eng-badge-pill" id="schoolProfileSavedBadge" style="background:rgba(16, 185, 129, 0.15); color:#10B981;">Method Configured</span>
+              </div>
+              <p class="eng-subline">Upload your textbook chapters or configure how your school teacher solves problems. AURA personalizes explanations to your school's exact marking schemes.</p>
+
+              <!-- Upload Syllabus Box & Method Summary -->
+              <div style="display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; align-items:center;">
+                <div class="vault-upload-dropzone" id="schoolSyllabusDropzone" style="flex:1; min-width:260px; padding:20px; cursor:pointer;">
+                  <input type="file" id="schoolSyllabusFileInput" style="display:none;" />
+                  <div style="font-size:24px; margin-bottom:4px;">📥</div>
+                  <h4 style="font-size:14px; font-weight:700; margin-bottom:2px;">Upload 10th / 11th / 12th Textbook or Syllabus PDF</h4>
+                  <p style="font-size:12px; color:var(--text-secondary); margin:0;">PDF, DOCX, or scanned textbook chapters</p>
+                </div>
+
+                <div style="flex:1; min-width:280px; background:var(--bg-surface-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+                  <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; margin-bottom:6px;">Your Stored Teaching Method</div>
+                  <div id="schoolStoredMethodSummary" style="font-size:12px; color:var(--text-primary); line-height:1.5; margin-bottom:8px;">
+                    "Step-by-step formula breakdown, bilingual Tamil-English, textbook definitions first, and exam-scoring tips."
+                  </div>
+                  <div style="display:flex; gap:8px;">
+                    <button class="btn-vault-action" id="btnConfigureSchoolMethod">⚙️ Reconfigure Method</button>
+                    <button class="btn-vault-action delete" id="btnDeleteSchoolData" style="color:#EF4444;">🗑️ Clear Data</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Permission Prompt Card (Shown when configuring method) -->
+              <div id="schoolPermissionCard" style="display:none; margin-top:16px; padding:16px; background:var(--bg-surface-elevated); border:1px solid var(--accent-gold); border-radius:var(--radius-md);">
+                <div style="font-size:13px; font-weight:700; color:var(--accent-gold); margin-bottom:6px;">
+                  🔒 Permission Confirmation
+                </div>
+                <p id="schoolPermissionText" style="font-size:13px; color:var(--text-primary); line-height:1.5; margin-bottom:12px;">
+                  "Your preferred study method and your school teaching style will be securely stored with your permission. Do you grant permission?"
+                </p>
+                <div style="display:flex; gap:10px;">
+                  <button class="btn-generate-gemini" id="btnGrantPermission" style="width:auto; padding:8px 20px;">
+                    ✓ Grant Permission &amp; Store My Method
+                  </button>
+                  <button class="btn-yt-external" id="btnDenyPermission">Cancel</button>
+                </div>
+              </div>
+
+              <!-- School Interactive Doubt Arena -->
+              <div style="margin-top:20px;">
+                <h4 style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Ask Any Doubt, Sum, or Concept (Taught in Your School's Method)</h4>
+                <div class="research-search-row">
+                  <input type="text" id="schoolDoubtInput" class="research-input"
+                    placeholder="Enter doubt or problem (e.g. Find electric field due to dipole at axial point or solve quadratic equation)..." />
+                  <button class="btn-generate-gemini" id="schoolAskDoubtBtn" style="width:auto; padding:0 24px;">
+                    Explain in My School Method
+                  </button>
+                </div>
+
+                <div id="schoolDoubtResponseCard" class="creation-crisp-card" style="display:none; margin-top:16px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Personalized School Explanation</span>
+                    <button class="btn-vault-action" id="copySchoolDoubtBtn">📋 Copy</button>
+                  </div>
+                  <div class="dialogue-content" id="schoolDoubtResponseText"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANE B: COLLEGE & DEGREE HUB (EMBEDDED PLATFORM) -->
+          <div id="sectionAcademicCollege" class="academic-pane" style="display:none;">
+            <div class="college-embed-wrapper">
+              <div class="college-embed-toolbar">
+                <div class="college-toolbar-title">
+                  <span style="font-size:18px;">🎓</span>
+                  <div>
+                    <span>Tamil Nadu College &amp; Degree Curriculum Platform</span>
+                    <span style="font-size:11px; font-weight:600; color:var(--accent-gold); margin-left:8px; background:rgba(194, 155, 72, 0.12); padding:2px 8px; border-radius:4px; border:1px solid rgba(194, 155, 72, 0.25);">Anna University Regulation 2021 &amp; State Universities</span>
+                  </div>
+                </div>
+                <div class="college-toolbar-controls">
+                  <button class="school-btn-action" id="btnReloadCollegeIframe" title="Reload Platform">
+                    🔄 Reload
+                  </button>
+                  <button class="school-btn-action" id="btnFullscreenCollegeIframe" title="Toggle Fullscreen">
+                    ⛶ Fullscreen
+                  </button>
+                  <button class="school-btn-action primary" id="btnOpenStandaloneCollege" title="Open in New Tab">
+                    ↗ Open Standalone
+                  </button>
+                </div>
+              </div>
+
+              <!-- Iframe embedding curriculum-platform with min-h-[85vh], borderless, dark-slate background -->
+              <iframe id="collegeCurriculumIframe" src="./curriculum-platform/index.html" class="college-embed-iframe" style="min-height:85vh; height:85vh; width:100%; border:none; background:#0d0f12; display:block;" title="Tamil Nadu Higher Education Curriculum Platform" allow="fullscreen"></iframe>
+            </div>
+          </div>
+
+          <!-- PANE C: MATERIAL ANALYZER & CONTEXT-GROUNDED AI DOUBT SOLVER -->
+          <div id="sectionAcademicMaterial" class="academic-pane" style="display:none;">
+            <div class="material-analyzer-container">
+              <!-- Left Sidebar: File Ingestion & Presets -->
+              <div class="material-sidebar-panel">
+                <!-- Dropzone Box -->
+                <div class="material-dropzone-box" id="materialDropzone">
+                  <input type="file" id="materialFileInput" accept=".pdf,.docx,.txt,.md,.json,.csv,image/*" style="display:none;" />
+                  <div style="font-size:32px; margin-bottom:8px;">📑</div>
+                  <h4 style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">Upload Notes or Question Bank</h4>
+                  <p style="font-size:11.5px; color:var(--text-secondary); margin:0 0 10px 0;">Drag &amp; drop PDF, DOCX, TXT, or handwritten notes</p>
+                  <button class="school-btn-action primary" style="pointer-events:none;">Choose Document</button>
+                </div>
+
+                <!-- Active Document Details Card -->
+                <div class="workspace-card" id="materialActiveDocCard" style="padding:14px; margin:0;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase;">Active Grounded Material</span>
+                    <span class="school-card-badge" id="materialDocTypeBadge">PDF Notes</span>
+                  </div>
+                  <div style="font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px; word-break:break-all;" id="materialActiveDocName">
+                    12th_Physics_Electrostatics_Formulas.pdf
+                  </div>
+                  <div style="font-size:11px; color:var(--text-secondary); margin-bottom:10px;" id="materialActiveDocMeta">
+                    2,450 words · 8 Formulas Detected · Ready for RAG
+                  </div>
+                  
+                  <!-- Strict Grounding Toggle -->
+                  <div style="background:var(--bg-surface-subtle); padding:10px 12px; border-radius:6px; border:1px solid var(--border-subtle); display:flex; align-items:flex-start; gap:8px;">
+                    <input type="checkbox" id="strictGroundingToggle" checked style="margin-top:2px; accent-color:var(--accent-gold); cursor:pointer;" />
+                    <label for="strictGroundingToggle" style="font-size:11.5px; color:var(--text-primary); cursor:pointer; line-height:1.4;">
+                      <strong style="color:var(--accent-gold);">Strict Grounding Rule:</strong> Solve strictly using ONLY formulas &amp; methods from this document.
+                    </label>
+                  </div>
+
+                  <!-- Collapsible Content Preview Toggle -->
+                  <button class="school-btn-action" id="btnToggleDocPreview" style="width:100%; justify-content:center; margin-top:10px;">
+                    👁️ Inspect Extracted Text Context
+                  </button>
+                  <div id="materialExtractedPreview" style="display:none; margin-top:8px; max-height:180px; overflow-y:auto; font-size:11.5px; font-family:var(--font-mono); background:#060A12; border:1px solid var(--border-subtle); padding:8px; border-radius:6px; color:#A7F3D0; white-space:pre-wrap;"></div>
+                </div>
+
+                <!-- High-Yield Sample Material Presets -->
+                <div class="workspace-card" style="padding:14px; margin:0;">
+                  <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; margin-bottom:8px;">
+                    Or Try High-Yield Sample Material:
+                  </div>
+                  <div class="material-presets-list">
+                    <button class="material-preset-btn active" data-preset="PHYSICS_12">
+                      <div class="preset-title">⚡ 12th Physics: Electrostatics &amp; Gauss Law</div>
+                      <div class="preset-desc">Coulomb's Law, Electric Dipole, Axial &amp; Equatorial Fields, Gauss Flux</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="MATHS_10">
+                      <div class="preset-title">📐 10th Maths: Quadratic Equations &amp; AP</div>
+                      <div class="preset-desc">Roots by formula, Discriminant condition, AP sum &amp; nth term formulas</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="CSE_COLLEGE">
+                      <div class="preset-title">💻 CS3301: Trees, Traversals &amp; Graph Search</div>
+                      <div class="preset-desc">AVL tree rotations, BFS/DFS, Dijkstra shortest path time complexities</div>
+                    </button>
+                    <button class="material-preset-btn" data-preset="COMMERCE_12">
+                      <div class="preset-title">📊 12th Commerce: Partnership &amp; Goodwill</div>
+                      <div class="preset-desc">Super Profit Method, Capitalization, Sacrifice Ratio on Partner Admission</div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Area: Interactive Context-Constrained Chat -->
+              <div class="grounded-chat-card">
+                <div class="grounded-chat-header">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:16px;">🤖</span>
+                    <div>
+                      <div style="font-size:13.5px; font-weight:700; color:var(--text-primary);">AURA Context-Constrained Doubt Solver</div>
+                      <div style="font-size:11px; color:#10B981;" id="groundedSolverStatus">● Grounded in Active Material (Zero Hallucination Mode)</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:8px;">
+                    <button class="school-btn-action" id="btnClearMaterialChat">🗑️ Clear Chat</button>
+                  </div>
+                </div>
+
+                <!-- Chat Stream -->
+                <div class="grounded-chat-stream" id="groundedChatStream">
+                  <!-- Initial Welcome Message from AI -->
+                  <div class="grounded-msg-row ai">
+                    <div class="grounded-msg-bubble">
+                      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; border-bottom:1px solid rgba(255, 255, 255, 0.08); padding-bottom:6px;">
+                        <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ AURA Grounded Tutor</span>
+                        <span style="font-size:10px; color:var(--text-tertiary);">RAG Engine Ready</span>
+                      </div>
+                      <p style="margin:0 0 8px 0;">Hello! I am your <strong>Context-Constrained Academic Doubt Solver</strong>. I have indexed your study notes and formulas.</p>
+                      <p style="margin:0; font-size:12.5px; color:var(--text-secondary);">Ask any numerical sum, derivation, or conceptual question. I will solve it <strong>strictly using the notation, formulas, and methods in your uploaded notes</strong>, with step-by-step arithmetic reduction and exam-scoring tips!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Controls, Chips & Input Bar -->
+                <div class="grounded-chat-controls">
+                  <!-- Quick Prompt Chips -->
+                  <div class="grounded-chips-bar">
+                    <button class="grounded-quick-chip" data-quick="Derive the governing formula step-by-step using notation from the notes.">⚡ Derive Governing Formula</button>
+                    <button class="grounded-quick-chip" data-quick="Solve a numerical problem step-by-step with given data, formula, and final boxed answer.">🔢 Step-by-Step Numerical Sum</button>
+                    <button class="grounded-quick-chip" data-quick="What are the essential 2-mark definitions and units in this material?">📝 List 2-Mark Definitions</button>
+                    <button class="grounded-quick-chip" data-quick="Explain the key intuition of this concept in simple bilingual Tanglish (Tamil-English).">🌐 Tanglish Explanation</button>
+                  </div>
+
+                  <!-- Input Row -->
+                  <div class="grounded-input-row">
+                    <input type="text" id="materialQuestionInput" class="grounded-text-input" placeholder="Ask any question, math sum, or derivation grounded in your material..." />
+                    <button id="btnAskMaterialDoubt" class="grounded-btn-send">
+                      <span>Solve with AI</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. AI Study Notes & Video Lectures Dual Arena -->
+          <div class="workspace-card" id="engLearningArena" style="margin-top:20px;">
+            <div
+              style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+              <div>
+                <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ Selected
+                  Subject Hub</span>
+                <h3 class="card-section-title" style="margin-bottom:0;" id="engActiveSubjectTitle">Data Structures &
+                  Algorithms</h3>
+              </div>
+
+              <!-- Video Language Preference Selector -->
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span
+                  style="font-size:11px; font-weight:700; color:var(--text-secondary); text-transform:uppercase;">Video
+                  Language:</span>
+                <select id="engVideoLangSelect" class="college-filter-select" title="Video Language Preference"
+                  aria-label="Video Language Preference" style="min-width:140px; padding:6px 12px;">
+                  <option value="Tamil" selected>🇮🇳 தமிழ் (Tamil)</option>
+                  <option value="English">🇬🇧 English</option>
+                  <option value="Tanglish">🤝 Tanglish</option>
+                  <option value="Malayalam">🌴 മലയാളം (Malayalam)</option>
+                  <option value="Hindi">🇮🇳 हिंदी (Hindi)</option>
+                </select>
+                <button class="btn-generate-gemini" id="engGenerateNotesBtn" style="width:auto; padding:8px 18px;">
+                  📖 Generate AI Study Notes (PDF)
+                </button>
+              </div>
+            </div>
+
+            <!-- Notes Reader & YouTube Videos Grid -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;" id="engArenaDualGrid">
+              <!-- AI Notes Container -->
+              <div class="creation-crisp-card" id="engNotesCard">
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:6px;">
+                  <span style="font-size:12px; font-weight:700; color:var(--accent-gold);">📖 High-Yield Study Notes</span>
+                  <div style="display:flex; gap:6px;">
+                    <button class="btn-vault-action" id="btnOpenNotesReader">Open Fullscreen</button>
+                    <button class="btn-vault-action" id="btnDownloadNotesPdf">📥 Download PDF</button>
+                    <button class="btn-vault-action" id="btnPrintNotes">Print / PDF</button>
+                  </div>
+                </div>
+                <div id="engNotesContentBody"
+                  style="max-height:360px; overflow-y:auto; font-size:13px; line-height:1.6;">
+                  Click "Generate AI Study Notes" to formulate summary, formulas, 2-mark Q&A, and 13-mark question
+                  outlines.
+                </div>
+                <div id="engOfficialGuidesContainer" style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-subtle); display:none;">
+                  <div style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>🔗 Official Syllabus &amp; PDF Reference Links</span>
+                    <span style="font-size:10px; color:var(--text-tertiary);">Direct Web &amp; PDF Access</span>
+                  </div>
+                  <div id="engOfficialGuidesList" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+              </div>
+
+              <!-- Curated YouTube Videos in Selected Language -->
+              <div class="creation-crisp-card" id="engVideosCard">
+                <div
+                  style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px;">
+                  <span style="font-size:12px; font-weight:700; color:#FF0055;">▷ Recommended YouTube Lectures</span>
+                  <span style="font-size:11px; color:var(--text-secondary);" id="engVideoLangTag">Language: Tamil</span>
+                </div>
+                <div id="engVideosListGrid"
+                  style="display:flex; flex-direction:column; gap:12px; max-height:360px; overflow-y:auto;">
+                  <!-- Video items populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+        <!-- =====================================================
+             VIEW 8: YOUTUBE INTEL (WORKSPACE 8)
+        ===================================================== -->
+        <section class="aura-view" id="view-youtube-intel">
+          <div class="view-header">
+            <div class="view-eyebrow">Video Intelligence</div>
+            <h2 class="view-title">YouTube Intel</h2>
+            <p class="view-desc">Search real-time YouTube video intelligence, stream directly within AURA, and
+              deconstruct content into executive takeaways.</p>
+          </div>
+
+          <div class="workspace-card">
+            <h3 class="card-section-title">Search YouTube Intelligence</h3>
+            <div class="research-search-row">
+              <input type="text" id="ytSearchInput" class="research-input"
+                placeholder="Search YouTube (e.g. Machine Learning, Stanford CS229)..." />
+              <button class="btn-generate-gemini" id="ytSearchBtn" style="width:auto; padding:0 24px;">Search
+                YouTube</button>
+            </div>
+
+            <div id="ytSearchStatus"
+              style="font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; display:none;">
+            </div>
+            <div class="youtube-video-grid" id="ytVideoResultsGrid"></div>
+          </div>
+
+          <!-- DECODE THE URL VIDEOS SECTION -->
+          <div class="workspace-card" style="margin-top:20px; border-left:4px solid #FF0055;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <div>
+                <h3 class="card-section-title" style="margin-bottom:2px;">🎬 Decode the URL Videos (Direct Stream &amp; AI Breakdown)</h3>
+                <p style="font-size:12px; color:var(--text-secondary); margin:0;">Paste any YouTube video link (watch URL, shorts, youtu.be). AURA will instantly stream the video inside the project and break down key timestamps and study notes.</p>
+              </div>
+              <span class="eng-badge-pill" style="background:rgba(255, 0, 85, 0.12); color:#FF0055;">Direct Stream</span>
+            </div>
+
+            <div class="research-search-row" style="margin-top:12px;">
+              <input type="text" id="ytDecodeUrlInput" class="research-input"
+                placeholder="Paste YouTube Video URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...)..." />
+              <button class="btn-generate-gemini" id="ytDecodeUrlBtn" style="width:auto; padding:0 24px; background:#FF0055; border-color:#FF0055;">
+                ▶ Decode &amp; Play Video
+              </button>
+            </div>
+
+            <div id="ytDecodePlayerArena" style="display:none; margin-top:16px;">
+              <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap:16px;" id="ytDecodeDualGrid">
+                <!-- Video Player Frame -->
+                <div style="border-radius:12px; overflow:hidden; background:#000; aspect-ratio:16/9; position:relative;">
+                  <iframe id="ytDecodeIframe" style="width:100%; height:100%; border:none;" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                </div>
+
+                <!-- AI Video Deconstruction -->
+                <div class="creation-crisp-card" style="margin-top:0;">
+                  <div style="font-size:12px; font-weight:800; color:#FF0055; text-transform:uppercase; margin-bottom:6px;">✦ AI Video Takeaways &amp; Concepts</div>
+                  <div id="ytDecodeAnalysisText" class="dialogue-content" style="font-size:13px; line-height:1.5;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Hidden anchor for legacy task view routing -->
+        <section class="aura-view" id="view-tasks" style="display:none;"></section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- =======================================================
+       DOCUMENT READER MODAL (FOR KNOWLEDGE VAULT & NOTES)
+  ======================================================= -->
+  <div class="doc-reader-modal" id="documentReaderModal">
+    <div class="doc-reader-box">
+      <div class="doc-reader-header">
+        <div>
+          <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ In-App Document
+            Reader</span>
+          <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:2px 0 0 0;"
+            id="docReaderModalTitle">Document Title</h3>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-vault-action" id="btnCopyReaderContent">📋 Copy Text</button>
+          <button class="btn-vault-action delete" id="btnCloseReaderModal">✕ Close</button>
+        </div>
+      </div>
+      <div class="doc-reader-body" id="docReaderModalBody"></div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       TASK EDIT MODAL
+  ======================================================= -->
+  <div class="doc-reader-modal" id="taskEditModal">
+    <div class="doc-reader-box" style="max-width:500px;">
+      <div class="doc-reader-header">
+        <h3 style="font-size:15px; font-weight:800; color:var(--text-primary);">Edit Objective / Task</h3>
+        <button class="btn-vault-action delete" id="btnCloseTaskEditModal">✕</button>
+      </div>
+      <div style="padding:20px;">
+        <div class="form-group">
+          <label class="form-label" for="taskEditTextInput">Task Objective</label>
+          <input type="text" id="taskEditTextInput" class="form-textarea" title="Task Objective"
+            placeholder="Enter task objective..." style="min-height:auto; height:42px;" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskEditBucketSelect">Column</label>
+          <select id="taskEditBucketSelect" class="form-textarea" title="Task Column" aria-label="Task Column"
+            style="min-height:auto; height:42px;">
+            <option value="today">Today's Focus</option>
+            <option value="upcoming">Upcoming Events</option>
+          </select>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:14px;">
+          <button class="btn-vault-action" id="btnSaveTaskEdit">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       MOCK EXAM SUBMIT CONFIRMATION MODAL
+  ======================================================= -->
+  <div class="doc-reader-modal" id="mockSubmitConfirmModal">
+    <div class="doc-reader-box" style="max-width:480px; text-align:center;">
+      <div style="padding:28px 24px;">
+        <div style="font-size:36px; margin-bottom:8px;">🏛️</div>
+        <h3 style="font-size:18px; font-weight:800; color:var(--text-primary);">Submit Semester Examination?</h3>
+        <p style="font-size:13px; color:var(--text-secondary); margin-top:8px; line-height:1.5;">
+          The AI University Examiner will evaluate your answers against university model keys, assign marks per
+          question, and record your performance marksheet.
+        </p>
+        <div style="display:flex; justify-content:center; gap:12px; margin-top:20px;">
+          <button class="btn-yt-external" id="btnCancelSubmitModal" style="padding:10px 20px;">Continue Writing</button>
+          <button class="btn-generate-gemini" id="btnConfirmSubmitModal" style="width:auto; padding:10px 24px;">
+            ✓ Confirm & Submit Exam
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- =======================================================
+       EMBEDDED YOUTUBE VIDEO MODAL (IN-APP PLAYBACK)
+  ======================================================= -->
+  <div class="doc-reader-modal" id="youtubeEmbeddedModal" style="display:none;">
+    <div class="doc-reader-box" style="max-width:820px; padding:0; overflow:hidden;">
+      <div class="doc-reader-header" style="padding:14px 20px;">
+        <div style="flex:1; min-width:0; margin-right:12px;">
+          <span style="font-size:11px; font-weight:700; color:#FF0055; text-transform:uppercase;">▷ YouTube Lecture
+            Player</span>
+          <h3
+            style="font-size:15px; font-weight:800; color:var(--text-primary); margin:2px 0 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
+            id="ytModalVideoTitle">Video Title</h3>
+        </div>
+        <button class="btn-vault-action delete" id="btnCloseYtModal">✕ Close</button>
+      </div>
+      <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000;">
+        <iframe id="ytModalIframe" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+          allowfullscreen
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      </div>
+    </div>
+  </div>
+  <!-- =======================================================
+       3. SPOTLIGHT COMMAND PALETTE MODAL (⌘K)
+  ======================================================= -->
+  <div class="palette-modal-backdrop hidden" id="commandPaletteModal">
+    <div class="palette-card">
+      <div class="palette-input-wrap">
+        <span>⌘</span>
+        <input type="text" id="paletteSearchInput" class="palette-input"
+          placeholder="Type a workspace name, command, or shortcut..." />
+      </div>
+      <div class="palette-results-list" id="paletteResultsList">
+        <div class="palette-item" data-view="command-center">⌘ Command Center</div>
+        <div class="palette-item" data-view="creation-lab">✎ Creation Studio</div>
+        <div class="palette-item" data-view="knowledge-vault">⧉ Topic Knowledge Vault</div>
+
+        <div class="palette-item" data-view="study-intel">📖 Study &amp; Task Planner</div>
+        <div class="palette-item" data-view="quiz-engine">✦ Quiz Engine</div>
+        <div class="palette-item" data-view="mock-test">🏛️ Semester Mock Test</div>
+        <div class="palette-item" data-view="student-performance">📊 Student Performance</div>
+        <div class="palette-item" data-view="engineering-hub">🎓 Engineering Hub</div>
+        <div class="palette-item" data-view="youtube-intel">▷ YouTube Intel</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       4. EMBEDDED IN-APP YOUTUBE PLAYER MODAL
+  ======================================================= -->
+  <div class="youtube-player-modal" id="youtubePlayerModal">
+    <div class="youtube-modal-box">
+      <div class="youtube-modal-header">
+        <div class="youtube-modal-title-wrap">
+          <span class="youtube-modal-channel" id="youtubeModalChannel">YOUTUBE INTEL</span>
+          <h3 class="youtube-modal-title" id="youtubeModalTitle">Video Player</h3>
+        </div>
+        <div class="youtube-modal-header-actions">
+          <a href="#" target="_blank" rel="noopener noreferrer" class="btn-yt-external" id="youtubeModalExternalLink">
+            <span>↗ Open on YouTube</span>
+          </a>
+          <button class="youtube-modal-close-btn" id="closeYoutubeModalBtn" title="Close Video (Esc)">✕</button>
+        </div>
+      </div>
+      <div class="youtube-modal-frame-wrap">
+        <iframe id="youtubeModalIframe" src="" title="YouTube Video Player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+      <div class="youtube-modal-footer">
+        <span style="font-size:12px; color:var(--text-secondary);" id="youtubeModalStatus">Streaming via AURA
+          Player</span>
+        <div class="youtube-modal-footer-actions">
+          <button class="btn-yt-summarize" id="youtubeModalSummarizeBtn">⌘ Summarize This Video</button>
+          <button class="btn-yt-external" id="youtubeModalQuizBtn">✦ Create Quiz from Video</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       5. CUTE ROBOT VOICE ASSISTANT MODAL (MIC TRIGGERED)
+  ======================================================= -->
+  <!-- =======================================================
+       5. FUTURISTIC CYBERNETIC ROBOT VOICE ASSISTANT MODAL (MIC TRIGGERED)
+  ======================================================= -->
+  <div class="cute-robot-overlay" id="cuteRobotModal">
+    <div class="cute-robot-backdrop-blur" id="robotBackdropBlur"></div>
+    <div class="cute-robot-card futuristic-robot-chassis" id="cuteRobotCard">
+
+      <!-- Quantum Cyber Beacon Antenna -->
+      <div class="robot-antenna">
+        <div class="antenna-bulb" id="antennaBulb"></div>
+        <div class="antenna-stick"></div>
+      </div>
+
+      <!-- Holographic Sonic Wave Rings -->
+      <div class="robot-sound-rings" id="robotSoundRings">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- Futuristic Robot Head -->
+      <div class="robot-head futuristic-cyber-head" id="robotHead">
+        <div class="robot-ear robot-ear-left"></div>
+        <div class="robot-ear robot-ear-right"></div>
+
+        <!-- Visor LED Cyber HUD Screen -->
+        <div class="robot-visor futuristic-cyber-visor" id="robotVisor">
+          <div class="cyber-scanline-overlay"></div>
+          <div class="robot-blush blush-left"></div>
+          <div class="robot-blush blush-right"></div>
+
+          <div class="robot-eyes-row" id="robotEyesRow">
+            <div class="cute-eye eye-left cyber-eye" id="robotEyeLeft">
+              <span class="eye-glint cyber-glint"></span>
+            </div>
+            <div class="cute-eye eye-right cyber-eye" id="robotEyeRight">
+              <span class="eye-glint cyber-glint"></span>
+            </div>
+          </div>
+
+          <div class="robot-mouth cyber-mouth" id="robotMouth"></div>
+        </div>
+      </div>
+
+      <!-- Floating Cybernetic Body & Chest Reactor -->
+      <div class="robot-body" id="robotBody">
+        <div class="robot-hand hand-left"></div>
+        <div class="robot-chest-core cyber-reactor-core">
+          <span class="chest-heart-pulse">◈</span>
+        </div>
+        <div class="robot-hand hand-right"></div>
+      </div>
+
+      <!-- Futuristic Neural Status Badge -->
+      <div class="cyber-neural-status-badge">
+        <span class="cyber-pulse-dot"></span>
+        <span>QUANTUM NEURAL VOICE AI · ONLINE</span>
+      </div>
+
+      <!-- Voice Persona Gender Switcher -->
+      <div class="robot-voice-gender-pill-row" style="display:flex; gap:8px; justify-content:center; margin-bottom:4px;">
+        <button type="button" class="robot-gender-pill-btn active" id="robotVoiceFemaleBtn">♀ Aura Female</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotVoiceMaleBtn">♂ Aero Male</button>
+      </div>
+
+      <!-- Multilingual Dialect Selector -->
+      <div class="robot-voice-lang-pill-row" style="display:flex; gap:6px; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+        <button type="button" class="robot-gender-pill-btn active" id="robotLangTanglishBtn">🌐 Tanglish / All</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangTamilBtn">🇮🇳 தமிழ்</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangHindiBtn">🇮🇳 हिन्दी</button>
+        <button type="button" class="robot-gender-pill-btn" id="robotLangEnglishBtn">🇬🇧 English</button>
+      </div>
+
+      <!-- Status & Transcript -->
+      <div class="robot-status-caption" id="robotStatusCaption">Futuristic AI Voice Intelligence (Auto-executes on pause)</div>
+      <div class="robot-transcript-box futuristic-transcript-hud" id="robotTranscriptBox">Speak in any language (English, Tanglish, Tamil, Hindi)... I will listen and act!</div>
+
+      <!-- Action Buttons -->
+      <div class="robot-controls-row">
+        <button class="btn-robot-action btn-robot-send" id="robotSendBtn">Done &amp; Execute ↑</button>
+        <button class="btn-robot-action btn-robot-cancel" id="robotCancelBtn">Cancel ✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       STUDENT AUTHENTICATION & PROFILE DATA MODAL
+  ======================================================= -->
+  <div class="doc-reader-modal" id="studentAuthModal" style="display:none;">
+    <div class="doc-reader-box" style="max-width:540px; border-radius:18px;">
+      <div class="doc-reader-header" style="border-bottom:1px solid var(--border-subtle); padding-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:20px;">👤</span>
+          <div>
+            <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:0;" id="authModalTitle">Student Account &amp; Profile</h3>
+            <span style="font-size:11px; color:var(--text-secondary);">Save study methods, school syllabus &amp; personal context</span>
+          </div>
+        </div>
+        <button class="btn-vault-action delete" id="btnCloseAuthModal">✕</button>
+      </div>
+
+      <div style="padding:20px;">
+        <!-- Auth Tabs: Sign In / Create Account / Manage Profile -->
+        <div class="creation-subnav-tabs" style="margin-bottom:16px; display:flex; gap:8px;">
+          <button class="branch-pill-btn active" id="authTabSignInBtn">Sign In</button>
+          <button class="branch-pill-btn" id="authTabSignUpBtn">Create Account</button>
+          <button class="branch-pill-btn" id="authTabProfileBtn">My Stored Data</button>
+        </div>
+
+        <!-- Google 1-Click Simulation Button -->
+        <button id="authGoogleBtn" class="btn-google-sign-in" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 16px; border-radius:10px; border:1px solid var(--border-medium); background:var(--bg-surface-subtle); color:var(--text-primary); font-size:13px; font-weight:600; cursor:pointer; margin-bottom:14px; transition:all 0.15s ease;">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div style="text-align:center; font-size:11px; color:var(--text-tertiary); margin-bottom:14px; position:relative;">
+          <span>— or use email —</span>
+        </div>
+
+        <!-- Form Fields -->
+        <div id="authFormFields">
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:11px;">Email Address</label>
+            <input type="email" id="authEmailInput" class="form-textarea" placeholder="student@example.com" style="height:40px; min-height:auto;" />
+          </div>
+
+          <div class="form-group" style="margin-bottom:12px;">
+            <label class="form-label" style="font-size:11px;">Password</label>
+            <div class="auth-password-wrapper">
+              <input type="password" id="authPasswordInput" class="form-textarea" placeholder="••••••••" style="height:40px; min-height:auto;" />
+              <button type="button" class="auth-password-toggle-btn" id="toggleStudentModalPasswordBtn" title="Show Password" aria-label="Toggle password visibility">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Extra sign-up fields -->
+          <div id="authExtraSignupFields" style="display:none;">
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" style="font-size:11px;">Your Name</label>
+              <input type="text" id="authNameInput" class="form-textarea" placeholder="e.g. Arun Kumar" style="height:40px; min-height:auto;" />
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px;">
+              <div>
+                <label class="form-label" style="font-size:11px;">Standard / Year</label>
+                <select id="authStandardSelect" class="form-textarea" style="height:40px; min-height:auto;">
+                  <option value="10th">10th Standard (SSLC/CBSE)</option>
+                  <option value="11th">11th Standard</option>
+                  <option value="12th" selected>12th Standard Board</option>
+                  <option value="College">College / Engineering</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" style="font-size:11px;">Stream / Group</label>
+                <select id="authStreamSelect" class="form-textarea" style="height:40px; min-height:auto;">
+                  <option value="Science (Maths/Bio)">Science (Maths/Bio)</option>
+                  <option value="Science (Computer Science)" selected>Computer Science</option>
+                  <option value="Commerce &amp; Accountancy">Commerce</option>
+                  <option value="Arts &amp; Humanities">Arts &amp; Humanities</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-generate-gemini" id="authSubmitBtn" style="width:100%; padding:10px; font-weight:700;">
+            Sign In to AURA
+          </button>
+        </div>
+
+        <!-- Stored Profile Management Pane -->
+        <div id="authProfileDetailsPane" style="display:none;">
+          <div style="background:var(--bg-surface-subtle); border-radius:12px; padding:14px; border:1px solid var(--border-subtle); margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:13px; font-weight:700; color:var(--text-primary);" id="authProfileName">Student Profile</span>
+              <span class="eng-badge-pill" id="authProfileStdBadge">12th Standard</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">
+              <strong>Email:</strong> <span id="authProfileEmail">student@aura.ai</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary); margin-bottom:6px;">
+              <strong>Stored Learning Method:</strong> <span id="authProfileMethod">Step-by-step formulas, bilingual Tamil-English, textbook definitions first.</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary);">
+              <strong>School Teaching Style:</strong> <span id="authProfileSchool">Standard textbook derivations, 2-mark definitions &amp; solved exercises.</span>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--border-subtle); padding-top:14px;">
+            <div style="font-size:12px; font-weight:700; color:#EF4444; margin-bottom:6px;">Privacy &amp; Data Control</div>
+            <p style="font-size:11px; color:var(--text-secondary); margin-bottom:10px;">
+              You can permanently delete your saved study methodology, uploaded school books, and personal memory profile anytime.
+            </p>
+            <button class="btn-vault-action delete" id="btnDeleteStudentAllData" style="width:100%; padding:10px; color:#EF4444; border-color:rgba(239, 68, 68, 0.4); font-weight:700;">
+              🗑️ Permanently Delete All My Stored Study Data &amp; Methods
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Assets & Master Script -->
+  <script src="app.js"></script>
 </body>
+
 </html>
