@@ -1319,6 +1319,11 @@ function switchView(viewKey) {
       window.loadYouTubeLectures();
     }
   }
+  if (viewKey === "gesture-arcade-workspace" || viewKey === "view-gesture-arcade-workspace") {
+    if (typeof window.initGestureArcadeHub === "function") {
+      window.initGestureArcadeHub();
+    }
+  }
 
   closeMobileSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -9005,6 +9010,7 @@ function initAura3CoreModules() {
   if (typeof initKnowledgeVaultTopicIngest === "function") initKnowledgeVaultTopicIngest();
   if (typeof initYouTubeUrlDecoder === "function") initYouTubeUrlDecoder();
   if (typeof initStudentAuthModal === "function") initStudentAuthModal();
+  if (typeof window.initGestureArcadeHub === "function") window.initGestureArcadeHub();
 }
 
 if (document.readyState === "loading") {

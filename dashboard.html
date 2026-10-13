@@ -13,9 +13,11 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
     rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
-  <!-- GIS script removed to bypass authentication gate -->
+  <!-- Google MediaPipe Hands & Camera Utils CDN for Gesture Arcade -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gestureArcade.css">
 </head>
 
 <body data-theme="rose-olive">
@@ -85,6 +87,11 @@
             <span class="nav-icon">🎓</span>
             <span class="nav-label">College & School</span>
             <span class="nav-badge">Hub</span>
+          </li>
+          <li class="nav-item" data-view="gesture-arcade-workspace">
+            <span class="nav-icon">🎮</span>
+            <span class="nav-label">Gesture Arcade</span>
+            <span class="nav-badge" style="background:linear-gradient(135deg, #00f0ff, #f59e0b); color:#000; font-weight:800;">NEURO</span>
           </li>
           <li class="nav-item" data-view="youtube-intel">
             <span class="nav-icon">▷</span>
@@ -357,6 +364,13 @@
                     <div class="cc-mod-meta">
                       <span class="cc-mod-name">Task Matrix</span>
                       <span class="cc-mod-hint">Autonomous Pipelines</span>
+                    </div>
+                  </button>
+                  <button class="cc-mod-card" data-view="gesture-arcade-workspace">
+                    <div class="cc-mod-icon-wrap" style="background:rgba(0, 240, 255, 0.15); border-color:#00f0ff;"><span class="cc-mod-icon">🎮</span></div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Gesture Arcade</span>
+                      <span class="cc-mod-hint">MediaPipe Neuro-Gym</span>
                     </div>
                   </button>
                 </div>
@@ -2008,6 +2022,108 @@
         <!-- Hidden anchor for legacy task view routing -->
         <section class="aura-view" id="view-tasks" style="display:none;"></section>
 
+        <!-- =====================================================
+             VIEW: AURA GESTURE ARCADE & NEURO-GYM
+             Interactive Hand Computer Vision Powered by Google MediaPipe
+        ===================================================== -->
+        <section class="aura-view" id="gesture-arcade-workspace">
+          <div class="gesture-arcade-container">
+            <!-- Hero Header -->
+            <div class="arcade-header-hero">
+              <div class="arcade-title-group">
+                <div class="arcade-hero-avatar">🎮</div>
+                <div>
+                  <h1 class="arcade-hero-heading">
+                    <span>Aura Gesture Arcade &amp; Neuro-Gym</span>
+                    <span class="arcade-badge-neuro">NEURAL VISION 3.0</span>
+                  </h1>
+                  <div class="arcade-hero-subtitle">
+                    <span>Low-Latency Real-Time Hand Landmark Tracking</span>
+                    <span>•</span>
+                    <span>Google MediaPipe Hands</span>
+                    <span>•</span>
+                    <span>60 FPS Physics Engine</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Header Status & Action Controls -->
+              <div class="arcade-header-controls">
+                <div class="arcade-status-pill" id="arcadeCamStatusPill">
+                  <span class="arcade-status-dot standby" id="arcadeCamStatusDot"></span>
+                  <span id="arcadeCamStatusLabel">⚪ Camera Standby</span>
+                </div>
+                <button type="button" class="btn-arcade-action" id="arcadeSimModeBtn" title="Toggle Mouse/Touch Simulator Fallback">
+                  <span>🖱️ Simulator Mode</span>
+                </button>
+                <button type="button" class="btn-arcade-action primary" id="arcadeRecalibrateBtn" title="Restart / Recalibrate Hand Tracking">
+                  <span>⚡ Recalibrate</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Global Stats Row -->
+            <div class="arcade-stats-row">
+              <div class="arcade-stat-card">
+                <div class="arcade-stat-icon">🏆</div>
+                <div>
+                  <div class="arcade-stat-val" id="arcadeStatTotalScore">0</div>
+                  <div class="arcade-stat-label">Total High Score</div>
+                </div>
+              </div>
+              <div class="arcade-stat-card">
+                <div class="arcade-stat-icon">🧠</div>
+                <div>
+                  <div class="arcade-stat-val" id="arcadeStatMastered">0/11</div>
+                  <div class="arcade-stat-label">Games Mastered</div>
+                </div>
+              </div>
+              <div class="arcade-stat-card">
+                <div class="arcade-stat-icon">⚡</div>
+                <div>
+                  <div class="arcade-stat-val">60 FPS</div>
+                  <div class="arcade-stat-label">Target Refresh Rate</div>
+                </div>
+              </div>
+              <div class="arcade-stat-card">
+                <div class="arcade-stat-icon">🖐️</div>
+                <div>
+                  <div class="arcade-stat-val">21 Points</div>
+                  <div class="arcade-stat-label">3D Skeletal Mesh</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Navigation & Search Bar -->
+            <div class="arcade-nav-bar">
+              <div class="arcade-category-pills">
+                <button type="button" class="arcade-cat-btn active" data-category="all">
+                  <span>✦ All Games (11)</span>
+                </button>
+                <button type="button" class="arcade-cat-btn" data-category="brain">
+                  <span>🧠 Brain &amp; Academic Gym (3)</span>
+                </button>
+                <button type="button" class="arcade-cat-btn" data-category="reflex">
+                  <span>⚡ Reflex &amp; Arcade Action (4)</span>
+                </button>
+                <button type="button" class="arcade-cat-btn" data-category="strategy">
+                  <span>🧩 Strategy &amp; Precision (3)</span>
+                </button>
+                <button type="button" class="arcade-cat-btn" data-category="rhythm">
+                  <span>🎵 Rhythm &amp; Beats (1)</span>
+                </button>
+              </div>
+
+              <div>
+                <input type="text" id="arcadeSearchInput" class="arcade-search-input" placeholder="🔍 Search games or gestures..." />
+              </div>
+            </div>
+
+            <!-- Games Grid (Rendered dynamically by gestureArcade.js) -->
+            <div class="arcade-games-grid" id="arcadeGameGrid"></div>
+          </div>
+        </section>
+
       </div>
     </main>
 
@@ -2127,6 +2243,7 @@
         <div class="palette-item" data-view="mock-test">🏛️ Semester Mock Test</div>
         <div class="palette-item" data-view="student-performance">📊 Student Performance</div>
         <div class="palette-item" data-view="engineering-hub">🎓 Engineering Hub</div>
+        <div class="palette-item" data-view="gesture-arcade-workspace">🎮 Gesture Arcade &amp; Neuro-Gym</div>
         <div class="palette-item" data-view="youtube-intel">▷ YouTube Intel</div>
       </div>
     </div>
@@ -2368,8 +2485,86 @@
     </div>
   </div>
 
+  <!-- =======================================================
+       LIVE INTERACTIVE GAME ARENA MODAL (GESTURE PLAYGROUND)
+  ======================================================= -->
+  <div class="gesture-game-arena" id="gestureGameArenaModal">
+    <!-- Top Game Bar -->
+    <div class="arena-topbar">
+      <div class="arena-title-info">
+        <span style="font-size:24px;">🎮</span>
+        <div>
+          <div class="arena-game-name" id="arenaGameTitle">Game Name</div>
+          <div class="arena-instruction-pill" id="arenaInstructionBanner">Instructions</div>
+        </div>
+      </div>
+
+      <!-- Live Metrics HUD -->
+      <div class="arena-metrics-hud">
+        <div class="arena-hud-stat">
+          <span class="arena-stat-tag">SCORE</span>
+          <span class="arena-stat-num" id="arenaScoreDisplay">0</span>
+        </div>
+        <div class="arena-hud-stat">
+          <span class="arena-stat-tag">STREAK</span>
+          <span class="arena-stat-num arena-streak-multiplier" id="arenaMultiplierDisplay">x1</span>
+        </div>
+        <div class="arena-hud-stat">
+          <span class="arena-stat-tag">PERFORMANCE</span>
+          <span class="arena-stat-num" id="arenaFpsDisplay" style="color:#10b981;">60 FPS</span>
+        </div>
+      </div>
+
+      <!-- Arena Action Buttons -->
+      <div class="arena-controls-row">
+        <button type="button" class="btn-arena-ctrl" id="btnArenaRestart" title="Restart Game">🔄 Restart</button>
+        <button type="button" class="btn-arena-ctrl danger" id="btnArenaClose" title="Exit to Hub">✕ Exit Hub</button>
+      </div>
+    </div>
+
+    <!-- Arena Stage Body (Canvas & Corner HUD) -->
+    <div class="arena-stage-body">
+      <canvas id="arcadeGameCanvas"></canvas>
+
+      <!-- Corner HUD: Mirrored Camera Feed & Skeletal Joints -->
+      <div class="arena-corner-hud" id="arenaCornerHud">
+        <div class="corner-hud-header">
+          <span>🖐️ HAND TRACKING HUD</span>
+          <span style="font-size:9px; color:#10b981;">LIVE</span>
+        </div>
+        <div class="corner-hud-feed">
+          <video id="gestureWebcamVideo" playsinline autoplay muted></video>
+          <canvas id="gestureSkeletonCanvas"></canvas>
+        </div>
+        <div class="corner-hud-footer">
+          <span id="cornerHudGestureLabel" class="corner-hud-action-tag">Tracking Hand...</span>
+          <span style="font-size:9px;">MediaPipe 3.0</span>
+        </div>
+      </div>
+
+      <!-- In-Arena Dialog Overlay (Game Over / Level Complete) -->
+      <div class="arena-dialog-overlay" id="arenaDialogOverlay">
+        <div class="arena-dialog-box">
+          <div class="arena-dialog-icon">🏆</div>
+          <div class="arena-dialog-title" id="arenaDialogTitle">GAME COMPLETE</div>
+          <div class="arena-dialog-score-wrap">
+            <div>
+              <div class="dialog-score-num" id="arenaDialogScore">0</div>
+              <div class="dialog-score-label">FINAL SCORE</div>
+            </div>
+          </div>
+          <div class="arena-dialog-btn-row">
+            <button type="button" class="btn-dialog-primary" id="btnDialogRestart">Play Again ↺</button>
+            <button type="button" class="btn-dialog-secondary" id="btnDialogExit">Exit to Hub ✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Audio Assets & Master Script -->
   <script src="app.js"></script>
+  <script src="gestureArcade.js"></script>
 </body>
 
 </html>
