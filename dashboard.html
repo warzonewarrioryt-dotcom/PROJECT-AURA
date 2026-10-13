@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="gestureArcade.css">
 </head>
 
-<body data-theme="rose-olive">
+<body data-theme="enterprise-dark">
 
   <!-- Authentication gate bypassed: login overlay removed -->
   <!-- =======================================================
@@ -51,51 +51,96 @@
       </div>
 
       <div class="sidebar-nav-container">
-        <div class="nav-section-title">Workspaces</div>
+        <!-- GROUP 1: CORE -->
+        <div class="nav-group-header">
+          <span class="nav-group-title">CORE</span>
+        </div>
         <ul class="nav-list">
           <li class="nav-item active" data-view="command-center">
-            <span class="nav-icon">⌘</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect></svg>
+            </span>
             <span class="nav-label">Command Center</span>
           </li>
           <li class="nav-item" data-view="creation-lab">
-            <span class="nav-icon">✎</span>
-            <span class="nav-label">Creation Studio</span>
-            <span class="nav-badge">AI</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            </span>
+            <span class="nav-label">Executive Studio</span>
+            <span class="nav-badge">STUDIO</span>
+          </li>
+        </ul>
+
+        <!-- GROUP 2: KNOWLEDGE -->
+        <div class="nav-group-header">
+          <span class="nav-group-title">KNOWLEDGE</span>
+        </div>
+        <ul class="nav-list">
+          <li class="nav-item" data-view="academic-hub-workspace">
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            </span>
+            <span class="nav-label">Academic Hub</span>
+            <span class="nav-badge">HUB</span>
           </li>
           <li class="nav-item" data-view="knowledge-vault">
-            <span class="nav-icon">⧉</span>
-            <span class="nav-label">Topic Knowledge Vault</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+            </span>
+            <span class="nav-label">Topic Vault</span>
+            <span class="nav-badge">RAG</span>
           </li>
-          <li class="nav-item" data-view="study-intel">
-            <span class="nav-icon">📖</span>
-            <span class="nav-label">Study & Task Planner</span>
+          <li class="nav-item" data-view="student-performance">
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            </span>
+            <span class="nav-label">Performance Analytics</span>
           </li>
-          <li class="nav-item" data-view="quiz-engine">
-            <span class="nav-icon">✦</span>
-            <span class="nav-label">Quiz Engine</span>
-          </li>
+        </ul>
+
+        <!-- GROUP 3: EVALUATION -->
+        <div class="nav-group-header">
+          <span class="nav-group-title">EVALUATION</span>
+        </div>
+        <ul class="nav-list">
           <li class="nav-item" data-view="mock-test">
-            <span class="nav-icon">🏛️</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
+            </span>
             <span class="nav-label">Semester Mock Test</span>
             <span class="nav-badge">PYQ</span>
           </li>
-          <li class="nav-item" data-view="student-performance">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">Performance</span>
+          <li class="nav-item" data-view="quiz-engine">
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+            </span>
+            <span class="nav-label">Quiz Engine</span>
           </li>
-          <li class="nav-item" data-view="academic-hub-workspace">
-            <span class="nav-icon">🎓</span>
-            <span class="nav-label">College & School</span>
-            <span class="nav-badge">Hub</span>
+          <li class="nav-item" data-view="study-intel">
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </span>
+            <span class="nav-label">Study & Task Planner</span>
           </li>
+        </ul>
+
+        <!-- GROUP 4: INTERACTIVE -->
+        <div class="nav-group-header">
+          <span class="nav-group-title">INTERACTIVE</span>
+        </div>
+        <ul class="nav-list">
           <li class="nav-item" data-view="gesture-arcade-workspace">
-            <span class="nav-icon">🎮</span>
-            <span class="nav-label">Gesture Arcade</span>
-            <span class="nav-badge" style="background:linear-gradient(135deg, #00f0ff, #f59e0b); color:#000; font-weight:800;">NEURO</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
+            </span>
+            <span class="nav-label">Neural Sensor & Gesture Lab</span>
+            <span class="nav-badge">VISION</span>
           </li>
           <li class="nav-item" data-view="youtube-intel">
-            <span class="nav-icon">▷</span>
-            <span class="nav-label">YouTube</span>
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </span>
+            <span class="nav-label">YouTube Intelligence</span>
           </li>
         </ul>
       </div>
@@ -116,154 +161,94 @@
         <div class="topbar-left">
           <button class="mobile-nav-toggle" id="mobileNavToggleBtn">☰</button>
           <div class="topbar-breadcrumbs">
-            <span class="crumb-root">PROJECT AURA</span>
+            <span class="crumb-root">WORKSPACE</span>
             <span class="crumb-divider">/</span>
-            <span class="crumb-active" id="breadcrumbCurrent">Command Center</span>
+            <span class="crumb-scope" id="breadcrumbScope">ACADEMIC INTELLIGENCE</span>
+            <span class="crumb-divider">/</span>
+            <span class="crumb-active" id="breadcrumbCurrent">COMMAND CENTER</span>
           </div>
         </div>
 
+        <div class="topbar-center">
+          <button class="topbar-search-trigger" id="topbarSearchTrigger" title="Command Palette (⌘K)">
+            <svg class="search-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span class="search-trigger-placeholder">Search curricula, commands, topics...</span>
+            <kbd class="search-shortcut-kbd">⌘K</kbd>
+          </button>
+        </div>
+
         <div class="topbar-right">
-          <!-- Voice Assistant Global Controller -->
+          <!-- Institutional Telemetry Strip -->
+          <div class="topbar-telemetry">
+            <span class="tel-tag"><span class="tel-k">Node:</span> <span class="tel-v font-mono">v20.18</span></span>
+            <span class="tel-sep">·</span>
+            <span class="tel-tag"><span class="tel-k">Latency:</span> <span class="tel-v font-mono" id="topbarLatency">24ms</span></span>
+            <span class="tel-sep">·</span>
+            <span class="tel-tag"><span class="pulse-dot-green"></span> <span class="tel-v tel-operational">Operational</span></span>
+          </div>
+
+          <!-- Sleek Voice Assistant Global Controller -->
           <button class="topbar-voice-btn" id="globalVoiceAssistantBtn" title="AURA Voice Assistant (Talk or Control Desktop)">
-            <span class="voice-wave-dot"></span>
-            <span class="voice-btn-label">Voice AI</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            <span class="voice-btn-label">Voice Neural</span>
           </button>
 
-          <!-- Voice Gender Switcher (Female / Male) -->
-          <button class="topbar-action-btn glass-voice-gender-pill" id="voiceGenderToggleBtn" title="Switch Voice Voice: Female (Aura) / Male (Aero)">
-            <span id="voiceGenderIcon" style="color:#FF4081; font-weight:800;">♀</span>
-            <span id="voiceGenderLabel" style="font-size:11px; font-weight:700;">Aura (Female)</span>
+          <!-- Voice Gender Switcher (kept hidden for JS listener compatibility) -->
+          <button class="topbar-action-btn glass-voice-gender-pill" id="voiceGenderToggleBtn" title="Switch Voice Synthesis Engine" style="display:none;">
+            <span id="voiceGenderIcon">♀</span>
+            <span id="voiceGenderLabel">Aura</span>
           </button>
 
-          <!-- Student Profile & Authentication -->
-          <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Authentication">
-            <span class="user-avatar-glyph">👤</span>
+          <!-- Operator Profile Pill -->
+          <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Access Credentials">
+            <span class="operator-avatar-glyph">AO</span>
             <span id="userNameLabel" class="user-name-text">Aura Operator</span>
+            <span class="operator-badge-pill">ACTIVE</span>
           </button>
 
-          <!-- Sign Out Button -->
+          <!-- Sign Out Button (hidden) -->
           <button class="topbar-action-btn glass-signout-btn" id="auraSignOutBtn" title="Sign Out of Project Aura" style="display:none;">
             <span>⎋ Sign Out</span>
           </button>
 
-          <button class="topbar-search-trigger" id="topbarSearchTrigger">
-            <span>Ask or search anything...</span>
-            <span class="search-shortcut-kbd">⌘K</span>
-          </button>
-
-          <div class="topbar-pill-badge" id="spatial3dBadge">
-            <span class="pulse-dot-green"></span>
-            <span>Online</span>
-          </div>
-
-          <div class="topbar-clock" id="osClock">--:--:--</div>
+          <div class="topbar-clock font-mono" id="osClock">--:--:--</div>
 
           <!-- Minimalist Theme Switcher -->
           <div class="theme-switcher-wrap" id="themeSwitcherWrap">
             <button class="topbar-theme-btn" id="themeToggleBtn" title="Theme Selector">
               <span class="theme-icon-swatch">◐</span>
-              <span id="activeThemeName">Rose & Olive</span>
+              <span id="activeThemeName">Enterprise Dark</span>
               <span style="font-size:9px; opacity:0.6;">▼</span>
             </button>
             <div class="theme-popover-dropdown" id="themePopoverDropdown">
-              <div class="theme-popover-title">Curated Minimalist Palettes</div>
+              <div class="theme-popover-title">Institutional Themes</div>
               <div class="theme-options-grid">
-                <div class="theme-option-card active" data-theme="rose-olive">
+                <div class="theme-option-card active" data-theme="enterprise-dark">
                   <div class="theme-preview-dots">
-                    <span style="background:#c9a0a0;"></span>
-                    <span style="background:#8a8f6b;"></span>
-                    <span style="background:#1E1A1B;"></span>
+                    <span style="background:#090a0f;"></span>
+                    <span style="background:#161b22;"></span>
+                    <span style="background:#38bdf8;"></span>
                   </div>
                   <div class="theme-option-info">
-                    <div class="theme-name">1. Rose & Olive</div>
-                    <div class="theme-desc">Rose (#c9a0a0) & Olive (#8a8f6b)</div>
+                    <div class="theme-name">Enterprise Obsidian</div>
+                    <div class="theme-desc">Linear & Vercel Monochrome Dark</div>
                   </div>
                 </div>
-                <div class="theme-option-card" data-theme="rose-olive-light">
+                <div class="theme-option-card" data-theme="champagne-dark">
                   <div class="theme-preview-dots">
-                    <span style="background:#c9a0a0;"></span>
-                    <span style="background:#8a8f6b;"></span>
-                    <span style="background:#FAF6F6;"></span>
+                    <span style="background:#0c0d12;"></span>
+                    <span style="background:#1a1c24;"></span>
+                    <span style="background:#d4af37;"></span>
                   </div>
                   <div class="theme-option-info">
-                    <div class="theme-name">Rose & Olive (Light)</div>
-                    <div class="theme-desc">Rose (#c9a0a0) & Olive Light UI</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="lavender-beige">
-                  <div class="theme-preview-dots">
-                    <span style="background:#a89bbe;"></span>
-                    <span style="background:#dbc3a8;"></span>
-                    <span style="background:#1B1924;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">2. Lavender & Beige</div>
-                    <div class="theme-desc">Lavender (#a89bbe) & Beige (#dbc3a8)</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="lavender-beige-light">
-                  <div class="theme-preview-dots">
-                    <span style="background:#a89bbe;"></span>
-                    <span style="background:#dbc3a8;"></span>
-                    <span style="background:#F8F6F2;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">Lavender & Beige (Light)</div>
-                    <div class="theme-desc">Lavender (#a89bbe) & Beige Light UI</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="sage-cream">
-                  <div class="theme-preview-dots">
-                    <span style="background:#a3b18a;"></span>
-                    <span style="background:#f2e8cf;"></span>
-                    <span style="background:#24301B;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">3. Sage & Cream</div>
-                    <div class="theme-desc">Sage (#a3b18a) & Cream (#f2e8cf)</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="sage-cream-dark">
-                  <div class="theme-preview-dots">
-                    <span style="background:#a3b18a;"></span>
-                    <span style="background:#f2e8cf;"></span>
-                    <span style="background:#121811;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">Sage & Cream (Dark)</div>
-                    <div class="theme-desc">Botanical Sage & Warm Cream Dark</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="cyber-obsidian">
-                  <div class="theme-preview-dots">
-                    <span style="background:#090A0D;"></span>
-                    <span style="background:#1C1F2B;"></span>
-                    <span style="background:#C9A45C;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">Minimal Obsidian</div>
-                    <div class="theme-desc">Matte Charcoal & Champagne Gold</div>
-                  </div>
-                </div>
-                <div class="theme-option-card" data-theme="minimal-light">
-                  <div class="theme-preview-dots">
-                    <span style="background:#F9F9FB;"></span>
-                    <span style="background:#FFFFFF;"></span>
-                    <span style="background:#111827;"></span>
-                  </div>
-                  <div class="theme-option-info">
-                    <div class="theme-name">Minimal Light</div>
-                    <div class="theme-desc">Pure Paper & Deep Ink</div>
+                    <div class="theme-name">Champagne Executive</div>
+                    <div class="theme-desc">Institutional Gold & Deep Slate</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-
-
-        </div>
-      </header>
+        </div></header>
 
       <div class="aura-stage-scroll">
         <!-- =====================================================
@@ -278,105 +263,211 @@
 
               <!-- Greeting Hero (hides when chat starts) -->
               <div class="cc-hero" id="ccHero">
-                <div class="cc-hero-badge">
-                  <span class="hero-badge-dot"></span>
-                  <span class="hero-badge-text">PROJECT AURA // WORKSPACE OS</span>
-                  <span class="hero-badge-version">v3.0</span>
+                <div class="cc-hero-top-meta">
+                  <div class="cc-hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    <span class="hero-badge-text">EXECUTIVE WORKSPACE</span>
+                    <span class="hero-badge-separator">/</span>
+                    <span class="hero-badge-version">AURA OS 3.0</span>
+                  </div>
+                  <div class="cc-greeting-label" id="heroGreeting">Executive Workspace · Academic OS</div>
                 </div>
 
-                <div class="cc-greeting" id="heroGreeting">Good evening.</div>
-                <h1 class="cc-headline">What would you like to <span class="cc-aura-word">accomplish today?</span></h1>
-                <p class="cc-subline">Orchestrating multi-model reasoning, autonomous deep research, persistent neural
-                  memory &amp; executive synthesis in one focused workspace.</p>
+                <div class="cc-hero-heading-block">
+                  <h1 class="cc-headline">Academic Intelligence Suite</h1>
+                  <p class="cc-subline">Institutional workspace for multi-board curriculum mastery, automated syllabus analysis, neural gesture laboratories, and continuous evaluation.</p>
+                </div>
 
-                <!-- Clean Minimalist Telemetry Strip -->
+                <!-- Enterprise Telemetry Strip -->
                 <div class="cc-telemetry-strip">
                   <div class="cc-tel-chip">
                     <span class="pulse-dot-green"></span>
-                    <span class="tel-label">System:</span>
+                    <span class="tel-label">System Status:</span>
                     <span class="tel-val">Operational</span>
                   </div>
                   <div class="cc-tel-chip">
-                    <span class="pulse-dot-green"></span>
-                    <span class="tel-label">Engine:</span>
-                    <span class="tel-val">Multi-Model AI</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span class="tel-label">Telemetry Latency:</span>
+                    <span class="tel-val font-mono" id="ccHeroLatency">24ms</span>
                   </div>
                   <div class="cc-tel-chip">
-                    <span class="tel-icon">⧉</span>
-                    <span class="tel-label">Knowledge Vault:</span>
-                    <span class="tel-val">Connected</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    <span class="tel-label">Engine Pipeline:</span>
+                    <span class="tel-val">Multi-Model LLM + RAG</span>
+                  </div>
+                  <div class="cc-tel-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <span class="tel-label">Vector Knowledge:</span>
+                    <span class="tel-val">Synchronized</span>
                   </div>
                 </div>
 
-                <!-- Quick Module Cards -->
+                <!-- Structured Linear/Vercel-style Quick Module Cards -->
                 <div class="cc-module-grid">
+                  <!-- 1. Academic Hub -->
+                  <button class="cc-mod-card" data-view="academic-hub-workspace">
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+                      </div>
+                      <span class="cc-mod-pill">Curriculum</span>
+                    </div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Academic Hub</span>
+                      <span class="cc-mod-hint">10th-12th & Engineering Syllabi</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>View Curriculum</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                  </button>
+
+                  <!-- 2. Executive Studio -->
                   <button class="cc-mod-card" data-view="creation-lab">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✎</span></div>
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                      </div>
+                      <span class="cc-mod-pill">Studio</span>
+                    </div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Creation Studio</span>
-                      <span class="cc-mod-hint">Documents &amp; Code</span>
+                      <span class="cc-mod-name">Executive Studio</span>
+                      <span class="cc-mod-hint">Report Synthesis & Documents</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Launch Studio</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
+
+                  <!-- 3. Knowledge Vault -->
                   <button class="cc-mod-card" data-view="knowledge-vault">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">⧉</span></div>
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                      </div>
+                      <span class="cc-mod-pill">RAG Vector</span>
+                    </div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Knowledge Vault</span>
-                      <span class="cc-mod-hint">RAG Vector Intelligence</span>
+                      <span class="cc-mod-name">Topic Vault</span>
+                      <span class="cc-mod-hint">PDF Vector Embeddings & Index</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Explore Vault</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
-                  <button class="cc-mod-card" data-view="engineering-hub">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">🎓</span></div>
+
+                  <!-- 4. Semester Mock Test -->
+                  <button class="cc-mod-card" data-view="mock-test">
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
+                      </div>
+                      <span class="cc-mod-pill">Evaluation</span>
+                    </div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">College &amp; School</span>
-                      <span class="cc-mod-hint">Syllabus &amp; Lecture Hub</span>
+                      <span class="cc-mod-name">Semester Mock Test</span>
+                      <span class="cc-mod-hint">Timed Exam Simulation & Past Papers</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Start Simulation</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
+
+                  <!-- 5. Quiz Engine -->
                   <button class="cc-mod-card" data-view="quiz-engine">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✦</span></div>
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                      </div>
+                      <span class="cc-mod-pill">Recall</span>
+                    </div>
                     <div class="cc-mod-meta">
                       <span class="cc-mod-name">Quiz Engine</span>
-                      <span class="cc-mod-hint">PYQ &amp; Exam Simulator</span>
+                      <span class="cc-mod-hint">Adaptive Topic Diagnostics</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Begin Quiz</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
-                  <button class="cc-mod-card" data-view="memory-cortex">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">◈</span></div>
-                    <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Memory Cortex</span>
-                      <span class="cc-mod-hint">Persistent Neural State</span>
-                    </div>
-                  </button>
+
+                  <!-- 6. Study Planner -->
                   <button class="cc-mod-card" data-view="study-intel">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">📖</span></div>
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                      </div>
+                      <span class="cc-mod-pill">Planning</span>
+                    </div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Study Intel</span>
-                      <span class="cc-mod-hint">Active Recall Matrix</span>
+                      <span class="cc-mod-name">Study Planner</span>
+                      <span class="cc-mod-hint">Active Recall & Deadline Sprints</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Open Planner</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
-                  <button class="cc-mod-card" data-view="youtube-intel">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">▷</span></div>
-                    <div class="cc-mod-meta">
-                      <span class="cc-mod-name">YouTube Intel</span>
-                      <span class="cc-mod-hint">Video Transcript AI</span>
-                    </div>
-                  </button>
-                  <button class="cc-mod-card" data-view="tasks">
-                    <div class="cc-mod-icon-wrap"><span class="cc-mod-icon">✓</span></div>
-                    <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Task Matrix</span>
-                      <span class="cc-mod-hint">Autonomous Pipelines</span>
-                    </div>
-                  </button>
+
+                  <!-- 7. Neural Sensor & Gesture Lab -->
                   <button class="cc-mod-card" data-view="gesture-arcade-workspace">
-                    <div class="cc-mod-icon-wrap" style="background:rgba(0, 240, 255, 0.15); border-color:#00f0ff;"><span class="cc-mod-icon">🎮</span></div>
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"></path><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"></path><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"></path></svg>
+                      </div>
+                      <span class="cc-mod-pill">Vision AI</span>
+                    </div>
                     <div class="cc-mod-meta">
-                      <span class="cc-mod-name">Gesture Arcade</span>
-                      <span class="cc-mod-hint">MediaPipe Neuro-Gym</span>
+                      <span class="cc-mod-name">Gesture & Vision Lab</span>
+                      <span class="cc-mod-hint">MediaPipe Neural Sensor Games</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Launch Lab</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                  </button>
+
+                  <!-- 8. Performance Analytics -->
+                  <button class="cc-mod-card" data-view="student-performance">
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                      </div>
+                      <span class="cc-mod-pill">Analytics</span>
+                    </div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">Performance Analytics</span>
+                      <span class="cc-mod-hint">Assessment Trajectory & Metrics</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Export Report</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </div>
+                  </button>
+
+                  <!-- 9. YouTube Intelligence -->
+                  <button class="cc-mod-card" data-view="youtube-intel">
+                    <div class="cc-mod-header">
+                      <div class="cc-mod-icon-wrap">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                      </div>
+                      <span class="cc-mod-pill">Media</span>
+                    </div>
+                    <div class="cc-mod-meta">
+                      <span class="cc-mod-name">YouTube Intelligence</span>
+                      <span class="cc-mod-hint">Semantic Transcripts & Synthesis</span>
+                    </div>
+                    <div class="cc-mod-action-footer">
+                      <span>Analyze Video</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </div>
                   </button>
                 </div>
               </div>
 
-              <!-- ── CHAT HISTORY STREAM (above input) ── -->
               <div class="cc-chat-stream" id="ccChatStream">
                 <!-- Messages are injected here by JS -->
               </div>
@@ -398,8 +489,8 @@
                   <div class="thinking-visual-row">
                     <div class="thinking-core-orb">◈</div>
                     <div class="thinking-text-group">
-                      <div class="thinking-status-headline" id="thinkingHeadline">Analyzing Directive...</div>
-                      <div class="thinking-status-sub" id="thinkingSub">Engaging reasoning pipeline · <span
+                      <div class="thinking-status-headline" id="thinkingHeadline">Processing Academic Directive...</div>
+                      <div class="thinking-status-sub" id="thinkingSub">Academic Intelligence Pipeline · <span
                           id="thinkingTimer">0.0s</span></div>
                     </div>
                   </div>

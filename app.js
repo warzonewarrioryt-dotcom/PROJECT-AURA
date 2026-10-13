@@ -1297,9 +1297,26 @@ function switchView(viewKey) {
     v.classList.toggle("active", isViewMatch);
   });
 
+  const BREADCRUMB_MAP = {
+    "command-center": { scope: "EXECUTIVE CORE", title: "COMMAND CENTER" },
+    "creation-lab": { scope: "EXECUTIVE CORE", title: "EXECUTIVE STUDIO" },
+    "academic-hub-workspace": { scope: "KNOWLEDGE SYSTEMS", title: "ACADEMIC HUB" },
+    "engineering-hub": { scope: "KNOWLEDGE SYSTEMS", title: "ACADEMIC HUB" },
+    "knowledge-vault": { scope: "KNOWLEDGE SYSTEMS", title: "TOPIC VAULT" },
+    "student-performance": { scope: "KNOWLEDGE SYSTEMS", title: "PERFORMANCE ANALYTICS" },
+    "mock-test": { scope: "EVALUATION ENGINE", title: "SEMESTER MOCK TEST" },
+    "quiz-engine": { scope: "EVALUATION ENGINE", title: "QUIZ ENGINE" },
+    "study-intel": { scope: "EVALUATION ENGINE", title: "STUDY & TASK PLANNER" },
+    "gesture-arcade-workspace": { scope: "INTERACTIVE LABS", title: "NEURAL GESTURE LAB" },
+    "youtube-intel": { scope: "INTERACTIVE LABS", title: "YOUTUBE INTELLIGENCE" }
+  };
+  const crumbInfo = BREADCRUMB_MAP[viewKey];
   if (breadcrumbCurrent) {
-    const activeItem = document.querySelector(`.nav-item[data-view="${viewKey}"], .nav-item[data-view="academic-hub-workspace"] .nav-label`);
-    breadcrumbCurrent.textContent = activeItem ? activeItem.textContent : viewKey;
+    breadcrumbCurrent.textContent = crumbInfo ? crumbInfo.title : viewKey.toUpperCase().replace(/-/g, " ");
+  }
+  const scopeEl = document.getElementById("breadcrumbScope");
+  if (scopeEl) {
+    scopeEl.textContent = crumbInfo ? crumbInfo.scope : "ACADEMIC INTELLIGENCE";
   }
 
   // Trigger view-specific fresh data loading
@@ -5620,7 +5637,9 @@ const activeThemeName = document.getElementById("activeThemeName");
 const themeOptionCards = document.querySelectorAll(".theme-option-card");
 
 const THEME_NAMES = {
-  "rose-olive": "1. Rose & Olive",
+  "enterprise-dark": "Enterprise Obsidian",
+  "champagne-dark": "Champagne Executive",
+  "rose-olive": "Enterprise Obsidian",
   "rose-olive-light": "Rose & Olive (Light)",
   "lavender-beige": "2. Lavender & Beige",
   "lavender-beige-light": "Lavender & Beige (Light)",
@@ -5639,7 +5658,7 @@ const THEME_NAMES = {
 };
 
 function applyLiveTheme(themeId) {
-  if (!THEME_NAMES[themeId]) themeId = "rose-olive";
+  if (!THEME_NAMES[themeId]) themeId = "enterprise-dark";
   document.body.setAttribute("data-theme", themeId);
   localStorage.setItem("aura_theme", themeId);
 
@@ -5662,7 +5681,7 @@ function initThemeSwitcher() {
     window.liveThemeCanvasEngine = new LiveThemeCanvasEngine("liveThemeCanvas");
   }
 
-  const savedTheme = localStorage.getItem("aura_theme") || "rose-olive";
+  const savedTheme = localStorage.getItem("aura_theme") || "enterprise-dark";
   applyLiveTheme(savedTheme);
 
   if (themeToggleBtn && themePopoverDropdown) {
@@ -6235,9 +6254,8 @@ function updateGreeting() {
   const greetingEl = document.getElementById("heroGreeting");
   if (!greetingEl) return;
   const hour = new Date().getHours();
-  if (hour < 12) greetingEl.textContent = "Good morning, Commander.";
-  else if (hour < 17) greetingEl.textContent = "Good afternoon, Commander.";
-  else greetingEl.textContent = "Good evening, Commander.";
+  const session = hour < 12 ? "Morning Session" : (hour < 17 ? "Afternoon Session" : "Evening Session");
+  greetingEl.textContent = `Executive Workspace · ${session}`;
 }
 updateGreeting();
 
@@ -9121,3 +9139,16 @@ window.grantProfileStorePermission = function(encodedQuery) {
   playTactileSound("success");
   alert("Your personal learning method has been stored with your permission! AURA will now apply this method across all your questions and doubt solver sessions.");
 };
+
+
+// Discreet Telemetry Latency Simulator
+function topbarLatencyTicker() {
+  setInterval(() => {
+    const topbarLatency = document.getElementById("topbarLatency");
+    const heroLatency = document.getElementById("ccHeroLatency");
+    const ms = 21 + Math.floor(Math.random() * 6);
+    if (topbarLatency) topbarLatency.textContent = `${ms}ms`;
+    if (heroLatency) heroLatency.textContent = `${ms}ms`;
+  }, 3500);
+}
+topbarLatencyTicker();
