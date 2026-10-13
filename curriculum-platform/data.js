@@ -1,0 +1,6140 @@
+window.__CURRICULUM_DATA__ = {
+  "platform": "Tamil Nadu Higher Education Curriculum Intelligence Platform",
+  "version": "3.2.0-TN-R2021",
+  "lastUpdated": "2026-10-13",
+  "state": "Tamil Nadu",
+  "primaryRegulation": "Anna University Regulation 2021",
+  "streams": [
+    {
+      "id": "engineering-tech",
+      "name": "Engineering & Technology",
+      "tamilName": "பொறியியல் மற்றும் தொழில்நுட்பம்",
+      "governingBody": "Anna University / Directorate of Technical Education (DOTE)",
+      "description": "Undergraduate and postgraduate technology degrees accredited by AICTE and affiliated with Anna University and autonomous engineering colleges across Tamil Nadu.",
+      "icon": "Cpu",
+      "accentColor": "#3b82f6",
+      "departments": [
+        {
+          "id": "cse",
+          "code": "CSE",
+          "name": "B.E. Computer Science and Engineering",
+          "shortName": "CSE",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Comprehensive curriculum spanning computational theory, software systems, systems architecture, AI, cloud systems, and networks.",
+          "totalDegreeCredits": 163,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": true,
+          "semesters": [
+            {
+              "semesterNumber": 1,
+              "title": "Semester 1",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3151",
+                  "title": "Professional English - I",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Sharing Information Related to Oneself/Family & Friends",
+                    "Unit II: General Reading and Listening Comprehension",
+                    "Unit III: Grammar and Vocabulary in Context",
+                    "Unit IV: Writing Paragraphs and Short Notes",
+                    "Unit V: Extended Writing and Letter Communication"
+                  ]
+                },
+                {
+                  "code": "MA3151",
+                  "title": "Matrices and Calculus",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Matrices - Eigenvalues and Eigenvectors, Cayley-Hamilton Theorem",
+                    "Unit II: Differential Calculus - Limits, Continuity, Partial Derivatives",
+                    "Unit III: Functions of Several Variables - Maxima and Minima, Jacobians",
+                    "Unit IV: Integral Calculus - Definite and Indefinite Integrals, Integration by Parts",
+                    "Unit V: Multiple Integrals - Double and Triple Integrals, Area and Volume"
+                  ]
+                },
+                {
+                  "code": "PH3151",
+                  "title": "Engineering Physics",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mechanics - Rigid Body Dynamics, Torsional Pendulum",
+                    "Unit II: Electromagnetic Waves - Maxwell's Equations, Propagation",
+                    "Unit III: Oscillations, Optics and Lasers - Einstein Coefficients, Semiconductor Lasers",
+                    "Unit IV: Basic Quantum Mechanics - Wave Particle Duality, Schrödinger Equation",
+                    "Unit V: Applied Applied Solid State Physics - Crystal Lattices, Free Electron Theory"
+                  ]
+                },
+                {
+                  "code": "CY3151",
+                  "title": "Engineering Chemistry",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Water and its Treatment - Hardness, Demineralization, Reverse Osmosis",
+                    "Unit II: Nano Chemistry - Nanomaterials Synthesis, Carbon Nanotubes",
+                    "Unit III: Phase Rule and Composites - One and Two Component Systems, FRP",
+                    "Unit IV: Fuels and Combustion - Calorific Value, Proximate and Ultimate Analysis",
+                    "Unit V: Energy Sources and Storage Devices - Lithium-ion Batteries, Supercapacitors"
+                  ]
+                },
+                {
+                  "code": "GE3151",
+                  "title": "Problem Solving and Python Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computational Thinking & Problem Solving - Algorithms, Flowcharts, Pseudocode",
+                    "Unit II: Data Types, Expressions, Statements - Python Variables, Operators, Precedence",
+                    "Unit III: Control Flow & Functions - Conditionals, Loops, Fruitful Functions",
+                    "Unit IV: Lists, Tuples, Dictionaries - Compound Data, Slicing, Mutability",
+                    "Unit V: Files, Modules, Packages - File I/O, Exceptions, Standard Library"
+                  ]
+                },
+                {
+                  "code": "GE3152",
+                  "title": "Heritage of Tamils / தமிழர் மரபு",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Language and Literature - Sangam Literature, Tolkappiyam",
+                    "Unit II: Heritage - Rock Art, Sculptures, Inscriptions",
+                    "Unit III: Folk and Martial Arts - Therukoothu, Karagattam, Silambam",
+                    "Unit IV: Flora and Fauna - Thinai Concept, Keeladi Excavations",
+                    "Unit V: Cultural Contribution of Tamils - Global Influence & Maritime Trade"
+                  ]
+                },
+                {
+                  "code": "GE3171",
+                  "title": "Problem Solving and Python Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: GCD and Square Root Computation Algorithms",
+                    "Exercise 2: Linear and Binary Search Implementation",
+                    "Exercise 3: Selection and Insertion Sort on Python Lists",
+                    "Exercise 4: Word Frequency Counter and Dictionary Operations",
+                    "Exercise 5: Matrix Multiplication and File Copy Operations"
+                  ]
+                },
+                {
+                  "code": "BS3171",
+                  "title": "Physics and Chemistry Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Physics: Determination of Laser Wavelength and Particle Size",
+                    "Physics: Young's Modulus by Non-Uniform Bending",
+                    "Chemistry: Estimation of Total Hardness of Water by EDTA",
+                    "Chemistry: Conductometric Titration of Strong Acid vs Strong Base",
+                    "Chemistry: Determination of Dissolved Oxygen in Industrial Water"
+                  ]
+                },
+                {
+                  "code": "GE3172",
+                  "title": "English Laboratory",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: Phonetics and Pronunciation Drills",
+                    "Exercise 2: Listening Comprehension from Technical Talks",
+                    "Exercise 3: Self-Introduction and Mock Telephonic Interviews"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 2,
+              "title": "Semester 2",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3251",
+                  "title": "Professional English - II",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Technical Writing & Reporting - Drafting Minutes & Agendas",
+                    "Unit II: Technical Proposals and Feasibility Studies",
+                    "Unit III: Professional Correspondence & Email Etiquette",
+                    "Unit IV: Presentations and Group Dynamics",
+                    "Unit V: Career Skills & Resume Writing"
+                  ]
+                },
+                {
+                  "code": "MA3251",
+                  "title": "Statistics and Numerical Methods",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Testing of Hypothesis - Large Samples, Z-Test, t-Test, Chi-Square",
+                    "Unit II: Design of Experiments - One-Way and Two-Way ANOVA, CRD, RBD",
+                    "Unit III: Solution of Equations & Eigenvalue Problems - Newton-Raphson, Gauss Elimination",
+                    "Unit IV: Interpolation and Approximation - Newton Forward/Backward, Lagrange",
+                    "Unit V: Numerical Differentiation and Integration - Trapezoidal, Simpson's Rules, Runge-Kutta"
+                  ]
+                },
+                {
+                  "code": "PH3256",
+                  "title": "Physics for Information Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Electrical Properties of Materials - Classical and Quantum Free Electron",
+                    "Unit II: Semiconductor Physics - Intrinsic and Extrinsic, Hall Effect",
+                    "Unit III: Magnetic Properties - Ferromagnetism, Magnetic Storage Devices",
+                    "Unit IV: Optical Properties - Luminescence, LEDs, Photodetectors",
+                    "Unit V: Nanoelectronic Devices - Quantum Wells, Single Electron Transistors"
+                  ]
+                },
+                {
+                  "code": "BE3251",
+                  "title": "Basic Electrical and Electronics Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: DC and AC Circuits - Ohm's Law, Kirchhoff's Laws, Mesh Analysis",
+                    "Unit II: AC Circuits Analysis - Single Phase and Three Phase Concepts",
+                    "Unit III: Electrical Machines - DC Motors, Transformers, Three Phase Induction Motors",
+                    "Unit IV: Electronic Devices - PN Junction Diode, BJT, MOSFET, Op-Amp",
+                    "Unit V: Digital Electronics - Logic Gates, Boolean Algebra, Counters"
+                  ]
+                },
+                {
+                  "code": "GE3251",
+                  "title": "Engineering Graphics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Plane Curves and Freehand Sketching - Conics, Involutes, Projections",
+                    "Unit II: Projection of Points, Lines and Plane Surfaces",
+                    "Unit III: Projection of Solids - Prisms, Pyramids, Cylinders and Cones",
+                    "Unit IV: Section of Solids and Development of Surfaces",
+                    "Unit V: Isometric and Perspective Projections, CAD Modeling"
+                  ]
+                },
+                {
+                  "code": "CS3251",
+                  "title": "Programming in C",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Basics of C Programming - Variables, Constants, Preprocessor Directives",
+                    "Unit II: Arrays and Strings - Multi-dimensional Arrays, String Handling",
+                    "Unit III: Functions and Pointers - Parameter Passing, Pointers Arithmetic",
+                    "Unit IV: Structures and Unions - Bit Fields, Nested Structures",
+                    "Unit V: File Processing and Dynamic Memory - malloc, free, Command Line Args"
+                  ]
+                },
+                {
+                  "code": "GE3252",
+                  "title": "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Weaving and Ceramic Technology - Ancient Handlooms and Terracotta",
+                    "Unit II: Design and Construction - Kallanai Dam, Brihadeeswarar Temple Architecture",
+                    "Unit III: Manufacturing Technology - Metallurgy, Wootz Steel, Bronze Casting",
+                    "Unit IV: Agriculture and Irrigation - Eri Water Harvesting Systems",
+                    "Unit V: Scientific Tamil and Tamil Computing - Unicode, NLP in Tamil"
+                  ]
+                },
+                {
+                  "code": "GE3271",
+                  "title": "Engineering Practices Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Civil & Mechanical: Carpentry, Plumbing, Sheet Metal Works, Arc Welding",
+                    "Electrical & Electronics: Residential Wiring, Energy Meter, Soldering, Logic Verification"
+                  ]
+                },
+                {
+                  "code": "CS3271",
+                  "title": "Programming in C Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Program 1: Real-world problems using conditional logic and looping constructs",
+                    "Program 2: Matrix arithmetic and string manipulation algorithms",
+                    "Program 3: Modular functions with recursive calls and pointer arithmetic",
+                    "Program 4: Student records and payroll management with structures and file I/O",
+                    "Program 5: Dynamic allocation of memory for dynamic arrays"
+                  ]
+                },
+                {
+                  "code": "GE3272",
+                  "title": "Communication Laboratory / Foreign Language",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Activity 1: Resume preparation and corporate cover letter writing",
+                    "Activity 2: Group discussions and technical debate sessions",
+                    "Activity 3: Professional presentation skills with audiovisual aids"
+                  ]
+                }
+              ],
+              "totalCredits": 26
+            },
+            {
+              "semesterNumber": 3,
+              "title": "Semester 3",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "MA3354",
+                  "title": "Discrete Mathematics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mathematical Logic - Propositions, Predicates and Quantifiers",
+                    "Unit II: Combinatorics - Mathematical Induction, Pigeonhole Principle, Recurrence",
+                    "Unit III: Graphs - Graph Models, Isomorphism, Eulerian and Hamiltonian Graphs",
+                    "Unit IV: Algebraic Structures - Groups, Subgroups, Homomorphism, Rings",
+                    "Unit V: Lattices and Boolean Algebra - Posets, Boolean Functions, Karnaugh Maps"
+                  ]
+                },
+                {
+                  "code": "CS3351",
+                  "title": "Digital Principles and Computer Organization",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Combinational Circuits - Logic Gates, K-Maps, Adders, Multiplexers",
+                    "Unit II: Synchronous Sequential Circuits - Flip-Flops, Registers, Counters",
+                    "Unit III: Computer Fundamentals - Instructions, Addressing Modes, RISC vs CISC",
+                    "Unit IV: Processor Design - Datapath, Control Unit, Pipelining, Hazards",
+                    "Unit V: Memory and I/O Systems - Cache Memory, Virtual Memory, DMA"
+                  ]
+                },
+                {
+                  "code": "CS3352",
+                  "title": "Foundations of Data Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Introduction to Data Science & Python for Data Analysis",
+                    "Unit II: Exploratory Data Analysis - Statistical Summaries, Outlier Detection",
+                    "Unit III: Data Wrangling - Cleaning, Transforming, Merging Data",
+                    "Unit IV: Statistical Inference & Hypothesis Testing in Data Science",
+                    "Unit V: Predictive Modeling Overview & Ethics in Data Science"
+                  ]
+                },
+                {
+                  "code": "CS3301",
+                  "title": "Data Structures",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Linear Data Structures - Singly, Doubly and Circular Linked Lists",
+                    "Unit II: Stacks and Queues - Array & List implementations, Applications",
+                    "Unit III: Tree Structures - Binary Trees, BST, AVL Trees, B-Trees",
+                    "Unit IV: Priority Queues and Sets - Binary Heaps, Disjoint Set Union",
+                    "Unit V: Graphs - Traversals (BFS, DFS), Shortest Paths (Dijkstra), MST"
+                  ]
+                },
+                {
+                  "code": "CS3391",
+                  "title": "Object Oriented Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Object Oriented Concepts & Java Fundamentals",
+                    "Unit II: Inheritance, Interfaces and Abstract Classes",
+                    "Unit III: Exception Handling and Multithreaded Programming",
+                    "Unit IV: Java Collections Framework and Generic Programming",
+                    "Unit V: Event Driven GUI Programming using JavaFX / Swing"
+                  ]
+                },
+                {
+                  "code": "CS3311",
+                  "title": "Data Structures Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Linked list operations and polynomial arithmetic",
+                    "Lab 2: Stack applications (Infix to Postfix conversion and Evaluation)",
+                    "Lab 3: Binary Search Tree operations with tree balancing",
+                    "Lab 4: Dijkstra's shortest path and Prim's minimum spanning tree",
+                    "Lab 5: Hashing with linear probing and quadratic probing"
+                  ]
+                },
+                {
+                  "code": "CS3381",
+                  "title": "Object Oriented Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Class, Objects, Constructors and Method Overloading",
+                    "Lab 2: Abstract Classes, Dynamic Binding, and Interfaces",
+                    "Lab 3: Custom Exception Handling and File Reading/Writing",
+                    "Lab 4: Producer-Consumer synchronization with threads",
+                    "Lab 5: Real-world desktop application using Java Collections & UI"
+                  ]
+                },
+                {
+                  "code": "CS3361",
+                  "title": "Data Science Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: NumPy array manipulation and Pandas DataFrames processing",
+                    "Lab 2: Data cleaning and imputation of missing observations",
+                    "Lab 3: Univariate and Bivariate visualization using Matplotlib and Seaborn",
+                    "Lab 4: Hypothesis testing and correlation analysis",
+                    "Lab 5: End-to-end regression analysis on a public Tamil Nadu health dataset"
+                  ]
+                },
+                {
+                  "code": "GE3361",
+                  "title": "Professional Development",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Activity 1: Mock technical interviews and elevator pitches",
+                    "Activity 2: Aptitude and logical problem solving rounds"
+                  ]
+                }
+              ],
+              "totalCredits": 23
+            },
+            {
+              "semesterNumber": 4,
+              "title": "Semester 4",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "CS3452",
+                  "title": "Theory of Computation",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Automata Fundamentals - DFA, NFA, Regular Expressions, Pumping Lemma",
+                    "Unit II: Context Free Grammars & Languages - Parse Trees, Ambiguity, CNF, GNF",
+                    "Unit III: Pushdown Automata - Deterministic and Non-Deterministic PDA",
+                    "Unit IV: Turing Machines - Multi-tape TM, Halting Problem, Church-Turing Thesis",
+                    "Unit V: Undecidability and NP-Completeness - Rice Theorem, Cook-Levin Theorem"
+                  ]
+                },
+                {
+                  "code": "CS3491",
+                  "title": "Artificial Intelligence and Machine Learning",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Problem Solving by Search - State Spaces, A* Search, Minimax",
+                    "Unit II: Knowledge Representation & Logic - First-Order Logic, Ontologies",
+                    "Unit III: Supervised Machine Learning - Linear/Logistic Regression, SVM, Decision Trees",
+                    "Unit IV: Unsupervised Learning & Ensembles - K-Means, Random Forests, Boosting",
+                    "Unit V: Neural Networks & Reinforcement Learning - Perceptrons, Backpropagation, Q-learning"
+                  ]
+                },
+                {
+                  "code": "CS3492",
+                  "title": "Database Management Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Relational Model & SQL - ER Modeling, Relational Algebra, Complex Queries",
+                    "Unit II: Database Design & Normalization - Functional Dependencies, 1NF, 2NF, 3NF, BCNF",
+                    "Unit III: Transactions & Concurrency - ACID Properties, 2PL, Timestamp Ordering",
+                    "Unit IV: Storage & Query Optimization - B+ Trees, Hashing, Cost Estimation",
+                    "Unit V: Modern Databases - NoSQL, MongoDB, Cassandra, Distributed Transactions"
+                  ]
+                },
+                {
+                  "code": "CS3401",
+                  "title": "Algorithms",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Algorithm Analysis - Asymptotic Notations, Recurrence Relations",
+                    "Unit II: Divide & Conquer and Greedy - Merge Sort, Huffman Coding, Fractional Knapsack",
+                    "Unit III: Dynamic Programming - Matrix Chain Multiplication, 0/1 Knapsack, LCS",
+                    "Unit IV: Backtracking and Branch & Bound - N-Queens, Traveling Salesperson",
+                    "Unit V: Approximation & Randomized Algorithms - Vertex Cover, Quickselect"
+                  ]
+                },
+                {
+                  "code": "CS3451",
+                  "title": "Introduction to Operating Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: OS Principles - System Calls, Processes, Threads, Multicore Programming",
+                    "Unit II: CPU Scheduling & Synchronization - Semaphores, Monitors, Deadlocks",
+                    "Unit III: Memory Management - Paging, Segmentation, Page Replacement Algorithms",
+                    "Unit IV: Storage & File Systems - Disk Scheduling, File Allocation Methods",
+                    "Unit V: Case Studies - Linux Kernel Architecture and Windows Internals"
+                  ]
+                },
+                {
+                  "code": "GE3451",
+                  "title": "Environmental Sciences and Sustainability",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Environment, Ecosystems & Biodiversity Conservation in Western Ghats",
+                    "Unit II: Environmental Pollution - Air, Water, Noise and E-Waste Management",
+                    "Unit III: Natural Resources - Renewable Energy, Water Conservation Strategies",
+                    "Unit IV: Climate Change & Sustainable Development Goals (SDGs)",
+                    "Unit V: Environmental Acts & Field Environmental Study"
+                  ]
+                },
+                {
+                  "code": "CS3461",
+                  "title": "Operating Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: POSIX System Calls for Process Management (fork, exec, wait)",
+                    "Lab 2: CPU Scheduling Algorithms (FCFS, SJF, Round Robin)",
+                    "Lab 3: Producer-Consumer synchronization using POSIX Semaphores and Mutexes",
+                    "Lab 4: Banker's algorithm for Deadlock Avoidance",
+                    "Lab 5: Page replacement algorithms (FIFO, LRU, Optimal)"
+                  ]
+                },
+                {
+                  "code": "CS3481",
+                  "title": "Database Management Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: DDL, DML and DCL commands with complex integrity constraints",
+                    "Lab 2: Nested Subqueries, Joins, Group By and Aggregate Functions",
+                    "Lab 3: PL/SQL Stored Procedures, Functions, Cursors and Database Triggers",
+                    "Lab 4: Application development with JDBC connection pool",
+                    "Lab 5: Document store operations in MongoDB with aggregation pipelines"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 5,
+              "title": "Semester 5",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CS3591",
+                  "title": "Computer Networks",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Network Architecture - OSI & TCP/IP, Physical Layer, Packet Switching",
+                    "Unit II: Data Link Layer - Framing, Error Control, CSMA/CD, Ethernet, IEEE 802.11",
+                    "Unit III: Network Layer - IPv4, IPv6, Subnetting, Routing Protocols (OSPF, BGP)",
+                    "Unit IV: Transport Layer - TCP, UDP, Flow Control, Congestion Control",
+                    "Unit V: Application Layer - DNS, HTTP/3, SMTP, Socket Programming"
+                  ]
+                },
+                {
+                  "code": "CS3501",
+                  "title": "Compiler Design",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Lexical Analysis - Regular Expressions, Lex/Flex, Transition Diagrams",
+                    "Unit II: Syntax Analysis - Top-Down (LL(1)), Bottom-Up Parsing (LR, LALR), Yacc",
+                    "Unit III: Semantic Analysis & Intermediate Code - Syntax Directed Translation, 3-Address Code",
+                    "Unit IV: Code Optimization - Basic Blocks, Flow Graphs, Loop Invariant Code Motion",
+                    "Unit V: Code Generation - Target Machine Architecture, Register Allocation"
+                  ]
+                },
+                {
+                  "code": "CB3491",
+                  "title": "Cryptography and Cyber Security",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Symmetric Encryption - Classical Ciphers, DES, AES, Block Cipher Modes",
+                    "Unit II: Asymmetric Cryptography - Number Theory, RSA, Diffie-Hellman, ECC",
+                    "Unit III: Cryptographic Hash & Digital Signatures - SHA-256, HMAC, DSS",
+                    "Unit IV: Network Security Protocols - TLS 1.3, IPSec, Kerberos, VPN Architecture",
+                    "Unit V: Cyber Threats, Firewalls, IDS/IPS & Zero Trust Architecture"
+                  ]
+                },
+                {
+                  "code": "CS3551",
+                  "title": "Distributed Computing",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Distributed Systems Architecture - Remote Procedure Calls (RPC), RMI",
+                    "Unit II: Synchronization & Clocks - Lamport Timestamps, Vector Clocks, Chandy-Lamport",
+                    "Unit III: Consensus & Fault Tolerance - Paxos, Raft, Byzantine Agreement",
+                    "Unit IV: Distributed File Systems - HDFS, Ceph, Consistent Hashing",
+                    "Unit V: Microservices, Containers, and Kubernetes Orchestration"
+                  ]
+                },
+                {
+                  "code": "PEC501",
+                  "title": "Professional Elective I: Full Stack Web Development",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Modern JavaScript (ES6+), TypeScript & Node.js Runtime",
+                    "Unit II: Frontend Frameworks - React, State Management (Redux/Zustand)",
+                    "Unit III: Backend API Design - REST, GraphQL, Fastify/Express",
+                    "Unit IV: Database Integration - Prisma ORM, PostgreSQL, Redis Caching",
+                    "Unit V: CI/CD, Docker Containerization & Cloud Deployment"
+                  ]
+                },
+                {
+                  "code": "PEC502",
+                  "title": "Professional Elective II: Advanced Java Programming",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Java Stream API, Functional Interfaces and Lambdas",
+                    "Unit II: Spring Boot Framework - Dependency Injection, REST APIs",
+                    "Unit III: Spring Data JPA and Hibernate ORM Mapping",
+                    "Unit IV: Security with Spring Security & JWT Token Authentication",
+                    "Unit V: Microservices with Spring Cloud and Eureka"
+                  ]
+                },
+                {
+                  "code": "CS3561",
+                  "title": "Compiler Design Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Lexical analyzer implementation using Lex / Flex tool",
+                    "Lab 2: Top-down predictive parser construction for grammar evaluation",
+                    "Lab 3: Bottom-up parser using Yacc / Bison for arithmetic expressions",
+                    "Lab 4: Intermediate 3-address code generation",
+                    "Lab 5: Code optimization pass using dead code elimination and constant folding"
+                  ]
+                },
+                {
+                  "code": "CS3571",
+                  "title": "Security Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Implementation of AES and RSA cryptographic algorithms",
+                    "Lab 2: Digital signatures and hash verification with OpenSSL",
+                    "Lab 3: Network packet sniffing and payload inspection with Wireshark",
+                    "Lab 4: Vulnerability scanning with Nmap and OpenVAS",
+                    "Lab 5: SQL injection and XSS penetration testing in web testbeds"
+                  ]
+                },
+                {
+                  "code": "MX3081",
+                  "title": "Mandatory Course I: Constitution of India",
+                  "category": "Theory",
+                  "credits": 0,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Historical Background & Philosophy of Indian Constitution",
+                    "Unit II: Fundamental Rights, Fundamental Duties & Directive Principles",
+                    "Unit III: Organs of Governance - Parliament, President, Prime Minister",
+                    "Unit IV: Judiciary System - Supreme Court, High Courts, Judicial Review",
+                    "Unit V: Federal Structure, Emergency Provisions, Local Self Government"
+                  ]
+                }
+              ],
+              "totalCredits": 23
+            },
+            {
+              "semesterNumber": 6,
+              "title": "Semester 6",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CCS335",
+                  "title": "Cloud Computing",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Cloud Infrastructure - Virtualization, Hypervisors, Cloud Models (IaaS, PaaS, SaaS)",
+                    "Unit II: Cloud Architecture - AWS, Azure, Google Cloud Platform Core Services",
+                    "Unit III: Cloud Storage & Big Data - S3, DynamoDB, Elastic MapReduce",
+                    "Unit IV: Cloud Security, Identity Management (IAM), Compliance",
+                    "Unit V: Serverless Computing - AWS Lambda, Edge Computing, Cloud Economics"
+                  ]
+                },
+                {
+                  "code": "CS3691",
+                  "title": "Embedded Systems and IoT",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Embedded Systems Architecture - ARM Cortex, Microcontrollers, Peripherals",
+                    "Unit II: Real Time Operating Systems (RTOS) - Tasks, Scheduling, Inter-process Comms",
+                    "Unit III: IoT Architecture & Sensors - MQTT, CoAP, ZigBee, LoRaWAN",
+                    "Unit IV: Edge Computing - Raspberry Pi, ESP32, Interfacing Sensors and Actuators",
+                    "Unit V: IoT Cloud Integration, Smart Agriculture & Industrial IoT Case Studies"
+                  ]
+                },
+                {
+                  "code": "PEC601",
+                  "title": "Professional Elective III: Big Data Analytics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Big Data Ecosystem - Hadoop Architecture, HDFS, MapReduce",
+                    "Unit II: Apache Spark - RDDs, DataFrames, Spark SQL, In-Memory Processing",
+                    "Unit III: NoSQL Databases for Big Data - Cassandra, HBase, Neo4j",
+                    "Unit IV: Stream Processing - Apache Kafka, Spark Streaming, Flink",
+                    "Unit V: Big Data Analytics in Practice & Distributed ML with MLlib"
+                  ]
+                },
+                {
+                  "code": "PEC602",
+                  "title": "Professional Elective IV: Software Testing & Automation",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Testing Principles - Black Box, White Box, Boundary Value Testing",
+                    "Unit II: Test Levels - Unit, Integration, System, Acceptance, Regression Testing",
+                    "Unit III: Test Automation Frameworks - Selenium WebDriver, Cypress, Playwright",
+                    "Unit IV: Performance and API Testing - JMeter, Postman, LoadRunner",
+                    "Unit V: DevSecOps Test Integration, SonarQube Code Quality"
+                  ]
+                },
+                {
+                  "code": "PEC603",
+                  "title": "Professional Elective V: Blockchain Technologies",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Blockchain Fundamentals - Cryptographic Hashes, Merkle Trees, P2P Networks",
+                    "Unit II: Consensus Algorithms - Proof of Work, Proof of Stake, PBFT",
+                    "Unit III: Ethereum & Smart Contracts - Solidity Programming, EVM, Gas Model",
+                    "Unit IV: Enterprise Blockchains - Hyperledger Fabric, Permissioned Ledgers",
+                    "Unit V: Decentralized Applications (DApps), DeFi and Web3 Infrastructure"
+                  ]
+                },
+                {
+                  "code": "OEC601",
+                  "title": "Open Elective I: Robotics & Automation",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Fundamentals of Robot Kinematics and Coordinate Frames",
+                    "Unit II: Robot Sensors, Vision Systems and LIDAR",
+                    "Unit III: Actuators and Grippers in Industrial Robotics",
+                    "Unit IV: Robot Operating System (ROS) and Motion Planning",
+                    "Unit V: Autonomous Mobile Robots and Cobots in Industry 4.0"
+                  ]
+                },
+                {
+                  "code": "CS3681",
+                  "title": "Cloud Computing and IoT Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Virtual machine provisioning on OpenStack / AWS EC2",
+                    "Lab 2: Microservice deployment with Docker and Kubernetes cluster",
+                    "Lab 3: Interfacing temperature, humidity, and ultrasonic sensors to ESP32",
+                    "Lab 4: Publishing IoT sensor telemetry to AWS IoT Core via MQTT",
+                    "Lab 5: Serverless notification pipeline using AWS Lambda and S3 triggers"
+                  ]
+                },
+                {
+                  "code": "CS3611",
+                  "title": "Mobile Application Development Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Native Android app using Kotlin / Flutter layout widgets",
+                    "Lab 2: Activity lifecycle, Intents, and Fragment transitions",
+                    "Lab 3: SQLite database and Room persistence library",
+                    "Lab 4: REST API consumption with Retrofit and JSON parsing",
+                    "Lab 5: Location based service and Google Maps integration"
+                  ]
+                },
+                {
+                  "code": "MX3082",
+                  "title": "Mandatory Course II: Disaster Management",
+                  "category": "Theory",
+                  "credits": 0,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Natural and Man-Made Hazards, Vulnerability Assessment",
+                    "Unit II: Disaster Preparedness and Early Warning Systems",
+                    "Unit III: Post Disaster Recovery, Relief, Rehabilitation Strategies",
+                    "Unit IV: Role of Technology and GIS in Disaster Mitigation",
+                    "Unit V: Case Studies of Tamil Nadu Cyclone and Flood Management"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 7,
+              "title": "Semester 7",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "GE3791",
+                  "title": "Human Values and Ethics",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Human Values - Morals, Values and Ethics, Integrity, Work Ethic",
+                    "Unit II: Engineering Ethics - Senses of Engineering Ethics, Moral Dilemmas",
+                    "Unit III: Engineering as Social Experimentation - Codes of Ethics, Industrial Safety",
+                    "Unit IV: Responsibilities and Rights - Collegiality, Whistleblowing, IPR",
+                    "Unit V: Global Issues - Multinational Corporations, Environmental Ethics, Cyber Ethics"
+                  ]
+                },
+                {
+                  "code": "PEC701",
+                  "title": "Professional Elective VI: Deep Learning Architectures",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Deep Feedforward Networks - Loss Functions, Optimization (Adam, RMSProp)",
+                    "Unit II: Convolutional Neural Networks (CNN) - ResNet, EfficientNet, Transfer Learning",
+                    "Unit III: Sequence Modeling - RNN, LSTM, GRU, Attention Mechanisms",
+                    "Unit IV: Transformer Architecture - Self-Attention, BERT, GPT, Vision Transformers",
+                    "Unit V: Generative Models - VAEs, GANs, Diffusion Models and Latent Spaces"
+                  ]
+                },
+                {
+                  "code": "OEC701",
+                  "title": "Open Elective II: Smart City Technologies",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Smart City Architecture, Urban Big Data & Sensor Networks",
+                    "Unit II: Intelligent Transportation Systems and Smart Traffic Management",
+                    "Unit III: Smart Energy Grids and Renewable Resource Integration",
+                    "Unit IV: Smart Water Management, Sanitation and E-Governance Portals",
+                    "Unit V: Security, Privacy, and Cyber Resilience in Smart Municipalities"
+                  ]
+                },
+                {
+                  "code": "OEC702",
+                  "title": "Open Elective III: Renewable Energy Systems",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Global Energy Scenario & Principles of Solar PV Technology",
+                    "Unit II: Wind Energy Conversion Systems - Aerodynamics and Generators",
+                    "Unit III: Biomass, Geothermal and Ocean Wave Energy",
+                    "Unit IV: Battery Energy Storage Systems and Hybrid Microgrids",
+                    "Unit V: Grid Integration Policies and Tamil Nadu Renewable Regulations"
+                  ]
+                },
+                {
+                  "code": "CS3711",
+                  "title": "Summer Internship / Industry Training",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "4 to 6 weeks of industry placement at accredited technology firm",
+                    "Hands-on production codebase engagement and engineering sprint cycles",
+                    "Technical report submission and viva-voce evaluation by faculty committee"
+                  ]
+                },
+                {
+                  "code": "CS3712",
+                  "title": "Project Work I / Phase I",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Phase 1: Problem identification, literature review, and societal relevance",
+                    "Phase 2: System design, architecture definition, and technology stack selection",
+                    "Phase 3: Prototype proof of concept and design presentation"
+                  ]
+                }
+              ],
+              "totalCredits": 15
+            },
+            {
+              "semesterNumber": 8,
+              "title": "Semester 8",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "CS3811",
+                  "title": "Project Work II / Phase II",
+                  "category": "Project",
+                  "credits": 10,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 20
+                  },
+                  "syllabusOutline": [
+                    "Full system implementation of capstone engineering solution",
+                    "Rigorous unit, integration, validation and performance benchmarking",
+                    "Research paper preparation for peer-reviewed indexed conference / journal",
+                    "Patent filing / Open source artifact release and final defense viva-voce"
+                  ]
+                }
+              ],
+              "totalCredits": 10
+            }
+          ]
+        },
+        {
+          "id": "it",
+          "code": "IT",
+          "name": "B.Tech. Information Technology",
+          "shortName": "IT",
+          "degreeType": "B.Tech.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Focuses on modern web architectures, enterprise application development, cloud networking, cyber security, and DevOps infrastructures.",
+          "totalDegreeCredits": 160.5,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": true,
+          "semesters": [
+            {
+              "semesterNumber": 1,
+              "title": "Semester 1",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3151",
+                  "title": "Professional English - I",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Sharing Information Related to Oneself/Family & Friends",
+                    "Unit II: General Reading and Listening Comprehension",
+                    "Unit III: Grammar and Vocabulary in Context",
+                    "Unit IV: Writing Paragraphs and Short Notes",
+                    "Unit V: Extended Writing and Letter Communication"
+                  ]
+                },
+                {
+                  "code": "MA3151",
+                  "title": "Matrices and Calculus",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Matrices - Eigenvalues and Eigenvectors, Cayley-Hamilton Theorem",
+                    "Unit II: Differential Calculus - Limits, Continuity, Partial Derivatives",
+                    "Unit III: Functions of Several Variables - Maxima and Minima, Jacobians",
+                    "Unit IV: Integral Calculus - Definite and Indefinite Integrals, Integration by Parts",
+                    "Unit V: Multiple Integrals - Double and Triple Integrals, Area and Volume"
+                  ]
+                },
+                {
+                  "code": "PH3151",
+                  "title": "Engineering Physics",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mechanics - Rigid Body Dynamics, Torsional Pendulum",
+                    "Unit II: Electromagnetic Waves - Maxwell's Equations, Propagation",
+                    "Unit III: Oscillations, Optics and Lasers - Einstein Coefficients, Semiconductor Lasers",
+                    "Unit IV: Basic Quantum Mechanics - Wave Particle Duality, Schrödinger Equation",
+                    "Unit V: Applied Applied Solid State Physics - Crystal Lattices, Free Electron Theory"
+                  ]
+                },
+                {
+                  "code": "CY3151",
+                  "title": "Engineering Chemistry",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Water and its Treatment - Hardness, Demineralization, Reverse Osmosis",
+                    "Unit II: Nano Chemistry - Nanomaterials Synthesis, Carbon Nanotubes",
+                    "Unit III: Phase Rule and Composites - One and Two Component Systems, FRP",
+                    "Unit IV: Fuels and Combustion - Calorific Value, Proximate and Ultimate Analysis",
+                    "Unit V: Energy Sources and Storage Devices - Lithium-ion Batteries, Supercapacitors"
+                  ]
+                },
+                {
+                  "code": "GE3151",
+                  "title": "Problem Solving and Python Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computational Thinking & Problem Solving - Algorithms, Flowcharts, Pseudocode",
+                    "Unit II: Data Types, Expressions, Statements - Python Variables, Operators, Precedence",
+                    "Unit III: Control Flow & Functions - Conditionals, Loops, Fruitful Functions",
+                    "Unit IV: Lists, Tuples, Dictionaries - Compound Data, Slicing, Mutability",
+                    "Unit V: Files, Modules, Packages - File I/O, Exceptions, Standard Library"
+                  ]
+                },
+                {
+                  "code": "GE3152",
+                  "title": "Heritage of Tamils / தமிழர் மரபு",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Language and Literature - Sangam Literature, Tolkappiyam",
+                    "Unit II: Heritage - Rock Art, Sculptures, Inscriptions",
+                    "Unit III: Folk and Martial Arts - Therukoothu, Karagattam, Silambam",
+                    "Unit IV: Flora and Fauna - Thinai Concept, Keeladi Excavations",
+                    "Unit V: Cultural Contribution of Tamils - Global Influence & Maritime Trade"
+                  ]
+                },
+                {
+                  "code": "GE3171",
+                  "title": "Problem Solving and Python Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: GCD and Square Root Computation Algorithms",
+                    "Exercise 2: Linear and Binary Search Implementation",
+                    "Exercise 3: Selection and Insertion Sort on Python Lists",
+                    "Exercise 4: Word Frequency Counter and Dictionary Operations",
+                    "Exercise 5: Matrix Multiplication and File Copy Operations"
+                  ]
+                },
+                {
+                  "code": "BS3171",
+                  "title": "Physics and Chemistry Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Physics: Determination of Laser Wavelength and Particle Size",
+                    "Physics: Young's Modulus by Non-Uniform Bending",
+                    "Chemistry: Estimation of Total Hardness of Water by EDTA",
+                    "Chemistry: Conductometric Titration of Strong Acid vs Strong Base",
+                    "Chemistry: Determination of Dissolved Oxygen in Industrial Water"
+                  ]
+                },
+                {
+                  "code": "GE3172",
+                  "title": "English Laboratory",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: Phonetics and Pronunciation Drills",
+                    "Exercise 2: Listening Comprehension from Technical Talks",
+                    "Exercise 3: Self-Introduction and Mock Telephonic Interviews"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 2,
+              "title": "Semester 2",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3251",
+                  "title": "Professional English - II",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Technical Writing & Reporting - Drafting Minutes & Agendas",
+                    "Unit II: Technical Proposals and Feasibility Studies",
+                    "Unit III: Professional Correspondence & Email Etiquette",
+                    "Unit IV: Presentations and Group Dynamics",
+                    "Unit V: Career Skills & Resume Writing"
+                  ]
+                },
+                {
+                  "code": "MA3251",
+                  "title": "Statistics and Numerical Methods",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Testing of Hypothesis - Large Samples, Z-Test, t-Test, Chi-Square",
+                    "Unit II: Design of Experiments - One-Way and Two-Way ANOVA, CRD, RBD",
+                    "Unit III: Solution of Equations & Eigenvalue Problems - Newton-Raphson, Gauss Elimination",
+                    "Unit IV: Interpolation and Approximation - Newton Forward/Backward, Lagrange",
+                    "Unit V: Numerical Differentiation and Integration - Trapezoidal, Simpson's Rules, Runge-Kutta"
+                  ]
+                },
+                {
+                  "code": "PH3256",
+                  "title": "Physics for Information Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Electrical Properties of Materials - Classical and Quantum Free Electron",
+                    "Unit II: Semiconductor Physics - Intrinsic and Extrinsic, Hall Effect",
+                    "Unit III: Magnetic Properties - Ferromagnetism, Magnetic Storage Devices",
+                    "Unit IV: Optical Properties - Luminescence, LEDs, Photodetectors",
+                    "Unit V: Nanoelectronic Devices - Quantum Wells, Single Electron Transistors"
+                  ]
+                },
+                {
+                  "code": "BE3251",
+                  "title": "Basic Electrical and Electronics Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: DC and AC Circuits - Ohm's Law, Kirchhoff's Laws, Mesh Analysis",
+                    "Unit II: AC Circuits Analysis - Single Phase and Three Phase Concepts",
+                    "Unit III: Electrical Machines - DC Motors, Transformers, Three Phase Induction Motors",
+                    "Unit IV: Electronic Devices - PN Junction Diode, BJT, MOSFET, Op-Amp",
+                    "Unit V: Digital Electronics - Logic Gates, Boolean Algebra, Counters"
+                  ]
+                },
+                {
+                  "code": "GE3251",
+                  "title": "Engineering Graphics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Plane Curves and Freehand Sketching - Conics, Involutes, Projections",
+                    "Unit II: Projection of Points, Lines and Plane Surfaces",
+                    "Unit III: Projection of Solids - Prisms, Pyramids, Cylinders and Cones",
+                    "Unit IV: Section of Solids and Development of Surfaces",
+                    "Unit V: Isometric and Perspective Projections, CAD Modeling"
+                  ]
+                },
+                {
+                  "code": "CS3251",
+                  "title": "Programming in C",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Basics of C Programming - Variables, Constants, Preprocessor Directives",
+                    "Unit II: Arrays and Strings - Multi-dimensional Arrays, String Handling",
+                    "Unit III: Functions and Pointers - Parameter Passing, Pointers Arithmetic",
+                    "Unit IV: Structures and Unions - Bit Fields, Nested Structures",
+                    "Unit V: File Processing and Dynamic Memory - malloc, free, Command Line Args"
+                  ]
+                },
+                {
+                  "code": "GE3252",
+                  "title": "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Weaving and Ceramic Technology - Ancient Handlooms and Terracotta",
+                    "Unit II: Design and Construction - Kallanai Dam, Brihadeeswarar Temple Architecture",
+                    "Unit III: Manufacturing Technology - Metallurgy, Wootz Steel, Bronze Casting",
+                    "Unit IV: Agriculture and Irrigation - Eri Water Harvesting Systems",
+                    "Unit V: Scientific Tamil and Tamil Computing - Unicode, NLP in Tamil"
+                  ]
+                },
+                {
+                  "code": "GE3271",
+                  "title": "Engineering Practices Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Civil & Mechanical: Carpentry, Plumbing, Sheet Metal Works, Arc Welding",
+                    "Electrical & Electronics: Residential Wiring, Energy Meter, Soldering, Logic Verification"
+                  ]
+                },
+                {
+                  "code": "CS3271",
+                  "title": "Programming in C Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Program 1: Real-world problems using conditional logic and looping constructs",
+                    "Program 2: Matrix arithmetic and string manipulation algorithms",
+                    "Program 3: Modular functions with recursive calls and pointer arithmetic",
+                    "Program 4: Student records and payroll management with structures and file I/O",
+                    "Program 5: Dynamic allocation of memory for dynamic arrays"
+                  ]
+                },
+                {
+                  "code": "GE3272",
+                  "title": "Communication Laboratory / Foreign Language",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Activity 1: Resume preparation and corporate cover letter writing",
+                    "Activity 2: Group discussions and technical debate sessions",
+                    "Activity 3: Professional presentation skills with audiovisual aids"
+                  ]
+                }
+              ],
+              "totalCredits": 26
+            },
+            {
+              "semesterNumber": 3,
+              "title": "Semester 3",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "MA3354",
+                  "title": "Discrete Mathematics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mathematical Logic and Proofs",
+                    "Unit II: Combinatorics and Recurrence Relations",
+                    "Unit III: Graph Theory and Network Models",
+                    "Unit IV: Algebraic Structures and Group Codes",
+                    "Unit V: Lattices and Boolean Functions"
+                  ]
+                },
+                {
+                  "code": "CS3351",
+                  "title": "Digital Principles and Computer Organization",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Combinational and Sequential Logic",
+                    "Unit II: Instruction Set Architecture & Addressing",
+                    "Unit III: Processor Datapath and Control Design",
+                    "Unit IV: Memory Hierarchies and Caches",
+                    "Unit V: Interfacing and Peripheral Bus Systems"
+                  ]
+                },
+                {
+                  "code": "CS3352",
+                  "title": "Foundations of Data Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Data Science Lifecycle and Methodologies",
+                    "Unit II: Data Ingestion and Wrangling in Python",
+                    "Unit III: Exploratory Statistical Analysis",
+                    "Unit IV: Feature Engineering and Dimensionality Reduction",
+                    "Unit V: Ethical and Responsible AI Principles"
+                  ]
+                },
+                {
+                  "code": "CD3291",
+                  "title": "Data Structures and Algorithms",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Asymptotic Complexities & Abstract Data Types",
+                    "Unit II: Linked Lists, Stacks and Queues",
+                    "Unit III: Tree Structures - Balanced Trees, Heaps",
+                    "Unit IV: Sorting and Searching Algorithms",
+                    "Unit V: Graph Algorithms & Dynamic Programming"
+                  ]
+                },
+                {
+                  "code": "IT3301",
+                  "title": "Object Oriented Programming in Java",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: OOP Concepts, Java Syntax & Objects",
+                    "Unit II: Packages, Interfaces & Polymorphism",
+                    "Unit III: Multithreading and Concurrency in Java",
+                    "Unit IV: Generics and Java Collections Framework",
+                    "Unit V: Modern Java I/O and Streams"
+                  ]
+                },
+                {
+                  "code": "CS3361",
+                  "title": "Data Science Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Data cleansing and manipulation with Pandas",
+                    "Lab 2: Statistical visualization with Seaborn",
+                    "Lab 3: Supervised model evaluation on real tabular data"
+                  ]
+                },
+                {
+                  "code": "IT3311",
+                  "title": "Data Structures and Algorithms Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Implementation of Doubly Linked Lists",
+                    "Lab 2: Stack and Queue implementations with applications",
+                    "Lab 3: AVL Tree balancing and Graph traversals"
+                  ]
+                },
+                {
+                  "code": "IT3381",
+                  "title": "Java Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Class hierarchy and interface implementation",
+                    "Lab 2: Custom exceptions and file streaming",
+                    "Lab 3: Multi-threaded banking transaction simulator"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 4,
+              "title": "Semester 4",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "CS3451",
+                  "title": "Introduction to Operating Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: OS Overview, Processes & CPU Scheduling",
+                    "Unit II: Process Synchronization & Deadlocks",
+                    "Unit III: Memory Management & Virtual Memory",
+                    "Unit IV: Storage Management & File Systems",
+                    "Unit V: Protection and Security in Linux"
+                  ]
+                },
+                {
+                  "code": "IT3401",
+                  "title": "Web Essentials",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Web Architecture, HTML5 Semantic Tags, CSS3 Grid/Flexbox",
+                    "Unit II: Client-Side Scripting - JavaScript ES6+, DOM Manipulation",
+                    "Unit III: Asynchronous Programming - Promises, Fetch API, Async/Await",
+                    "Unit IV: Server-Side Basics - Node.js, Express REST endpoints",
+                    "Unit V: Web Security - CORS, JWT, OWASP Top 10 Protections"
+                  ]
+                },
+                {
+                  "code": "CS3491",
+                  "title": "Artificial Intelligence and Machine Learning",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Intelligent Agents & Informed Search Algorithms",
+                    "Unit II: Knowledge Representation and First Order Logic",
+                    "Unit III: Supervised Learning - Regression & Classification",
+                    "Unit IV: Unsupervised Learning - Clustering and Dimensionality",
+                    "Unit V: Neural Networks and Deep Learning Introduction"
+                  ]
+                },
+                {
+                  "code": "CS3492",
+                  "title": "Database Management Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: ER Modeling and Relational Database Schema",
+                    "Unit II: SQL DDL/DML and Relational Algebra",
+                    "Unit III: Normalization and Functional Dependencies",
+                    "Unit IV: Transaction Processing and Concurrency Control",
+                    "Unit V: Indexing and NoSQL Databases"
+                  ]
+                },
+                {
+                  "code": "GE3451",
+                  "title": "Environmental Sciences and Sustainability",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ecosystems and Biodiversity Conservation",
+                    "Unit II: Environmental Pollution & Waste Management",
+                    "Unit III: Natural Resources & Climate Change",
+                    "Unit IV: Sustainable Energy Technologies",
+                    "Unit V: Environmental Legislation and Green Practices"
+                  ]
+                },
+                {
+                  "code": "IT3411",
+                  "title": "Web Essentials Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Responsive multi-page web layout using CSS Grid and Flexbox",
+                    "Lab 2: Dynamic single page app with vanilla JavaScript and DOM events",
+                    "Lab 3: Node.js Express CRUD service with MongoDB database"
+                  ]
+                },
+                {
+                  "code": "CS3461",
+                  "title": "Operating Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Shell scripting and system call programming",
+                    "Lab 2: CPU scheduling and deadlock detection algorithms",
+                    "Lab 3: Page replacement and memory allocation algorithms"
+                  ]
+                },
+                {
+                  "code": "CS3481",
+                  "title": "Database Management Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Complex SQL queries with nested joins and subqueries",
+                    "Lab 2: PL/SQL procedures, cursors, and triggers",
+                    "Lab 3: Web-to-database integration project"
+                  ]
+                }
+              ],
+              "totalCredits": 20.5
+            },
+            {
+              "semesterNumber": 5,
+              "title": "Semester 5",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CS3591",
+                  "title": "Computer Networks",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Protocol Hierarchies and Physical Transmission Media",
+                    "Unit II: Data Link Layer Protocols and MAC Sublayer",
+                    "Unit III: Routing Algorithms, IP Addressing and Subnetting",
+                    "Unit IV: End-to-End Transport Protocols (TCP & UDP)",
+                    "Unit V: Web Protocols and Network Administration"
+                  ]
+                },
+                {
+                  "code": "IT3501",
+                  "title": "Full Stack Web Development",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Modern Component Architectures (React / Vue)",
+                    "Unit II: State Management, Hooks and Routing",
+                    "Unit III: Backend Microservices with Node.js & NestJS",
+                    "Unit IV: Database Modeling with PostgreSQL & Redis",
+                    "Unit V: Automated Deployment, Docker and Cloud Hosting"
+                  ]
+                },
+                {
+                  "code": "CB3491",
+                  "title": "Cryptography and Cyber Security",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Classical and Modern Symmetric Encryption",
+                    "Unit II: Public Key Cryptography and Key Management",
+                    "Unit III: Message Integrity, Hash Functions & Digital Signatures",
+                    "Unit IV: Network and Transport Layer Security Protocols",
+                    "Unit V: Penetration Testing and Threat Mitigation"
+                  ]
+                },
+                {
+                  "code": "PEI501",
+                  "title": "Professional Elective I: DevOps and Microservices",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: DevOps Culture, CI/CD Pipeline Architectures",
+                    "Unit II: Version Control & GitHub Actions / GitLab CI",
+                    "Unit III: Containerization with Docker & Multi-stage builds",
+                    "Unit IV: Kubernetes Cluster Management and Helm Charts",
+                    "Unit V: Monitoring and Observability with Prometheus & Grafana"
+                  ]
+                },
+                {
+                  "code": "PEI502",
+                  "title": "Professional Elective II: UI/UX Design Fundamentals",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Design Thinking and User Centered Research",
+                    "Unit II: Information Architecture and Wireframing in Figma",
+                    "Unit III: Visual Design, Typography, Color Systems",
+                    "Unit IV: Prototyping and Usability Testing",
+                    "Unit V: Accessibility Standards (WCAG) and Design Systems"
+                  ]
+                },
+                {
+                  "code": "PEI503",
+                  "title": "Professional Elective III: Software Project Management",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Project Evaluation and Agile Scrum Methodologies",
+                    "Unit II: Effort Estimation - COCOMO, Function Points",
+                    "Unit III: Activity Planning and Risk Management",
+                    "Unit IV: Resource Allocation and Sprint Tracking",
+                    "Unit V: Quality Assurance and Team Leadership"
+                  ]
+                },
+                {
+                  "code": "IT3511",
+                  "title": "Full Stack Development Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: React dashboard with live API integration",
+                    "Lab 2: Microservice API with authentication middleware",
+                    "Lab 3: Docker containerization and continuous integration test"
+                  ]
+                },
+                {
+                  "code": "CS3571",
+                  "title": "Security Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Implementation of cryptographic ciphers in Python",
+                    "Lab 2: Packet capture and TLS handshake inspection",
+                    "Lab 3: Web vulnerability exploitation and patching"
+                  ]
+                }
+              ],
+              "totalCredits": 23
+            },
+            {
+              "semesterNumber": 6,
+              "title": "Semester 6",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CCS335",
+                  "title": "Cloud Computing",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Cloud Models and Virtualization Infrastructures",
+                    "Unit II: Cloud Services (Compute, Storage, Networking)",
+                    "Unit III: Serverless Architectures and Event Driven Systems",
+                    "Unit IV: Cloud Identity, Governance and Cost Optimization",
+                    "Unit V: Hybrid and Multi-Cloud Architectures"
+                  ]
+                },
+                {
+                  "code": "IT3601",
+                  "title": "Mobile Computing",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Wireless Transmission and Mobile IP",
+                    "Unit II: Cellular Networks (4G LTE, 5G Architecture)",
+                    "Unit III: Mobile Operating Systems Architecture",
+                    "Unit IV: Mobile Ad Hoc Networks (MANETs)",
+                    "Unit V: Pervasive Computing and Location Based Services"
+                  ]
+                },
+                {
+                  "code": "CS3691",
+                  "title": "Embedded Systems and IoT",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Embedded Microcontrollers and Peripherals",
+                    "Unit II: RTOS Concepts and Interrupt Handling",
+                    "Unit III: IoT Communication Protocols and Sensors",
+                    "Unit IV: Edge Computing and Gateway Architecture",
+                    "Unit V: Real-World Smart Infrastructure IoT Applications"
+                  ]
+                },
+                {
+                  "code": "OEI601",
+                  "title": "Open Elective I: Digital Marketing & Analytics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Search Engine Optimization (SEO) Principles",
+                    "Unit II: Performance Marketing and Pay-Per-Click Advertising",
+                    "Unit III: Social Media Marketing Strategies",
+                    "Unit IV: Web Analytics and Conversion Rate Optimization",
+                    "Unit V: AI-driven Marketing Automation and Attribution"
+                  ]
+                },
+                {
+                  "code": "PEI601",
+                  "title": "Professional Elective IV: Information Storage and Management",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Storage Systems - SAN, NAS, and DAS",
+                    "Unit II: RAID Configurations and Disk Performance",
+                    "Unit III: Software Defined Storage and Object Stores",
+                    "Unit IV: Business Continuity, Backup and Disaster Recovery",
+                    "Unit V: Storage Security and Cloud Archival Systems"
+                  ]
+                },
+                {
+                  "code": "PEI602",
+                  "title": "Professional Elective V: Business Intelligence & Data Mining",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Data Warehousing Architectures and OLAP",
+                    "Unit II: Association Rule Mining and Market Basket Analysis",
+                    "Unit III: Advanced Classification and Decision Trees",
+                    "Unit IV: Cluster Analysis and Anomaly Detection",
+                    "Unit V: Enterprise Business Intelligence Dashboards"
+                  ]
+                },
+                {
+                  "code": "IT3611",
+                  "title": "Mobile Application Development Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Cross-platform mobile app development with Flutter",
+                    "Lab 2: Hardware sensor integration (GPS, Camera, Accelerometer)",
+                    "Lab 3: Offline data persistence and cloud sync"
+                  ]
+                },
+                {
+                  "code": "CS3681",
+                  "title": "Cloud Computing and IoT Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: AWS Lambda serverless function deployment",
+                    "Lab 2: ESP32 IoT sensor telemetry publishing via MQTT",
+                    "Lab 3: Automated alerting and cloud telemetry dashboard"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 7,
+              "title": "Semester 7",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "GE3791",
+                  "title": "Human Values and Ethics",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Human Values and Professionalism",
+                    "Unit II: Engineering Ethics and Dilemmas",
+                    "Unit III: Codes of Conduct and Safety",
+                    "Unit IV: IPR, Whistleblowing and Corporate Governance",
+                    "Unit V: Global Ethical Challenges in Computing"
+                  ]
+                },
+                {
+                  "code": "PEI701",
+                  "title": "Professional Elective VI: Cyber Forensics and Incident Response",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Digital Evidence Collection and Chain of Custody",
+                    "Unit II: Disk and File System Forensics",
+                    "Unit III: Memory Forensics and Malware Analysis",
+                    "Unit IV: Network Traffic Forensics and Log Analysis",
+                    "Unit V: Incident Response Playbooks and Legal Frameworks"
+                  ]
+                },
+                {
+                  "code": "OEI701",
+                  "title": "Open Elective II: Waste Management and Circular Economy",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Solid and Hazardous Waste Generation",
+                    "Unit II: E-Waste Recycling and Extended Producer Responsibility",
+                    "Unit III: Circular Economy Principles in Manufacturing",
+                    "Unit IV: Waste to Energy Technologies",
+                    "Unit V: Environmental Regulations and Industrial Ecology"
+                  ]
+                },
+                {
+                  "code": "OEI702",
+                  "title": "Open Elective III: Cyber Law and Ethics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Information Technology Act 2000 & Amendments",
+                    "Unit II: Electronic Contracts and Digital Signatures",
+                    "Unit III: Data Privacy, GDPR, and Indian DPDP Act 2023",
+                    "Unit IV: Cybercrimes and Prosecution Procedures",
+                    "Unit V: Intellectual Property in the Digital Domain"
+                  ]
+                },
+                {
+                  "code": "IT3711",
+                  "title": "Summer Internship / Mini Project",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Industrial internship training or approved enterprise application prototype",
+                    "Code repository submission and technical presentation"
+                  ]
+                },
+                {
+                  "code": "IT3712",
+                  "title": "Project Work I / Phase I",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Software requirement specification and architectural design",
+                    "Iterative proof of concept development and phase 1 review"
+                  ]
+                }
+              ],
+              "totalCredits": 15
+            },
+            {
+              "semesterNumber": 8,
+              "title": "Semester 8",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "IT3811",
+                  "title": "Project Work II / Phase II",
+                  "category": "Project",
+                  "credits": 10,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 20
+                  },
+                  "syllabusOutline": [
+                    "Production deployment of capstone software engineering project",
+                    "Comprehensive automated testing, security audit and documentation",
+                    "Technical publication preparation and external viva-voce defense"
+                  ]
+                }
+              ],
+              "totalCredits": 10
+            }
+          ]
+        },
+        {
+          "id": "aids",
+          "code": "AI&DS",
+          "name": "B.Tech. Artificial Intelligence & Data Science",
+          "shortName": "AI & DS",
+          "degreeType": "B.Tech.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Curated curriculum delivering deep expertise in machine learning, deep learning, NLP, computer vision, big data, and generative AI.",
+          "totalDegreeCredits": 158,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": true,
+          "semesters": [
+            {
+              "semesterNumber": 1,
+              "title": "Semester 1",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3151",
+                  "title": "Professional English - I",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Sharing Information Related to Oneself/Family & Friends",
+                    "Unit II: General Reading and Listening Comprehension",
+                    "Unit III: Grammar and Vocabulary in Context",
+                    "Unit IV: Writing Paragraphs and Short Notes",
+                    "Unit V: Extended Writing and Letter Communication"
+                  ]
+                },
+                {
+                  "code": "MA3151",
+                  "title": "Matrices and Calculus",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Matrices - Eigenvalues and Eigenvectors, Cayley-Hamilton Theorem",
+                    "Unit II: Differential Calculus - Limits, Continuity, Partial Derivatives",
+                    "Unit III: Functions of Several Variables - Maxima and Minima, Jacobians",
+                    "Unit IV: Integral Calculus - Definite and Indefinite Integrals, Integration by Parts",
+                    "Unit V: Multiple Integrals - Double and Triple Integrals, Area and Volume"
+                  ]
+                },
+                {
+                  "code": "PH3151",
+                  "title": "Engineering Physics",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mechanics - Rigid Body Dynamics, Torsional Pendulum",
+                    "Unit II: Electromagnetic Waves - Maxwell's Equations, Propagation",
+                    "Unit III: Oscillations, Optics and Lasers - Einstein Coefficients, Semiconductor Lasers",
+                    "Unit IV: Basic Quantum Mechanics - Wave Particle Duality, Schrödinger Equation",
+                    "Unit V: Applied Applied Solid State Physics - Crystal Lattices, Free Electron Theory"
+                  ]
+                },
+                {
+                  "code": "CY3151",
+                  "title": "Engineering Chemistry",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Water and its Treatment - Hardness, Demineralization, Reverse Osmosis",
+                    "Unit II: Nano Chemistry - Nanomaterials Synthesis, Carbon Nanotubes",
+                    "Unit III: Phase Rule and Composites - One and Two Component Systems, FRP",
+                    "Unit IV: Fuels and Combustion - Calorific Value, Proximate and Ultimate Analysis",
+                    "Unit V: Energy Sources and Storage Devices - Lithium-ion Batteries, Supercapacitors"
+                  ]
+                },
+                {
+                  "code": "GE3151",
+                  "title": "Problem Solving and Python Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computational Thinking & Problem Solving - Algorithms, Flowcharts, Pseudocode",
+                    "Unit II: Data Types, Expressions, Statements - Python Variables, Operators, Precedence",
+                    "Unit III: Control Flow & Functions - Conditionals, Loops, Fruitful Functions",
+                    "Unit IV: Lists, Tuples, Dictionaries - Compound Data, Slicing, Mutability",
+                    "Unit V: Files, Modules, Packages - File I/O, Exceptions, Standard Library"
+                  ]
+                },
+                {
+                  "code": "GE3152",
+                  "title": "Heritage of Tamils / தமிழர் மரபு",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Language and Literature - Sangam Literature, Tolkappiyam",
+                    "Unit II: Heritage - Rock Art, Sculptures, Inscriptions",
+                    "Unit III: Folk and Martial Arts - Therukoothu, Karagattam, Silambam",
+                    "Unit IV: Flora and Fauna - Thinai Concept, Keeladi Excavations",
+                    "Unit V: Cultural Contribution of Tamils - Global Influence & Maritime Trade"
+                  ]
+                },
+                {
+                  "code": "GE3171",
+                  "title": "Problem Solving and Python Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: GCD and Square Root Computation Algorithms",
+                    "Exercise 2: Linear and Binary Search Implementation",
+                    "Exercise 3: Selection and Insertion Sort on Python Lists",
+                    "Exercise 4: Word Frequency Counter and Dictionary Operations",
+                    "Exercise 5: Matrix Multiplication and File Copy Operations"
+                  ]
+                },
+                {
+                  "code": "BS3171",
+                  "title": "Physics and Chemistry Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Physics: Determination of Laser Wavelength and Particle Size",
+                    "Physics: Young's Modulus by Non-Uniform Bending",
+                    "Chemistry: Estimation of Total Hardness of Water by EDTA",
+                    "Chemistry: Conductometric Titration of Strong Acid vs Strong Base",
+                    "Chemistry: Determination of Dissolved Oxygen in Industrial Water"
+                  ]
+                },
+                {
+                  "code": "GE3172",
+                  "title": "English Laboratory",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: Phonetics and Pronunciation Drills",
+                    "Exercise 2: Listening Comprehension from Technical Talks",
+                    "Exercise 3: Self-Introduction and Mock Telephonic Interviews"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 2,
+              "title": "Semester 2",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3251",
+                  "title": "Professional English - II",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Technical Writing & Reporting - Drafting Minutes & Agendas",
+                    "Unit II: Technical Proposals and Feasibility Studies",
+                    "Unit III: Professional Correspondence & Email Etiquette",
+                    "Unit IV: Presentations and Group Dynamics",
+                    "Unit V: Career Skills & Resume Writing"
+                  ]
+                },
+                {
+                  "code": "MA3251",
+                  "title": "Statistics and Numerical Methods",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Testing of Hypothesis - Large Samples, Z-Test, t-Test, Chi-Square",
+                    "Unit II: Design of Experiments - One-Way and Two-Way ANOVA, CRD, RBD",
+                    "Unit III: Solution of Equations & Eigenvalue Problems - Newton-Raphson, Gauss Elimination",
+                    "Unit IV: Interpolation and Approximation - Newton Forward/Backward, Lagrange",
+                    "Unit V: Numerical Differentiation and Integration - Trapezoidal, Simpson's Rules, Runge-Kutta"
+                  ]
+                },
+                {
+                  "code": "PH3256",
+                  "title": "Physics for Information Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Electrical Properties of Materials - Classical and Quantum Free Electron",
+                    "Unit II: Semiconductor Physics - Intrinsic and Extrinsic, Hall Effect",
+                    "Unit III: Magnetic Properties - Ferromagnetism, Magnetic Storage Devices",
+                    "Unit IV: Optical Properties - Luminescence, LEDs, Photodetectors",
+                    "Unit V: Nanoelectronic Devices - Quantum Wells, Single Electron Transistors"
+                  ]
+                },
+                {
+                  "code": "BE3251",
+                  "title": "Basic Electrical and Electronics Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: DC and AC Circuits - Ohm's Law, Kirchhoff's Laws, Mesh Analysis",
+                    "Unit II: AC Circuits Analysis - Single Phase and Three Phase Concepts",
+                    "Unit III: Electrical Machines - DC Motors, Transformers, Three Phase Induction Motors",
+                    "Unit IV: Electronic Devices - PN Junction Diode, BJT, MOSFET, Op-Amp",
+                    "Unit V: Digital Electronics - Logic Gates, Boolean Algebra, Counters"
+                  ]
+                },
+                {
+                  "code": "GE3251",
+                  "title": "Engineering Graphics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Plane Curves and Freehand Sketching - Conics, Involutes, Projections",
+                    "Unit II: Projection of Points, Lines and Plane Surfaces",
+                    "Unit III: Projection of Solids - Prisms, Pyramids, Cylinders and Cones",
+                    "Unit IV: Section of Solids and Development of Surfaces",
+                    "Unit V: Isometric and Perspective Projections, CAD Modeling"
+                  ]
+                },
+                {
+                  "code": "CS3251",
+                  "title": "Programming in C",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Basics of C Programming - Variables, Constants, Preprocessor Directives",
+                    "Unit II: Arrays and Strings - Multi-dimensional Arrays, String Handling",
+                    "Unit III: Functions and Pointers - Parameter Passing, Pointers Arithmetic",
+                    "Unit IV: Structures and Unions - Bit Fields, Nested Structures",
+                    "Unit V: File Processing and Dynamic Memory - malloc, free, Command Line Args"
+                  ]
+                },
+                {
+                  "code": "GE3252",
+                  "title": "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Weaving and Ceramic Technology - Ancient Handlooms and Terracotta",
+                    "Unit II: Design and Construction - Kallanai Dam, Brihadeeswarar Temple Architecture",
+                    "Unit III: Manufacturing Technology - Metallurgy, Wootz Steel, Bronze Casting",
+                    "Unit IV: Agriculture and Irrigation - Eri Water Harvesting Systems",
+                    "Unit V: Scientific Tamil and Tamil Computing - Unicode, NLP in Tamil"
+                  ]
+                },
+                {
+                  "code": "GE3271",
+                  "title": "Engineering Practices Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Civil & Mechanical: Carpentry, Plumbing, Sheet Metal Works, Arc Welding",
+                    "Electrical & Electronics: Residential Wiring, Energy Meter, Soldering, Logic Verification"
+                  ]
+                },
+                {
+                  "code": "CS3271",
+                  "title": "Programming in C Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Program 1: Real-world problems using conditional logic and looping constructs",
+                    "Program 2: Matrix arithmetic and string manipulation algorithms",
+                    "Program 3: Modular functions with recursive calls and pointer arithmetic",
+                    "Program 4: Student records and payroll management with structures and file I/O",
+                    "Program 5: Dynamic allocation of memory for dynamic arrays"
+                  ]
+                },
+                {
+                  "code": "GE3272",
+                  "title": "Communication Laboratory / Foreign Language",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Activity 1: Resume preparation and corporate cover letter writing",
+                    "Activity 2: Group discussions and technical debate sessions",
+                    "Activity 3: Professional presentation skills with audiovisual aids"
+                  ]
+                }
+              ],
+              "totalCredits": 26
+            },
+            {
+              "semesterNumber": 3,
+              "title": "Semester 3",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "MA3354",
+                  "title": "Discrete Mathematics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mathematical Logic and Proof Techniques",
+                    "Unit II: Combinatorics and Generating Functions",
+                    "Unit III: Graph Theory and Network Connectivity",
+                    "Unit IV: Algebraic Structures and Groups",
+                    "Unit V: Boolean Algebra and Karnaugh Maps"
+                  ]
+                },
+                {
+                  "code": "CS3351",
+                  "title": "Digital Principles and Computer Organization",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Combinational and Sequential Digital Design",
+                    "Unit II: Processor Instruction Architecture",
+                    "Unit III: Pipelining and Hazard Control",
+                    "Unit IV: Memory Hierarchies and Virtual Memory",
+                    "Unit V: Parallel Processing and GPU Hardware"
+                  ]
+                },
+                {
+                  "code": "AD3351",
+                  "title": "Design and Analysis of Algorithms",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Asymptotic Analysis and Recurrences",
+                    "Unit II: Divide-and-Conquer and Greedy Paradigms",
+                    "Unit III: Dynamic Programming and Memoization",
+                    "Unit IV: Backtracking and Branch-and-Bound",
+                    "Unit V: Randomized Algorithms and NP-Completeness"
+                  ]
+                },
+                {
+                  "code": "AD3391",
+                  "title": "Database Design and Management",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Relational Model and Relational Algebra",
+                    "Unit II: Advanced SQL and Schema Normalization",
+                    "Unit III: Concurrency Control and Transaction Logging",
+                    "Unit IV: Query Optimization and Indexing Structures",
+                    "Unit V: NoSQL, Document Databases, and Vector Databases"
+                  ]
+                },
+                {
+                  "code": "CS3391",
+                  "title": "Object Oriented Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Object Oriented Paradigms and Java Syntax",
+                    "Unit II: Inheritance, Polymorphism and Interfaces",
+                    "Unit III: Multithreading and Concurrency",
+                    "Unit IV: Collections and Generic Classes",
+                    "Unit V: I/O Streams and Networking in Java"
+                  ]
+                },
+                {
+                  "code": "AD3381",
+                  "title": "Database Design and Management Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Schema creation and SQL query optimization",
+                    "Lab 2: PL/SQL stored procedures and triggers",
+                    "Lab 3: Document storage in MongoDB and vector embeddings store"
+                  ]
+                },
+                {
+                  "code": "CS3381",
+                  "title": "Object Oriented Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Class hierarchies and interface polymorphism",
+                    "Lab 2: Multithreaded producer-consumer simulations",
+                    "Lab 3: Data collection management with Java streams"
+                  ]
+                },
+                {
+                  "code": "AD3311",
+                  "title": "Artificial Intelligence Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Implementation of BFS, DFS, and A* Search in Python",
+                    "Lab 2: Constraint satisfaction problems (N-Queens, Sudoku)",
+                    "Lab 3: Adversarial search with Minimax and Alpha-Beta pruning"
+                  ]
+                },
+                {
+                  "code": "GE3361",
+                  "title": "Professional Development",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Communication, group discussion and interview readiness"
+                  ]
+                }
+              ],
+              "totalCredits": 23.5
+            },
+            {
+              "semesterNumber": 4,
+              "title": "Semester 4",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "MA3391",
+                  "title": "Probability and Statistics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Random Variables - Discrete and Continuous Distributions",
+                    "Unit II: Two-Dimensional Random Variables - Joint Distributions, Covariance",
+                    "Unit III: Estimation Theory - Maximum Likelihood, Bayesian Estimation",
+                    "Unit IV: Testing of Hypothesis - Small and Large Sample Tests",
+                    "Unit V: Stochastic Processes and Markov Chains"
+                  ]
+                },
+                {
+                  "code": "AL3452",
+                  "title": "Operating Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: OS Services, System Calls and Process Management",
+                    "Unit II: CPU Scheduling, Synchronization and Deadlocks",
+                    "Unit III: Memory Hierarchy, Paging, Virtual Memory",
+                    "Unit IV: File System Implementation and Storage",
+                    "Unit V: Virtualization, Containers and Linux Internals"
+                  ]
+                },
+                {
+                  "code": "AL3451",
+                  "title": "Machine Learning",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Introduction - PAC Learning, Bias-Variance Tradeoff",
+                    "Unit II: Supervised Algorithms - Linear/Logistic Regression, SVMs, Decision Trees",
+                    "Unit III: Ensemble Methods - Bagging, Boosting (AdaBoost, XGBoost)",
+                    "Unit IV: Unsupervised Learning - K-Means, Hierarchical Clustering, PCA, t-SNE",
+                    "Unit V: Probabilistic Models - Naive Bayes, Hidden Markov Models (HMM)"
+                  ]
+                },
+                {
+                  "code": "AD3491",
+                  "title": "Fundamentals of Data Science",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Data Science Workflow and Scientific Python",
+                    "Unit II: Data Ingestion, Scraping, and Preprocessing",
+                    "Unit III: Exploratory Data Analysis and Feature Selection",
+                    "Unit IV: Statistical Modeling and Cross-Validation",
+                    "Unit V: Big Data Tools and Cloud Analytics Platforms"
+                  ]
+                },
+                {
+                  "code": "GE3451",
+                  "title": "Environmental Sciences and Sustainability",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ecosystem Ecology and Biodiversity",
+                    "Unit II: Environmental Pollution and Waste Management",
+                    "Unit III: Renewable Energy and Conservation",
+                    "Unit IV: Sustainable Development Goals",
+                    "Unit V: Environmental Regulations and Case Studies"
+                  ]
+                },
+                {
+                  "code": "AL3461",
+                  "title": "Machine Learning Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Regression modeling with Scikit-learn and regularization",
+                    "Lab 2: Support Vector Machines and hyperparameter tuning (GridSearchCV)",
+                    "Lab 3: Random Forest and XGBoost classification models",
+                    "Lab 4: Clustering algorithms evaluation using silhouette score",
+                    "Lab 5: End-to-end ML pipeline with cross-validation and metrics"
+                  ]
+                },
+                {
+                  "code": "AD3411",
+                  "title": "Data Science Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Data scraping, cleaning and missing value imputation",
+                    "Lab 2: Exploratory statistical visualization with Seaborn",
+                    "Lab 3: Dimensionality reduction using PCA on high dimensional data"
+                  ]
+                },
+                {
+                  "code": "AL3481",
+                  "title": "Operating Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Process creation, IPC with pipes and shared memory",
+                    "Lab 2: CPU scheduling and deadlock avoidance algorithms",
+                    "Lab 3: Memory paging simulation"
+                  ]
+                }
+              ],
+              "totalCredits": 21.5
+            },
+            {
+              "semesterNumber": 5,
+              "title": "Semester 5",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "AD3501",
+                  "title": "Deep Learning",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Foundations - Neural Networks, Backpropagation, Activation Functions",
+                    "Unit II: Optimization - SGD, Momentum, Adam, Batch Normalization",
+                    "Unit III: Convolutional Neural Networks - AlexNet, VGG, ResNet, Transfer Learning",
+                    "Unit IV: Recurrent Architectures - RNNs, LSTMs, GRUs, Bidirectional RNNs",
+                    "Unit V: Autoencoders, Generative Adversarial Networks (GANs)"
+                  ]
+                },
+                {
+                  "code": "CW3551",
+                  "title": "Data and Information Security",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Cryptographic Concepts - AES, RSA, Digital Signatures",
+                    "Unit II: Data Protection - Access Control, Differential Privacy",
+                    "Unit III: Network Security - TLS/SSL, Firewalls, Intrusion Detection",
+                    "Unit IV: Adversarial Machine Learning and Model Poisoning Attacks",
+                    "Unit V: Compliance - GDPR, Data Governance and Ethics"
+                  ]
+                },
+                {
+                  "code": "CS3591",
+                  "title": "Computer Networks",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Layered Architecture and Physical Layer Principles",
+                    "Unit II: Data Link Layer Protocols and Local Area Networks",
+                    "Unit III: Network Layer - Routing Algorithms and IP Protocol",
+                    "Unit IV: Transport Layer Protocols (TCP and UDP)",
+                    "Unit V: Application Layer Protocols and Cloud Networking"
+                  ]
+                },
+                {
+                  "code": "PEA501",
+                  "title": "Professional Elective I: Big Data Analytics & Spark",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Hadoop Ecosystem, HDFS and MapReduce Paradigm",
+                    "Unit II: Apache Spark Architecture - RDDs and DataFrames",
+                    "Unit III: Spark SQL and Distributed Data Transformations",
+                    "Unit IV: Spark Streaming and Real-time Analytics with Kafka",
+                    "Unit V: Machine Learning at Scale with Spark MLlib"
+                  ]
+                },
+                {
+                  "code": "PEA502",
+                  "title": "Professional Elective II: Exploratory Data Analysis & Visualization",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Principles of Data Graphics and Visual Perception",
+                    "Unit II: Multi-dimensional Data Exploration Techniques",
+                    "Unit III: Interactive Visualizations using D3.js and Plotly",
+                    "Unit IV: Geospatial Data Mapping and GIS Analytics",
+                    "Unit V: Dashboard Design Principles with Streamlit / Tableau"
+                  ]
+                },
+                {
+                  "code": "PEA503",
+                  "title": "Professional Elective III: Time Series Analysis & Forecasting",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Characteristics of Time Series - Trend, Seasonality, Stationarity",
+                    "Unit II: Autoregressive & Moving Average Models (AR, MA, ARMA, ARIMA)",
+                    "Unit III: Seasonal ARIMA (SARIMA) and Exponential Smoothing",
+                    "Unit IV: Deep Learning for Forecasting - DeepAR, Temporal Fusion Transformers",
+                    "Unit V: Real-World Financial and Sensor Time Series Forecasting"
+                  ]
+                },
+                {
+                  "code": "AD3511",
+                  "title": "Deep Learning Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Neural network implementation from scratch with PyTorch / TensorFlow",
+                    "Lab 2: CNN image classification model with data augmentation",
+                    "Lab 3: Transfer learning using pre-trained ResNet and fine-tuning",
+                    "Lab 4: Sentiment analysis using LSTM recurrent networks",
+                    "Lab 5: Generative Adversarial Network (GAN) image generation"
+                  ]
+                },
+                {
+                  "code": "AD3512",
+                  "title": "Summer Internship / Industry Certification",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Summer industry placement or accredited specialized AI/DS certification",
+                    "Technical presentation and evaluation"
+                  ]
+                }
+              ],
+              "totalCredits": 23
+            },
+            {
+              "semesterNumber": 6,
+              "title": "Semester 6",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "AD3601",
+                  "title": "Natural Language Processing",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Words and Text Preprocessing - Tokenization, Stemming, Lemmatization, N-grams",
+                    "Unit II: Word Embeddings - Word2Vec, GloVe, FastText",
+                    "Unit III: Sequence Tagging - POS Tagging, Named Entity Recognition (NER), HMMs",
+                    "Unit IV: Transformers in NLP - Self-Attention, BERT, RoBERTa, T5",
+                    "Unit V: Applications - Machine Translation, Question Answering, Text Summarization"
+                  ]
+                },
+                {
+                  "code": "IT3601",
+                  "title": "Computer Vision",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Image Processing Fundamentals - Filtering, Edge Detection, Color Spaces",
+                    "Unit II: Feature Extraction - SIFT, SURF, ORB, Harris Corner Detection",
+                    "Unit III: Deep Object Detection - R-CNN, Fast R-CNN, YOLO, SSD",
+                    "Unit IV: Image Segmentation - Semantic (U-Net, Mask R-CNN) and Instance Segmentation",
+                    "Unit V: Video Processing, Optical Flow, and Vision Transformers (ViT)"
+                  ]
+                },
+                {
+                  "code": "OEA601",
+                  "title": "Open Elective I: Healthcare Analytics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Electronic Health Records (EHR) and Clinical Informatics",
+                    "Unit II: Predictive Modeling in Disease Diagnosis and Patient Risk",
+                    "Unit III: Medical Imaging AI (MRI, CT Scan, X-Ray Analysis)",
+                    "Unit IV: Genomics and Personalized Medicine Analytics",
+                    "Unit V: Regulatory Ethics, HIPAA and Health Data Privacy"
+                  ]
+                },
+                {
+                  "code": "PEA601",
+                  "title": "Professional Elective IV: Reinforcement Learning & Autonomous Agents",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Markov Decision Processes (MDP) and Bellman Equations",
+                    "Unit II: Dynamic Programming, Monte Carlo Methods and Temporal Difference",
+                    "Unit III: Value Function Approximation and Deep Q-Networks (DQN)",
+                    "Unit IV: Policy Gradient Methods - REINFORCE, Actor-Critic, PPO",
+                    "Unit V: Multi-Agent RL and Applications in Robotics and Games"
+                  ]
+                },
+                {
+                  "code": "PEA602",
+                  "title": "Professional Elective V: Generative AI & Large Language Models",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Generative Model Architectures - Diffusion Models, Flow Models",
+                    "Unit II: Transformer Scaled LLM Architectures - GPT, LLaMA, Claude Foundation",
+                    "Unit III: Prompt Engineering, Few-Shot In-Context Learning and System Prompts",
+                    "Unit IV: Retrieval Augmented Generation (RAG) and Vector Indexing",
+                    "Unit V: Fine-Tuning - LoRA, QLoRA, RLHF, and Safety Alignment"
+                  ]
+                },
+                {
+                  "code": "AD3611",
+                  "title": "Natural Language Processing and Computer Vision Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Text preprocessing and classification with BERT in HuggingFace",
+                    "Lab 2: Named Entity Recognition pipeline on legal documents",
+                    "Lab 3: OpenCV image filtering and contour detection",
+                    "Lab 4: Real-time object detection with YOLOv8 on live webcam video",
+                    "Lab 5: Semantic segmentation with U-Net on biomedical imagery"
+                  ]
+                },
+                {
+                  "code": "AD3612",
+                  "title": "Mini Project (AI & DS Applications)",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Applied AI/DS prototype addressing societal, industrial or environmental challenge",
+                    "Evaluation based on model performance, UI integration, and documentation"
+                  ]
+                }
+              ],
+              "totalCredits": 19
+            },
+            {
+              "semesterNumber": 7,
+              "title": "Semester 7",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "GE3791",
+                  "title": "Human Values and Ethics",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Human Values and Professional Ethics",
+                    "Unit II: Engineering Ethics and Dilemmas",
+                    "Unit III: Ethical Dilemmas in AI and Algorithm Bias",
+                    "Unit IV: IPR, Safety, Whistleblowing and Corporate Accountability",
+                    "Unit V: Global Ethical Challenges in Automated Decision Making"
+                  ]
+                },
+                {
+                  "code": "PEA701",
+                  "title": "Professional Elective VI: Explainable AI & MLOps",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Interpretability in Machine Learning - LIME, SHAP, Saliency Maps",
+                    "Unit II: Model Fairness, Algorithmic Bias and Accountability",
+                    "Unit III: MLOps Architecture - Data Drift, Model Monitoring, Feature Stores",
+                    "Unit IV: Model Registry and CI/CD with MLflow and Kubeflow",
+                    "Unit V: Serving Low-Latency Models with Triton and ONNX Runtime"
+                  ]
+                },
+                {
+                  "code": "OEA701",
+                  "title": "Open Elective II: Quantum Computing Fundamentals",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Quantum Bits (Qubits), Superposition, and Quantum Gates",
+                    "Unit II: Quantum Circuits and Entanglement",
+                    "Unit III: Quantum Algorithms - Deutsch-Jozsa, Grover's Search",
+                    "Unit IV: Shor's Algorithm and Quantum Cryptography (QKD)",
+                    "Unit V: Quantum Machine Learning (QML) and Qiskit Programming"
+                  ]
+                },
+                {
+                  "code": "OEA702",
+                  "title": "Open Elective III: Autonomous Vehicles & Robotics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Autonomous Vehicle Architecture - Sensors (LIDAR, Radar, Camera)",
+                    "Unit II: Sensor Fusion with Extended Kalman Filters",
+                    "Unit III: Localization and Mapping (SLAM)",
+                    "Unit IV: Path Planning and Behavioral Decision Making",
+                    "Unit V: Drive-by-Wire Systems and Safety Validation"
+                  ]
+                },
+                {
+                  "code": "AD3711",
+                  "title": "Project Work I / Phase I",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Problem formulation, dataset curation, baseline model design",
+                    "Architecture defense and intermediate progress evaluation"
+                  ]
+                }
+              ],
+              "totalCredits": 13
+            },
+            {
+              "semesterNumber": 8,
+              "title": "Semester 8",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "AD3811",
+                  "title": "Project Work II / Phase II",
+                  "category": "Project",
+                  "credits": 10,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 20
+                  },
+                  "syllabusOutline": [
+                    "End-to-end implementation of AI & Data Science capstone solution",
+                    "Production deployment, automated validation, and stress testing",
+                    "Peer-reviewed research paper submission and final oral defense"
+                  ]
+                }
+              ],
+              "totalCredits": 10
+            }
+          ]
+        },
+        {
+          "id": "csbs",
+          "code": "CSBS",
+          "name": "B.Tech. Computer Science and Business Systems",
+          "shortName": "CSBS",
+          "degreeType": "B.Tech.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "TCS industry-designed degree fusing advanced computer science fundamentals with management, financial engineering, enterprise ERP, and business strategy.",
+          "totalDegreeCredits": 147,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": true,
+          "semesters": [
+            {
+              "semesterNumber": 1,
+              "title": "Semester 1",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3151",
+                  "title": "Business Communication & English",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Business English Fundamentals and Cross-Cultural Communication",
+                    "Unit II: Professional Listening and Active Reading Comprehension",
+                    "Unit III: Executive Writing - Memos, Professional Emails and Agendas",
+                    "Unit IV: Corporate Presentation Skills and Non-Verbal Dynamics",
+                    "Unit V: Business Case Study Discussion and Summarization"
+                  ]
+                },
+                {
+                  "code": "MA3151",
+                  "title": "Discrete Mathematics & Calculus",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Propositional Logic and Predicate Calculus",
+                    "Unit II: Set Theory, Relations, Functions, and Equivalence",
+                    "Unit III: Differential and Integral Calculus Applications in Economics",
+                    "Unit IV: Matrices - Eigenvalues, Singular Value Decomposition",
+                    "Unit V: Combinatorics and Graph Theory for Networks"
+                  ]
+                },
+                {
+                  "code": "PH3151",
+                  "title": "Principles of Electrical Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: DC Circuit Analysis and Network Theorems",
+                    "Unit II: AC Circuit Fundamentals and Phasor Representation",
+                    "Unit III: Transformers and Electrical Energy Systems",
+                    "Unit IV: Electrical Machines - Induction Motors and Generators",
+                    "Unit V: Electrical Safety, Power Factor and Tariff Structures"
+                  ]
+                },
+                {
+                  "code": "CY3151",
+                  "title": "Fundamentals of Physics & Chemistry",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Quantum Mechanics and Semiconductors",
+                    "Unit II: Lasers and Optical Fiber Communications",
+                    "Unit III: Thermodynamics and Reaction Kinetics",
+                    "Unit IV: Polymer Science and Advanced Materials",
+                    "Unit V: Green Chemistry and Industrial Sustainability"
+                  ]
+                },
+                {
+                  "code": "CB3151",
+                  "title": "Fundamentals of Computer Science & Python",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computational Problem Solving & Python Syntax",
+                    "Unit II: Control Structures, Functions and Modular Design",
+                    "Unit III: Python Collections - Lists, Tuples, Dictionaries, Sets",
+                    "Unit IV: Object Oriented Basics and Exception Handling in Python",
+                    "Unit V: File I/O, Regular Expressions and Business Scripting"
+                  ]
+                },
+                {
+                  "code": "GE3152",
+                  "title": "Heritage of Tamils / தமிழர் மரபு",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Sangam Literature and Tamil Heritage",
+                    "Unit II: Arts, Sculptures, and Temple Architecture",
+                    "Unit III: Traditional Trades, Shipping and Maritime Commerce",
+                    "Unit IV: Keeladi Civilizations and Archaeological Heritage",
+                    "Unit V: Global Impact of Tamil Culture"
+                  ]
+                },
+                {
+                  "code": "CB3171",
+                  "title": "Computer Science & Python Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Algorithm design for business calculations and interest tables",
+                    "Lab 2: String manipulation and financial transaction parsing",
+                    "Lab 3: Python scripts for tabular inventory records and report generation"
+                  ]
+                },
+                {
+                  "code": "BS3171",
+                  "title": "Physics and Chemistry Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Physics: Optical and semiconductor measurement experiments",
+                    "Chemistry: Volumetric analysis, water hardness, and conductometric tests"
+                  ]
+                },
+                {
+                  "code": "HS3171",
+                  "title": "Business Communication Laboratory",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Voice modulation, articulation and professional speaking",
+                    "Lab 2: Mock business client interactions and presentation simulations"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 2,
+              "title": "Semester 2",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "MA3252",
+                  "title": "Linear Algebra and Differential Equations",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Vector Spaces, Subspaces, Linear Independence, Basis and Dimension",
+                    "Unit II: Linear Transformations, Kernel, Range, Matrix Representation",
+                    "Unit III: Inner Product Spaces, Orthogonality, Gram-Schmidt Process",
+                    "Unit IV: Ordinary Differential Equations of First and Second Order",
+                    "Unit V: Partial Differential Equations and Numerical Solutions"
+                  ]
+                },
+                {
+                  "code": "CB3251",
+                  "title": "Statistical Methods & Business Analytics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Descriptive Statistics, Skewness, Kurtosis and Data Summarization",
+                    "Unit II: Probability Distributions - Binomial, Poisson, Normal, Lognormal",
+                    "Unit III: Sampling Distributions, Estimation and Confidence Intervals",
+                    "Unit IV: Hypothesis Testing - Z-Test, t-Test, ANOVA, Chi-Square",
+                    "Unit V: Business Regression Modeling and Correlation Analysis"
+                  ]
+                },
+                {
+                  "code": "CB3252",
+                  "title": "Principles of Electronics Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Semiconductor Devices - Diodes, BJT, MOSFET Characteristics",
+                    "Unit II: Operational Amplifiers - Inverting, Non-Inverting, Comparators",
+                    "Unit III: Digital Logic Fundamentals - Boolean Algebra, Logic Gates",
+                    "Unit IV: Flip-Flops, Registers, Counters and State Machines",
+                    "Unit V: Data Converters (ADC/DAC) and Sensor Interfacing"
+                  ]
+                },
+                {
+                  "code": "CS3251",
+                  "title": "Programming in C and Data Structures",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: C Fundamentals, Pointers, and Memory Allocation",
+                    "Unit II: Linear Data Structures - Arrays, Stacks, Queues, Linked Lists",
+                    "Unit III: Non-Linear Structures - Binary Trees, BST, Heaps",
+                    "Unit IV: Graph Representations, BFS, DFS and Shortest Path",
+                    "Unit V: Searching and Sorting Algorithms Complexity Analysis"
+                  ]
+                },
+                {
+                  "code": "CB3253",
+                  "title": "Business Strategy and Operations",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Introduction to Business Strategy & Corporate Mission",
+                    "Unit II: Environmental Scanning - PESTEL and Porter's Five Forces",
+                    "Unit III: Operations Management - Capacity Planning, Supply Chains",
+                    "Unit IV: Total Quality Management (TQM) and Lean Six Sigma",
+                    "Unit V: Business Process Reengineering and Digital Transformation"
+                  ]
+                },
+                {
+                  "code": "GE3252",
+                  "title": "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ancient Weaving and Terracotta Technologies",
+                    "Unit II: Ancient Dam Building (Kallanai) and Temple Engineering",
+                    "Unit III: Metallurgical Wonders and Bronze Sculptures",
+                    "Unit IV: Ancient Water Harvesting and Irrigation Engineering",
+                    "Unit V: Digital Tamil and Modern Tamil Linguistic Technologies"
+                  ]
+                },
+                {
+                  "code": "CB3271",
+                  "title": "Data Structures Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Linked list manipulation and stack-based parsing",
+                    "Lab 2: Binary Search Tree operations and heap sorting",
+                    "Lab 3: Graph shortest path algorithm implementation in C"
+                  ]
+                },
+                {
+                  "code": "CB3272",
+                  "title": "Electronics Engineering Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Diode and BJT characteristic curves measurement",
+                    "Lab 2: Op-Amp inverting and summing amplifier circuits",
+                    "Lab 3: Digital logic gate verification and counter circuits"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 3,
+              "title": "Semester 3",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "CB3351",
+                  "title": "Formal Languages and Automata Theory",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Finite Automata, Regular Languages and Pumping Lemma",
+                    "Unit II: Context-Free Grammars and Pushdown Automata",
+                    "Unit III: Turing Machines and Computability",
+                    "Unit IV: Decidability, Halting Problem and Reductions",
+                    "Unit V: Computational Complexity Classes (P, NP, NP-Complete)"
+                  ]
+                },
+                {
+                  "code": "CS3351",
+                  "title": "Computer Organization and Architecture",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computer Evolution, Performance Metrics, Instruction Sets",
+                    "Unit II: Arithmetic and Logic Unit (ALU) Operations",
+                    "Unit III: Processor Datapath, Control Logic, and Pipelining",
+                    "Unit IV: Memory Systems - Cache Memory, Virtual Memory",
+                    "Unit V: I/O Organization, Multicores, and Enterprise Servers"
+                  ]
+                },
+                {
+                  "code": "CB3352",
+                  "title": "Object Oriented Programming in Java",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Java Language Mechanics, Classes, and Methods",
+                    "Unit II: Inheritance, Interfaces, and Exception Handling",
+                    "Unit III: Multithreading and Concurrency Utilities",
+                    "Unit IV: Java Generics and Collections Framework",
+                    "Unit V: Enterprise Design Patterns (Singleton, Factory, Observer)"
+                  ]
+                },
+                {
+                  "code": "CB3353",
+                  "title": "Computational Statistics",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Statistical Computing Paradigms with R and Python",
+                    "Unit II: Monte Carlo Simulation and Resampling Methods (Bootstrap, Jackknife)",
+                    "Unit III: Nonparametric Statistical Tests and Goodness-of-Fit",
+                    "Unit IV: Multivariate Analysis - Factor Analysis and PCA",
+                    "Unit V: Bayesian Computational Inference and MCMC Methods"
+                  ]
+                },
+                {
+                  "code": "CB3354",
+                  "title": "Financial Accounting and Management",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Principles of Accounting, Double Entry System, Journal and Ledger",
+                    "Unit II: Preparation of Financial Statements - Profit & Loss, Balance Sheet",
+                    "Unit III: Financial Statement Analysis - Ratio Analysis, Cash Flow Statement",
+                    "Unit IV: Cost Accounting - Marginal Costing, Cost-Volume-Profit (CVP) Analysis",
+                    "Unit V: Capital Budgeting - NPV, IRR, Payback Period"
+                  ]
+                },
+                {
+                  "code": "CB3381",
+                  "title": "Java Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Object oriented architecture and design patterns in Java",
+                    "Lab 2: Multi-threaded producer consumer with concurrent data structures",
+                    "Lab 3: Enterprise banking and invoice system using Java collections"
+                  ]
+                },
+                {
+                  "code": "CB3382",
+                  "title": "Computational Statistics Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Monte Carlo simulations for financial risk modeling",
+                    "Lab 2: Bootstrap confidence intervals for business metrics",
+                    "Lab 3: Multivariate analysis and principal components in R/Python"
+                  ]
+                },
+                {
+                  "code": "GE3361",
+                  "title": "Business Communication & Ethics",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Executive pitch presentations and corporate business ethics roleplay"
+                  ]
+                }
+              ],
+              "totalCredits": 20
+            },
+            {
+              "semesterNumber": 4,
+              "title": "Semester 4",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "CB3451",
+                  "title": "Operating Systems & Systems Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Operating System Architecture and Kernel Services",
+                    "Unit II: Process Scheduling and Inter-Process Communication",
+                    "Unit III: Memory Management, Paging, and Virtual Memory",
+                    "Unit IV: File Systems, I/O Subsystems, and Storage Virtualization",
+                    "Unit V: Shell Scripting and Linux Systems Programming"
+                  ]
+                },
+                {
+                  "code": "CB3491",
+                  "title": "Database Management Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Relational Model, ER Modeling and Relational Algebra",
+                    "Unit II: Advanced SQL Queries, Views, and Triggers",
+                    "Unit III: Schema Normalization (1NF through BCNF, 4NF)",
+                    "Unit IV: Transaction Processing, ACID, Locking and Concurrency",
+                    "Unit V: Enterprise NoSQL Systems and Cloud Databases"
+                  ]
+                },
+                {
+                  "code": "CB3452",
+                  "title": "Software Engineering & Agile Methodology",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Software Lifecycle Models - Waterfall to Modern Agile",
+                    "Unit II: Requirements Engineering and User Story Mapping",
+                    "Unit III: Software Architecture, Microservices, and UML Modeling",
+                    "Unit IV: Agile Scrum, Sprint Planning, Kanban, and JIRA Workflow",
+                    "Unit V: Software Testing, CI/CD, DevOps and Quality Assurance"
+                  ]
+                },
+                {
+                  "code": "CB3453",
+                  "title": "Marketing Research and Management",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Marketing Fundamentals - STP (Segmentation, Targeting, Positioning)",
+                    "Unit II: Marketing Mix (4Ps & 7Ps) and Customer Value Proposition",
+                    "Unit III: Marketing Research Process - Survey Design, Focus Groups",
+                    "Unit IV: Consumer Behavior and Digital Marketing Analytics",
+                    "Unit V: Brand Management and Customer Lifetime Value (CLV)"
+                  ]
+                },
+                {
+                  "code": "GE3451",
+                  "title": "Environmental Sciences and Sustainability",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ecosystem Ecology and Natural Habitats",
+                    "Unit II: Industrial Pollution and Carbon Footprint Reduction",
+                    "Unit III: Sustainable Business Practices and ESG Compliance",
+                    "Unit IV: Renewable Energy Transitions and Conservation",
+                    "Unit V: Environmental Law and Sustainability Audits"
+                  ]
+                },
+                {
+                  "code": "CB3461",
+                  "title": "Operating Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: POSIX process fork, exec, wait and pipes implementation",
+                    "Lab 2: CPU scheduling and deadlock detection algorithms in C",
+                    "Lab 3: Virtual memory page replacement simulation"
+                  ]
+                },
+                {
+                  "code": "CB3481",
+                  "title": "Database Management Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Complex SQL schema creation with integrity rules",
+                    "Lab 2: PL/SQL procedures, packages, and automated audit triggers",
+                    "Lab 3: Full-stack database connectivity with transaction management"
+                  ]
+                }
+              ],
+              "totalCredits": 18
+            },
+            {
+              "semesterNumber": 5,
+              "title": "Semester 5",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CB3501",
+                  "title": "Design and Analysis of Algorithms",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Algorithm Complexity, Big-O, Master Theorem",
+                    "Unit II: Divide and Conquer, Greedy Algorithms (Huffman, MST)",
+                    "Unit III: Dynamic Programming - Knapsack, Shortest Path (Floyd-Warshall)",
+                    "Unit IV: Backtracking and Branch & Bound for Combinatorial Problems",
+                    "Unit V: Intractable Problems, NP-Completeness, Approximation Algorithms"
+                  ]
+                },
+                {
+                  "code": "CB3502",
+                  "title": "Computer Networks & Cloud Computing",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Enterprise Networking - OSI, TCP/IP, Ethernet, VLANs",
+                    "Unit II: IP Addressing, CIDR, Routing Protocols (BGP, OSPF)",
+                    "Unit III: Cloud Infrastructure Models - IaaS, PaaS, SaaS, Hybrid Cloud",
+                    "Unit IV: Cloud Providers (AWS/Azure) - Compute, VPC, S3, IAM",
+                    "Unit V: Cloud Native Architectures, Microservices and Containerization"
+                  ]
+                },
+                {
+                  "code": "CB3503",
+                  "title": "Human Resource & Corporate Finance",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Strategic Human Resource Management and Talent Acquisition",
+                    "Unit II: Performance Management, KPI Frameworks, Compensation Models",
+                    "Unit III: Corporate Finance - Time Value of Money, Risk and Return",
+                    "Unit IV: Working Capital Management and Cost of Capital (WACC)",
+                    "Unit V: Mergers, Acquisitions, Corporate Governance and Ethics"
+                  ]
+                },
+                {
+                  "code": "CB3504",
+                  "title": "Information Security and Risk Management",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Enterprise Security Architecture, C-I-A Triad, Cryptography",
+                    "Unit II: Identity & Access Management (IAM), SSO, Multi-Factor Auth",
+                    "Unit III: Cyber Risk Assessment - ISO 27001, NIST Cybersecurity Framework",
+                    "Unit IV: Threat Modeling, Vulnerability Management and Penetration Testing",
+                    "Unit V: Business Continuity Planning (BCP) and Disaster Recovery (DR)"
+                  ]
+                },
+                {
+                  "code": "PEB501",
+                  "title": "Professional Elective I: Conversational AI & CRM Systems",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Customer Relationship Management (CRM) Architecture (Salesforce)",
+                    "Unit II: Conversational Agents - Intent Recognition, Slot Filling",
+                    "Unit III: NLP for Customer Feedback and Sentiment Analysis",
+                    "Unit IV: Omnichannel Customer Service Automation",
+                    "Unit V: Ethics, Data Privacy and Voice of Customer Analytics"
+                  ]
+                },
+                {
+                  "code": "CB3511",
+                  "title": "Networks & Security Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Network configuration and packet capture with Wireshark",
+                    "Lab 2: Firewall rules configuration and SSL certificate installation",
+                    "Lab 3: Cryptographic cipher implementation and risk auditing"
+                  ]
+                },
+                {
+                  "code": "CB3512",
+                  "title": "Business Analytics Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Financial ratio calculations and dashboard modeling in Python/Excel",
+                    "Lab 2: Customer churn prediction using logistic regression and decision trees",
+                    "Lab 3: Interactive enterprise analytics dashboard in Power BI / Tableau"
+                  ]
+                }
+              ],
+              "totalCredits": 20
+            },
+            {
+              "semesterNumber": 6,
+              "title": "Semester 6",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "CB3601",
+                  "title": "Enterprise Systems & ERP",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Enterprise Resource Planning (ERP) Overview (SAP/Oracle)",
+                    "Unit II: Business Modules - Supply Chain, Manufacturing, Sales, Finance",
+                    "Unit III: ERP Implementation Lifecycle, Customization and Integration",
+                    "Unit IV: Cloud ERP Systems and API Integrations",
+                    "Unit V: Post-Implementation Auditing, Change Management and Case Studies"
+                  ]
+                },
+                {
+                  "code": "CB3602",
+                  "title": "Artificial Intelligence and Cognitive Computing",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Foundations of AI, Heuristic Search, Knowledge Representation",
+                    "Unit II: Machine Learning for Business - Predictive Modeling and Classification",
+                    "Unit III: Deep Learning and Cognitive Systems Architecture",
+                    "Unit IV: Natural Language Processing in Business Intelligence",
+                    "Unit V: Autonomous Business Decision Systems and AI Governance"
+                  ]
+                },
+                {
+                  "code": "PEB601",
+                  "title": "Professional Elective II: Financial Engineering & Fintech",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Overview of Modern Fintech - Payments, Neobanking, Lending",
+                    "Unit II: Algorithmic Trading Systems and Market Microstructure",
+                    "Unit III: Derivatives Pricing - Black-Scholes Formula and Binomial Trees",
+                    "Unit IV: Blockchain, Cryptocurrencies, and Decentralized Finance (DeFi)",
+                    "Unit V: RegTech, Anti-Money Laundering (AML) and Financial Compliance"
+                  ]
+                },
+                {
+                  "code": "PEB602",
+                  "title": "Professional Elective III: Modern Web Architecture & Microservices",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Enterprise Web Architectures - Monolith vs Microservices",
+                    "Unit II: RESTful APIs, GraphQL and Event-Driven Architectures",
+                    "Unit III: API Gateways, Service Meshes (Istio) and Message Queues (Kafka)",
+                    "Unit IV: Distributed Caching (Redis), CQRS and Event Sourcing",
+                    "Unit V: Scalability, Resiliency, Circuit Breakers and Chaos Engineering"
+                  ]
+                },
+                {
+                  "code": "OEB601",
+                  "title": "Open Elective I: Intellectual Property Rights & Corporate Law",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Introduction to IPR - Patents, Trademarks, Copyrights, Trade Secrets",
+                    "Unit II: Patent Filing Process in India and PCT International Filings",
+                    "Unit III: Corporate Law - Companies Act 2013, Directors' Duties",
+                    "Unit IV: Commercial Contracts, NDAs, Service Level Agreements (SLAs)",
+                    "Unit V: Cyber Jurisprudence and Cross-Border Digital Transactions"
+                  ]
+                },
+                {
+                  "code": "CB3611",
+                  "title": "Cognitive Computing Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Business prediction models with Scikit-learn and evaluation metrics",
+                    "Lab 2: Sentiment analysis of corporate earnings calls with transformers",
+                    "Lab 3: Cognitive chatbot development with intent and entity extraction"
+                  ]
+                },
+                {
+                  "code": "CB3612",
+                  "title": "Design Thinking & Innovation Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Empathy mapping and user problem statement definition",
+                    "Lab 2: Rapid ideation, prototyping with interactive tools",
+                    "Lab 3: Business model canvas validation and pitch deck defense"
+                  ]
+                }
+              ],
+              "totalCredits": 19
+            },
+            {
+              "semesterNumber": 7,
+              "title": "Semester 7",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "CB3701",
+                  "title": "Services Science and Service Oriented Architecture",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Foundations of Service Science - Service Economy Dynamics",
+                    "Unit II: Service Oriented Architecture (SOA) Principles and Web Services",
+                    "Unit III: Enterprise Service Bus (ESB) and Business Process Modeling (BPMN)",
+                    "Unit IV: Cloud Service Models, Service Level Agreements (SLAs), QoS",
+                    "Unit V: Digital Service Management (ITIL 4) and Service Innovation"
+                  ]
+                },
+                {
+                  "code": "PEB701",
+                  "title": "Professional Elective IV: Supply Chain Management & Logistics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Supply Chain Network Design and Distribution Strategies",
+                    "Unit II: Demand Forecasting and Inventory Optimization",
+                    "Unit III: Sourcing, Procurement, and Supplier Relationship Management",
+                    "Unit IV: Logistics, Freight Optimization, and Cold Chain Management",
+                    "Unit V: Digital Supply Chains - IoT, RFID, and Blockchain Traceability"
+                  ]
+                },
+                {
+                  "code": "PEB702",
+                  "title": "Professional Elective V: Cloud Infrastructure & DevOps",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Infrastructure as Code (IaC) with Terraform and Ansible",
+                    "Unit II: Continuous Integration and Continuous Delivery (CI/CD)",
+                    "Unit III: Kubernetes Cluster Administration in Production",
+                    "Unit IV: Site Reliability Engineering (SRE) Principles, SLOs and SLIs",
+                    "Unit V: Enterprise Cloud Security and Compliance as Code"
+                  ]
+                },
+                {
+                  "code": "OEB701",
+                  "title": "Open Elective II: International Trade and Global Business",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Theories of International Trade and Global Trade Organizations (WTO)",
+                    "Unit II: Foreign Exchange Markets, Currency Risk, and Hedging",
+                    "Unit III: Export-Import Documentation, Incoterms, and Letter of Credit",
+                    "Unit IV: Global Supply Chains and Tariffs Policy",
+                    "Unit V: International Business Negotiation and Cross-Cultural Strategy"
+                  ]
+                },
+                {
+                  "code": "CB3711",
+                  "title": "Summer Internship & Industry Project",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "TCS or partner enterprise industry placement internship",
+                    "Comprehensive business case study report and viva-voce examination"
+                  ]
+                },
+                {
+                  "code": "CB3712",
+                  "title": "Project Work I / Capstone Phase I",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Enterprise challenge identification, business feasibility analysis",
+                    "Architectural blueprints and prototype validation review"
+                  ]
+                }
+              ],
+              "totalCredits": 16
+            },
+            {
+              "semesterNumber": 8,
+              "title": "Semester 8",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "CB3811",
+                  "title": "Project Work II / Capstone Phase II",
+                  "category": "Project",
+                  "credits": 10,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 20
+                  },
+                  "syllabusOutline": [
+                    "Full-scale enterprise application deployment with business ROI validation",
+                    "Production performance testing, security compliance, user acceptance",
+                    "Technical whitepaper or conference publication and defense viva-voce"
+                  ]
+                }
+              ],
+              "totalCredits": 10
+            }
+          ]
+        },
+        {
+          "id": "ece",
+          "code": "ECE",
+          "name": "B.E. Electronics and Communication Engineering",
+          "shortName": "ECE",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Rigorous curriculum covering semiconductor devices, VLSI chip design, digital signal processing, 5G wireless networks, RF systems, and embedded IoT.",
+          "totalDegreeCredits": 163.5,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": true,
+          "semesters": [
+            {
+              "semesterNumber": 1,
+              "title": "Semester 1",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3151",
+                  "title": "Professional English - I",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Sharing Information Related to Oneself/Family & Friends",
+                    "Unit II: General Reading and Listening Comprehension",
+                    "Unit III: Grammar and Vocabulary in Context",
+                    "Unit IV: Writing Paragraphs and Short Notes",
+                    "Unit V: Extended Writing and Letter Communication"
+                  ]
+                },
+                {
+                  "code": "MA3151",
+                  "title": "Matrices and Calculus",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Matrices - Eigenvalues and Eigenvectors, Cayley-Hamilton Theorem",
+                    "Unit II: Differential Calculus - Limits, Continuity, Partial Derivatives",
+                    "Unit III: Functions of Several Variables - Maxima and Minima, Jacobians",
+                    "Unit IV: Integral Calculus - Definite and Indefinite Integrals, Integration by Parts",
+                    "Unit V: Multiple Integrals - Double and Triple Integrals, Area and Volume"
+                  ]
+                },
+                {
+                  "code": "PH3151",
+                  "title": "Engineering Physics",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Mechanics - Rigid Body Dynamics, Torsional Pendulum",
+                    "Unit II: Electromagnetic Waves - Maxwell's Equations, Propagation",
+                    "Unit III: Oscillations, Optics and Lasers - Einstein Coefficients, Semiconductor Lasers",
+                    "Unit IV: Basic Quantum Mechanics - Wave Particle Duality, Schrödinger Equation",
+                    "Unit V: Applied Applied Solid State Physics - Crystal Lattices, Free Electron Theory"
+                  ]
+                },
+                {
+                  "code": "CY3151",
+                  "title": "Engineering Chemistry",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Water and its Treatment - Hardness, Demineralization, Reverse Osmosis",
+                    "Unit II: Nano Chemistry - Nanomaterials Synthesis, Carbon Nanotubes",
+                    "Unit III: Phase Rule and Composites - One and Two Component Systems, FRP",
+                    "Unit IV: Fuels and Combustion - Calorific Value, Proximate and Ultimate Analysis",
+                    "Unit V: Energy Sources and Storage Devices - Lithium-ion Batteries, Supercapacitors"
+                  ]
+                },
+                {
+                  "code": "GE3151",
+                  "title": "Problem Solving and Python Programming",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computational Thinking & Problem Solving - Algorithms, Flowcharts, Pseudocode",
+                    "Unit II: Data Types, Expressions, Statements - Python Variables, Operators, Precedence",
+                    "Unit III: Control Flow & Functions - Conditionals, Loops, Fruitful Functions",
+                    "Unit IV: Lists, Tuples, Dictionaries - Compound Data, Slicing, Mutability",
+                    "Unit V: Files, Modules, Packages - File I/O, Exceptions, Standard Library"
+                  ]
+                },
+                {
+                  "code": "GE3152",
+                  "title": "Heritage of Tamils / தமிழர் மரபு",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Language and Literature - Sangam Literature, Tolkappiyam",
+                    "Unit II: Heritage - Rock Art, Sculptures, Inscriptions",
+                    "Unit III: Folk and Martial Arts - Therukoothu, Karagattam, Silambam",
+                    "Unit IV: Flora and Fauna - Thinai Concept, Keeladi Excavations",
+                    "Unit V: Cultural Contribution of Tamils - Global Influence & Maritime Trade"
+                  ]
+                },
+                {
+                  "code": "GE3171",
+                  "title": "Problem Solving and Python Programming Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: GCD and Square Root Computation Algorithms",
+                    "Exercise 2: Linear and Binary Search Implementation",
+                    "Exercise 3: Selection and Insertion Sort on Python Lists",
+                    "Exercise 4: Word Frequency Counter and Dictionary Operations",
+                    "Exercise 5: Matrix Multiplication and File Copy Operations"
+                  ]
+                },
+                {
+                  "code": "BS3171",
+                  "title": "Physics and Chemistry Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Physics: Determination of Laser Wavelength and Particle Size",
+                    "Physics: Young's Modulus by Non-Uniform Bending",
+                    "Chemistry: Estimation of Total Hardness of Water by EDTA",
+                    "Chemistry: Conductometric Titration of Strong Acid vs Strong Base",
+                    "Chemistry: Determination of Dissolved Oxygen in Industrial Water"
+                  ]
+                },
+                {
+                  "code": "GE3172",
+                  "title": "English Laboratory",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Exercise 1: Phonetics and Pronunciation Drills",
+                    "Exercise 2: Listening Comprehension from Technical Talks",
+                    "Exercise 3: Self-Introduction and Mock Telephonic Interviews"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 2,
+              "title": "Semester 2",
+              "academicYear": "Year 1",
+              "subjects": [
+                {
+                  "code": "HS3251",
+                  "title": "Professional English - II",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Technical Writing & Reporting",
+                    "Unit II: Technical Proposals and Feasibility Studies",
+                    "Unit III: Professional Correspondence & Email Etiquette",
+                    "Unit IV: Presentations and Group Dynamics",
+                    "Unit V: Career Skills & Resume Writing"
+                  ]
+                },
+                {
+                  "code": "MA3251",
+                  "title": "Statistics and Numerical Methods",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Testing of Hypothesis for Large and Small Samples",
+                    "Unit II: Design of Experiments - One-Way and Two-Way ANOVA",
+                    "Unit III: Solution of Equations and Eigenvalue Problems",
+                    "Unit IV: Interpolation, Differentiation and Integration",
+                    "Unit V: Numerical Solutions of Differential Equations (RK-4)"
+                  ]
+                },
+                {
+                  "code": "PH3254",
+                  "title": "Physics for Electronics Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Crystallography and Crystal Defects",
+                    "Unit II: Semiconductor Physics - Carrier Transport, Hall Effect",
+                    "Unit III: Dielectric and Magnetic Materials in Electronics",
+                    "Unit IV: Optical Properties of Materials and Optoelectronic Devices",
+                    "Unit V: Nanoelectronic Devices and Quantum Dot Lasers"
+                  ]
+                },
+                {
+                  "code": "BE3254",
+                  "title": "Electrical and Instrumentation Engineering",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: DC and AC Machines - Generators, Motors, Transformers",
+                    "Unit II: Power Generation and Distribution Systems",
+                    "Unit III: Measurement of Electrical Quantities - Wattmeters, Energy Meters",
+                    "Unit IV: Transducers and Sensor Interfacing (LVDT, Thermocouple, Strain Gauge)",
+                    "Unit V: Digital Storage Oscilloscopes (DSO) and Virtual Instrumentation"
+                  ]
+                },
+                {
+                  "code": "GE3251",
+                  "title": "Engineering Graphics",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Curves and Freehand Sketching",
+                    "Unit II: Projection of Points, Lines and Planes",
+                    "Unit III: Projection of Solids",
+                    "Unit IV: Section of Solids and Development of Surfaces",
+                    "Unit V: Isometric Projection and CAD Modeling"
+                  ]
+                },
+                {
+                  "code": "EC3251",
+                  "title": "Circuit Analysis",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Basic Circuit Concepts, Mesh and Nodal Analysis",
+                    "Unit II: Network Theorems - Thevenin, Norton, Superposition, Maximum Power",
+                    "Unit III: Resonance and Coupled Circuits - Series and Parallel Resonant Circuits",
+                    "Unit IV: Transient Response of RL, RC, and RLC Circuits (Laplace Transform)",
+                    "Unit V: Two-Port Networks - Z, Y, h, ABCD Parameters"
+                  ]
+                },
+                {
+                  "code": "GE3252",
+                  "title": "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+                  "category": "Theory",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 1,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ancient Weaving and Terracotta Technologies",
+                    "Unit II: Design and Construction of Kallanai Dam",
+                    "Unit III: Metallurgical Feats and Bronze Casting",
+                    "Unit IV: Ancient Water Harvesting and Agriculture",
+                    "Unit V: Tamil Computing and Scientific Tamil"
+                  ]
+                },
+                {
+                  "code": "GE3271",
+                  "title": "Engineering Practices Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Civil/Mechanical: Carpentry, plumbing, welding and sheet metal",
+                    "Electrical/Electronics: Residential wiring, soldering, and logic gates"
+                  ]
+                },
+                {
+                  "code": "EC3271",
+                  "title": "Circuits Analysis Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Verification of Kirchhoff's Laws, Thevenin and Norton Theorems",
+                    "Lab 2: Series and Parallel RLC resonance frequency response",
+                    "Lab 3: Transient analysis of RC/RL circuits using DSO and SPICE simulation"
+                  ]
+                }
+              ],
+              "totalCredits": 24
+            },
+            {
+              "semesterNumber": 3,
+              "title": "Semester 3",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "MA3355",
+                  "title": "Random Processes and Linear Algebra",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Vector Spaces, Linear Transformations and Inner Products",
+                    "Unit II: Eigenvalues, Diagonalization and Singular Value Decomposition",
+                    "Unit III: Random Variables, Moments, Moment Generating Functions",
+                    "Unit IV: Two-Dimensional Random Variables, Joint Distributions and Covariance",
+                    "Unit V: Classification of Random Processes - Stationary, Markov, Poisson, Gaussian"
+                  ]
+                },
+                {
+                  "code": "CS3353",
+                  "title": "C Programming and Data Structures",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: C Programming Review - Pointers, Dynamic Memory, Preprocessor",
+                    "Unit II: Linear Data Structures - Stacks, Queues, Linked Lists",
+                    "Unit III: Non-Linear Structures - Binary Search Trees and Heaps",
+                    "Unit IV: Graph Algorithms - BFS, DFS, Shortest Path",
+                    "Unit V: Sorting and Searching Algorithms with Complexity"
+                  ]
+                },
+                {
+                  "code": "EC3354",
+                  "title": "Signals and Systems",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Classification of Signals and Systems (Continuous & Discrete)",
+                    "Unit II: Analysis of Continuous-Time Signals - Fourier Series & Fourier Transform",
+                    "Unit III: Linear Time-Invariant (LTI) Continuous-Time Systems (Laplace Transform)",
+                    "Unit IV: Analysis of Discrete-Time Signals - DTFT & Z-Transform",
+                    "Unit V: Linear Time-Invariant Discrete-Time Systems & Convolution"
+                  ]
+                },
+                {
+                  "code": "EC3353",
+                  "title": "Electronic Devices and Circuits",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Semiconductor Diodes, Zener Regulators, Rectifiers & Filters",
+                    "Unit II: Bipolar Junction Transistors (BJT) - Biasing, Small Signal h-parameter Model",
+                    "Unit III: Field Effect Transistors (JFET & MOSFET) - Biasing, Small Signal Model",
+                    "Unit IV: Frequency Response of Amplifiers - Low and High Frequency Cutoffs",
+                    "Unit V: Multistage Amplifiers and Differential Amplifier Pairs"
+                  ]
+                },
+                {
+                  "code": "EC3351",
+                  "title": "Control Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Systems Modeling - Transfer Function, Block Diagrams, Signal Flow Graphs",
+                    "Unit II: Time Response Analysis - First & Second Order Systems, Steady State Errors",
+                    "Unit III: Frequency Response Analysis - Bode Plots, Polar Plots, Nyquist Criterion",
+                    "Unit IV: Stability Analysis - Routh-Hurwitz Criterion, Root Locus Technique",
+                    "Unit V: State Space Analysis - State Transition Matrix, Controllability, Observability"
+                  ]
+                },
+                {
+                  "code": "EC3352",
+                  "title": "Digital Systems Design",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Boolean Algebra, Simplification Techniques (K-Maps, Quine-McCluskey)",
+                    "Unit II: Combinational Logic Design - Adders, Multipliers, Decoders, Multiplexers",
+                    "Unit III: Synchronous Sequential Circuits - State Reduction, Moore & Mealy Machines",
+                    "Unit IV: Asynchronous Sequential Circuits - Flow Tables, Races, Hazards",
+                    "Unit V: Verilog HDL Programming and Programmable Logic Devices (FPGA/CPLD)"
+                  ]
+                },
+                {
+                  "code": "EC3361",
+                  "title": "Electronic Devices and Circuits Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: V-I characteristics of PN junction and Zener diodes",
+                    "Lab 2: BJT Common Emitter amplifier frequency response and gain",
+                    "Lab 3: MOSFET amplifier design and SPICE simulation"
+                  ]
+                },
+                {
+                  "code": "CS3362",
+                  "title": "C Programming and Data Structures Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Linked list operations and stack applications",
+                    "Lab 2: Binary Search Tree traversal and searching",
+                    "Lab 3: Dijkstra's shortest path implementation in C"
+                  ]
+                },
+                {
+                  "code": "GE3361",
+                  "title": "Professional Development",
+                  "category": "Lab",
+                  "credits": 1,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Communication skills, logical reasoning and interview preparation"
+                  ]
+                }
+              ],
+              "totalCredits": 25
+            },
+            {
+              "semesterNumber": 4,
+              "title": "Semester 4",
+              "academicYear": "Year 2",
+              "subjects": [
+                {
+                  "code": "EC3452",
+                  "title": "Electromagnetic Fields",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Static Electric Fields - Coulomb's Law, Gauss's Law, Divergence, Potential",
+                    "Unit II: Static Magnetic Fields - Biot-Savart Law, Ampere's Law, Curl, Stokes Theorem",
+                    "Unit III: Electric and Magnetic Fields in Materials - Boundary Conditions",
+                    "Unit IV: Time-Varying Fields and Maxwell's Equations - Faraday's Law, Displacement Current",
+                    "Unit V: Electromagnetic Waves - Wave Equation, Poynting Vector, Reflection and Refraction"
+                  ]
+                },
+                {
+                  "code": "EC3401",
+                  "title": "Networks and Security",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Computer Network Architecture and Physical Layer Standards",
+                    "Unit II: Data Link Layer Protocols, MAC Framing, Ethernet",
+                    "Unit III: Network Layer Routing Protocols and IPv4/IPv6",
+                    "Unit IV: Transport Layer Protocols (TCP/UDP) and Congestion Control",
+                    "Unit V: Network Security - Cryptography, Firewalls, IPSec and SSL/TLS"
+                  ]
+                },
+                {
+                  "code": "EC3451",
+                  "title": "Linear Integrated Circuits",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Operational Amplifier Basics - Differential Stage, Ideal & Practical Specs",
+                    "Unit II: Op-Amp Applications - Active Filters, Instrumentation Amplifiers, Schmitt Triggers",
+                    "Unit III: Analog Multipliers and Phase Locked Loops (PLL 565)",
+                    "Unit IV: D/A and A/D Converters - R-2R Ladder, Successive Approximation, Flash ADC",
+                    "Unit V: Special Function ICs - 555 Timer, Voltage Regulators (723, LM317)"
+                  ]
+                },
+                {
+                  "code": "EC3492",
+                  "title": "Digital Signal Processing",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Discrete Fourier Transform (DFT) and Fast Fourier Transform (FFT) Algorithms",
+                    "Unit II: Infinite Impulse Response (IIR) Filter Design - Butterworth, Chebyshev",
+                    "Unit III: Finite Impulse Response (FIR) Filter Design - Windowing Techniques",
+                    "Unit IV: Finite Word Length Effects - Quantization Noise, Limit Cycles",
+                    "Unit V: Multirate Signal Processing and DSP Processor Architectures"
+                  ]
+                },
+                {
+                  "code": "EC3491",
+                  "title": "Communication Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Amplitude Modulation - AM, DSB-SC, SSB-SC, VSB, Superheterodyne Receiver",
+                    "Unit II: Angle Modulation - Frequency Modulation (FM), Phase Modulation (PM)",
+                    "Unit III: Pulse Modulation - PAM, PWM, PPM, Pulse Code Modulation (PCM), DPCM",
+                    "Unit IV: Baseband Transmission - Line Coding, Eye Pattern, Inter-Symbol Interference (ISI)",
+                    "Unit V: Noise Performance of Analog Communication Systems - SNR, Figure of Merit"
+                  ]
+                },
+                {
+                  "code": "GE3451",
+                  "title": "Environmental Sciences and Sustainability",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Ecosystem Ecology and Natural Biodiversity",
+                    "Unit II: Environmental Pollution, E-Waste Management and Recycling",
+                    "Unit III: Sustainable Energy Resources and Green Technologies",
+                    "Unit IV: Global Climate Initiatives and Urban Planning",
+                    "Unit V: Environmental Law and Field Case Studies"
+                  ]
+                },
+                {
+                  "code": "EC3461",
+                  "title": "Communication Systems Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: AM and FM modulation and demodulation circuits verification",
+                    "Lab 2: Pulse Code Modulation (PCM) and demodulation",
+                    "Lab 3: Pre-emphasis and De-emphasis circuits response analysis"
+                  ]
+                },
+                {
+                  "code": "EC3462",
+                  "title": "Linear Integrated Circuits Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Op-amp inverting, non-inverting, differentiator, integrator circuits",
+                    "Lab 2: Instrumentation amplifier and active second-order Butterworth filter",
+                    "Lab 3: Astable and monostable multivibrators using 555 timer IC"
+                  ]
+                }
+              ],
+              "totalCredits": 22
+            },
+            {
+              "semesterNumber": 5,
+              "title": "Semester 5",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "EC3501",
+                  "title": "Wireless Communication",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 1,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Wireless Channel Characterization - Large-Scale Path Loss, Shadowing",
+                    "Unit II: Small-Scale Fading and Multipath - Rayleigh, Rician Distributions",
+                    "Unit III: Cellular Architecture - Frequency Reuse, Handoff, Cell Splitting, Trunking",
+                    "Unit IV: Digital Modulation for Wireless - QPSK, MSK, OFDM, CDMA, MIMO",
+                    "Unit V: Modern Cellular Standards - 4G LTE-Advanced, 5G NR Architecture"
+                  ]
+                },
+                {
+                  "code": "EC3552",
+                  "title": "VLSI and Chip Design",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: MOS Transistor Theory - CMOS Inverter VTC, Noise Margins, Body Effect",
+                    "Unit II: Combinational MOS Logic Circuits - Static CMOS, Dynamic Logic, Pass Transistors",
+                    "Unit III: Sequential Logic Circuits - Latches, Flip-Flops, Setup/Hold Times",
+                    "Unit IV: Subsystem Design - Adders, Multipliers, Memory (SRAM, DRAM)",
+                    "Unit V: ASIC Design Flow, Testing, Scan Chains, Built-In Self-Test (BIST)"
+                  ]
+                },
+                {
+                  "code": "EC3551",
+                  "title": "Transmission Lines and RF Systems",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Transmission Line Theory - Wave Propagation, Characteristic Impedance",
+                    "Unit II: High Frequency Lines - VSWR, Input Impedance, Reflection Coefficient",
+                    "Unit III: Impedance Matching - Single and Double Stub Matching, Smith Chart",
+                    "Unit IV: Guided Waves - TE, TM, TEM Modes in Parallel Planes and Waveguides",
+                    "Unit V: RF Passive Components - Directional Couplers, Power Dividers, Circulators"
+                  ]
+                },
+                {
+                  "code": "PEE501",
+                  "title": "Professional Elective I: Medical Electronics",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Electro-Physiology and Bio-Potential Electrodes (ECG, EEG, EMG)",
+                    "Unit II: Bio-Chemical and Non-Electrical Parameter Measurements",
+                    "Unit III: Assist Devices - Pacemakers, Defibrillators, Ventilators",
+                    "Unit IV: Medical Imaging Modalities - X-Ray, Ultrasound, CT, MRI",
+                    "Unit V: Patient Safety, Telemedicine and Biomedical Telemetry"
+                  ]
+                },
+                {
+                  "code": "PEE502",
+                  "title": "Professional Elective II: Advanced Microprocessors & Microcontrollers",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: 8086 Architecture, Addressing Modes and Assembly Language",
+                    "Unit II: 8051 Microcontroller Architecture, Timers, Serial Communication",
+                    "Unit III: ARM Cortex-M Processor Architecture and Pipeline",
+                    "Unit IV: Peripherals Interfacing - LCD, Stepper Motors, ADC, I2C, SPI",
+                    "Unit V: Real-Time Operating Systems (FreeRTOS) on Embedded Microcontrollers"
+                  ]
+                },
+                {
+                  "code": "PEE503",
+                  "title": "Professional Elective III: Optical Communication & Networks",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Optical Fibers - Step Index, Graded Index, Attenuation, Dispersion",
+                    "Unit II: Optical Sources - LEDs, Distributed Feedback Semiconductor Lasers",
+                    "Unit III: Optical Detectors - PIN and Avalanche Photodiodes, Receiver Sensitivity",
+                    "Unit IV: Wavelength Division Multiplexing (WDM) and Optical Amplifiers (EDFA)",
+                    "Unit V: Optical Networks - SONET/SDH, OTN, Fiber to the Home (FTTH)"
+                  ]
+                },
+                {
+                  "code": "EC3561",
+                  "title": "VLSI Design Laboratory",
+                  "category": "Lab",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Verilog HDL modeling and testbench verification of ALU and counters",
+                    "Lab 2: FPGA synthesis, pin assignment and hardware demonstration",
+                    "Lab 3: CMOS inverter schematic and layout design in Cadence / EDA tools",
+                    "Lab 4: Design Rule Check (DRC) and Layout Versus Schematic (LVS) verification"
+                  ]
+                },
+                {
+                  "code": "EC3562",
+                  "title": "Digital Signal Processing Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Computation of DFT and FFT algorithms in MATLAB / Python",
+                    "Lab 2: Design of Butterworth and Chebyshev IIR digital filters",
+                    "Lab 3: Design of FIR filter using rectangular and Hamming window functions",
+                    "Lab 4: Real-time audio filtering on DSP Starter Kit (TMS320C6713)"
+                  ]
+                }
+              ],
+              "totalCredits": 22.5
+            },
+            {
+              "semesterNumber": 6,
+              "title": "Semester 6",
+              "academicYear": "Year 3",
+              "subjects": [
+                {
+                  "code": "ET3491",
+                  "title": "Embedded Systems and IOT Design",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Embedded System Architecture - ARM Processors and Peripherals",
+                    "Unit II: RTOS Concepts - Task Scheduling, Semaphores, Message Queues",
+                    "Unit III: IoT Architecture - Sensing Layer, Network Gateways, Cloud Analytics",
+                    "Unit IV: IoT Protocols - MQTT, CoAP, Bluetooth Low Energy, LoRaWAN",
+                    "Unit V: Embedded Security, Firmware Upgrades Over-The-Air (OTA)"
+                  ]
+                },
+                {
+                  "code": "CS3491",
+                  "title": "Artificial Intelligence and Machine Learning",
+                  "category": "Theory",
+                  "credits": 4,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 2
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Problem Solving and State Space Search Algorithms",
+                    "Unit II: Machine Learning Paradigms - Supervised vs Unsupervised",
+                    "Unit III: Classification and Regression Algorithms with Scikit-learn",
+                    "Unit IV: Deep Neural Networks and Convolutional Architectures",
+                    "Unit V: Embedded Edge AI and TinyML Implementation"
+                  ]
+                },
+                {
+                  "code": "OEE601",
+                  "title": "Open Elective I: MEMS and Sensor Technology",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Micro-Electro-Mechanical Systems (MEMS) Fundamentals",
+                    "Unit II: Micro-Fabrication Processes - Photolithography, Etching, Deposition",
+                    "Unit III: MEMS Sensors - Accelerometers, Gyroscopes, Pressure Sensors",
+                    "Unit IV: Optical and RF MEMS Devices",
+                    "Unit V: Packaging, Reliability and Commercial Applications"
+                  ]
+                },
+                {
+                  "code": "PEE601",
+                  "title": "Professional Elective IV: Automotive Electronics & CAN Bus",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Modern Vehicle Electrical Systems and Powertrain Electronics",
+                    "Unit II: In-Vehicle Networking - CAN Bus, LIN, FlexRay, Automotive Ethernet",
+                    "Unit III: Advanced Driver Assistance Systems (ADAS) and Radar",
+                    "Unit IV: Electric Vehicle (EV) Power Electronics and Battery Management Systems",
+                    "Unit V: Functional Safety Standard ISO 26262 and Automotive Cybersecurity"
+                  ]
+                },
+                {
+                  "code": "PEE602",
+                  "title": "Professional Elective V: Antenna and Microwave Propagation",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Antenna Radiation Concepts - Dipole, Radiation Pattern, Directivity, Gain",
+                    "Unit II: Antenna Arrays - Linear Arrays, Phased Arrays, Beamforming",
+                    "Unit III: Practical Antennas - Horn, Yagi-Uda, Microstrip Patch Antennas",
+                    "Unit IV: Microwave Waveguides and Cavity Resonators",
+                    "Unit V: Radio Wave Propagation - Ground Wave, Sky Wave, Space Wave"
+                  ]
+                },
+                {
+                  "code": "EC3661",
+                  "title": "Embedded Systems and IOT Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Interfacing LEDs, switches, LCD with ARM Cortex microcontroller",
+                    "Lab 2: ADC conversion and sensor data logging in FreeRTOS",
+                    "Lab 3: Node-to-cloud IoT telemetry publishing via MQTT using ESP32"
+                  ]
+                },
+                {
+                  "code": "EC3662",
+                  "title": "Wireless and RF Laboratory",
+                  "category": "Lab",
+                  "credits": 1.5,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 3
+                  },
+                  "syllabusOutline": [
+                    "Lab 1: Reflection coefficient and VSWR measurement with Vector Network Analyzer",
+                    "Lab 2: Radiation pattern measurement of microstrip patch antenna",
+                    "Lab 3: Digital modulation (QPSK/QAM) constellation diagram evaluation in SDR"
+                  ]
+                }
+              ],
+              "totalCredits": 20
+            },
+            {
+              "semesterNumber": 7,
+              "title": "Semester 7",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "GE3791",
+                  "title": "Human Values and Ethics",
+                  "category": "Theory",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 2,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Human Values, Ethics and Moral Integrity",
+                    "Unit II: Engineering Ethics and Professional Responsibility",
+                    "Unit III: Safety, Risk Assessment and Product Liability",
+                    "Unit IV: Global Ethical Concerns in Electronics and Electronic Waste",
+                    "Unit V: Codes of Conduct (IEEE, ACM) and Intellectual Property Rights"
+                  ]
+                },
+                {
+                  "code": "EC3701",
+                  "title": "Optical and Microwave Communication",
+                  "category": "Theory",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "syllabusOutline": [
+                    "Unit I: Microwave Passive Components - S-Parameters, Directional Couplers",
+                    "Unit II: Microwave Semiconductor Devices - Gunn Diode, IMPATT, Klystron, TWT",
+                    "Unit III: Optical Fiber Waveguides - Attenuation, Chromatic Dispersion",
+                    "Unit IV: Optical Transmitters and Coherent Receivers",
+                    "Unit V: Free Space Optical (FSO) Communications and Quantum Key Distribution"
+                  ]
+                },
+                {
+                  "code": "PEE701",
+                  "title": "Professional Elective VI: Satellite Communication & Radar Systems",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Professional Elective",
+                  "syllabusOutline": [
+                    "Unit I: Satellite Orbits, Kepler's Laws, Orbital Mechanics and Launchers",
+                    "Unit II: Satellite Subsystems - Telemetry, Tracking, Power, Transponders",
+                    "Unit III: Satellite Link Design - Uplink and Downlink Budget Calculation",
+                    "Unit IV: Radar Fundamentals - Radar Range Equation, CW and Pulsed Radar",
+                    "Unit V: MTI and Doppler Radar, Tracking Radars, Synthetic Aperture Radar (SAR)"
+                  ]
+                },
+                {
+                  "code": "OEE701",
+                  "title": "Open Elective II: Cyber Physical Systems",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Introduction to Cyber Physical Systems (CPS) Architecture",
+                    "Unit II: Modeling Physical Systems and Hybrid Dynamical Automata",
+                    "Unit III: Timing, Concurrency and Resource Allocation in CPS",
+                    "Unit IV: Security and Resiliency of Cyber-Physical Networks",
+                    "Unit V: Smart Grid and Industrial Automation Case Studies"
+                  ]
+                },
+                {
+                  "code": "OEE702",
+                  "title": "Open Elective III: Disaster Management & Communications",
+                  "category": "Elective",
+                  "credits": 3,
+                  "contactHours": {
+                    "lecture": 3,
+                    "tutorial": 0,
+                    "practical": 0
+                  },
+                  "electiveType": "Open Elective",
+                  "syllabusOutline": [
+                    "Unit I: Emergency Communication Networks and HAM Radio",
+                    "Unit II: Satellite-Based Disaster Warning Systems",
+                    "Unit III: GIS and Remote Sensing in Disaster Damage Assessment",
+                    "Unit IV: Ad-hoc Mesh Networks for Search and Rescue Operations",
+                    "Unit V: National and State Disaster Management Protocols in Tamil Nadu"
+                  ]
+                },
+                {
+                  "code": "EC3711",
+                  "title": "Project Work I / Phase I",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Hardware / software co-design problem definition and literature review",
+                    "Design simulation, component selection and initial PCB schematic validation"
+                  ]
+                },
+                {
+                  "code": "EC3712",
+                  "title": "Internship / Industrial Training",
+                  "category": "Project",
+                  "credits": 2,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 4
+                  },
+                  "syllabusOutline": [
+                    "Industrial placement training at certified semiconductor / telecommunications firm",
+                    "Technical presentation and viva-voce evaluation"
+                  ]
+                }
+              ],
+              "totalCredits": 18
+            },
+            {
+              "semesterNumber": 8,
+              "title": "Semester 8",
+              "academicYear": "Year 4",
+              "subjects": [
+                {
+                  "code": "EC3811",
+                  "title": "Project Work II / Phase II",
+                  "category": "Project",
+                  "credits": 10,
+                  "contactHours": {
+                    "lecture": 0,
+                    "tutorial": 0,
+                    "practical": 20
+                  },
+                  "syllabusOutline": [
+                    "Physical fabrication and hardware implementation of capstone electronic system",
+                    "Benchmarking, spectrum analysis, signal integrity verification",
+                    "Research publication / patent drafting and comprehensive viva-voce defense"
+                  ]
+                }
+              ],
+              "totalCredits": 10
+            }
+          ]
+        },
+        {
+          "id": "eee",
+          "code": "EEE",
+          "name": "B.E. Electrical and Electronics Engineering",
+          "shortName": "EEE",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Power systems, power electronics, electric vehicles, renewable energy microgrids, control engineering, and electric drives.",
+          "totalDegreeCredits": 165,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "mech",
+          "code": "MECH",
+          "name": "B.E. Mechanical Engineering",
+          "shortName": "MECH",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Thermodynamics, fluid mechanics, CAD/CAM, robotics, additive manufacturing, and automotive powertrain engineering.",
+          "totalDegreeCredits": 164,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "civil",
+          "code": "CIVIL",
+          "name": "B.E. Civil Engineering",
+          "shortName": "CIVIL",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Structural analysis, geotechnical engineering, hydrology, transportation systems, and sustainable green construction.",
+          "totalDegreeCredits": 163,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bme",
+          "code": "BME",
+          "name": "B.E. Biomedical Engineering",
+          "shortName": "BME",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Bio-instrumentation, medical imaging, biomaterials, physiological modeling, and robotic surgical systems.",
+          "totalDegreeCredits": 165,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "aero",
+          "code": "AERO",
+          "name": "B.E. Aeronautical Engineering",
+          "shortName": "AERO",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Aerodynamics, flight mechanics, propulsion systems, aerospace composite structures, and avionics.",
+          "totalDegreeCredits": 166,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "che",
+          "code": "CHE",
+          "name": "B.Tech. Chemical Engineering",
+          "shortName": "CHE",
+          "degreeType": "B.Tech.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Chemical reaction engineering, transport phenomena, process dynamics, separation processes, and industrial safety.",
+          "totalDegreeCredits": 164,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "mct",
+          "code": "MCT",
+          "name": "B.E. Mechatronics Engineering",
+          "shortName": "Mechatronics",
+          "degreeType": "B.E.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Anna University Regulation 2021",
+          "overview": "Synergistic integration of precision mechanical engineering, electronics, computer control, and industrial automation robotics.",
+          "totalDegreeCredits": 165,
+          "streamId": "engineering-tech",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "medical-allied",
+      "name": "Medical & Allied Health Sciences",
+      "tamilName": "மருத்துவம் மற்றும் துணை மருத்துவ அறிவியல்",
+      "governingBody": "The Tamil Nadu Dr. M.G.R. Medical University",
+      "description": "Comprehensive medical, clinical, dental, pharmaceutical, and health science degree programs governing healthcare education in Tamil Nadu.",
+      "icon": "Activity",
+      "accentColor": "#ef4444",
+      "departments": [
+        {
+          "id": "mbbs",
+          "code": "MBBS",
+          "name": "Bachelor of Medicine and Bachelor of Surgery (MBBS)",
+          "shortName": "MBBS",
+          "degreeType": "MBBS",
+          "durationYears": 5.5,
+          "totalSemesters": 9,
+          "regulation": "National Medical Commission (NMC) / TN Dr. M.G.R. Medical University",
+          "overview": "Pre-clinical, para-clinical, and clinical medical training followed by 1-year Compulsory Rotatory Residential Internship (CRRI).",
+          "totalDegreeCredits": 240,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bds",
+          "code": "BDS",
+          "name": "Bachelor of Dental Surgery (BDS)",
+          "shortName": "BDS",
+          "degreeType": "BDS",
+          "durationYears": 5,
+          "totalSemesters": 8,
+          "regulation": "Dental Council of India (DCI) / TN Dr. M.G.R. Medical University",
+          "overview": "Oral and maxillofacial surgery, conservative dentistry, prosthodontics, periodontics, and orthodontic health.",
+          "totalDegreeCredits": 200,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bpharm",
+          "code": "B.Pharm",
+          "name": "Bachelor of Pharmacy (B.Pharm)",
+          "shortName": "B.Pharm",
+          "degreeType": "B.Pharm",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Pharmacy Council of India (PCI) / TN Dr. M.G.R. Medical University",
+          "overview": "Pharmaceutics, medicinal chemistry, pharmacology, pharmacognosy, and clinical pharmaceutical analysis.",
+          "totalDegreeCredits": 208,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "nursing",
+          "code": "B.Sc Nursing",
+          "name": "Bachelor of Science in Nursing",
+          "shortName": "Nursing",
+          "degreeType": "B.Sc",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Indian Nursing Council (INC) / TN Nurses and Midwives Council",
+          "overview": "Clinical nursing, community health nursing, pediatric, psychiatric, and critical care patient management.",
+          "totalDegreeCredits": 160,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bpt",
+          "code": "BPT",
+          "name": "Bachelor of Physiotherapy (BPT)",
+          "shortName": "Physiotherapy",
+          "degreeType": "BPT",
+          "durationYears": 4.5,
+          "totalSemesters": 8,
+          "regulation": "TN Dr. M.G.R. Medical University",
+          "overview": "Exercise therapy, electrotherapy, orthopedics, neuro-physiotherapy, sports medicine, and rehabilitation.",
+          "totalDegreeCredits": 180,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "mlt",
+          "code": "B.Sc MLT",
+          "name": "B.Sc Medical Laboratory Technology",
+          "shortName": "MLT",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TN Dr. M.G.R. Medical University",
+          "overview": "Clinical biochemistry, microbiology, hematology, histopathology, and molecular diagnostics.",
+          "totalDegreeCredits": 140,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "pharmd",
+          "code": "Pharm.D",
+          "name": "Doctor of Pharmacy (Pharm.D)",
+          "shortName": "Pharm.D",
+          "degreeType": "Pharm.D",
+          "durationYears": 6,
+          "totalSemesters": 12,
+          "regulation": "Pharmacy Council of India (PCI)",
+          "overview": "Clinical pharmacy, pharmacotherapeutics, clinical trials, therapeutic drug monitoring, and hospital residency.",
+          "totalDegreeCredits": 280,
+          "streamId": "medical-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science & Computing",
+      "tamilName": "அறிவியல் மற்றும் கணிப்பொறி",
+      "governingBody": "Tamil Nadu State Council for Higher Education (TANSCHE) / State Universities",
+      "description": "Pure and applied sciences, mathematical computation, physics, chemistry, biotechnology, and computing sciences.",
+      "icon": "FlaskConical",
+      "accentColor": "#10b981",
+      "departments": [
+        {
+          "id": "bsc-maths",
+          "code": "B.Sc Maths",
+          "name": "B.Sc. Mathematics",
+          "shortName": "B.Sc Maths",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Classical algebra, real analysis, complex analysis, numerical methods, differential equations, and operations research.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-physics",
+          "code": "B.Sc Physics",
+          "name": "B.Sc. Physics",
+          "shortName": "B.Sc Physics",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Classical mechanics, quantum mechanics, electromagnetism, optics, thermal physics, electronics, and solid-state physics.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-chemistry",
+          "code": "B.Sc Chemistry",
+          "name": "B.Sc. Chemistry",
+          "shortName": "B.Sc Chemistry",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Organic, inorganic, and physical chemistry, spectroscopy, coordination compounds, polymer science, and analytical chemistry.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-cs",
+          "code": "B.Sc CS",
+          "name": "B.Sc. Computer Science",
+          "shortName": "B.Sc CS",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Core computing, data structures, Java, Python, web technologies, software engineering, and database systems.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-ds",
+          "code": "B.Sc Data Science",
+          "name": "B.Sc. Data Science and Artificial Intelligence",
+          "shortName": "B.Sc DS",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Statistical computing, machine learning algorithms, big data analysis, business visualization, and deep learning.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-biotech",
+          "code": "B.Sc Biotech",
+          "name": "B.Sc. Biotechnology",
+          "shortName": "B.Sc Biotech",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Molecular biology, genetic engineering, immunology, plant and animal tissue culture, bioinformatics, and bioprocess technology.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-stat",
+          "code": "B.Sc Statistics",
+          "name": "B.Sc. Statistics",
+          "shortName": "B.Sc Stat",
+          "degreeType": "B.Sc",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Probability theory, statistical inference, design of experiments, quality control, stochastic models, and actuarial statistics.",
+          "totalDegreeCredits": 140,
+          "streamId": "science",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "commerce-mgmt",
+      "name": "Commerce & Management",
+      "tamilName": "வணிகவியல் மற்றும் மேலாண்மை",
+      "governingBody": "TANSCHE / Madras, Bharathiar, Madurai Kamaraj, Bharathidasan Universities",
+      "description": "Financial accounting, corporate taxation, fintech, auditing, marketing, and business administration.",
+      "icon": "TrendingUp",
+      "accentColor": "#f59e0b",
+      "departments": [
+        {
+          "id": "bcom-gen",
+          "code": "B.Com",
+          "name": "Bachelor of Commerce (General)",
+          "shortName": "B.Com Gen",
+          "degreeType": "B.Com",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Financial accounting, corporate law, income tax, GST, auditing, banking theory, and commercial statistics.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bcom-af",
+          "code": "B.Com (A&F)",
+          "name": "B.Com. Accounting and Finance",
+          "shortName": "B.Com A&F",
+          "degreeType": "B.Com",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Advanced corporate accounting, financial management, portfolio analysis, direct and indirect taxation, and international finance.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bcom-cs",
+          "code": "B.Com (CS)",
+          "name": "B.Com. Corporate Secretaryship",
+          "shortName": "B.Com CS",
+          "degreeType": "B.Com",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Company law, secretarial practice, corporate governance, securities market law, and economic legislation.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bcom-ca",
+          "code": "B.Com (CA)",
+          "name": "B.Com. Computer Applications",
+          "shortName": "B.Com CA",
+          "degreeType": "B.Com",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "E-Commerce accounting, database systems, Tally ERP, business analytics, Python for financial data, and web commerce.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bba",
+          "code": "BBA",
+          "name": "Bachelor of Business Administration (BBA)",
+          "shortName": "BBA",
+          "degreeType": "BBA",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Principles of management, human resource management, consumer behavior, strategic management, and entrepreneurship.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bcom-bi",
+          "code": "B.Com (B&I)",
+          "name": "B.Com. Banking and Insurance",
+          "shortName": "B.Com B&I",
+          "degreeType": "B.Com",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Commercial banking operations, risk management, life & general insurance underwriting, and digital banking regulations.",
+          "totalDegreeCredits": 140,
+          "streamId": "commerce-mgmt",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "arts-humanities",
+      "name": "Arts & Humanities",
+      "tamilName": "கலை மற்றும் மனிதவியல்",
+      "governingBody": "Tamil Nadu State Council for Higher Education (TANSCHE)",
+      "description": "Literature, linguistics, history, economics, media studies, political science, and social sciences.",
+      "icon": "BookOpen",
+      "accentColor": "#8b5cf6",
+      "departments": [
+        {
+          "id": "ba-eng",
+          "code": "B.A. English",
+          "name": "B.A. English Literature",
+          "shortName": "B.A. English",
+          "degreeType": "B.A.",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "British, American, Post-Colonial, and Indian writing in English, literary criticism, phonetics, and journalism.",
+          "totalDegreeCredits": 140,
+          "streamId": "arts-humanities",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "ba-tamil",
+          "code": "B.A. Tamil",
+          "name": "B.A. Tamil Literature / தமிழ் இலக்கியம்",
+          "shortName": "B.A. Tamil",
+          "degreeType": "B.A.",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "சங்க இலக்கியம், பக்தி இலக்கியம், தொல்காப்பியம், நன்னூல், நவீன இலக்கியம் மற்றும் தமிழ் கணினியியல்.",
+          "totalDegreeCredits": 140,
+          "streamId": "arts-humanities",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "ba-econ",
+          "code": "B.A. Economics",
+          "name": "B.A. Economics",
+          "shortName": "B.A. Econ",
+          "degreeType": "B.A.",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Microeconomics, macroeconomics, development economics, public finance, monetary economics, and Tamil Nadu economic history.",
+          "totalDegreeCredits": 140,
+          "streamId": "arts-humanities",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "ba-hist",
+          "code": "B.A. History",
+          "name": "B.A. History and Tourism",
+          "shortName": "B.A. History",
+          "degreeType": "B.A.",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "History of Tamil Nadu, Indian National Movement, World Civilization, archaeology, and heritage management.",
+          "totalDegreeCredits": 140,
+          "streamId": "arts-humanities",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "ba-jmc",
+          "code": "B.A. JMC",
+          "name": "B.A. Journalism and Mass Communication",
+          "shortName": "B.A. JMC",
+          "degreeType": "B.A.",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TANSCHE CBCS Regulation",
+          "overview": "Print journalism, broadcast media, digital content production, media ethics, public relations, and documentary filmmaking.",
+          "totalDegreeCredits": 140,
+          "streamId": "arts-humanities",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "law-legal",
+      "name": "Law & Legal Studies",
+      "tamilName": "சட்டம் மற்றும் நீதித்துறை கல்வி",
+      "governingBody": "The Tamil Nadu Dr. Ambedkar Law University (TNDALU) / Bar Council of India",
+      "description": "Integrated honors and three-year professional law programs offered through Government and Private Law Colleges in Tamil Nadu.",
+      "icon": "Scale",
+      "accentColor": "#06b6d4",
+      "departments": [
+        {
+          "id": "ba-llb",
+          "code": "B.A. LL.B (Hons)",
+          "name": "B.A. LL.B. (Honours) - 5 Year Integrated",
+          "shortName": "B.A. LL.B",
+          "degreeType": "B.A. LL.B",
+          "durationYears": 5,
+          "totalSemesters": 10,
+          "regulation": "TNDALU / Bar Council of India",
+          "overview": "Constitutional law, criminal law, contracts, torts, family law, human rights, international jurisprudence, and moot court advocacy.",
+          "totalDegreeCredits": 220,
+          "streamId": "law-legal",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bcom-llb",
+          "code": "B.Com. LL.B (Hons)",
+          "name": "B.Com. LL.B. (Honours) - 5 Year Integrated",
+          "shortName": "B.Com LL.B",
+          "degreeType": "B.Com LL.B",
+          "durationYears": 5,
+          "totalSemesters": 10,
+          "regulation": "TNDALU / Bar Council of India",
+          "overview": "Corporate law, banking law, taxation laws, securities regulations, commercial contracts, and international trade law.",
+          "totalDegreeCredits": 220,
+          "streamId": "law-legal",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bba-llb",
+          "code": "B.B.A. LL.B (Hons)",
+          "name": "B.B.A. LL.B. (Honours) - 5 Year Integrated",
+          "shortName": "B.B.A. LL.B",
+          "degreeType": "B.B.A. LL.B",
+          "durationYears": 5,
+          "totalSemesters": 10,
+          "regulation": "TNDALU / Bar Council of India",
+          "overview": "Corporate governance, mergers and acquisitions, labor jurisprudence, competition law, and intellectual property litigation.",
+          "totalDegreeCredits": 220,
+          "streamId": "law-legal",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "llb-3yr",
+          "code": "LL.B (3-Year)",
+          "name": "LL.B. (Honours) - 3 Year Degree",
+          "shortName": "LL.B",
+          "degreeType": "LL.B",
+          "durationYears": 3,
+          "totalSemesters": 6,
+          "regulation": "TNDALU / Bar Council of India",
+          "overview": "Substantive and procedural civil and criminal law, evidence act, administrative law, environmental law, and legal drafting.",
+          "totalDegreeCredits": 150,
+          "streamId": "law-legal",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    },
+    {
+      "id": "agriculture-allied",
+      "name": "Agriculture & Allied Sciences",
+      "tamilName": "வேளாண்மை மற்றும் சார்பு அறிவியல்",
+      "governingBody": "Tamil Nadu Agricultural University (TNAU) / TNJFU",
+      "description": "Agronomy, horticulture, agricultural engineering, forestry, and fisheries sciences across Tamil Nadu.",
+      "icon": "Sprout",
+      "accentColor": "#16a34a",
+      "departments": [
+        {
+          "id": "bsc-agri",
+          "code": "B.Sc (Hons) Agri",
+          "name": "B.Sc. (Honours) Agriculture",
+          "shortName": "B.Sc Agri",
+          "degreeType": "B.Sc (Hons)",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "ICAR / Tamil Nadu Agricultural University (TNAU)",
+          "overview": "Agronomy, soil science, plant breeding & genetics, crop physiology, agricultural entomology, plant pathology, and RAWE rural attachment.",
+          "totalDegreeCredits": 180,
+          "streamId": "agriculture-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bsc-horti",
+          "code": "B.Sc (Hons) Horti",
+          "name": "B.Sc. (Honours) Horticulture",
+          "shortName": "B.Sc Horti",
+          "degreeType": "B.Sc (Hons)",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "ICAR / TNAU",
+          "overview": "Production technology of fruits, vegetables, floriculture, landscape gardening, medicinal and aromatic crops, and post-harvest handling.",
+          "totalDegreeCredits": 180,
+          "streamId": "agriculture-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "btech-agri-eng",
+          "code": "B.Tech Agri Eng",
+          "name": "B.Tech. Agricultural Engineering",
+          "shortName": "Agri Eng",
+          "degreeType": "B.Tech.",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "AICTE / TNAU / Anna University",
+          "overview": "Farm machinery, soil and water conservation engineering, irrigation and drainage, agricultural processing, and renewable energy.",
+          "totalDegreeCredits": 165,
+          "streamId": "agriculture-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        },
+        {
+          "id": "bfsc",
+          "code": "B.F.Sc",
+          "name": "Bachelor of Fisheries Science (B.F.Sc)",
+          "shortName": "Fisheries",
+          "degreeType": "B.F.Sc",
+          "durationYears": 4,
+          "totalSemesters": 8,
+          "regulation": "Tamil Nadu Dr. J. Jayalalithaa Fisheries University (TNJFU)",
+          "overview": "Aquaculture, aquatic animal health management, fisheries resource management, fish processing technology, and oceanography.",
+          "totalDegreeCredits": 175,
+          "streamId": "agriculture-allied",
+          "isCurriculumPopulated": false,
+          "semesters": []
+        }
+      ]
+    }
+  ]
+};

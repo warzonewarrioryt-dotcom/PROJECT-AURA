@@ -90,13 +90,26 @@ const Icons = {
 };
 
 function App() {
-  const dataset = window.__CURRICULUM_DATA__;
+  const [dataset, setDataset] = useState(window.__CURRICULUM_DATA__ || null);
   const [selectedStreamId, setSelectedStreamId] = useState('engineering-tech');
   const [selectedDeptId, setSelectedDeptId] = useState('cse');
   const [selectedSemesterNumber, setSelectedSemesterNumber] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeModalSubject, setActiveModalSubject] = useState(null);
+
+  useEffect(() => {
+    if (!dataset) {
+      if (window.__CURRICULUM_DATA__) {
+        setDataset(window.__CURRICULUM_DATA__);
+      }
+      const handleDataReady = (e) => {
+        setDataset(e.detail || window.__CURRICULUM_DATA__);
+      };
+      window.addEventListener('curriculum-data-ready', handleDataReady);
+      return () => window.removeEventListener('curriculum-data-ready', handleDataReady);
+    }
+  }, [dataset]);
 
   const currentStream = useMemo(() => {
     if (!dataset) return null;
