@@ -55,8 +55,18 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "30mb" }));
 app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 
+// Root & Dashboard routes: bypass authentication gate and serve dashboard.html directly
+app.get(["/", "/dashboard", "/dashboard.html"], (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "dashboard.html"));
+});
+
+// Explicit redirect for index.html to dashboard.html
+app.get("/index.html", (req, res) => {
+  res.redirect("/dashboard.html");
+});
+
 // Serve frontend static files if accessed directly via backend
-app.use(express.static(path.join(__dirname, "..")));
+app.use(express.static(path.join(__dirname, ".."), { index: false }));
 
 // Serve generated images from creations directory
 app.use("/creations", express.static(path.join(__dirname, "uploads/creations")));
@@ -88,17 +98,11 @@ app.get('/api/auth/google-client-id', (req, res) => {
 // Favicon fallback route
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
-// Dashboard route fallback
-app.get(["/dashboard", "/dashboard.html"], (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "index.html"));
-});
-
-
 /* =========================================================
-   ROOT & SYSTEM STATUS
+   ROOT & SYSTEM STATUS (API HEALTH ENDPOINTS)
 ========================================================= */
 
-app.get("/", (req, res) => {
+app.get(["/api/status", "/api/health"], (req, res) => {
   res.json({
     success: true,
     system: "PROJECT AURA 3.0",

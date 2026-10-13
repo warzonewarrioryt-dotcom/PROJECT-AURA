@@ -14,150 +14,13 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
     rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- GIS script removed to bypass authentication gate -->
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body data-theme="rose-olive">
 
-  <!-- =======================================================
-       AUTHENTICATION GATEWAY: LIQUID GLASS LOGIN & SIGNUP PORTAL
-       Enforces mandatory authentication before granting access to Project Aura
-  ======================================================= -->
-  <div id="auraLoginPortal" class="aura-auth-portal-overlay">
-    <div class="aura-auth-glass-container">
-      <div class="auth-brand-badge">
-        <div class="auth-brand-icon">◈</div>
-        <div class="auth-brand-text">
-          <div class="auth-brand-title">PROJECT AURA 3.0</div>
-          <div class="auth-brand-sub">Neural Academic &amp; Personal Operating System</div>
-        </div>
-      </div>
-
-      <!-- Auth Switcher Tabs -->
-      <div class="auth-tabs-row">
-        <button class="auth-tab-btn active" id="tabLoginBtn" type="button">Sign In</button>
-        <button class="auth-tab-btn" id="tabSignupBtn" type="button">Create Account</button>
-      </div>
-
-      <!-- Error / Success Alert -->
-      <div id="auraAuthAlert" class="auth-alert-box" style="display:none;"></div>
-
-      <!-- SIGN IN FORM -->
-      <form id="auraLoginForm" class="auth-form-card" autocomplete="on">
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraLoginEmail">Email Address</label>
-          <input type="email" id="auraLoginEmail" class="auth-glass-input" placeholder="e.g. manikandan@aura.ai" required autocomplete="email" />
-        </div>
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraLoginPassword">Password</label>
-          <div class="auth-password-wrapper">
-            <input type="password" id="auraLoginPassword" class="auth-glass-input" placeholder="Enter your password" required autocomplete="current-password" />
-            <button type="button" class="auth-password-toggle-btn" id="toggleLoginPasswordBtn" title="Show Password" aria-label="Toggle password visibility">
-              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </button>
-          </div>
-        </div>
-        <button type="submit" id="auraLoginSubmitBtn" class="auth-submit-glow-btn">
-          <span>Sign In to Project Aura</span>
-          <span class="auth-btn-arrow">→</span>
-        </button>
-
-        <!-- Cyberpunk Stylish Divider -->
-        <div class="auth-divider">
-          <span>OR</span>
-        </div>
-
-        <!-- Dedicated Container for Official Google Button -->
-        <div id="googleBtnContainer" style="width: 100%; display: flex; justify-content: center; margin-top: 12px;"></div>
-
-        <div class="auth-demo-shortcut" id="fillDemoCredentialsBtn" title="Click to autofill lead scholar credentials">
-          <span>⚡ Quick Fill Demo: <strong>manikandan@aura.ai</strong> / <strong>aura123</strong></span>
-        </div>
-      </form>
-
-      <!-- SIGN UP FORM -->
-      <form id="auraSignupForm" class="auth-form-card" style="display:none;" autocomplete="on">
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraSignupName">Full Name</label>
-          <input type="text" id="auraSignupName" class="auth-glass-input" placeholder="e.g. Manikandan" required autocomplete="name" />
-        </div>
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraSignupEmail">Email Address</label>
-          <input type="email" id="auraSignupEmail" class="auth-glass-input" placeholder="e.g. student@college.edu" required autocomplete="email" />
-        </div>
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraSignupPassword">Password</label>
-          <div class="auth-password-wrapper">
-            <input type="password" id="auraSignupPassword" class="auth-glass-input" placeholder="Create a password (min 4 chars)" minlength="4" required autocomplete="new-password" />
-            <button type="button" class="auth-password-toggle-btn" id="toggleSignupPasswordBtn" title="Show Password" aria-label="Toggle password visibility">
-              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-            </button>
-          </div>
-        </div>
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraSignupStandard">Academic Level</label>
-          <select id="auraSignupStandard" class="auth-glass-select">
-            <option value="College">College / Engineering</option>
-            <option value="12th">12th Standard</option>
-            <option value="11th">11th Standard</option>
-            <option value="10th">10th Standard</option>
-          </select>
-        </div>
-        <button type="submit" id="auraSignupSubmitBtn" class="auth-submit-glow-btn">
-          <span>Create Account &amp; Launch</span>
-          <span class="auth-btn-arrow">→</span>
-        </button>
-
-        <!-- Cyberpunk Stylish Divider -->
-        <div class="auth-divider">
-          <span>OR</span>
-        </div>
-
-        <!-- Dedicated Container for Official Google Button -->
-        <div id="googleSignupBtnContainer" style="width: 100%; display: flex; justify-content: center; margin-top: 12px;"></div>
-      </form>
-
-      <!-- Hidden Container for Google GIS anchor if needed -->
-      <div id="gsiHiddenRenderContainer" style="display:none;" aria-hidden="true"></div>
-
-      <!-- EMAIL VERIFICATION FORM -->
-      <form id="auraVerifyForm" class="auth-form-card" style="display:none;" autocomplete="off">
-        <div style="text-align:center; margin-bottom:14px;">
-          <div style="font-size:26px; margin-bottom:4px;">✉️</div>
-          <div style="font-size:15px; font-weight:800; color:var(--text-primary);">Verify Your Email Address</div>
-          <div style="font-size:12px; color:var(--text-secondary); margin-top:4px; line-height:1.4;">
-            A 6-digit verification code has been generated for <strong id="verifyTargetEmail" style="color:var(--accent-gold);"></strong>. Enter the code below to activate your account:
-          </div>
-        </div>
-
-        <div class="auth-input-group">
-          <label class="auth-label" for="auraVerifyCodeInput">6-Digit Verification Code / Passkey</label>
-          <input type="text" id="auraVerifyCodeInput" class="auth-glass-input" placeholder="e.g. 842109" maxlength="6" style="text-align:center; font-size:22px; font-weight:800; letter-spacing:0.25em; color:var(--accent-cyan);" required />
-        </div>
-
-        <button type="submit" id="auraVerifySubmitBtn" class="auth-submit-glow-btn">
-          <span>Verify Code &amp; Launch Project Aura</span>
-          <span class="auth-btn-arrow">✓</span>
-        </button>
-
-        <div class="auth-demo-shortcut" id="autoFillVerifyCodeBtn" style="margin-top:10px; cursor:pointer;" title="Click to auto-enter the generated passkey">
-          <span>🔑 Quick Passkey: <strong id="verifyPasskeyBadge">842109</strong> (Click to auto-fill)</span>
-        </div>
-
-        <div style="text-align:center; margin-top:12px;">
-          <button type="button" id="auraBackToLoginBtn" style="background:none; border:none; color:var(--text-secondary); font-size:12px; cursor:pointer; text-decoration:underline;">
-            ← Back to Sign In
-          </button>
-        </div>
-      </form>
-
-      <div class="auth-footer-note">
-        <span>🔒 Authentic Academic Protocol · User-Isolated Device Analytics</span>
-      </div>
-    </div>
-  </div>
-
+  <!-- Authentication gate bypassed: login overlay removed -->
   <!-- =======================================================
        LIVE DYNAMIC CANVAS (CHATGPT 6 ASTRA LIVE THEMES)
   ======================================================= -->
@@ -268,7 +131,7 @@
           <!-- Student Profile & Authentication -->
           <button class="topbar-user-btn" id="userAuthBtn" title="Student Profile & Authentication">
             <span class="user-avatar-glyph">👤</span>
-            <span id="userNameLabel" class="user-name-text">Sign In</span>
+            <span id="userNameLabel" class="user-name-text">Aura Operator</span>
           </button>
 
           <!-- Sign Out Button -->

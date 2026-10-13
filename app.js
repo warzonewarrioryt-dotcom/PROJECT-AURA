@@ -31,17 +31,55 @@ const state = {
   tasks: JSON.parse(localStorage.getItem("aura_tasks") || "[]")
 };
 
+// Default Mock User Profile (Bypasses Authentication Gate)
+const DEFAULT_AURA_USER = {
+  id: "operator_001",
+  name: "Aura Operator",
+  email: "operator@aura.ai",
+  role: "System Operator",
+  status: "Active",
+  standard: "Higher Education & Research",
+  stream: "Neural OS",
+  preferredMethod: "Deep conceptual analysis, step-by-step reasoning, and multi-disciplinary synthesis",
+  schoolTeachingStyle: "Comprehensive syllabus breakdown and practical implementations",
+  loggedIn: true
+};
+
+// Immediately populate mock user & token in localStorage if not already present
+(function initBypassMockUser() {
+  try {
+    if (!localStorage.getItem("token")) {
+      localStorage.setItem("token", "aura_operator_bypass_token");
+    }
+    const currentSession = localStorage.getItem("aura_auth_session");
+    if (!currentSession) {
+      localStorage.setItem("aura_auth_session", JSON.stringify({
+        success: true,
+        token: localStorage.getItem("token") || "aura_operator_bypass_token",
+        user: DEFAULT_AURA_USER,
+        student: DEFAULT_AURA_USER,
+        profile: DEFAULT_AURA_USER
+      }));
+    }
+    const currentProfile = localStorage.getItem("aura_student_profile");
+    if (!currentProfile) {
+      localStorage.setItem("aura_student_profile", JSON.stringify(DEFAULT_AURA_USER));
+    }
+  } catch (_) {}
+})();
+
 function getActiveUserId() {
   const sess = localStorage.getItem("aura_auth_session");
   if (sess) {
     try {
       const parsed = JSON.parse(sess);
       if (parsed.user && parsed.user.id) return parsed.user.id;
+      if (parsed.student && parsed.student.id) return parsed.student.id;
     } catch (_) {}
   }
   let deviceUid = localStorage.getItem("aura_device_uid");
   if (!deviceUid) {
-    deviceUid = "dev_" + Math.random().toString(36).substring(2, 10) + "_" + Date.now();
+    deviceUid = DEFAULT_AURA_USER.id;
     localStorage.setItem("aura_device_uid", deviceUid);
   }
   return deviceUid;
@@ -6596,15 +6634,9 @@ function executeAuraVoiceCommand(rawTranscript) {
     return;
   }
 
-  // 11. Sign Out / Logout
+  // 11. Sign Out / Logout (Bypassed)
   if (cmd.includes("sign out") || cmd.includes("logout") || cmd.includes("log out") || cmd.includes("veliye") || cmd.includes("வெளியேறு") || cmd.includes("लॉगआउट")) {
-    const portal = document.getElementById("auraLoginPortal");
-    if (portal) {
-      localStorage.removeItem("aura_auth_session");
-      portal.classList.remove("authenticated");
-      switchView("command-center");
-      speakAuraVoice(isTamilScript ? "ப்ராஜெக்ட் ஆராவிலிருந்து வெளியேறிவிட்டீர்கள்." : (isHindiScript ? "प्रोजेक्ट ऑरा से लॉगआउट कर दिया गया है।" : "Project Aura-la irunthu sign out aagiduchu."));
-    }
+    speakAuraVoice("Authentication gate is bypassed. You are permanently signed in as Aura Operator.");
     return;
   }
 
@@ -8638,6 +8670,7 @@ function initStudentAuthModal() {
 
   userAuthBtn.addEventListener("click", () => {
     studentAuthModal.style.display = "flex";
+    if (authTabProfileBtn) authTabProfileBtn.click();
     updateAuthProfileDisplay();
     playTactileSound("click");
   });
@@ -8836,10 +8869,11 @@ function initStudentAuthModal() {
         localStorage.removeItem("aura_school_perm");
         localStorage.removeItem("aura_school_method");
         localStorage.removeItem("aura_local_vault_files");
-        updateTopUserName("Sign In");
+        localStorage.setItem("aura_student_profile", JSON.stringify(DEFAULT_AURA_USER));
+        updateTopUserName("Aura Operator");
         updateAuthProfileDisplay();
         playTactileSound("click");
-        alert("All student study profile data, methods, and uploaded syllabi have been permanently deleted.");
+        alert("Personal profile reset to default Aura Operator.");
       }
     });
   }
@@ -8847,29 +8881,27 @@ function initStudentAuthModal() {
 
 function updateTopUserName(name) {
   const lbl = document.getElementById("userNameLabel");
-  if (lbl) lbl.textContent = name || "Sign In";
+  if (lbl) lbl.textContent = name || "Aura Operator";
 }
 
 function updateAuthProfileDisplay() {
-  const stored = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+  const stored = JSON.parse(localStorage.getItem("aura_student_profile") || JSON.stringify(DEFAULT_AURA_USER));
   const pName = document.getElementById("authProfileName");
   const pStd = document.getElementById("authProfileStdBadge");
   const pEmail = document.getElementById("authProfileEmail");
   const pMethod = document.getElementById("authProfileMethod");
   const pSchool = document.getElementById("authProfileSchool");
 
-  if (pName) pName.textContent = stored.name || "Guest Student";
-  if (pStd) pStd.textContent = (stored.standard || "12th") + " Standard";
-  if (pEmail) pEmail.textContent = stored.email || "guest@aura.ai";
-  if (pMethod) pMethod.textContent = stored.preferredMethod || collegeAndSchoolState.storedMethod;
+  if (pName) pName.textContent = stored.name || "Aura Operator";
+  if (pStd) pStd.textContent = (stored.standard || "Higher Education & Research") + (stored.standard ? " Standard" : "");
+  if (pEmail) pEmail.textContent = stored.email || "operator@aura.ai";
+  if (pMethod) pMethod.textContent = stored.preferredMethod || (typeof collegeAndSchoolState !== "undefined" && collegeAndSchoolState.storedMethod) || "Step-by-step formula derivation & conceptual clarity";
   if (pSchool) pSchool.textContent = stored.schoolTeachingStyle || "Standard textbook definitions and derivations";
 }
 
 // Check saved profile on boot
-const savedProfileBoot = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
-if (savedProfileBoot.name) {
-  setTimeout(() => updateTopUserName(savedProfileBoot.name), 200);
-}
+const savedProfileBoot = JSON.parse(localStorage.getItem("aura_student_profile") || JSON.stringify(DEFAULT_AURA_USER));
+setTimeout(() => updateTopUserName(savedProfileBoot.name || "Aura Operator"), 200);
 
 // Connect new subnav tabs in Creation Studio
 document.addEventListener("click", (e) => {
@@ -8915,462 +8947,51 @@ function initPasswordToggleButtons() {
   });
 }
 
-// ── MANDATORY LIQUID GLASS LOGIN & SIGNUP PORTAL GATEWAY ──
+// ── AUTHENTICATION BYPASS & OPERATOR GATEWAY CONTROLLER ──
 function initAuthGateway() {
+  // 1. Immediately remove login overlay from DOM if present
   const portal = document.getElementById("auraLoginPortal");
-  if (!portal) return;
+  if (portal) {
+    portal.classList.add("authenticated");
+    portal.style.display = "none";
+    try { portal.remove(); } catch (_) {}
+  }
 
-  initPasswordToggleButtons();
+  // 2. Ensure mock session and tokens are seeded
+  try {
+    if (!localStorage.getItem("token")) {
+      localStorage.setItem("token", "aura_operator_bypass_token");
+    }
+    if (!localStorage.getItem("aura_auth_session")) {
+      localStorage.setItem("aura_auth_session", JSON.stringify({
+        success: true,
+        token: localStorage.getItem("token") || "aura_operator_bypass_token",
+        user: DEFAULT_AURA_USER,
+        student: DEFAULT_AURA_USER,
+        profile: DEFAULT_AURA_USER
+      }));
+    }
+    if (!localStorage.getItem("aura_student_profile")) {
+      localStorage.setItem("aura_student_profile", JSON.stringify(DEFAULT_AURA_USER));
+    }
+  } catch (_) {}
 
-  const tabLoginBtn = document.getElementById("tabLoginBtn");
-  const tabSignupBtn = document.getElementById("tabSignupBtn");
-  const loginForm = document.getElementById("auraLoginForm");
-  const signupForm = document.getElementById("auraSignupForm");
-  const verifyForm = document.getElementById("auraVerifyForm");
-  const alertBox = document.getElementById("auraAuthAlert");
-  const fillDemoBtn = document.getElementById("fillDemoCredentialsBtn");
-  const loginEmail = document.getElementById("auraLoginEmail");
-  const loginPass = document.getElementById("auraLoginPassword");
-  const signOutBtn = document.getElementById("auraSignOutBtn");
+  // 3. Set default mock user details in UI headers
+  const profile = JSON.parse(localStorage.getItem("aura_student_profile") || JSON.stringify(DEFAULT_AURA_USER));
+  const operatorName = profile.name || "Aura Operator";
+
   const userNameLabel = document.getElementById("userNameLabel");
+  if (userNameLabel) userNameLabel.textContent = operatorName;
+  updateTopUserName(operatorName);
+  updateAuthProfileDisplay();
 
-  const verifyEmailLabel = document.getElementById("verifyTargetEmail");
-  const verifyCodeInput = document.getElementById("auraVerifyCodeInput");
-  const verifySubmitBtn = document.getElementById("auraVerifySubmitBtn");
-  const autoFillVerifyCodeBtn = document.getElementById("autoFillVerifyCodeBtn");
-  const verifyPasskeyBadge = document.getElementById("verifyPasskeyBadge");
-  const backToLoginBtn = document.getElementById("auraBackToLoginBtn");
+  // 4. Hide signout button
+  const signOutBtn = document.getElementById("auraSignOutBtn");
+  if (signOutBtn) signOutBtn.style.display = "none";
 
-  function showAlert(msg, isError = true) {
-    if (!alertBox) return;
-    alertBox.textContent = msg;
-    alertBox.className = `auth-alert-box ${isError ? 'error' : 'success'}`;
-    alertBox.style.display = "block";
-  }
-
-  function hideAlert() {
-    if (alertBox) alertBox.style.display = "none";
-  }
-
-  function showVerifyView(targetEmail, code) {
-    if (loginForm) loginForm.style.display = "none";
-    if (signupForm) signupForm.style.display = "none";
-    if (tabLoginBtn) tabLoginBtn.classList.remove("active");
-    if (tabSignupBtn) tabSignupBtn.classList.remove("active");
-    if (verifyForm) verifyForm.style.display = "block";
-    if (verifyEmailLabel) verifyEmailLabel.textContent = targetEmail;
-    if (verifyPasskeyBadge && code) verifyPasskeyBadge.textContent = code;
-    if (verifyCodeInput) {
-      verifyCodeInput.value = "";
-      setTimeout(() => verifyCodeInput.focus(), 150);
-    }
-    showAlert(`✉️ Verification code generated for ${targetEmail}. Enter the 6-digit code to activate your account.`, false);
-  }
-
-  // Switch between Sign In and Create Account
-  if (tabLoginBtn && tabSignupBtn && loginForm && signupForm) {
-    tabLoginBtn.addEventListener("click", () => {
-      tabLoginBtn.classList.add("active");
-      tabSignupBtn.classList.remove("active");
-      loginForm.style.display = "block";
-      signupForm.style.display = "none";
-      if (verifyForm) verifyForm.style.display = "none";
-      hideAlert();
-    });
-    tabSignupBtn.addEventListener("click", () => {
-      tabSignupBtn.classList.add("active");
-      tabLoginBtn.classList.remove("active");
-      signupForm.style.display = "block";
-      loginForm.style.display = "none";
-      if (verifyForm) verifyForm.style.display = "none";
-      hideAlert();
-    });
-  }
-
-  // Back to login button from verification view
-  if (backToLoginBtn) {
-    backToLoginBtn.addEventListener("click", () => {
-      if (verifyForm) verifyForm.style.display = "none";
-      if (loginForm) loginForm.style.display = "block";
-      if (tabLoginBtn) tabLoginBtn.classList.add("active");
-      if (tabSignupBtn) tabSignupBtn.classList.remove("active");
-      hideAlert();
-    });
-  }
-
-  // Quick auto-fill passkey button
-  if (autoFillVerifyCodeBtn && verifyCodeInput && verifyPasskeyBadge) {
-    autoFillVerifyCodeBtn.addEventListener("click", () => {
-      verifyCodeInput.value = verifyPasskeyBadge.textContent.trim();
-      playTactileSound("click");
-      showAlert("Passkey auto-filled. Click 'Verify Code & Launch' to activate your account.", false);
-    });
-  }
-
-  // Quick Demo credentials fill
-  if (fillDemoBtn && loginEmail && loginPass) {
-    fillDemoBtn.addEventListener("click", () => {
-      loginEmail.value = "manikandan@aura.ai";
-      loginPass.value = "aura123";
-      playTactileSound("click");
-      showAlert("Demo credentials loaded! Click 'Sign In to Project Aura' to continue.", false);
-    });
-  }
-
-  // ── OFFICIAL GOOGLE IDENTITY SERVICES (GIS) AUTHENTICATION ──
-  const GOOGLE_CLIENT_ID = "792884492277-qu4hiu3qpdiacda8ufrj558ef5sghcp9.apps.googleusercontent.com";
-
-  async function handleGoogleCredentialResponse(response) {
-    if (!response || !response.credential) {
-      console.warn("[GOOGLE AUTH] Empty credential response received");
-      showAlert("Google authentication was canceled or returned no credential.");
-      return;
-    }
-
-    showAlert("Verifying Google account with Project Aura...", false);
-
-    const payload = JSON.stringify({ credential: response.credential });
-
-    try {
-      let res;
-      try {
-        res = await fetch(`${BACKEND_URL}/api/student/auth/google`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: payload
-        });
-      } catch (err) {
-        console.warn("[GOOGLE AUTH] Primary endpoint failed, trying fallback:", err.message);
-        res = await fetch("https://project-aura-hush.onrender.com/api/auth/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: payload
-        });
-      }
-
-      if (!res.ok) {
-        let errData = {};
-        try { errData = await res.json(); } catch (_) {}
-        throw new Error(errData.message || errData.error || `Authentication failed with status ${res.status}`);
-      }
-
-      const data = await res.json();
-
-      // Store token and student session in localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("aura_auth_session", JSON.stringify(data));
-      const studentData = data.student || data.user || data.profile;
-      if (studentData) {
-        localStorage.setItem("aura_student_profile", JSON.stringify(studentData));
-      }
-
-      showAlert(`✓ Welcome, ${(studentData && studentData.name) || "Student"}! Google authentication successful.`, false);
-      if (typeof playTactileSound === "function") playTactileSound("success");
-      if (typeof playProjectAuraCinematicImpact === "function") {
-        playProjectAuraCinematicImpact(0.85);
-      }
-
-      setTimeout(() => {
-        if (portal) portal.classList.add("authenticated");
-        if (userNameLabel) userNameLabel.textContent = (studentData && studentData.name) || "Student";
-        if (typeof updateTopUserName === "function") updateTopUserName((studentData && studentData.name) || "Student");
-        if (signOutBtn) signOutBtn.style.display = "inline-flex";
-        if (typeof loadStudentPerformance === "function") loadStudentPerformance();
-        if (typeof updateAuthProfileDisplay === "function") updateAuthProfileDisplay();
-        if (typeof switchView === "function") switchView("command-center");
-
-        // Redirect directly to dashboard route as requested
-        window.location.href = "/dashboard.html";
-      }, 500);
-
-    } catch (err) {
-      console.error("[GOOGLE AUTH ERROR]", err);
-      showAlert("✕ Google Sign-In error: " + (err.message || "Failed to complete authentication."));
-      if (typeof playTactileSound === "function") playTactileSound("error");
-    }
-  }
-
-  function initGoogleAuth() {
-    if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-      setTimeout(initGoogleAuth, 300);
-      return;
-    }
-
-    try {
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: handleGoogleCredentialResponse,
-        auto_select: false,
-        use_fedcm_for_prompt: true
-      });
-
-      const container = document.getElementById("googleBtnContainer");
-      if (container) {
-        container.innerHTML = "";
-        google.accounts.id.renderButton(container, {
-          theme: "filled_blue",
-          size: "large",
-          text: "continue_with",
-          shape: "rectangular",
-          width: "320"
-        });
-      }
-
-      const signupContainer = document.getElementById("googleSignupBtnContainer");
-      if (signupContainer) {
-        signupContainer.innerHTML = "";
-        google.accounts.id.renderButton(signupContainer, {
-          theme: "filled_blue",
-          size: "large",
-          text: "continue_with",
-          shape: "rectangular",
-          width: "320"
-        });
-      }
-    } catch (err) {
-      console.warn("[GOOGLE AUTH INIT ERROR]", err);
-    }
-  }
-
-  // Initialize Google Identity Services
-  initGoogleAuth();
-
-  // Check active session on startup
-  const existingSession = localStorage.getItem("aura_auth_session");
-  const existingToken = localStorage.getItem("token");
-  if (existingSession || existingToken) {
-    try {
-      const sess = existingSession ? JSON.parse(existingSession) : null;
-      const user = (sess && (sess.student || sess.user || sess.profile)) || JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
-      portal.classList.add("authenticated");
-      if (user && user.name) {
-        if (userNameLabel) userNameLabel.textContent = user.name || "Student";
-        if (typeof updateTopUserName === "function") updateTopUserName(user.name);
-      }
-      if (signOutBtn) signOutBtn.style.display = "inline-flex";
-    } catch (_) {
-      if (existingToken) {
-        portal.classList.add("authenticated");
-        if (signOutBtn) signOutBtn.style.display = "inline-flex";
-      } else {
-        portal.classList.remove("authenticated");
-      }
-    }
-  } else {
-    portal.classList.remove("authenticated");
-    if (signOutBtn) signOutBtn.style.display = "none";
-  }
-
-  // Handle Login submission
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      hideAlert();
-      const email = loginEmail ? loginEmail.value.trim() : "";
-      const password = loginPass ? loginPass.value.trim() : "";
-      if (!email || !password) {
-        showAlert("✕ Unsuccessful: Please enter both email and password.");
-        return;
-      }
-
-      const submitBtn = document.getElementById("auraLoginSubmitBtn");
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Verifying Credentials...";
-      }
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/student/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-
-        if (res.status === 401) {
-          throw new Error("Invalid email or password. Please check your credentials or create an account.");
-        }
-
-        const data = await res.json();
-        if (!data.success) {
-          throw new Error(data.error || "Invalid email or password. Please check your credentials or create an account.");
-        }
-
-        if (data.requireVerification) {
-          showVerifyView(data.email, data.verificationCode);
-          return;
-        }
-
-        // Store authentic user session in browser & database
-        localStorage.setItem("aura_auth_session", JSON.stringify(data));
-        localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
-
-        showAlert("✓ Authentication successful! Initializing Project Aura...", false);
-        playTactileSound("success");
-        if (typeof playProjectAuraCinematicImpact === "function") {
-          playProjectAuraCinematicImpact(0.85);
-        }
-
-        setTimeout(() => {
-          portal.classList.add("authenticated");
-          if (userNameLabel) userNameLabel.textContent = (data.user && data.user.name) || "Student";
-          if (signOutBtn) signOutBtn.style.display = "inline-flex";
-          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
-        }, 550);
-      } catch (err) {
-        showAlert(err.message || "Invalid email or password. Please check your credentials or create an account.");
-        playTactileSound("error");
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Sign In to Project Aura</span><span class="auth-btn-arrow">→</span>`;
-        }
-      }
-    });
-  }
-
-  // Handle Signup submission
-  if (signupForm) {
-    signupForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      hideAlert();
-      const name = document.getElementById("auraSignupName")?.value.trim();
-      const email = document.getElementById("auraSignupEmail")?.value.trim();
-      const password = document.getElementById("auraSignupPassword")?.value.trim();
-      const standard = document.getElementById("auraSignupStandard")?.value || "College";
-      const stream = document.getElementById("auraSignupStream")?.value || "General";
-
-      if (!email || !password) {
-        showAlert("✕ Unsuccessful: Email and password are required.");
-        return;
-      }
-
-      const submitBtn = document.getElementById("auraSignupSubmitBtn");
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Generating Verification Passkey...";
-      }
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/student/auth/signup`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password, standard, stream })
-        });
-
-        if (res.status === 409) {
-          throw new Error("This email is already registered. Please sign in instead.");
-        }
-
-        const data = await res.json();
-        if (!data.success) {
-          throw new Error(data.error || "Unsuccessful: Failed to register account.");
-        }
-
-        if (data.requireVerification) {
-          showVerifyView(data.email, data.verificationCode);
-          playTactileSound("dispatch");
-          return;
-        }
-
-        localStorage.setItem("aura_auth_session", JSON.stringify(data));
-        localStorage.setItem("aura_student_profile", JSON.stringify(data.user));
-
-        showAlert("✓ Account registered successfully! Welcome to Project Aura.", false);
-        playTactileSound("success");
-        if (typeof playProjectAuraCinematicImpact === "function") {
-          playProjectAuraCinematicImpact(0.85);
-        }
-
-        setTimeout(() => {
-          portal.classList.add("authenticated");
-          if (userNameLabel) userNameLabel.textContent = data.user.name || "Student";
-          if (signOutBtn) signOutBtn.style.display = "inline-flex";
-          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
-        }, 550);
-      } catch (err) {
-        showAlert(err.message || "✕ Unsuccessful: Registration failed. Try with different credentials.");
-        playTactileSound("error");
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>Create Account & Launch</span><span class="auth-btn-arrow">→</span>`;
-        }
-      }
-    });
-  }
-
-  // Handle Email Verification submission
-  if (verifyForm) {
-    verifyForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      hideAlert();
-      const code = verifyCodeInput ? verifyCodeInput.value.trim() : "";
-      const email = (verifyEmailLabel ? verifyEmailLabel.textContent.trim() : "") ||
-                    (document.getElementById("auraSignupEmail")?.value.trim() || "");
-
-      if (!code || code.length !== 6) {
-        showAlert("✕ Unsuccessful: Please enter the complete 6-digit verification code.");
-        playTactileSound("error");
-        return;
-      }
-
-      if (verifySubmitBtn) {
-        verifySubmitBtn.disabled = true;
-        verifySubmitBtn.textContent = "Verifying Passkey...";
-      }
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/api/student/auth/verify-code`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, code })
-        });
-        const data = await res.json();
-        if (!data.success) {
-          throw new Error(data.error || "Unsuccessful: Invalid verification code. Please check your code.");
-        }
-
-        localStorage.setItem("aura_auth_session", JSON.stringify(data));
-        localStorage.setItem("aura_student_profile", JSON.stringify(data.profile || data.user));
-
-        showAlert("✓ Email verified successfully! Launching Project Aura...", false);
-        playTactileSound("success");
-        if (typeof playProjectAuraCinematicImpact === "function") {
-          playProjectAuraCinematicImpact(0.85);
-        }
-
-        setTimeout(() => {
-          portal.classList.add("authenticated");
-          if (userNameLabel) userNameLabel.textContent = (data.user && data.user.name) || "Student";
-          if (signOutBtn) signOutBtn.style.display = "inline-flex";
-          if (typeof loadStudentPerformance === "function") loadStudentPerformance();
-        }, 550);
-      } catch (err) {
-        showAlert(err.message || "✕ Unsuccessful: Verification failed. Invalid code.");
-        playTactileSound("error");
-      } finally {
-        if (verifySubmitBtn) {
-          verifySubmitBtn.disabled = false;
-          verifySubmitBtn.innerHTML = `<span>Verify Code &amp; Launch Project Aura</span><span class="auth-btn-arrow">✓</span>`;
-        }
-      }
-    });
-  }
-
-  // Handle Sign Out
-  if (signOutBtn) {
-    signOutBtn.addEventListener("click", () => {
-      if (confirm("Sign out of Project Aura? The portal will be locked until you sign back in.")) {
-        localStorage.removeItem("aura_auth_session");
-        localStorage.removeItem("token");
-        localStorage.removeItem("aura_student_profile");
-        portal.classList.remove("authenticated");
-        signOutBtn.style.display = "none";
-        if (userNameLabel) userNameLabel.textContent = "Sign In";
-        switchView("command-center");
-        playTactileSound("click");
-      }
-    });
+  // 5. Ensure active view is visible and not blocked
+  if (typeof switchView === "function" && state.activeView === "command-center") {
+    switchView("command-center");
   }
 }
 
