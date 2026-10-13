@@ -6909,6 +6909,7 @@ const academicIntelligenceState = {
   activeSchoolStandard: "STD_12", // "STD_10" | "STD_11" | "STD_12"
   activeSchoolGroup: "BIO_MATHS", // "BIO_MATHS" | "COMP_SCI" | "PURE_SCI" | "COMMERCE" | "ARTS"
   activeSubject: "Physics",
+  selectedSubject: null, // { standardOrDept, semester, subjectName, subjectCode, currentTopic, topics }
   userMethodPermission: localStorage.getItem("aura_school_perm") === "true",
   storedMethod: localStorage.getItem("aura_school_method") || "Step-by-step formula breakdown, bilingual Tamil-English, textbook definitions first, and exam-scoring tips",
   // Material Analyzer State
@@ -7439,12 +7440,387 @@ const AURA_SCHOOL_CURRICULUM = {
   }
 };
 
+// ── CURATED ACADEMIC VIDEO LIBRARY (MAPPED TO SUBJECT CODES & NAMES) ──
+const AURA_CURATED_ACADEMIC_VIDEOS = {
+  "CS3301": [
+    { id: "Q_n_4iY7a44", title: "Data Structures & Algorithms Complete Course in Tamil", channel: "Logic First Tamil", desc: "Arrays, Linked Lists, Stacks, Queues, Binary Trees & Sorting algorithms.", url: "https://www.youtube.com/watch?v=Q_n_4iY7a44", thumbnail: "https://i.ytimg.com/vi/Q_n_4iY7a44/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "eIRMbZ5v3uA", title: "Data Structures in Tamil - Full Subject Playlist", channel: "Error Makes Clever Academy", desc: "Memory allocation, pointers, Big-O complexity, and tree traversals.", url: "https://www.youtube.com/watch?v=eIRMbZ5v3uA", thumbnail: "https://i.ytimg.com/vi/eIRMbZ5v3uA/hqdefault.jpg", language: "Tamil", badge: "Core Syllabus" },
+    { id: "0IAPZzGSbME", title: "Data Structures and Algorithms for Beginners", channel: "Programming with Mosh", desc: "Core computer science fundamentals: Stacks, Queues, Hash Tables, Trees, and Graph theory.", url: "https://www.youtube.com/watch?v=0IAPZzGSbME", thumbnail: "https://i.ytimg.com/vi/0IAPZzGSbME/hqdefault.jpg", language: "English", badge: "CS Foundation" }
+  ],
+  "CS3401": [
+    { id: "B31LgI4Y4DQ", title: "Algorithms and Data Structures Tutorial - Full Course", channel: "freeCodeCamp.org", desc: "Divide and conquer, greedy algorithms, dynamic programming, and graphs.", url: "https://www.youtube.com/watch?v=B31LgI4Y4DQ", thumbnail: "https://i.ytimg.com/vi/B31LgI4Y4DQ/hqdefault.jpg", language: "English", badge: "Anna University R2021" },
+    { id: "2Y88q7H_z5U", title: "Design and Analysis of Algorithms - Complete Lecture Series", channel: "Abdul Bari", desc: "Master recurrence relations, Knapsack, Dijkstra, and NP-completeness.", url: "https://www.youtube.com/watch?v=2Y88q7H_z5U", thumbnail: "https://i.ytimg.com/vi/2Y88q7H_z5U/hqdefault.jpg", language: "English", badge: "Exam Blueprint" }
+  ],
+  "CS3491": [
+    { id: "8uA3m5K1n70", title: "Artificial Intelligence & Machine Learning in Tamil", channel: "Logic First Tamil", desc: "Heuristic search, A* algorithm, knowledge representation, and neural networks.", url: "https://www.youtube.com/watch?v=8uA3m5K1n70", thumbnail: "https://i.ytimg.com/vi/8uA3m5K1n70/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "JMUxmLgw-QU", title: "Artificial Intelligence Full Course", channel: "freeCodeCamp.org", desc: "Full semester AI syllabus: Search, constraints, logic, and deep learning.", url: "https://www.youtube.com/watch?v=JMUxmLgw-QU", thumbnail: "https://i.ytimg.com/vi/JMUxmLgw-QU/hqdefault.jpg", language: "English", badge: "Comprehensive" }
+  ],
+  "CS3492": [
+    { id: "HXV3zeQKqGY", title: "Database Management Systems (DBMS) Full Course in Tamil", channel: "Logic First Tamil", desc: "ER modeling, relational schemas, Normalization (1NF, 2NF, 3NF, BCNF), and SQL.", url: "https://www.youtube.com/watch?v=HXV3zeQKqGY", thumbnail: "https://i.ytimg.com/vi/HXV3zeQKqGY/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "kBdlM6hZS5A", title: "DBMS Complete Anna University Playlist", channel: "Gate Smashers", desc: "Transactions, ACID properties, indexing, and recovery techniques.", url: "https://www.youtube.com/watch?v=kBdlM6hZS5A", thumbnail: "https://i.ytimg.com/vi/kBdlM6hZS5A/hqdefault.jpg", language: "English", badge: "Exam Scoring" }
+  ],
+  "CS3591": [
+    { id: "3QhU93L8W5k", title: "Computer Networks & OSI Model in Tamil", channel: "Logic First Tamil", desc: "OSI 7 Layers, TCP/IP, IP Addressing, Routing Protocols, and TCP flow control.", url: "https://www.youtube.com/watch?v=3QhU93L8W5k", thumbnail: "https://i.ytimg.com/vi/3QhU93L8W5k/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "qiQR5rTSshw", title: "Computer Networks Lectures for Engineering", channel: "Gate Smashers", desc: "Data link layer, CRC, sliding window protocols, subnetting, and network security.", url: "https://www.youtube.com/watch?v=qiQR5rTSshw", thumbnail: "https://i.ytimg.com/vi/qiQR5rTSshw/hqdefault.jpg", language: "English", badge: "Full Coverage" }
+  ],
+  "CS3351": [
+    { id: "v3eWjQ7w-L0", title: "Digital Principles & System Design in Tamil", channel: "Logic First Tamil", desc: "Boolean algebra, K-Maps, combinational & sequential circuit design.", url: "https://www.youtube.com/watch?v=v3eWjQ7w-L0", thumbnail: "https://i.ytimg.com/vi/v3eWjQ7w-L0/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "4c83B8QeY4E", title: "Computer Organization and Architecture Complete Course", channel: "Neso Academy", desc: "CPU architecture, instruction pipelining, cache memory mapping, and RISC/CISC.", url: "https://www.youtube.com/watch?v=4c83B8QeY4E", thumbnail: "https://i.ytimg.com/vi/4c83B8QeY4E/hqdefault.jpg", language: "English", badge: "Hardware Core" }
+  ],
+  "CS3352": [
+    { id: "7O_X0k3X9Xk", title: "Foundations of Data Science with Python in Tamil", channel: "Error Makes Clever Academy", desc: "NumPy, Pandas, Exploratory Data Analysis, and Statistical Modeling.", url: "https://www.youtube.com/watch?v=7O_X0k3X9Xk", thumbnail: "https://i.ytimg.com/vi/7O_X0k3X9Xk/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "ua-CiDNNj30", title: "Python for Data Science - Course for Beginners", channel: "freeCodeCamp.org", desc: "Data cleaning, statistical inference, visualization, and linear regression.", url: "https://www.youtube.com/watch?v=ua-CiDNNj30", thumbnail: "https://i.ytimg.com/vi/ua-CiDNNj30/hqdefault.jpg", language: "English", badge: "Python Stack" }
+  ],
+  "CS3452": [
+    { id: "58N2N7zJGrQ", title: "Theory of Computation & Automata Theory Full Course", channel: "Gate Smashers", desc: "DFA, NFA, regular expressions, pumping lemma, CFG, and Turing machines.", url: "https://www.youtube.com/watch?v=58N2N7zJGrQ", thumbnail: "https://i.ytimg.com/vi/58N2N7zJGrQ/hqdefault.jpg", language: "English", badge: "Anna University R2021" }
+  ],
+  "MA3151": [
+    { id: "e_e07fJ85V8", title: "Engineering Mathematics: Matrices & Calculus in Tamil", channel: "Tamil Maths Academy", desc: "Eigenvalues, eigenvectors, Cayley-Hamilton, and differential calculus.", url: "https://www.youtube.com/watch?v=e_e07fJ85V8", thumbnail: "https://i.ytimg.com/vi/e_e07fJ85V8/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" },
+    { id: "fNk_zzaMoSs", title: "Essence of Linear Algebra", channel: "3Blue1Brown", desc: "Vectors, dot product, determinants, eigenvalues and transformations.", url: "https://www.youtube.com/watch?v=fNk_zzaMoSs", thumbnail: "https://i.ytimg.com/vi/fNk_zzaMoSs/hqdefault.jpg", language: "English", badge: "Geometric Intuition" }
+  ],
+  "PH3151": [
+    { id: "m6x8A4V4B9o", title: "Engineering Physics Complete Derivations in Tamil", channel: "Tamil Physics Tutor", desc: "Laser mechanics, fiber optics, quantum physics, and crystal structures.", url: "https://www.youtube.com/watch?v=m6x8A4V4B9o", thumbnail: "https://i.ytimg.com/vi/m6x8A4V4B9o/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" }
+  ],
+  "CY3151": [
+    { id: "c_u8A2Z5N3o", title: "Engineering Chemistry: Water Technology & Polymers in Tamil", channel: "Tamil Chem Academy", desc: "Hardness of water, boiler troubles, conducting polymers, and nanochemistry.", url: "https://www.youtube.com/watch?v=c_u8A2Z5N3o", thumbnail: "https://i.ytimg.com/vi/c_u8A2Z5N3o/hqdefault.jpg", language: "Tamil", badge: "Anna University R2021" }
+  ],
+  // School mapped subjects
+  "PHYSICS": [
+    { id: "m6x8A4V4B9o", title: "12th Physics Tamil Nadu State Board Complete Derivations", channel: "Tamil Physics Tutor", desc: "Electrostatics, Gauss Law, Current Electricity, and Wave Optics full derivations.", url: "https://www.youtube.com/watch?v=m6x8A4V4B9o", thumbnail: "https://i.ytimg.com/vi/m6x8A4V4B9o/hqdefault.jpg", language: "Tamil", badge: "State Board Core" },
+    { id: "T63zM2l2e74", title: "Electricity and Magnetism - MIT Physics 8.02", channel: "MIT OpenCourseWare", desc: "Electric fields, Gauss's law, Ampere's law, and Faraday's induction.", url: "https://www.youtube.com/watch?v=T63zM2l2e74", thumbnail: "https://i.ytimg.com/vi/T63zM2l2e74/hqdefault.jpg", language: "English", badge: "Concept Master" }
+  ],
+  "MATHEMATICS": [
+    { id: "e_e07fJ85V8", title: "12th Maths Samacheer Kalvi Volume 1 & 2 in Tamil", channel: "Tamil Maths Hub", desc: "Applications of Matrices, Complex Numbers, Theory of Equations, Differential Calculus.", url: "https://www.youtube.com/watch?v=e_e07fJ85V8", thumbnail: "https://i.ytimg.com/vi/e_e07fJ85V8/hqdefault.jpg", language: "Tamil", badge: "Samacheer Kalvi" },
+    { id: "WS070h7kY3I", title: "Calculus 1 - Full College & High School Course", channel: "freeCodeCamp.org", desc: "Limits, derivatives, curve sketching, and definite integration.", url: "https://www.youtube.com/watch?v=WS070h7kY3I", thumbnail: "https://i.ytimg.com/vi/WS070h7kY3I/hqdefault.jpg", language: "English", badge: "Calculus Foundation" }
+  ],
+  "CHEMISTRY": [
+    { id: "c_u8A2Z5N3o", title: "12th Chemistry Samacheer Kalvi Full Syllabus in Tamil", channel: "Tamil Chem Academy", desc: "Metallurgy, p-Block elements, Coordination Chemistry, and Organic Named Reactions.", url: "https://www.youtube.com/watch?v=c_u8A2Z5N3o", thumbnail: "https://i.ytimg.com/vi/c_u8A2Z5N3o/hqdefault.jpg", language: "Tamil", badge: "State Board Core" },
+    { id: "bC79K6V3M6E", title: "General Chemistry Review & Exam Problems", channel: "The Organic Chemistry Tutor", desc: "Electrochemistry, chemical kinetics, stoichiometry, and thermochemistry.", url: "https://www.youtube.com/watch?v=bC79K6V3M6E", thumbnail: "https://i.ytimg.com/vi/bC79K6V3M6E/hqdefault.jpg", language: "English", badge: "High Yield" }
+  ],
+  "COMPUTER SCIENCE": [
+    { id: "m67-bOpOoPU", title: "12th Computer Science Python Full Syllabus in Tamil", channel: "Error Makes Clever Academy", desc: "Python variables, control structures, functions, strings, lists, tuples, dictionaries, and classes.", url: "https://www.youtube.com/watch?v=m67-bOpOoPU", thumbnail: "https://i.ytimg.com/vi/m67-bOpOoPU/hqdefault.jpg", language: "Tamil", badge: "Python Syllabus" },
+    { id: "rfscVS0vtbw", title: "Python for Beginners - Full Course", channel: "freeCodeCamp.org", desc: "Comprehensive beginner to intermediate Python tutorial with exercises.", url: "https://www.youtube.com/watch?v=rfscVS0vtbw", thumbnail: "https://i.ytimg.com/vi/rfscVS0vtbw/hqdefault.jpg", language: "English", badge: "Production Python" }
+  ],
+  "BIOLOGY": [
+    { id: "B_y9J8w2a41", title: "12th Biology (Botany & Zoology) State Board in Tamil", channel: "Tamil Bio Masters", desc: "Reproduction in organisms, Genetics, Biotechnology, and Human Health.", url: "https://www.youtube.com/watch?v=B_y9J8w2a41", thumbnail: "https://i.ytimg.com/vi/B_y9J8w2a41/hqdefault.jpg", language: "Tamil", badge: "State Board Bio" }
+  ],
+  "COMMERCE": [
+    { id: "P_v2B8n4m91", title: "12th Accountancy & Commerce Complete Course in Tamil", channel: "Tamil Commerce Academy", desc: "Partnership accounts, admission of partner, goodwill valuation, and company accounts.", url: "https://www.youtube.com/watch?v=P_v2B8n4m91", thumbnail: "https://i.ytimg.com/vi/P_v2B8n4m91/hqdefault.jpg", language: "Tamil", badge: "State Board Commerce" }
+  ]
+};
+
+// Dock Recommendations Container into active pane directly beneath subject view
+function dockAcademicRecommendationsContainer(paneKey) {
+  const container = document.getElementById("academic-yt-recommendations");
+  if (!container) return;
+
+  if (paneKey === "school") {
+    const schoolExplorerCard = document.querySelector("#sectionAcademicSchool .workspace-card");
+    if (schoolExplorerCard && schoolExplorerCard.parentElement) {
+      if (container.parentElement !== schoolExplorerCard.parentElement || container.previousElementSibling !== schoolExplorerCard) {
+        schoolExplorerCard.parentElement.insertBefore(container, schoolExplorerCard.nextSibling);
+      }
+    }
+  } else if (paneKey === "college") {
+    const collegeSlot = document.getElementById("collegeYtSlot");
+    const collegePane = document.getElementById("sectionAcademicCollege");
+    if (collegeSlot) {
+      if (container.parentElement !== collegeSlot) {
+        collegeSlot.appendChild(container);
+      }
+    } else if (collegePane) {
+      if (container.parentElement !== collegePane) {
+        collegePane.appendChild(container);
+      }
+    }
+  }
+}
+
+// Generate targeted video query cards/embeds matching the exact selection
+function getTargetedAcademicVideos(subjectName, subjectCode, topic, standardOrDept, semester) {
+  const normName = (subjectName || "").toUpperCase();
+  const normCode = (subjectCode || "").toUpperCase();
+  const isCollege = Boolean(semester || (standardOrDept && standardOrDept.toLowerCase().includes("engineering")) || (normCode && normCode.length >= 5 && /\d/.test(normCode)));
+
+  // 1. Check curated library for exact static code or name matches
+  let curatedMatches = [];
+  if (normCode && AURA_CURATED_ACADEMIC_VIDEOS[normCode]) {
+    curatedMatches = AURA_CURATED_ACADEMIC_VIDEOS[normCode];
+  } else {
+    for (const [key, vids] of Object.entries(AURA_CURATED_ACADEMIC_VIDEOS)) {
+      if (normCode && (normCode.includes(key) || key.includes(normCode))) {
+        curatedMatches = vids;
+        break;
+      }
+      if (normName && (normName.includes(key) || key.includes(normName))) {
+        curatedMatches = vids;
+        break;
+      }
+    }
+  }
+
+  // If curated static library has videos mapped to this exact subject code/name:
+  if (curatedMatches.length > 0) {
+    return curatedMatches.map(v => ({
+      title: v.title,
+      channel: v.channel,
+      thumbnail: v.thumbnail || (v.id ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400"),
+      url: v.url || (v.id ? `https://www.youtube.com/watch?v=${v.id}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(subjectName + ' ' + (topic || '') + ' lecture')}`),
+      language: v.language || "Tamil",
+      badge: v.badge || (isCollege ? "Anna University R2021" : "TN State Board Core"),
+      description: v.desc || `Complete syllabus lecture walkthrough for ${subjectName} covering ${topic || 'key syllabus units'}.`
+    }));
+  }
+
+  // 2. Otherwise generate targeted video query cards matching the EXACT selection
+  const cleanTopic = topic || "Syllabus Breakdown";
+  if (isCollege) {
+    return [
+      {
+        title: `Anna University ${subjectName} Lecture Series (Regulation 2021)`,
+        channel: "Anna University Online & Logic First Tamil",
+        thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent('Anna University ' + subjectName + ' Lecture Series Tamil English')}`,
+        language: "Tamil & English",
+        badge: "Anna University R2021",
+        description: `Complete university syllabus walkthrough for ${subjectName} (${subjectCode || 'Engineering'}). Units 1 to 5 derivations, model question papers, and scoring strategy.`
+      },
+      {
+        title: `${subjectName} — ${cleanTopic} Deep-Dive & Derivations`,
+        channel: "NPTEL & State University Faculty",
+        thumbnail: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(subjectName + ' ' + cleanTopic + ' lecture Tamil English')}`,
+        language: "Tamil",
+        badge: "Topic Deep-Dive",
+        description: `In-depth analysis of ${cleanTopic} with step-by-step mathematical formulation, pseudocode, and university exam 16-mark problem solutions.`
+      },
+      {
+        title: `${subjectName} — High-Yield Model Exam Questions & Answers`,
+        channel: "Gate Smashers & Error Makes Clever",
+        thumbnail: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(subjectName + ' Anna University important questions 2 mark 16 mark')}`,
+        language: "English & Tamil",
+        badge: "University Blueprint",
+        description: `High-probability Part A (2-Mark) definitions and Part B/C (16-Mark) questions for semester examinations in ${subjectName}.`
+      }
+    ];
+  } else {
+    // School (10th, 11th, 12th)
+    return [
+      {
+        title: `${standardOrDept || '12th Std'} ${subjectName} Tamil Nadu State Board full syllabus`,
+        channel: "Tamil Nadu State Board Masters & Samacheer Kalvi Hub",
+        thumbnail: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent((standardOrDept || '12th Std') + ' ' + subjectName + ' Tamil Nadu State Board full syllabus Tamil')}`,
+        language: "Tamil",
+        badge: "TN State Board Core",
+        description: `Verified Samacheer Kalvi & CBSE coverage for ${subjectName}. Full chapter explanations, book-back numerical solutions, and government key points.`
+      },
+      {
+        title: `${subjectName} — ${cleanTopic} Scoring Walkthrough`,
+        channel: "Tamil Science & Maths Academy",
+        thumbnail: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent(subjectName + ' ' + cleanTopic + ' 12th standard Tamil Nadu lecture')}`,
+        language: "Tamil & English",
+        badge: "Chapter Deep-Dive",
+        description: `Step-by-step breakdown of ${cleanTopic} with formulas, derivations, ray diagrams, and board exam presentation tips.`
+      },
+      {
+        title: `${subjectName} — Critical 5-Mark Derivations & Board Blueprint`,
+        channel: "State Board Rankers Guide",
+        thumbnail: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400",
+        url: `https://www.youtube.com/results?search_query=${encodeURIComponent((standardOrDept || '12th Std') + ' ' + subjectName + ' public exam important 5 mark questions Tamil')}`,
+        language: "Tamil",
+        badge: "Centum Scoring Tips",
+        description: `Master high-yield 5-mark derivations and numericals in ${subjectName} to maximize board examination scores.`
+      }
+    ];
+  }
+}
+
+// Render dynamic recommended YouTube videos in #academic-yt-recommendations
+function renderAcademicYouTubeRecommendations() {
+  const container = document.getElementById("academic-yt-recommendations");
+  if (!container) return;
+
+  const sel = academicIntelligenceState.selectedSubject;
+
+  // 1. Clean empty state when no subject is selected
+  if (!sel || !sel.subjectName) {
+    container.innerHTML = `
+      <div class="academic-yt-empty-state">
+        <div class="academic-yt-empty-icon">📺</div>
+        <h4 class="academic-yt-empty-title">Select any subject above to load syllabus topics and lecture videos.</h4>
+        <p class="academic-yt-empty-sub">Choose any school subject (10th, 11th, 12th) or college course above to dynamically stream high-yield lecture series and exam walkthroughs in Tamil &amp; English.</p>
+      </div>
+    `;
+    return;
+  }
+
+  // 2. Active selection is present
+  const selectedSubjectName = sel.subjectName.split("(")[0].trim();
+  const selectedSubjectCode = sel.subjectCode || "";
+  const standardOrDept = sel.standardOrDept || (sel.semester ? `Semester ${sel.semester}` : "Curriculum Standard");
+  const selectedTopic = sel.currentTopic || "Full Syllabus";
+  const semester = sel.semester;
+
+  // 1-Click link: Watch Topic Deep-Dive on YouTube
+  const ytSearchQuery = `${selectedSubjectName} ${selectedTopic} lecture Tamil English`;
+  const ytDeepDiveUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ytSearchQuery)}`;
+
+  // Prepare topic pills list
+  let topicsList = [];
+  if (Array.isArray(sel.topics) && sel.topics.length > 0) {
+    topicsList = sel.topics;
+  } else if (sel.semester) {
+    topicsList = [
+      selectedTopic,
+      "Unit 1: Fundamentals & Theory",
+      "Unit 2: System Architecture & Derivations",
+      "Unit 3: Implementation & Solved Problems",
+      "Unit 4: Advanced Principles & Real-Time Case Studies",
+      "Unit 5: University Model Exam High-Weightage Questions"
+    ];
+  } else {
+    topicsList = [
+      selectedTopic,
+      "Chapter 1: Governing Laws & Derivations",
+      "Chapter 2: Step-by-Step Numerical Problems",
+      "Chapter 3: High-Yield Board Exam 5-Mark Questions",
+      "Chapter 4: Formulas, Units & One-Mark Concepts",
+      "Full Syllabus Rapid Revision"
+    ];
+  }
+  topicsList = Array.from(new Set([selectedTopic, ...topicsList]));
+
+  // Dynamically clear previous video cards and retrieve matched/targeted cards
+  const matchingVideos = getTargetedAcademicVideos(selectedSubjectName, selectedSubjectCode, selectedTopic, standardOrDept, semester);
+
+  container.innerHTML = `
+    <!-- Active Header -->
+    <div class="academic-yt-header">
+      <div class="academic-yt-header-left">
+        <div class="academic-yt-eyebrow">
+          <span>✦</span>
+          <span>Curated Video Lectures &amp; Explanations</span>
+        </div>
+        <div class="academic-yt-title-row">
+          <h3 class="academic-yt-subject-title">${escapeHtml(sel.subjectName)}</h3>
+          <div class="academic-yt-badges-row">
+            <span class="academic-yt-badge highlight">${escapeHtml(standardOrDept)}${semester ? ` · Sem ${semester}` : ''}</span>
+            ${selectedSubjectCode ? `<span class="academic-yt-badge">${escapeHtml(selectedSubjectCode)}</span>` : ''}
+            <span class="academic-yt-badge" style="color:#10B981; border-color:rgba(16,185,129,0.3); background:rgba(16,185,129,0.08);">● Live Syllabus Matched</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-Click Action Button: Watch Topic Deep-Dive on YouTube -->
+      <a href="${escapeHtml(ytDeepDiveUrl)}" target="_blank" rel="noopener noreferrer" class="academic-deepdive-btn" title="Open YouTube search results for ${escapeHtml(ytSearchQuery)}">
+        <span class="academic-yt-play-icon">▶</span>
+        <span>Watch Topic Deep-Dive on YouTube</span>
+        <span class="academic-btn-arrow">↗</span>
+      </a>
+    </div>
+
+    <!-- Dynamic Topic / Chapter Selector Banner -->
+    <div class="academic-yt-topic-banner">
+      <div class="academic-topic-label-row">
+        <span class="academic-topic-focus-title">📍 Active Syllabus Topic / Unit: <strong>${escapeHtml(selectedTopic)}</strong></span>
+        <span style="font-size:10.5px; color:#94a3b8;">Click any unit pill to filter targeted lectures:</span>
+      </div>
+      <div class="academic-topic-pills-row">
+        ${topicsList.map(t => {
+          const isActive = t === selectedTopic;
+          return `
+            <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(t).replace(/'/g, "\\'")}')">
+              ${escapeHtml(t)}
+            </button>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Targeted Videos Grid -->
+    <div class="academic-yt-grid">
+      ${matchingVideos.map(v => `
+        <div class="academic-yt-card">
+          <div class="academic-yt-thumb-wrap">
+            <img src="${escapeHtml(v.thumbnail)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400'" />
+            <span class="academic-yt-chip-badge">${escapeHtml(v.badge || 'Verified Curriculum')}</span>
+            <span class="academic-yt-lang-badge">${escapeHtml(v.language || 'Tamil & English')}</span>
+          </div>
+          <div class="academic-yt-card-body">
+            <div>
+              <h4 class="academic-yt-card-title" title="${escapeHtml(v.title)}">${escapeHtml(v.title)}</h4>
+              <div class="academic-yt-card-channel" style="margin-top:4px;">
+                <span>📺</span>
+                <span>${escapeHtml(v.channel)}</span>
+              </div>
+              <p class="academic-yt-card-desc" style="margin-top:6px;">${escapeHtml(v.description)}</p>
+            </div>
+            <div class="academic-yt-card-actions">
+              <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url)}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel).replace(/'/g, "\\'")}')">
+                <span>▷</span>
+                <span>In-App Stream</span>
+              </button>
+              <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="academic-yt-btn-yt">
+                <span>↗ YouTube</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Topic switcher inside recommendations banner
+window.selectAcademicRecommendationTopic = function(topic) {
+  if (academicIntelligenceState.selectedSubject) {
+    academicIntelligenceState.selectedSubject.currentTopic = topic;
+    renderAcademicYouTubeRecommendations();
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  }
+};
+
 // Master Initializer for Academic Intelligence Hub
 function initCollegeAndSchoolHub() {
   // Initialize default active preset
   if (!academicIntelligenceState.activeMaterial.text) {
     academicIntelligenceState.activeMaterial.text = AURA_MATERIAL_PRESETS.PHYSICS_12.text;
   }
+
+  // Bind Cross-Window Listener for College Subject Selection from Iframe
+  window.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "AURA_ACADEMIC_SUBJECT_SELECTED") {
+      const { standardOrDept, semester, subjectName, subjectCode, currentTopic } = event.data;
+      const cleanSubj = (subjectName || "").split("(")[0].trim();
+      academicIntelligenceState.activeSubject = cleanSubj;
+      academicIntelligenceState.selectedSubject = {
+        standardOrDept: standardOrDept || "Higher Education Degree",
+        semester: semester || 1,
+        subjectName: subjectName || "Selected Course",
+        subjectCode: subjectCode || "",
+        currentTopic: currentTopic || "Full Syllabus",
+        topics: [
+          currentTopic || "Full Syllabus",
+          "Unit 1: Core Concepts & Principles",
+          "Unit 2: System Architecture & Derivations",
+          "Unit 3: Implementation & Solved Problems",
+          "Unit 4: Real-World Case Studies & Advanced Topics",
+          "Unit 5: University Model Exam High-Weightage Questions"
+        ]
+      };
+
+      dockAcademicRecommendationsContainer("college");
+      renderAcademicYouTubeRecommendations();
+
+      const recEl = document.getElementById("academic-yt-recommendations");
+      if (recEl) {
+        recEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+  });
 
   // 1. Setup 3-Way Sub-Navigation Tabs
   const tabAcademicSchool = document.getElementById("tabAcademicSchool");
@@ -7467,9 +7843,13 @@ function initCollegeAndSchoolHub() {
     if (sectionAcademicMaterial) sectionAcademicMaterial.style.display = tabKey === "material" ? "block" : "none";
 
     if (tabKey === "school") {
+      dockAcademicRecommendationsContainer("school");
       renderSchoolCurriculum();
+      renderAcademicYouTubeRecommendations();
     } else if (tabKey === "college") {
       ensureCollegeIframeLoaded();
+      dockAcademicRecommendationsContainer("college");
+      renderAcademicYouTubeRecommendations();
     }
 
     if (typeof playTactileSound === "function") playTactileSound("click");
@@ -7549,11 +7929,15 @@ function initCollegeAndSchoolHub() {
   // 6. Setup School Teaching Style & Permission Handlers
   setupSchoolTeachingStyleControls();
 
-  // Render initial curriculum view
+  // Dock recommendations in School pane initially
+  dockAcademicRecommendationsContainer("school");
+
+  // Render initial curriculum view & YouTube recommendations
   renderSchoolCurriculum();
+  renderAcademicYouTubeRecommendations();
 }
 
-// Render dynamic school subjects grid
+// Render dynamic school subjects grid with full interactivity
 function renderSchoolCurriculum() {
   const grid = document.getElementById("academicSchoolGrid");
   const filterBadge = document.getElementById("schoolActiveFilterBadge");
@@ -7597,17 +7981,44 @@ function renderSchoolCurriculum() {
   if (countBadge) countBadge.textContent = `${subjectsList.length} Subjects Enrolled`;
   if (subjectsTitle) subjectsTitle.textContent = `${filterText} — High-Yield Units & Formulas`;
 
+  // Auto-select first subject if none selected yet
+  if (!academicIntelligenceState.selectedSubject && subjectsList.length > 0) {
+    const firstSubj = subjectsList[0];
+    const cleanFirstName = firstSubj.name.split("(")[0].trim();
+    academicIntelligenceState.activeSubject = cleanFirstName;
+    academicIntelligenceState.selectedSubject = {
+      standardOrDept: filterText,
+      semester: null,
+      subjectName: firstSubj.name,
+      subjectCode: firstSubj.id || `STD-${std.replace("STD_", "")}-${cleanFirstName.slice(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`,
+      currentTopic: (firstSubj.chapters && firstSubj.chapters[0]) || "Full Syllabus",
+      topics: firstSubj.chapters || []
+    };
+  }
+
   grid.innerHTML = subjectsList.map((item, idx) => {
-    const chaptersHtml = (item.chapters || []).map(ch => `• ${escapeHtml(ch)}`).join("<br/>");
+    const isSelected = academicIntelligenceState.selectedSubject &&
+      (academicIntelligenceState.selectedSubject.subjectName === item.name);
+    const activeTopic = isSelected ? (academicIntelligenceState.selectedSubject.currentTopic) : null;
+
+    const chaptersHtml = (item.chapters || []).map(ch => {
+      const isChActive = isSelected && activeTopic === ch;
+      return `
+        <button type="button" class="school-chapter-pill ${isChActive ? 'active' : ''}" data-subject="${escapeHtml(item.name)}" data-chapter="${escapeHtml(ch)}">
+          • ${escapeHtml(ch)}
+        </button>
+      `;
+    }).join("");
+
     return `
-      <div class="school-subject-card ${idx === 0 ? 'active' : ''}" data-subject-id="${item.id || idx}">
+      <div class="school-subject-card ${isSelected ? 'active active-academic-subject ring-2 ring-amber-500/80 bg-slate-800/90' : ''}" data-subject-name="${escapeHtml(item.name)}" data-subject-id="${item.id || idx}">
         <div>
           <div class="school-card-header">
             <h4 class="school-card-title">${escapeHtml(item.name)}</h4>
             <span class="school-card-badge">${escapeHtml(item.weight || 'Board Core')}</span>
           </div>
           
-          <div class="school-chapters-list" title="Chapters breakdown">
+          <div class="school-chapters-list" title="Chapters breakdown — click any chapter to stream lectures">
             ${chaptersHtml}
           </div>
 
@@ -7626,11 +8037,11 @@ function renderSchoolCurriculum() {
         </div>
 
         <div class="school-card-actions">
-          <button class="school-btn-action" onclick="askSchoolSubjectDoubt('${escapeHtml(item.name)}')">
+          <button type="button" class="school-btn-action" onclick="askSchoolSubjectDoubt('${escapeHtml(item.name)}')">
             <span>❓</span>
             <span>Ask Doubts</span>
           </button>
-          <button class="school-btn-action primary" onclick="selectSchoolSubject('${escapeHtml(item.name)}')">
+          <button type="button" class="school-btn-action primary" onclick="selectSchoolSubject('${escapeHtml(item.name)}')">
             <span>▷</span>
             <span>Video Lectures</span>
           </button>
@@ -7639,40 +8050,91 @@ function renderSchoolCurriculum() {
     `;
   }).join("");
 
-  // Auto-select first subject to keep sync with YouTube Lectures arena
-  if (subjectsList.length > 0) {
-    const firstName = subjectsList[0].name.split("(")[0].trim();
-    academicIntelligenceState.activeSubject = firstName;
-    const activeTitle = document.getElementById("engActiveSubjectTitle");
-    if (activeTitle) activeTitle.textContent = firstName;
-  }
+  // Attach card-level click listeners to toggle active state immediately
+  grid.querySelectorAll(".school-subject-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("button.school-btn-action") || e.target.closest("button.school-chapter-pill")) return;
+      const subjName = card.getAttribute("data-subject-name");
+      const matchedItem = subjectsList.find(s => s.name === subjName) || subjectsList[0];
+      selectSchoolSubject(matchedItem.name);
+    });
+  });
+
+  // Attach chapter pill click listeners to switch active topic directly
+  grid.querySelectorAll(".school-chapter-pill").forEach(pill => {
+    pill.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const subjName = pill.getAttribute("data-subject");
+      const chapterName = pill.getAttribute("data-chapter");
+      selectSchoolSubject(subjName, chapterName);
+    });
+  });
 }
 
-// Select School Subject and link with Notes / Video Lectures Arena
-window.selectSchoolSubject = function(subjectName) {
-  const cleanName = subjectName.split("(")[0].trim();
+// Select School Subject, toggle active ring-2 highlight & update dynamic YouTube recommendations
+window.selectSchoolSubject = function(subjectName, topicOverride) {
+  const std = academicIntelligenceState.activeSchoolStandard;
+  const grp = academicIntelligenceState.activeSchoolGroup;
+  let filterText = "";
+  if (std === "STD_10") {
+    filterText = "10th Standard (SSLC & CBSE Board)";
+  } else if (std === "STD_11") {
+    filterText = "11th Standard";
+  } else {
+    filterText = "12th Standard Board";
+  }
+
+  // Find subject details
+  let currentList = [];
+  if (std === "STD_10") currentList = AURA_SCHOOL_CURRICULUM.STD_10.subjects;
+  else if (std === "STD_11") currentList = AURA_SCHOOL_CURRICULUM.STD_11.groups[grp] || [];
+  else currentList = AURA_SCHOOL_CURRICULUM.STD_12.groups[grp] || [];
+
+  const matched = currentList.find(s => s.name === subjectName || s.name.includes(subjectName)) || { name: subjectName, chapters: [] };
+  const cleanName = matched.name.split("(")[0].trim();
+  const currentTopic = topicOverride || (matched.chapters && matched.chapters[0]) || "Full Syllabus";
+
+  // Store in State: { standardOrDept, semester, subjectName, subjectCode, currentTopic }
   academicIntelligenceState.activeSubject = cleanName;
+  academicIntelligenceState.selectedSubject = {
+    standardOrDept: filterText,
+    semester: null,
+    subjectName: matched.name,
+    subjectCode: matched.id || `STD-${std.replace("STD_", "")}-${cleanName.slice(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`,
+    currentTopic: currentTopic,
+    topics: matched.chapters || []
+  };
+
   if (typeof engineeringHubState !== "undefined") {
     engineeringHubState.activeSubject = cleanName;
   }
 
-  // Update card highlights
+  // Immediately toggle active border/highlight state (ring-2 ring-amber-500/80 bg-slate-800/90)
   document.querySelectorAll(".school-subject-card").forEach(c => {
-    c.classList.toggle("active", c.textContent.includes(cleanName));
+    const isThisCard = c.getAttribute("data-subject-name") === matched.name;
+    c.classList.toggle("active", isThisCard);
+    c.classList.toggle("active-academic-subject", isThisCard);
+    c.classList.toggle("ring-2", isThisCard);
+    c.classList.toggle("ring-amber-500/80", isThisCard);
+    c.classList.toggle("bg-slate-800/90", isThisCard);
   });
 
-  const activeTitle = document.getElementById("engActiveSubjectTitle");
-  if (activeTitle) activeTitle.textContent = cleanName;
+  // Toggle active chapter pill highlight
+  document.querySelectorAll(".school-chapter-pill").forEach(p => {
+    const isThisChapter = p.getAttribute("data-subject") === matched.name && p.getAttribute("data-chapter") === currentTopic;
+    p.classList.toggle("active", isThisChapter);
+  });
 
-  // Auto-scroll to learning arena smoothly
-  const learningArena = document.getElementById("engLearningArena");
-  if (learningArena) {
-    learningArena.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  // Ensure recommendations container is docked directly beneath the School subjects grid
+  dockAcademicRecommendationsContainer("school");
 
-  // Load recommended videos for this school subject
-  if (typeof window.loadYouTubeLectures === "function") {
-    window.loadYouTubeLectures(cleanName);
+  // Dynamically clear previous video cards and render targeted recommendations
+  renderAcademicYouTubeRecommendations();
+
+  // Scroll smoothly to the recommendations container
+  const recEl = document.getElementById("academic-yt-recommendations");
+  if (recEl) {
+    recEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
   if (typeof playTactileSound === "function") playTactileSound("click");

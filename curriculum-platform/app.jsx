@@ -97,6 +97,21 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeModalSubject, setActiveModalSubject] = useState(null);
+  const [selectedSubjectCode, setSelectedSubjectCode] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState('');
+
+  const notifyParentSubjectSelected = (sub, dept, sem, topic) => {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'AURA_ACADEMIC_SUBJECT_SELECTED',
+        standardOrDept: (dept && (dept.name || dept.code)) || (currentDept && (currentDept.name || currentDept.code)) || 'Higher Education Degree',
+        semester: sem || selectedSemesterNumber || 1,
+        subjectName: sub.title,
+        subjectCode: sub.code,
+        currentTopic: topic || (sub.syllabusOutline && sub.syllabusOutline[0]) || 'Full Syllabus'
+      }, '*');
+    }
+  };
 
   useEffect(() => {
     if (!dataset) {
@@ -327,6 +342,10 @@ function App() {
                       setSelectedStreamId(result.stream.id);
                       setSelectedDeptId(result.department.id);
                       setSelectedSemesterNumber(result.semesterNumber);
+                      setSelectedSubjectCode(result.subject.code);
+                      const topic = (result.subject.syllabusOutline && result.subject.syllabusOutline[0]) || 'Full Syllabus';
+                      setSelectedTopic(topic);
+                      notifyParentSubjectSelected(result.subject, result.department, result.semesterNumber, topic);
                       setActiveModalSubject(result.subject);
                     }}
                     className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-800/40 cursor-pointer transition-all space-y-2 group"
@@ -577,65 +596,119 @@ function App() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {displayedSubjects.map(subject => (
-                  <div
-                    key={subject.code}
-                    onClick={() => setActiveModalSubject(subject)}
-                    className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-indigo-500/50 hover:bg-slate-850/60 transition-all cursor-pointer flex flex-col justify-between group space-y-3"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-xs font-bold text-indigo-400 px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20">
-                          {subject.code}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          {subject.electiveType && subject.electiveType !== 'None' && (
-                            <span className="text-[10px] font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                              {subject.electiveType}
+                {displayedSubjects.map(subject => {
+                  const isSelected = selectedSubjectCode === subject.code;
+                  const currentTopicName = (subject.syllabusOutline && subject.syllabusOutline[0]) || 'Full Syllabus';
+
+                  const handleSelectThisSubject = (topicOverride) => {
+                    const topicToUse = topicOverride || (isSelected && selectedTopic) || currentTopicName;
+                    setSelectedSubjectCode(subject.code);
+                    setSelectedTopic(topicToUse);
+                    notifyParentSubjectSelected(subject, currentDept, currentSemester?.semesterNumber, topicToUse);
+                  };
+
+                  return (
+                    <div
+                      key={subject.code}
+                      onClick={() => handleSelectThisSubject()}
+                      className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group space-y-3 ${
+                        isSelected
+                          ? 'ring-2 ring-amber-500/80 bg-slate-800/90 border-amber-500/90 shadow-xl shadow-amber-950/40'
+                          : 'bg-slate-900/60 border-slate-800 hover:border-amber-500/50 hover:bg-slate-850/60'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded border transition-colors ${
+                            isSelected
+                              ? 'text-amber-400 bg-amber-500/10 border-amber-500/30'
+                              : 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20'
+                          }`}>
+                            {subject.code}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {subject.electiveType && subject.electiveType !== 'None' && (
+                              <span className="text-[10px] font-medium text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                                {subject.electiveType}
+                              </span>
+                            )}
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getCategoryBadgeClass(subject.category)}`}>
+                              {subject.category}
                             </span>
+                          </div>
+                        </div>
+
+                        <h4 className={`text-sm font-bold transition-colors mt-2 leading-snug ${
+                          isSelected ? 'text-amber-300' : 'text-slate-100 group-hover:text-amber-200'
+                        }`}>
+                          {subject.title}
+                        </h4>
+
+                        {subject.syllabusOutline && subject.syllabusOutline.length > 0 && (
+                          <div className="mt-2.5 space-y-1">
+                            {subject.syllabusOutline.slice(0, 2).map((topic, tIdx) => (
+                              <p
+                                key={tIdx}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSelectThisSubject(topic);
+                                }}
+                                className={`text-[11px] line-clamp-1 flex items-center gap-1.5 transition-colors cursor-pointer rounded px-1.5 -mx-1.5 py-0.5 ${
+                                  isSelected && selectedTopic === topic
+                                    ? 'text-amber-300 bg-amber-500/15 font-semibold'
+                                    : 'text-slate-400 hover:text-amber-300 hover:bg-slate-800/60'
+                                }`}
+                                title="Click topic to load targeted lecture videos"
+                              >
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                  isSelected && selectedTopic === topic ? 'bg-amber-400' : 'bg-indigo-500/60'
+                                }`} />
+                                {topic}
+                              </p>
+                            ))}
+                            {subject.syllabusOutline.length > 2 && (
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveModalSubject(subject);
+                                }}
+                                className="text-[10px] text-indigo-400 hover:text-amber-300 font-medium cursor-pointer block mt-1"
+                              >
+                                +{subject.syllabusOutline.length - 2} more syllabus units... (Inspect)
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-800/70 text-slate-400">
+                        <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                          <Icons.Clock />
+                          {subject.contactHours ? (
+                            <span>L:{subject.contactHours.lecture} T:{subject.contactHours.tutorial} P:{subject.contactHours.practical}</span>
+                          ) : (
+                            <span>Credits: {subject.credits}</span>
                           )}
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getCategoryBadgeClass(subject.category)}`}>
-                            {subject.category}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveModalSubject(subject);
+                            }}
+                            className="text-[10.5px] px-2 py-0.5 rounded text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+                          >
+                            Syllabus
+                          </button>
+                          <span className="font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+                            {subject.credits} Cr
                           </span>
                         </div>
                       </div>
-
-                      <h4 className="text-sm font-bold text-slate-100 group-hover:text-indigo-300 transition-colors mt-2 leading-snug">
-                        {subject.title}
-                      </h4>
-
-                      {subject.syllabusOutline && subject.syllabusOutline.length > 0 && (
-                        <div className="mt-2.5 space-y-1">
-                          {subject.syllabusOutline.slice(0, 2).map((topic, tIdx) => (
-                            <p key={tIdx} className="text-[11px] text-slate-400 line-clamp-1 flex items-center gap-1.5">
-                              <span className="w-1 h-1 rounded-full bg-indigo-500/60 shrink-0" />
-                              {topic}
-                            </p>
-                          ))}
-                          {subject.syllabusOutline.length > 2 && (
-                            <span className="text-[10px] text-indigo-400/80 font-medium">
-                              +{subject.syllabusOutline.length - 2} more syllabus units...
-                            </span>
-                          )}
-                        </div>
-                      )}
                     </div>
-
-                    <div className="flex items-center justify-between text-xs pt-3 border-t border-slate-800/70 text-slate-400">
-                      <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                        <Icons.Clock />
-                        {subject.contactHours ? (
-                          <span>L:{subject.contactHours.lecture} T:{subject.contactHours.tutorial} P:{subject.contactHours.practical}</span>
-                        ) : (
-                          <span>Credits: {subject.credits}</span>
-                        )}
-                      </div>
-                      <span className="font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
-                        {subject.credits} Cr
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           </div>
@@ -726,19 +799,42 @@ function App() {
                   {activeModalSubject.syllabusOutline.map((unitText, uIdx) => (
                     <div
                       key={uIdx}
-                      className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/70 text-xs text-slate-300 leading-relaxed flex items-start gap-2.5"
+                      onClick={() => {
+                        setSelectedSubjectCode(activeModalSubject.code);
+                        setSelectedTopic(unitText);
+                        notifyParentSubjectSelected(activeModalSubject, currentDept, currentSemester?.semesterNumber, unitText);
+                      }}
+                      className={`p-3 rounded-xl border text-xs leading-relaxed flex items-start gap-2.5 cursor-pointer transition-all ${
+                        selectedSubjectCode === activeModalSubject.code && selectedTopic === unitText
+                          ? 'bg-amber-950/40 border-amber-500/80 text-amber-200'
+                          : 'bg-slate-950/60 border-slate-800/70 text-slate-300 hover:border-amber-500/40 hover:bg-slate-850/60'
+                      }`}
+                      title="Click unit to select and load targeted YouTube lecture series"
                     >
-                      <span className="w-5 h-5 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-mono font-bold shrink-0 text-[10px] border border-indigo-500/20">
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center font-mono font-bold shrink-0 text-[10px] border ${
+                        selectedSubjectCode === activeModalSubject.code && selectedTopic === unitText
+                          ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                          : 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+                      }`}>
                         {uIdx + 1}
                       </span>
-                      <span>{unitText}</span>
+                      <span className="flex-1">{unitText}</span>
+                      <span className="text-[10px] text-amber-400/80 uppercase font-semibold shrink-0">▷ Select</span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-end pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-800 flex-wrap gap-2">
+              <a
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(activeModalSubject.title + ' ' + (selectedTopic || '') + ' lecture Tamil English')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold shadow-md shadow-red-950/40 flex items-center gap-1.5 transition-all"
+              >
+                <span>▶</span> Watch Topic Deep-Dive on YouTube ↗
+              </a>
               <button
                 onClick={() => setActiveModalSubject(null)}
                 className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all"

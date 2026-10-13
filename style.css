@@ -11925,4 +11925,424 @@ textarea:focus {
   cursor: not-allowed;
   transform: none;
 }
+
+/* =========================================================
+   ACADEMIC INTELLIGENCE SUITE — CURATED YOUTUBE RECOMMENDATIONS
+   & INTERACTIVE SUBJECT SELECTION
+   ========================================================= */
+
+.school-subject-card.active,
+.school-subject-card.active-academic-subject,
+.school-subject-card.ring-2 {
+  border-color: rgba(245, 158, 11, 0.9) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.8), 0 8px 24px -4px rgba(245, 158, 11, 0.3) !important;
+}
+
+.school-subject-card.active::before,
+.school-subject-card.active-academic-subject::before {
+  background: #f59e0b !important;
+}
+
+.school-chapter-pill {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  padding: 3px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+  background: transparent;
+  border: 1px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.school-chapter-pill:hover {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.school-chapter-pill.active {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  font-weight: 700;
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* Academic YouTube Recommendations Container */
+#academic-yt-recommendations,
+.academic-yt-container {
+  background: #0d0f12 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Clean Empty State */
+.academic-yt-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.academic-yt-empty-icon {
+  font-size: 42px;
+  margin-bottom: 12px;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.35));
+}
+
+.academic-yt-empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.academic-yt-empty-sub {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  max-width: 520px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Active Recommendations Header */
+.academic-yt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 16px;
+}
+
+.academic-yt-header-left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.academic-yt-eyebrow {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.academic-yt-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.academic-yt-subject-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.academic-yt-badges-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.academic-yt-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-family: var(--font-mono);
+}
+
+.academic-yt-badge.highlight {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* 1-Click Deep Dive Button */
+.academic-deepdive-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #FF1A1A 0%, #CC0000 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 12.5px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  box-shadow: 0 4px 16px rgba(255, 0, 0, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.academic-deepdive-btn:hover {
+  background: linear-gradient(135deg, #FF3333 0%, #E60000 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5);
+  color: #ffffff !important;
+}
+
+.academic-deepdive-btn .academic-yt-play-icon {
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.academic-btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.academic-deepdive-btn:hover .academic-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* Topic / Unit Selector Row */
+.academic-yt-topic-banner {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.academic-topic-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.academic-topic-focus-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.academic-topic-pills-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.academic-topic-pill {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  color: #94a3b8;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.academic-topic-pill:hover {
+  background: rgba(51, 65, 85, 0.8);
+  color: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+.academic-topic-pill.active {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.6);
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+/* Video Cards Grid */
+.academic-yt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.academic-yt-card {
+  background: #11141a;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.academic-yt-card:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.academic-yt-thumb-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #060a12;
+  overflow: hidden;
+}
+
+.academic-yt-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.academic-yt-card:hover .academic-yt-thumb-img {
+  transform: scale(1.03);
+}
+
+.academic-yt-chip-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.academic-yt-lang-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.academic-yt-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.academic-yt-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.academic-yt-card-channel {
+  font-size: 11px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.academic-yt-card-desc {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.academic-yt-card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.academic-yt-btn-inapp {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #f59e0b;
+  color: #020617;
+  font-weight: 700;
+  font-size: 11px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.academic-yt-btn-inapp:hover {
+  background: #fbbf24;
+}
+
+.academic-yt-btn-yt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.academic-yt-btn-yt:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
 
