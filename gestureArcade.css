@@ -834,3 +834,73 @@
     gap: 10px;
   }
 }
+
+/* Arcade Camera Permission Prompt Banner */
+.arcade-cam-permission-banner {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: var(--radius-md, 12px);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  animation: bannerFadeIn 0.3s ease-out;
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cam-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cam-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cam-banner-icon {
+  font-size: 24px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cam-banner-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fca5a5;
+  margin: 0 0 4px 0;
+}
+
+.cam-banner-desc {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.btn-arcade-reenable-cam {
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-arcade-reenable-cam:hover {
+  background: #dc2626;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
+}

@@ -1615,63 +1615,208 @@
         ===================================================== -->
         <section class="aura-view" id="view-student-performance">
           <div class="view-header">
-            <div class="view-eyebrow">Academic Diagnostic Matrix</div>
-            <h2 class="view-title">Performance & Analytics</h2>
-            <p class="view-desc">Semester mock test percentage records, grade history, and AI performance mentor guiding
-              you on what subject and topics to focus on.</p>
+            <div class="view-eyebrow">Institutional Academic Telemetry</div>
+            <h2 class="view-title">Executive Performance &amp; Diagnostic Analytics</h2>
+            <p class="view-desc">Predictive mastery projections, syllabus completion velocity, retention decay modeling, and 52-week cognitive load analytics.</p>
           </div>
 
-          <!-- Summary Metric Cards -->
-          <div class="perf-metrics-grid">
-            <div class="perf-metric-card">
-              <span class="perf-metric-lbl">Average Score</span>
-              <span class="perf-metric-val" id="perfAvgScore" style="color:var(--accent-gold);">82%</span>
-            </div>
-            <div class="perf-metric-card">
-              <span class="perf-metric-lbl">Mock Tests Completed</span>
-              <span class="perf-metric-val" id="perfTestsCount">2</span>
-            </div>
-            <div class="perf-metric-card">
-              <span class="perf-metric-lbl">Strong Subjects</span>
-              <span class="perf-metric-val" id="perfStrongCount" style="color:#10B981;">1</span>
-            </div>
-            <div class="perf-metric-card">
-              <span class="perf-metric-lbl">Needs Focus</span>
-              <span class="perf-metric-val" id="perfFocusCount" style="color:#F59E0B;">1</span>
-            </div>
-          </div>
-
-          <!-- AI Performance Mentor Directive -->
-          <div class="workspace-card" style="margin-bottom:20px; border-color:var(--border-medium);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-              <div>
-                <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦ AI Performance
-                  Mentor</span>
-                <h3 class="card-section-title" style="margin-bottom:0;" id="perfGuideSubjectTitle">Focus Directive:
-                  Discrete Mathematics</h3>
+          <!-- 1. Executive KPI Cards -->
+          <div class="perf-kpi-grid">
+            <div class="perf-kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-title">Syllabus Completion Velocity</span>
+                <span class="kpi-icon">⚡</span>
               </div>
-              <button class="btn-vault-action" id="refreshPerfGuideBtn">🔄 Refresh AI Guide</button>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="perfVelocityVal">+14.8%</span>
+                <span class="kpi-sub-unit">/ week</span>
+              </div>
+              <div class="kpi-trend positive">
+                <span>▲ +2.4% vs institutional benchmark</span>
+              </div>
             </div>
 
-            <div
-              style="background:var(--bg-surface-subtle); padding:16px; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:14px;">
-              <h4 style="font-size:13px; font-weight:700; color:var(--accent-gold); margin-bottom:8px;">🎯 Priority
-                Topics to Master:</h4>
-              <div id="perfGuideTopicsList" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            <div class="perf-kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-title">Cumulative Retention Index</span>
+                <span class="kpi-icon">🧠</span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="perfRetentionVal">89.4%</span>
+                <span class="kpi-sub-unit">Ebbinghaus Curve</span>
+              </div>
+              <div class="kpi-trend positive">
+                <span>Optimal recall decay interval</span>
+              </div>
             </div>
 
-            <div
-              style="background:rgba(217,119,6,0.08); border-left:4px solid var(--accent-gold); padding:14px 18px; border-radius:var(--radius-sm);">
-              <div style="font-size:12px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">⚡ Short
-                & Crisp Learning Instructions:</div>
-              <div id="perfGuideInstructionsList"
-                style="font-size:13px; color:var(--text-primary); margin-top:6px; line-height:1.5;"></div>
+            <div class="perf-kpi-card">
+              <div class="kpi-card-header">
+                <span class="kpi-title">Average Problem Latency</span>
+                <span class="kpi-icon">⏱️</span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="perfLatencyVal">2m 45s</span>
+                <span class="kpi-sub-unit">/ problem</span>
+              </div>
+              <div class="kpi-trend positive">
+                <span>▼ -18s speedup vs target</span>
+              </div>
+            </div>
+
+            <div class="perf-kpi-card highlight">
+              <div class="kpi-card-header">
+                <span class="kpi-title">Exam Readiness Score</span>
+                <span class="kpi-icon">🎯</span>
+              </div>
+              <div class="kpi-value-row">
+                <span class="kpi-val" id="perfReadinessVal">92</span>
+                <span class="kpi-sub-unit">/ 100</span>
+              </div>
+              <div class="kpi-trend positive">
+                <span>Tier A1 Projected Distinction</span>
+              </div>
             </div>
           </div>
 
-          <!-- Test Marksheets History Table -->
+          <!-- 2. Middle Row: Subject Competency Quadrant Matrix + Predictive Score Projector -->
+          <div class="perf-middle-grid">
+            <!-- Left: Subject Competency Quadrant Matrix -->
+            <div class="workspace-card perf-matrix-card">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>🧭</span>
+                  <span>Subject Competency Radar Matrix</span>
+                </div>
+                <span class="eng-badge-pill">High Mastery vs Priority Need</span>
+              </div>
+              <p class="eng-subline">Quadrant mapping categorizing core curriculum disciplines by verified mastery vs semester exam weightage urgency.</p>
+
+              <div class="competency-quadrant-container" id="competencyQuadrantGrid">
+                <!-- Quadrant I: High Mastery, High Priority -->
+                <div class="quadrant-box q-top-right">
+                  <div class="quadrant-label">Q1 · High Mastery · Core Board Priority</div>
+                  <div class="quadrant-items" id="quadrantQ1Items">
+                    <div class="quadrant-chip master-high">📐 Mathematics (94%)</div>
+                    <div class="quadrant-chip master-high">⚡ Physics Derivations (91%)</div>
+                  </div>
+                </div>
+
+                <!-- Quadrant II: High Mastery, Low Need -->
+                <div class="quadrant-box q-top-left">
+                  <div class="quadrant-label">Q2 · High Mastery · Stable Retention</div>
+                  <div class="quadrant-items" id="quadrantQ2Items">
+                    <div class="quadrant-chip master-stable">💻 Computer Science (96%)</div>
+                    <div class="quadrant-chip master-stable">📜 Language Paper 1 (90%)</div>
+                  </div>
+                </div>
+
+                <!-- Quadrant III: Low Mastery, High Priority Need (Revision Focus) -->
+                <div class="quadrant-box q-bottom-right priority-focus">
+                  <div class="quadrant-label">Q3 · Priority Revision · Focus Directive</div>
+                  <div class="quadrant-items" id="quadrantQ3Items">
+                    <div class="quadrant-chip need-focus">🧪 Organic Named Reactions (68%)</div>
+                    <div class="quadrant-chip need-focus">🔬 Plant Tissue Culture (72%)</div>
+                  </div>
+                </div>
+
+                <!-- Quadrant IV: Low Mastery, Low Priority -->
+                <div class="quadrant-box q-bottom-left">
+                  <div class="quadrant-label">Q4 · Maintenance · Periodic Review</div>
+                  <div class="quadrant-items" id="quadrantQ4Items">
+                    <div class="quadrant-chip need-maint">📖 English Letter Writing (85%)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Predictive Score Projector -->
+            <div class="workspace-card perf-projector-card">
+              <div class="eng-title-row">
+                <div class="eng-title-headline">
+                  <span>📊</span>
+                  <span>Predictive Score Projector</span>
+                </div>
+                <span class="eng-badge-pill" style="background:rgba(56,189,248,0.12); color:#38bdf8;">Statistical Confidence 95%</span>
+              </div>
+              <p class="eng-subline">Projected board exam and university semester outcome calculated from timed mock accuracy &amp; active recall trends.</p>
+
+              <div class="projector-big-score-box">
+                <div class="proj-headline">Projected Board Aggregate</div>
+                <div class="proj-number" id="projScoreDisplay">93.8%</div>
+                <div class="proj-interval">Confidence Interval: 92.4% — 95.2% (Distinction Range)</div>
+              </div>
+
+              <!-- Subject Projection Breakdown Progress Bars -->
+              <div class="proj-subject-breakdown" id="projSubjectBreakdown">
+                <div class="proj-sub-row">
+                  <div class="proj-sub-meta"><span>Mathematics (Calculus &amp; Vectors)</span><span>96%</span></div>
+                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:96%; background:#38bdf8;"></div></div>
+                </div>
+                <div class="proj-sub-row">
+                  <div class="proj-sub-meta"><span>Physics (Theory &amp; Derivations)</span><span>92%</span></div>
+                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:92%; background:#10b981;"></div></div>
+                </div>
+                <div class="proj-sub-row">
+                  <div class="proj-sub-meta"><span>Chemistry (Named Equations)</span><span>88%</span></div>
+                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:88%; background:#f59e0b;"></div></div>
+                </div>
+                <div class="proj-sub-row">
+                  <div class="proj-sub-meta"><span>Computer Science / Biology</span><span>95%</span></div>
+                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:95%; background:#a855f7;"></div></div>
+                </div>
+                <div class="proj-sub-row">
+                  <div class="proj-sub-meta"><span>Part 1 &amp; Part 2 Languages</span><span>94%</span></div>
+                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:94%; background:#06b6d4;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Cognitive Load & Time-on-Task 52-Week Heatmap -->
+          <div class="workspace-card" style="margin-bottom:20px;">
+            <div class="eng-title-row">
+              <div class="eng-title-headline">
+                <span>🗓️</span>
+                <span>Cognitive Load &amp; Deep-Work Activity Heatmap (52 Weeks)</span>
+              </div>
+              <div class="heatmap-telemetry-badge">
+                <span>Total Deep Work: <strong>486 Hours</strong></span>
+                <span>·</span>
+                <span>Current Streak: <strong>28 Days</strong></span>
+              </div>
+            </div>
+            <p class="eng-subline">Continuous tracking of deep focus study sprints, timed mock test sessions, and syllabus chapter coverage across all 52 academic weeks.</p>
+
+            <div class="heatmap-calendar-wrapper">
+              <div class="heatmap-day-labels">
+                <span>Mon</span>
+                <span>Wed</span>
+                <span>Fri</span>
+              </div>
+              <div class="heatmap-grid" id="perf52WeekHeatmapGrid"></div>
+            </div>
+
+            <div class="heatmap-legend-row">
+              <span class="legend-text">Less Intensity</span>
+              <div class="heatmap-cell lvl-0"></div>
+              <div class="heatmap-cell lvl-1"></div>
+              <div class="heatmap-cell lvl-2"></div>
+              <div class="heatmap-cell lvl-3"></div>
+              <div class="heatmap-cell lvl-4"></div>
+              <span class="legend-text">6+ Hours / Day</span>
+            </div>
+          </div>
+
+          <!-- 4. Test Marksheets Examination History Table -->
           <div class="workspace-card">
-            <h3 class="card-section-title">Examination Marksheets History</h3>
+            <div class="eng-title-row">
+              <div class="eng-title-headline">
+                <span>📜</span>
+                <span>Examination Marksheets History &amp; Transcript Archive</span>
+              </div>
+              <span class="eng-badge-pill" id="perfTestsCountBadge">2 Assessments Completed</span>
+            </div>
             <div id="perfHistoryContainer"></div>
           </div>
         </section>
@@ -1721,9 +1866,18 @@
               <div class="school-selector-container">
                 <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.06em;">Select Class / Standard:</div>
                 <div class="school-chips-row" id="schoolStandardChipsRow">
-                  <button class="school-std-pill" data-schoolstd="STD_10">🎒 10th Standard (SSLC &amp; CBSE)</button>
+                  <button class="school-std-pill" data-schoolstd="STD_10">🎒 10th Standard</button>
                   <button class="school-std-pill" data-schoolstd="STD_11">🧬 11th Standard</button>
-                  <button class="school-std-pill active" data-schoolstd="STD_12">🎓 12th Standard (Higher Secondary Board)</button>
+                  <button class="school-std-pill active" data-schoolstd="STD_12">🎓 12th Standard (Board Centum Track)</button>
+                </div>
+
+                <!-- 10th Standard Board Selector Sub-Tabs -->
+                <div id="schoolBoardSelectorBox" style="margin-top:8px; display:none;">
+                  <div style="font-size:11px; font-weight:800; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Select 10th Curriculum Board:</div>
+                  <div class="school-chips-row" id="schoolBoardChipsRow">
+                    <button class="school-board-pill active" data-board="TN_SSLC">🏛️ Tamil Nadu SSLC (State Board)</button>
+                    <button class="school-board-pill" data-board="CBSE">📘 CBSE Board (NCERT National)</button>
+                  </div>
                 </div>
 
                 <!-- 11th & 12th Stream / Group Selector -->
@@ -2149,6 +2303,22 @@
                 </button>
                 <button type="button" class="btn-arcade-action primary" id="arcadeRecalibrateBtn" title="Restart / Recalibrate Hand Tracking">
                   <span>⚡ Recalibrate</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sleek Permission Prompt Banner (Shows if Camera Denied / Pending) -->
+            <div class="arcade-cam-permission-banner" id="arcadeCameraPermissionBanner" style="display:none;">
+              <div class="cam-banner-content">
+                <div class="cam-banner-left">
+                  <span class="cam-banner-icon">📹</span>
+                  <div>
+                    <h4 class="cam-banner-title">Camera Permission Required for Hand Gesture Tracking</h4>
+                    <p class="cam-banner-desc">Enable your webcam so Google MediaPipe Hands can track your finger landmarks and hand motions in real time. Simulator mode is active in the meantime.</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-arcade-reenable-cam" id="btnReenableCamera">
+                  <span>📹 Re-enable Camera</span>
                 </button>
               </div>
             </div>
@@ -2624,7 +2794,7 @@
           <span style="font-size:9px; color:#10b981;">LIVE</span>
         </div>
         <div class="corner-hud-feed">
-          <video id="gestureWebcamVideo" playsinline autoplay muted></video>
+          <video id="gesture-cam" playsinline autoplay muted></video>
           <canvas id="gestureSkeletonCanvas"></canvas>
         </div>
         <div class="corner-hud-footer">
