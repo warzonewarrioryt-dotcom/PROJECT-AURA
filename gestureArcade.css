@@ -617,12 +617,12 @@
   position: absolute;
   bottom: 24px;
   right: 28px;
-  width: 250px;
-  height: 190px;
+  width: 320px;
+  height: 220px;
   border-radius: 18px;
-  background: rgba(14, 19, 32, 0.85);
-  border: 2px solid rgba(0, 240, 255, 0.35);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 240, 255, 0.2);
+  background: rgba(14, 19, 32, 0.9);
+  border: 2px solid rgba(0, 240, 255, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 240, 255, 0.25);
   overflow: hidden;
   backdrop-filter: blur(24px);
   z-index: 100;
@@ -638,7 +638,7 @@
 
 .corner-hud-header {
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -651,25 +651,32 @@
 .corner-hud-feed {
   position: relative;
   flex: 1;
-  background: #000;
+  background: #090a0f;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+#gesture-cam,
 #gestureWebcamVideo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scaleX(-1); /* Mirror camera feed */
-  opacity: 0.65;
+  object-fit: contain !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: scaleX(-1); /* Proper mirror mode without stretching */
+  background: #090a0f;
+  display: block;
 }
 
 #gestureSkeletonCanvas {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
   pointer-events: none;
-  transform: scaleX(-1); /* Align mirrored coordinates */
+  transform: scaleX(-1); /* Proper mirror mode without stretching */
+  background: transparent;
 }
 
 .corner-hud-footer {
