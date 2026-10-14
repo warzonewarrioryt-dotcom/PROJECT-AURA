@@ -12465,8 +12465,8 @@ body {
 .aura-topbar {
   background: var(--bg-glass);
   border-bottom: 1px solid var(--border-subtle);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .topbar-breadcrumbs {

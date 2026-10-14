@@ -2298,9 +2298,10 @@
                   <span class="arcade-status-dot standby" id="arcadeCamStatusDot"></span>
                   <span id="arcadeCamStatusLabel">⚪ Camera Standby</span>
                 </div>
-                <button type="button" class="btn-arcade-action" id="arcadeSimModeBtn" title="Toggle Mouse/Touch Simulator Fallback">
-                  <span>🖱️ Simulator Mode</span>
-                </button>
+                <div class="arcade-status-pill" id="arcadeHandSensorPill">
+                  <span class="arcade-status-dot active" id="arcadeHandSensorDot"></span>
+                  <span id="arcadeHandSensorLabel">✋ Pure Hand Tracking</span>
+                </div>
                 <button type="button" class="btn-arcade-action primary" id="arcadeRecalibrateBtn" title="Restart / Recalibrate Hand Tracking">
                   <span>⚡ Recalibrate</span>
                 </button>
@@ -2314,7 +2315,7 @@
                   <span class="cam-banner-icon">📹</span>
                   <div>
                     <h4 class="cam-banner-title">Camera Permission Required for Hand Gesture Tracking</h4>
-                    <p class="cam-banner-desc">Enable your webcam so Google MediaPipe Hands can track your finger landmarks and hand motions in real time. Simulator mode is active in the meantime.</p>
+                    <p class="cam-banner-desc">Enable your webcam so Google MediaPipe Hands can track your finger landmarks in real time. Games respond strictly to live hand gestures — mouse and touch controls are disabled.</p>
                   </div>
                 </div>
                 <button type="button" class="btn-arcade-reenable-cam" id="btnReenableCamera">

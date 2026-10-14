@@ -330,18 +330,17 @@
     return false;
   }
 
-  // ── MASTER TRACKING STATE ──
+  // ── MASTER TRACKING STATE (PURE HAND TRACKING — NO MOUSE/TOUCH SIMULATOR) ──
   const trackingState = {
     cameraActive: false,
-    simulatorMode: false,
     cameraInitialized: false,
     handsDetector: null,
     cameraStream: null,
+    handsInitRetry: null,
     lastFrameTime: performance.now(),
     fps: 60,
     fpsHistory: [],
     landmarks: [], // Multi-hand landmarks array for multi-hand engines
-    keys: {}, // Keyboard inputs for simulator mode
 
     // Detected Hand Landmarks
     // Hand 1 (Primary):
@@ -385,37 +384,46 @@
       velocity: 0,
       lastX: 0.25,
       lastY: 0.5
-    },
-
-    // Mouse / Touch Simulation
-    simMouseX: 0.5,
-    simMouseY: 0.5,
-    simIsDown: false,
-    simTilt: 0,
-    simHand2Y: 0.5
+    }
   };
 
-  // ── MEDIAPIPE HANDS INITIALIZATION ──
+  // ── MEDIAPIPE HANDS INITIALIZATION (RELIABLE CDN WASM & BINARY RESOLUTION) ──
   function initMediaPipeHands() {
-    if (typeof window.Hands === "undefined") {
-      console.warn("[GESTURE ARCADE] MediaPipe Hands CDN not loaded. Fallback to simulator mode available.");
+    const HandsConstructor = window.Hands || (typeof Hands !== "undefined" ? Hands : null);
+    if (!HandsConstructor) {
+      console.warn("[GESTURE ARCADE] MediaPipe Hands CDN script pending evaluation. Polling...");
+      if (!trackingState.handsInitRetry) {
+        trackingState.handsInitRetry = setInterval(() => {
+          if (window.Hands || typeof Hands !== "undefined") {
+            clearInterval(trackingState.handsInitRetry);
+            trackingState.handsInitRetry = null;
+            initMediaPipeHands();
+          }
+        }, 150);
+      }
       return false;
     }
 
+    if (trackingState.handsInitRetry) {
+      clearInterval(trackingState.handsInitRetry);
+      trackingState.handsInitRetry = null;
+    }
+
     try {
-      const hands = new window.Hands({
+      const hands = new HandsConstructor({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
       });
 
       hands.setOptions({
         maxNumHands: 2,
         modelComplexity: 1,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
+        minDetectionConfidence: 0.65,
+        minTrackingConfidence: 0.65
       });
 
       hands.onResults(onHandResults);
       trackingState.handsDetector = hands;
+      console.log("[GESTURE ARCADE] MediaPipe Hands successfully initialized (minConfidence: 0.65).");
       return true;
     } catch (err) {
       console.error("[GESTURE ARCADE] MediaPipe Init Error:", err);
@@ -442,7 +450,7 @@
         video: {
           width: { ideal: 1280, min: 640 },
           height: { ideal: 720, min: 480 },
-          facingMode: 'user',
+          facingMode: "user",
           aspectRatio: { ideal: 1.7777777778 } // 16:9 widescreen
         }
       };
@@ -454,7 +462,6 @@
 
       trackingState.cameraActive = true;
       trackingState.cameraStream = stream;
-      trackingState.simulatorMode = false; // Real camera feed active
 
       // Hide permission prompt banner
       const banner = document.getElementById("arcadeCameraPermissionBanner");
@@ -466,6 +473,10 @@
       let isFrameProcessing = false;
       const processVideoFrame = async () => {
         if (!trackingState.cameraActive) return;
+
+        if (!trackingState.handsDetector) {
+          initMediaPipeHands();
+        }
 
         if (video.readyState >= 2 && trackingState.handsDetector && !isFrameProcessing) {
           isFrameProcessing = true;
@@ -489,7 +500,7 @@
       const banner = document.getElementById("arcadeCameraPermissionBanner");
       if (banner) banner.style.display = "block";
 
-      enableSimulatorMode("Camera access blocked. Click 'Re-enable Camera' to grant permissions.");
+      updateWebcamStatusUI(false, "❌ Camera Access Denied — Enable Camera");
     }
   }
 
@@ -503,32 +514,24 @@
     updateWebcamStatusUI(false, "⚪ Camera Standby");
   }
 
-  function enableSimulatorMode(reason) {
-    trackingState.simulatorMode = true;
-    updateWebcamStatusUI(false, "🖱️ Simulator Mode (Active)");
-    const simBadge = document.getElementById("arcadeSimModeBtn");
-    if (simBadge) simBadge.classList.add("active-sim");
-    if (reason) console.info("[GESTURE ARCADE]", reason);
-  }
-
-  function toggleSimulatorMode() {
-    trackingState.simulatorMode = !trackingState.simulatorMode;
-    const simBadge = document.getElementById("arcadeSimModeBtn");
-    if (trackingState.simulatorMode) {
-      if (simBadge) simBadge.classList.add("active-sim");
-      updateWebcamStatusUI(false, "🖱️ Simulator Mode (Active)");
-    } else {
-      if (simBadge) simBadge.classList.remove("active-sim");
-      startWebcam();
-    }
-  }
-
   function updateWebcamStatusUI(isActive, label) {
     const statusText = document.getElementById("arcadeCamStatusLabel");
     const statusDot = document.getElementById("arcadeCamStatusDot");
     if (statusText) statusText.textContent = label;
     if (statusDot) {
-      statusDot.className = "arcade-status-dot " + (isActive ? "active" : (trackingState.simulatorMode ? "standby" : ""));
+      statusDot.className = "arcade-status-dot " + (isActive ? "active" : "");
+    }
+
+    const sensorDot = document.getElementById("arcadeHandSensorDot");
+    const sensorLabel = document.getElementById("arcadeHandSensorLabel");
+    if (sensorDot && sensorLabel) {
+      if (trackingState.hand1.detected) {
+        sensorDot.className = "arcade-status-dot active";
+        sensorLabel.textContent = `✋ Hand Tracking (${trackingState.hand1.handedness})`;
+      } else {
+        sensorDot.className = "arcade-status-dot standby";
+        sensorLabel.textContent = "✋ Searching for Hands...";
+      }
     }
   }
 
@@ -746,6 +749,7 @@
       this.multiplier = 1;
       this.streak = 0;
       this.isPaused = false;
+      this.isAwaitingHands = false;
       this.isOver = false;
       this.particles = [];
       this.lastTick = performance.now();
@@ -777,38 +781,46 @@
       // Base synchronization of pointer & hand gesture states
       const p = this.getPointerPos();
       this.pointer = p;
+      if (!p.detected) {
+        this.isAwaitingHands = true;
+        return false;
+      }
+      this.isAwaitingHands = false;
       this.handX = p.rawX;
       this.handY = p.rawY;
       this.isPinching = p.isPinch;
       this.isFist = p.isFist;
       this.isOpenPalm = p.isOpenPalm;
       this.currentGesture = p.isPinch ? "pinch" : (p.isFist ? "fist" : (p.isOpenPalm ? "palm" : "neutral"));
+      return true;
     }
 
     getPointerPos() {
-      if (trackingState.simulatorMode || !trackingState.hand1.detected) {
+      if (!trackingState.hand1.detected) {
         return {
-          x: trackingState.simMouseX * this.width,
-          y: trackingState.simMouseY * this.height,
-          palmX: trackingState.simMouseX * this.width,
-          palmY: trackingState.simMouseY * this.height,
-          rawX: trackingState.simMouseX,
-          rawY: trackingState.simMouseY,
-          isTrigger: trackingState.simIsDown,
-          isPinch: trackingState.simIsDown,
+          detected: false,
+          x: this.width * 0.5,
+          y: this.height * 0.5,
+          palmX: this.width * 0.5,
+          palmY: this.height * 0.5,
+          rawX: 0.5,
+          rawY: 0.5,
+          isTrigger: false,
+          isPinch: false,
           isFist: false,
           isOpenPalm: false,
           isScissors: false,
-          tilt: trackingState.simTilt || 0,
+          tilt: 0,
           velocity: 0,
           fingerHeights: [0.5, 0.5, 0.5, 0.5, 0.5],
-          hand2Y: trackingState.simHand2Y * this.height,
+          hand2Y: this.height * 0.5,
           twoHandsDetected: false
         };
       }
       const h1 = trackingState.hand1;
       const h2 = trackingState.hand2;
       return {
+        detected: true,
         x: h1.indexTipX * this.width,
         y: h1.indexTipY * this.height,
         palmX: h1.palmX * this.width,
@@ -823,9 +835,154 @@
         tilt: h1.tiltAngle,
         velocity: h1.velocity,
         fingerHeights: h1.fingerHeights,
-        hand2Y: h2.detected ? h2.palmY * this.height : (trackingState.simHand2Y * this.height),
+        hand2Y: h2.detected ? h2.palmY * this.height : (this.height * 0.5),
         twoHandsDetected: h1.detected && h2.detected
       };
+    }
+
+    drawAwaitingHandsOverlay() {
+      const ctx = this.ctx;
+      const w = this.width;
+      const h = this.height;
+      const time = performance.now() / 1000;
+
+      ctx.save();
+
+      // Cyber Frosted Glass Backdrop
+      ctx.fillStyle = "rgba(6, 9, 16, 0.84)";
+      ctx.fillRect(0, 0, w, h);
+
+      // Cyber Perspective Grid Scanlines
+      ctx.strokeStyle = "rgba(0, 240, 255, 0.08)";
+      ctx.lineWidth = 1;
+      const gridSize = 40;
+      for (let x = 0; x < w; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Vertical Sweeping Laser Beam
+      const scanY = ((time * 0.6) % 1) * h;
+      const scanGrad = ctx.createLinearGradient(0, scanY - 35, 0, scanY + 35);
+      scanGrad.addColorStop(0, "rgba(0, 240, 255, 0)");
+      scanGrad.addColorStop(0.5, "rgba(0, 240, 255, 0.35)");
+      scanGrad.addColorStop(1, "rgba(0, 240, 255, 0)");
+      ctx.fillStyle = scanGrad;
+      ctx.fillRect(0, scanY - 35, w, 70);
+
+      ctx.strokeStyle = "#00f0ff";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.moveTo(0, scanY);
+      ctx.lineTo(w, scanY);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Holographic Scanner Brackets
+      const boxW = Math.min(540, w * 0.88);
+      const boxH = Math.min(270, h * 0.62);
+      const boxX = (w - boxW) / 2;
+      const boxY = (h - boxH) / 2;
+      const cornerLen = 36;
+
+      ctx.strokeStyle = "rgba(0, 240, 255, 0.9)";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 16;
+
+      // Top-Left
+      ctx.beginPath();
+      ctx.moveTo(boxX, boxY + cornerLen);
+      ctx.lineTo(boxX, boxY);
+      ctx.lineTo(boxX + cornerLen, boxY);
+      ctx.stroke();
+
+      // Top-Right
+      ctx.beginPath();
+      ctx.moveTo(boxX + boxW - cornerLen, boxY);
+      ctx.lineTo(boxX + boxW, boxY);
+      ctx.lineTo(boxX + boxW, boxY + cornerLen);
+      ctx.stroke();
+
+      // Bottom-Left
+      ctx.beginPath();
+      ctx.moveTo(boxX, boxY + boxH - cornerLen);
+      ctx.lineTo(boxX, boxY + boxH);
+      ctx.lineTo(boxX + cornerLen, boxY + boxH);
+      ctx.stroke();
+
+      // Bottom-Right
+      ctx.beginPath();
+      ctx.moveTo(boxX + boxW - cornerLen, boxY + boxH);
+      ctx.lineTo(boxX + boxW, boxY + boxH);
+      ctx.lineTo(boxX + boxW, boxY + boxH - cornerLen);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Center Holographic Hand Graphic with Pulsing Radar Rings
+      const iconY = boxY + 68;
+      const pulse = 0.75 + Math.sin(time * 4) * 0.25;
+
+      ctx.save();
+      ctx.translate(w / 2, iconY);
+      ctx.fillStyle = `rgba(0, 240, 255, ${pulse * 0.18})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, 44, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = `rgba(0, 240, 255, ${pulse})`;
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 18 * pulse;
+      ctx.beginPath();
+      ctx.arc(0, 0, 44, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Outer radar pulse
+      const outerR = 44 + ((time * 30) % 25);
+      const outerAlpha = Math.max(0, 1 - (outerR - 44) / 25);
+      ctx.strokeStyle = `rgba(0, 240, 255, ${outerAlpha * 0.7})`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.font = "36px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("✋", 0, 0);
+      ctx.restore();
+
+      // Primary Warning Heading
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#00f0ff";
+      ctx.shadowColor = "#00f0ff";
+      ctx.shadowBlur = 18;
+      ctx.font = "bold 22px 'JetBrains Mono', monospace";
+      ctx.fillText("AWAITING HAND SENSORS", w / 2, boxY + 150);
+      ctx.shadowBlur = 0;
+
+      // Subtitle Instructions (Exact Prompt Requirement)
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "600 16px 'Outfit', sans-serif";
+      ctx.fillText("Place hands in front of camera", w / 2, boxY + 182);
+
+      // System telemetry subtext
+      ctx.fillStyle = "rgba(148, 163, 184, 0.85)";
+      ctx.font = "11px 'JetBrains Mono', monospace";
+      ctx.fillText("MEDIAPIPE REAL-TIME SENSING · MOUSE INPUT DISABLED", w / 2, boxY + 218);
+
+      ctx.restore();
     }
 
     addScore(pts) {
@@ -972,7 +1129,7 @@
         // Check slice collision with fast moving blade
         if (!item.sliced && this.trail.length > 2) {
           const dist = Math.hypot(p.x - item.x, p.y - item.y);
-          const isMovingFast = (p.velocity && p.velocity > 0.02) || trackingState.simIsDown;
+          const isMovingFast = (p.velocity && p.velocity > 0.02) || p.isTrigger;
 
           if (dist < item.radius + 15 && isMovingFast) {
             item.sliced = true;
@@ -1619,7 +1776,7 @@
         });
       }
 
-      const isStriking = (p.velocity && p.velocity > 0.05) || p.isFist || trackingState.simIsDown;
+      const isStriking = (p.velocity && p.velocity > 0.05) || p.isFist;
 
       for (let i = this.enemies.length - 1; i >= 0; i--) {
         const e = this.enemies[i];
@@ -1929,7 +2086,7 @@
       const heights = p.fingerHeights || [0.5, 0.5, 0.5, 0.5, 0.5];
 
       heights.forEach((h, i) => {
-        const isPressed = h > 0.65 || (trackingState.simIsDown && Math.floor(p.rawX * 5) === i);
+        const isPressed = h > 0.65;
         if (isPressed && !this.keyStates[i]) {
           this.keyStates[i] = true;
           audio.playPianoNote(i);
@@ -1980,7 +2137,7 @@
       this.speed = 140; // km/h
       this.maxSpeed = 220;
       this.minSpeed = 50;
-      this.nitroSpeed = 280;
+      this.nitroSpeed = 290;
       this.distance = 0;
       this.steeringAngle = 0; // in degrees
       this.targetSteer = 0;
@@ -2002,38 +2159,36 @@
       this.screenShake = 0;
 
       // Initialize road speed lines
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 45; i++) {
         this.speedLines.push({
           x: (Math.random() - 0.5) * this.width * 1.6,
           y: Math.random() * this.height,
-          len: 30 + Math.random() * 90,
-          speed: 450 + Math.random() * 650
+          len: 35 + Math.random() * 110,
+          speed: 500 + Math.random() * 700
         });
       }
     }
 
     update(dt) {
-      super.update(dt);
+      if (!super.update(dt)) return; // Pauses on lost hand tracking
 
       // Screen shake decay
       if (this.screenShake > 0) {
-        this.screenShake = Math.max(0, this.screenShake - 25 * dt);
+        this.screenShake = Math.max(0, this.screenShake - 26 * dt);
       }
 
       // Smooth highway curvature simulation
       this.curveTimer += dt;
       if (this.curveTimer > 4.5) {
         this.curveTimer = 0;
-        this.targetCurve = (Math.random() - 0.5) * 0.7;
+        this.targetCurve = (Math.random() - 0.5) * 0.75;
       }
-      this.roadCurve += (this.targetCurve - this.roadCurve) * 1.2 * dt;
+      this.roadCurve += (this.targetCurve - this.roadCurve) * 1.25 * dt;
 
-      // Two-Hand Steering Wheel Tilt & Motion Tracking
+      // Two-Hand Steering Wheel Tilt & Motion Tracking (STRICTLY GESTURE DRIVEN)
       let isBraking = false;
       let isAccelerating = false;
       let targetSteer = 0;
-
-      const p = this.pointer || this.getPointerPos();
 
       if (trackingState.hand1.detected && trackingState.hand2.detected) {
         // Dual-Hand Virtual Steering Wheel
@@ -2061,7 +2216,7 @@
           isAccelerating = true;
         }
       } else if (trackingState.hand1.detected) {
-        // Single Hand Tilt & Lateral Movement Fallback
+        // Single Hand Tilt & Lateral Movement
         const h = trackingState.hand1;
         this.steeringAngle = h.tiltAngle || ((h.palmX - 0.5) * 55);
         targetSteer = Math.max(-1, Math.min(1, (h.palmX - 0.5) * 2.4));
@@ -2073,42 +2228,24 @@
           isAccelerating = true;
         }
       } else {
-        // Mouse & Keyboard Simulator Mode Fallback
-        let keySteer = 0;
-        if (trackingState.keys["ArrowLeft"] || trackingState.keys["a"] || trackingState.keys["A"]) keySteer -= 1;
-        if (trackingState.keys["ArrowRight"] || trackingState.keys["d"] || trackingState.keys["D"]) keySteer += 1;
-
-        if (keySteer !== 0) {
-          targetSteer = keySteer;
-          this.steeringAngle = keySteer * 28;
-        } else {
-          targetSteer = Math.max(-1, Math.min(1, (trackingState.simMouseX - 0.5) * 2.4));
-          this.steeringAngle = targetSteer * 28;
-        }
-
-        if (trackingState.keys["ArrowDown"] || trackingState.keys["s"] || trackingState.keys["S"] || trackingState.keys[" "]) {
-          isBraking = true;
-        }
-        if (trackingState.keys["ArrowUp"] || trackingState.keys["w"] || trackingState.keys["W"] || trackingState.simIsDown) {
-          isAccelerating = true;
-        }
-
-        this.steerMode = "🖱️ SIMULATOR / KEYS";
+        targetSteer = 0;
+        this.steeringAngle = 0;
+        this.steerMode = "AWAITING SENSORS";
       }
 
       this.isBraking = isBraking;
 
       // Smooth steering interpolation
-      this.playerX += (targetSteer - this.playerX) * 9 * dt;
+      this.playerX += (targetSteer - this.playerX) * 9.5 * dt;
       this.playerX = Math.max(-0.9, Math.min(0.9, this.playerX));
 
       // Speed & Nitro Physics
       if (isBraking) {
-        this.speed = Math.max(this.minSpeed, this.speed - 160 * dt);
+        this.speed = Math.max(this.minSpeed, this.speed - 170 * dt);
         this.nitroActive = false;
       } else if (isAccelerating && this.nitroFuel > 5) {
         this.nitroActive = true;
-        this.speed = Math.min(this.nitroSpeed, this.speed + 120 * dt);
+        this.speed = Math.min(this.nitroSpeed, this.speed + 130 * dt);
         this.nitroFuel = Math.max(0, this.nitroFuel - 28 * dt);
         if (Math.random() < 0.1) audio.playNitro();
       } else {
@@ -2118,12 +2255,12 @@
       }
 
       this.distance += (this.speed / 3.6) * dt;
-      this.roadZ = (this.roadZ + this.speed * 4.5 * dt) % 200;
-      this.shieldPulse = (this.shieldPulse + dt * 4) % (Math.PI * 2);
+      this.roadZ = (this.roadZ + this.speed * 4.6 * dt) % 200;
+      this.shieldPulse = (this.shieldPulse + dt * 4.5) % (Math.PI * 2);
 
       // Spawn oncoming traffic (Cruisers & Heavy Cyber Trucks)
-      if (Math.random() < 0.032 * (this.speed / 100)) {
-        const laneIndices = [-0.6, -0.2, 0.2, 0.6];
+      if (Math.random() < 0.034 * (this.speed / 100)) {
+        const laneIndices = [-0.62, -0.21, 0.21, 0.62];
         const lane = laneIndices[Math.floor(Math.random() * laneIndices.length)];
         const isTruck = Math.random() > 0.65;
         this.obstacles.push({
@@ -2131,7 +2268,7 @@
           z: 1000,
           type: isTruck ? "truck" : "cruiser",
           color: isTruck ? "#f59e0b" : (Math.random() > 0.5 ? "#ef4444" : "#ec4899"),
-          laneChangeSpeed: (Math.random() - 0.5) * 0.15
+          laneChangeSpeed: (Math.random() - 0.5) * 0.16
         });
       }
 
@@ -2142,14 +2279,15 @@
         this.powerups.push({
           x: (Math.random() - 0.5) * 1.3,
           z: 1000,
-          type: powerType
+          type: powerType,
+          rot: 0
         });
       }
 
       // Update oncoming obstacles
       for (let i = this.obstacles.length - 1; i >= 0; i--) {
         const obs = this.obstacles[i];
-        obs.z -= this.speed * 4.6 * dt;
+        obs.z -= this.speed * 4.8 * dt;
         obs.x += obs.laneChangeSpeed * dt;
         obs.x = Math.max(-0.75, Math.min(0.75, obs.x));
 
@@ -2164,7 +2302,7 @@
               // Shield absorbs the crash!
               this.shieldActive = false;
               audio.playScore();
-              this.screenShake = 10;
+              this.screenShake = 12;
               this.spawnParticles(this.width * 0.5 + this.playerX * (this.width * 0.4), this.height * 0.85, "#00f0ff", 28);
               this.floatingTexts.push({
                 text: "SHIELD DEFLECTED!",
@@ -2178,7 +2316,7 @@
             } else {
               // High-speed impact!
               audio.playWrong();
-              this.screenShake = 22;
+              this.screenShake = 24;
               this.resetStreak();
               this.speed = Math.max(50, this.speed - 90);
               this.spawnParticles(this.width * 0.5 + this.playerX * (this.width * 0.4), this.height * 0.85, "#ef4444", 36);
@@ -2201,6 +2339,7 @@
           if (laneDiff < 0.38) {
             // Close shave / near miss bonus
             audio.playScore();
+            this.screenShake = 6;
             this.addScore(150);
             this.addMultiplier(1);
             this.floatingTexts.push({
@@ -2220,7 +2359,8 @@
       // Update powerups
       for (let i = this.powerups.length - 1; i >= 0; i--) {
         const pUp = this.powerups[i];
-        pUp.z -= this.speed * 4.6 * dt;
+        pUp.z -= this.speed * 4.8 * dt;
+        pUp.rot += dt * 3.5;
 
         if (pUp.z < 110 && pUp.z > 20 && Math.abs(pUp.x - this.playerX) < 0.35) {
           audio.playPop();
@@ -2254,17 +2394,17 @@
       });
 
       // Exhaust particle generation
-      if (Math.random() < (this.nitroActive ? 0.9 : 0.4)) {
+      if (Math.random() < (this.nitroActive ? 0.95 : 0.45)) {
         const playerScreenX = this.width * 0.5 + (this.playerX * (this.width * 0.4));
         const playerScreenY = this.height * 0.86;
         this.exhaustParticles.push({
-          x: playerScreenX + (Math.random() - 0.5) * 24,
-          y: playerScreenY + 22,
-          vx: (Math.random() - 0.5) * 40,
-          vy: Math.random() * 80 + 120,
-          color: this.nitroActive ? (Math.random() > 0.5 ? "#f59e0b" : "#00f0ff") : "#00f0ff",
-          size: this.nitroActive ? 6 : 3,
-          life: 0.3
+          x: playerScreenX + (Math.random() - 0.5) * 26,
+          y: playerScreenY + 24,
+          vx: (Math.random() - 0.5) * 44,
+          vy: Math.random() * 90 + 130,
+          color: this.nitroActive ? (Math.random() > 0.5 ? "#f59e0b" : "#ff007f") : "#00f0ff",
+          size: this.nitroActive ? 7 : 3.5,
+          life: 0.35
         });
       }
 
@@ -2279,7 +2419,7 @@
       // Update floating combat texts
       for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
         const ft = this.floatingTexts[i];
-        ft.y -= 40 * dt;
+        ft.y -= 42 * dt;
         ft.life -= dt;
         if (ft.life <= 0) this.floatingTexts.splice(i, 1);
       }
@@ -2289,94 +2429,180 @@
       const ctx = this.ctx;
       const w = this.width;
       const h = this.height;
-      const horizonY = h * 0.44;
+      const horizonY = h * 0.43;
 
       ctx.save();
 
-      // Screen shake offset
+      // Screen shake translation
       if (this.screenShake > 0) {
         ctx.translate((Math.random() - 0.5) * this.screenShake, (Math.random() - 0.5) * this.screenShake);
       }
 
-      // Cosmic Synthwave Sky Gradient
+      // ── 1. COSMIC SYNTHWAVE SKY WITH NEON HORIZON ──
       const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
-      skyGrad.addColorStop(0, "#04060f");
-      skyGrad.addColorStop(0.65, "#0f0b24");
-      skyGrad.addColorStop(1, "#260e3b");
+      skyGrad.addColorStop(0, "#010206");
+      skyGrad.addColorStop(0.55, "#0b051a");
+      skyGrad.addColorStop(1, "#260938");
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, w, horizonY);
 
-      // Distant Synthwave Horizon Sun with scanlines
-      const sunY = horizonY - 10;
-      const sunRadius = 75;
+      // Distant Synthwave Horizon Sun with Horizontal Raster Scanlines
+      const sunY = horizonY - 14;
+      const sunRadius = 78;
       const sunGrad = ctx.createLinearGradient(0, sunY - sunRadius, 0, sunY);
       sunGrad.addColorStop(0, "#ff007f");
-      sunGrad.addColorStop(1, "#f59e0b");
+      sunGrad.addColorStop(0.5, "#f59e0b");
+      sunGrad.addColorStop(1, "#ffe580");
       ctx.fillStyle = sunGrad;
+      ctx.shadowColor = "#ff007f";
+      ctx.shadowBlur = 32;
       ctx.beginPath();
-      ctx.arc(w * 0.5 + this.roadCurve * 60, sunY, sunRadius, Math.PI, 0);
+      ctx.arc(w * 0.5 + this.roadCurve * 70, sunY, sunRadius, Math.PI, 0);
       ctx.fill();
+      ctx.shadowBlur = 0;
 
-      // Sun horizon blinds/stripes
-      ctx.fillStyle = "#0f0b24";
-      for (let s = 0; s < 5; s++) {
-        const stripeY = sunY - 8 - s * 12;
-        ctx.fillRect(w * 0.5 - sunRadius + this.roadCurve * 60, stripeY, sunRadius * 2, 3 + s);
+      // Sun horizontal raster blinds
+      ctx.fillStyle = "#0b051a";
+      for (let s = 0; s < 6; s++) {
+        const stripeY = sunY - 6 - s * 12;
+        ctx.fillRect(w * 0.5 - sunRadius + this.roadCurve * 70, stripeY, sunRadius * 2, 2.5 + s * 0.8);
       }
 
-      // Distant Cyber City Skyline Silhouettes
-      ctx.fillStyle = "#090c1a";
-      for (let b = 0; b < 16; b++) {
-        const bw = w / 16;
-        const bh = 15 + ((b * 37) % 55);
-        ctx.fillRect(b * bw, horizonY - bh, bw - 2, bh);
+      // Parallax Distant Cyber Mountains Grid
+      ctx.strokeStyle = "rgba(236, 72, 153, 0.22)";
+      ctx.lineWidth = 1;
+      const mountainCenter = w * 0.5 + this.roadCurve * 40;
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(mountainCenter - 260, horizonY - 45);
+      ctx.lineTo(mountainCenter - 140, horizonY - 15);
+      ctx.lineTo(mountainCenter - 40, horizonY - 55);
+      ctx.lineTo(mountainCenter + 80, horizonY - 20);
+      ctx.lineTo(mountainCenter + 220, horizonY - 50);
+      ctx.lineTo(w, horizonY);
+      ctx.stroke();
+
+      // Cyberpunk City Skyline Silhouettes with Glowing Windows & Neon Beacons
+      for (let b = 0; b < 20; b++) {
+        const bw = w / 20;
+        const bh = 18 + ((b * 47) % 65);
+        const bx = b * bw;
+        ctx.fillStyle = "#080b18";
+        ctx.fillRect(bx, horizonY - bh, bw - 2, bh);
+
+        // Tower antenna beacons
+        if (b % 3 === 0) {
+          ctx.strokeStyle = "#38bdf8";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(bx + bw * 0.5, horizonY - bh);
+          ctx.lineTo(bx + bw * 0.5, horizonY - bh - 16);
+          ctx.stroke();
+
+          ctx.fillStyle = "#ef4444";
+          ctx.shadowColor = "#ef4444";
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.arc(bx + bw * 0.5, horizonY - bh - 16, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
       }
 
-      // 3D Perspective Road Surface with dynamic curve
-      const roadCenterHorizon = w * 0.5 + this.roadCurve * 120;
+      // ── 2. ROAD SHOULDERS WITH PERSPECTIVE CYBER GRID ──
+      const roadCenterHorizon = w * 0.5 + this.roadCurve * 140;
+
+      // Road shoulder surface
+      ctx.fillStyle = "#04050a";
+      ctx.fillRect(0, horizonY, w, h - horizonY);
+
+      // Cyber grid lines on road shoulders
+      ctx.strokeStyle = "rgba(0, 240, 255, 0.12)";
+      ctx.lineWidth = 1;
+      for (let x = -w; x < w * 2; x += 60) {
+        ctx.beginPath();
+        ctx.moveTo(roadCenterHorizon, horizonY);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+
+      // Horizontal perspective grid lines moving with roadZ
+      for (let z = 0; z < 12; z++) {
+        const pz = (z * 24 + (this.roadZ % 24)) / 288;
+        const lineY = horizonY + Math.pow(pz, 2.2) * (h - horizonY);
+        ctx.beginPath();
+        ctx.moveTo(0, lineY);
+        ctx.lineTo(w, lineY);
+        ctx.stroke();
+      }
+
+      // ── 3. 3D PERSPECTIVE ROAD SURFACE WITH CURVATURE ──
       const roadGrad = ctx.createLinearGradient(0, horizonY, 0, h);
-      roadGrad.addColorStop(0, "#0b0f19");
-      roadGrad.addColorStop(0.5, "#070a12");
+      roadGrad.addColorStop(0, "#0c101d");
+      roadGrad.addColorStop(0.5, "#080b14");
       roadGrad.addColorStop(1, "#030408");
       ctx.fillStyle = roadGrad;
 
       ctx.beginPath();
-      ctx.moveTo(roadCenterHorizon - w * 0.16, horizonY);
-      ctx.lineTo(roadCenterHorizon + w * 0.16, horizonY);
+      ctx.moveTo(roadCenterHorizon - w * 0.15, horizonY);
+      ctx.lineTo(roadCenterHorizon + w * 0.15, horizonY);
       ctx.lineTo(w * 0.98, h);
       ctx.lineTo(w * 0.02, h);
       ctx.closePath();
       ctx.fill();
 
-      // Glowing Neon Guardrails & Borders
+      // Glowing Neon Guardrail Beams & Laser Barriers
       ctx.strokeStyle = "#00f0ff";
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
       ctx.shadowColor = "#00f0ff";
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 14;
       ctx.beginPath();
-      ctx.moveTo(roadCenterHorizon - w * 0.16, horizonY);
+      ctx.moveTo(roadCenterHorizon - w * 0.15, horizonY);
       ctx.lineTo(w * 0.02, h);
-      ctx.moveTo(roadCenterHorizon + w * 0.16, horizonY);
+      ctx.stroke();
+
+      ctx.strokeStyle = "#ff007f";
+      ctx.shadowColor = "#ff007f";
+      ctx.beginPath();
+      ctx.moveTo(roadCenterHorizon + w * 0.15, horizonY);
       ctx.lineTo(w * 0.98, h);
       ctx.stroke();
       ctx.shadowBlur = 0;
 
-      // 4-Lane Dashed Road Markers moving with speed
+      // Road Edge 3D Perspective Neon Pylons
+      for (let py = 0; py < 8; py++) {
+        const pz = (py * 32 + (this.roadZ % 32)) / 256;
+        const curScale = Math.pow(pz, 2.2);
+        const curY = horizonY + curScale * (h - horizonY);
+        const pylonH = 45 * curScale;
+
+        // Left pylon
+        const leftX = roadCenterHorizon - w * 0.15 + (w * 0.02 - (roadCenterHorizon - w * 0.15)) * curScale;
+        ctx.fillStyle = "#00f0ff";
+        ctx.fillRect(leftX - 2 * curScale, curY - pylonH, 4 * curScale, pylonH);
+
+        // Right pylon
+        const rightX = roadCenterHorizon + w * 0.15 + (w * 0.98 - (roadCenterHorizon + w * 0.15)) * curScale;
+        ctx.fillStyle = "#ff007f";
+        ctx.fillRect(rightX - 2 * curScale, curY - pylonH, 4 * curScale, pylonH);
+      }
+
+      // 4-Lane Dashed Road Dividers with Speed Movement
       [-0.45, 0, 0.45].forEach(laneOffset => {
-        ctx.strokeStyle = "rgba(0, 240, 255, 0.4)";
-        ctx.lineWidth = 2;
-        ctx.setLineDash([18, 22]);
-        ctx.lineDashOffset = -this.roadZ * 2;
+        ctx.strokeStyle = "rgba(0, 240, 255, 0.45)";
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([20, 24]);
+        ctx.lineDashOffset = -this.roadZ * 2.2;
         ctx.beginPath();
-        ctx.moveTo(roadCenterHorizon + laneOffset * (w * 0.14), horizonY);
+        ctx.moveTo(roadCenterHorizon + laneOffset * (w * 0.13), horizonY);
         ctx.lineTo(w * (0.5 + laneOffset * 0.48), h);
         ctx.stroke();
       });
       ctx.setLineDash([]);
 
       // Speed lines passing by
-      ctx.strokeStyle = this.nitroActive ? "rgba(255, 0, 128, 0.45)" : "rgba(0, 240, 255, 0.25)";
-      ctx.lineWidth = this.nitroActive ? 2 : 1;
+      ctx.strokeStyle = this.nitroActive ? "rgba(255, 0, 128, 0.55)" : "rgba(0, 240, 255, 0.28)";
+      ctx.lineWidth = this.nitroActive ? 2.5 : 1.2;
       this.speedLines.forEach(l => {
         ctx.beginPath();
         ctx.moveTo(l.x, l.y);
@@ -2384,18 +2610,18 @@
         ctx.stroke();
       });
 
-      // Render Oncoming Obstacle Vehicles
+      // ── 4. RENDER ONCOMING VEHICLES ──
       this.obstacles.slice().sort((a, b) => b.z - a.z).forEach(obs => {
         const scale = (1000 - obs.z) / 1000;
         if (scale <= 0.01) return;
 
         const curY = horizonY + (h - horizonY) * scale;
-        const curHorizonX = roadCenterHorizon + (obs.x * (w * 0.14));
+        const curHorizonX = roadCenterHorizon + (obs.x * (w * 0.13));
         const curBottomX = w * 0.5 + (obs.x * (w * 0.46));
         const curX = curHorizonX + (curBottomX - curHorizonX) * scale;
 
-        const carW = (obs.type === "truck" ? 82 : 62) * scale;
-        const carH = (obs.type === "truck" ? 48 : 34) * scale;
+        const carW = (obs.type === "truck" ? 86 : 64) * scale;
+        const carH = (obs.type === "truck" ? 52 : 36) * scale;
 
         ctx.save();
         ctx.translate(curX, curY - carH);
@@ -2403,111 +2629,124 @@
         // Vehicle Chassis
         ctx.fillStyle = obs.color;
         ctx.shadowColor = obs.color;
-        ctx.shadowBlur = 10 * scale;
+        ctx.shadowBlur = 12 * scale;
         ctx.fillRect(-carW * 0.5, 0, carW, carH);
         ctx.shadowBlur = 0;
 
         // Cabin windshield
-        ctx.fillStyle = "#0c1322";
-        ctx.fillRect(-carW * 0.35, carH * 0.15, carW * 0.7, carH * 0.4);
+        ctx.fillStyle = "#070c18";
+        ctx.fillRect(-carW * 0.36, carH * 0.15, carW * 0.72, carH * 0.38);
 
-        // Rear brake lights
+        // Rear glowing brake lightbar
         ctx.fillStyle = "#ff0033";
         ctx.shadowColor = "#ff0033";
-        ctx.shadowBlur = 8 * scale;
-        ctx.fillRect(-carW * 0.45, carH * 0.65, carW * 0.25, 4 * scale);
-        ctx.fillRect(carW * 0.2, carH * 0.65, carW * 0.25, 4 * scale);
+        ctx.shadowBlur = 12 * scale;
+        ctx.fillRect(-carW * 0.46, carH * 0.65, carW * 0.92, 5 * scale);
         ctx.shadowBlur = 0;
 
         ctx.restore();
       });
 
-      // Render Powerup Orbs
+      // ── 5. RENDER 3D ROTATING POWERUP CRYSTALS ──
       this.powerups.forEach(pUp => {
         const scale = (1000 - pUp.z) / 1000;
         if (scale <= 0.01) return;
 
         const curY = horizonY + (h - horizonY) * scale;
         const curX = w * 0.5 + (pUp.x * (w * 0.45 * scale));
-        const rad = 16 * scale;
+        const rad = 18 * scale;
         const color = pUp.type === "nitro" ? "#00f0ff" : (pUp.type === "shield" ? "#10b981" : "#c084fc");
 
         ctx.save();
-        ctx.beginPath();
-        ctx.arc(curX, curY - rad, rad, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.translate(curX, curY - rad);
+        ctx.rotate(pUp.rot);
+
+        // Diamond wireframe
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
         ctx.shadowColor = color;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.moveTo(0, -rad);
+        ctx.lineTo(rad, 0);
+        ctx.lineTo(0, rad);
+        ctx.lineTo(-rad, 0);
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.35;
         ctx.fill();
+        ctx.globalAlpha = 1.0;
         ctx.shadowBlur = 0;
 
-        // Powerup icon letter
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `bold ${Math.max(8, Math.round(14 * scale))}px 'JetBrains Mono', monospace`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(pUp.type === "nitro" ? "⚡" : (pUp.type === "shield" ? "🛡️" : "💎"), curX, curY - rad);
         ctx.restore();
       });
 
-      // Render Exhaust Particle Flames
+      // ── 6. RENDER EXHAUST PARTICLES ──
       this.exhaustParticles.forEach(ep => {
         ctx.fillStyle = ep.color;
+        ctx.shadowColor = ep.color;
+        ctx.shadowBlur = 10;
         ctx.beginPath();
         ctx.arc(ep.x, ep.y, ep.size, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
       });
 
-      // Render Player Cyber Supercar
+      // ── 7. RENDER PLAYER CYBER SUPERCAR ──
       const playerScreenX = w * 0.5 + (this.playerX * (w * 0.4));
       const playerScreenY = h * 0.85;
-      const pW = 90;
-      const pH = 46;
+      const pW = 94;
+      const pH = 48;
 
       ctx.save();
       ctx.translate(playerScreenX, playerScreenY);
-      ctx.rotate((this.steeringAngle * Math.PI / 180) * 0.3);
+      ctx.rotate((this.steeringAngle * Math.PI / 180) * 0.32);
 
-      // Headlight Road Illumination Beams
-      const beamGrad = ctx.createLinearGradient(0, -pH, 0, -pH - 160);
-      beamGrad.addColorStop(0, "rgba(0, 240, 255, 0.35)");
+      // Volumetric Headlight Beams Illumination
+      const beamGrad = ctx.createLinearGradient(0, -pH, 0, -pH - 180);
+      beamGrad.addColorStop(0, "rgba(0, 240, 255, 0.42)");
       beamGrad.addColorStop(1, "rgba(0, 240, 255, 0)");
       ctx.fillStyle = beamGrad;
 
       // Left beam
       ctx.beginPath();
       ctx.moveTo(-pW * 0.35, -pH);
-      ctx.lineTo(-pW * 0.8, -pH - 160);
-      ctx.lineTo(-pW * 0.1, -pH - 160);
+      ctx.lineTo(-pW * 0.85, -pH - 180);
+      ctx.lineTo(-pW * 0.1, -pH - 180);
       ctx.closePath();
       ctx.fill();
 
       // Right beam
       ctx.beginPath();
       ctx.moveTo(pW * 0.35, -pH);
-      ctx.lineTo(pW * 0.1, -pH - 160);
-      ctx.lineTo(pW * 0.8, -pH - 160);
+      ctx.lineTo(pW * 0.1, -pH - 180);
+      ctx.lineTo(pW * 0.85, -pH - 180);
       ctx.closePath();
       ctx.fill();
 
-      // Car Body Underglow
-      ctx.fillStyle = this.nitroActive ? "rgba(255, 0, 128, 0.4)" : "rgba(0, 240, 255, 0.35)";
+      // Multi-Layer Underglow Bloom
+      const underglowGrad = ctx.createRadialGradient(0, 4, 10, 0, 4, pW * 0.65);
+      underglowGrad.addColorStop(0, this.nitroActive ? "rgba(255, 0, 128, 0.65)" : "rgba(0, 240, 255, 0.55)");
+      underglowGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = underglowGrad;
       ctx.beginPath();
-      ctx.ellipse(0, 4, pW * 0.55, 14, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 4, pW * 0.65, 18, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Aerodynamic Chassis Base
       ctx.fillStyle = "#0c1322";
       ctx.strokeStyle = this.nitroActive ? "#ff007f" : "#00f0ff";
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2.8;
       ctx.shadowColor = ctx.strokeStyle;
-      ctx.shadowBlur = 14;
+      ctx.shadowBlur = 18;
       ctx.beginPath();
       ctx.moveTo(-pW * 0.5, 0);
-      ctx.lineTo(-pW * 0.42, -pH * 0.7);
+      ctx.lineTo(-pW * 0.42, -pH * 0.72);
       ctx.lineTo(-pW * 0.28, -pH);
       ctx.lineTo(pW * 0.28, -pH);
-      ctx.lineTo(pW * 0.42, -pH * 0.7);
+      ctx.lineTo(pW * 0.42, -pH * 0.72);
       ctx.lineTo(pW * 0.5, 0);
       ctx.closePath();
       ctx.fill();
@@ -2526,57 +2765,52 @@
 
       // Rear Spoiler / Fin Wing
       ctx.fillStyle = "#00f0ff";
-      ctx.fillRect(-pW * 0.45, -4, pW * 0.9, 5);
+      ctx.fillRect(-pW * 0.46, -4, pW * 0.92, 5);
 
-      // Tail Lights / Brake Strip
+      // Tail Lights / Brake Lightbar
       ctx.fillStyle = this.isBraking ? "#ff0033" : "#ff2255";
       ctx.shadowColor = ctx.fillStyle;
-      ctx.shadowBlur = this.isBraking ? 18 : 8;
-      ctx.fillRect(-pW * 0.42, -2, pW * 0.84, this.isBraking ? 6 : 4);
+      ctx.shadowBlur = this.isBraking ? 20 : 10;
+      ctx.fillRect(-pW * 0.44, -2, pW * 0.88, this.isBraking ? 7 : 4);
       ctx.shadowBlur = 0;
 
-      // Exhaust Nozzles
-      ctx.fillStyle = "#334155";
-      ctx.fillRect(-pW * 0.22, 0, 10, 6);
-      ctx.fillRect(pW * 0.22 - 10, 0, 10, 6);
-
-      // Active Cyber Shield Bubble
+      // Active Cyber Shield Lattice Bubble
       if (this.shieldActive) {
-        ctx.strokeStyle = `rgba(0, 240, 255, ${0.45 + Math.sin(this.shieldPulse) * 0.25})`;
+        ctx.strokeStyle = `rgba(0, 240, 255, ${0.45 + Math.sin(this.shieldPulse) * 0.28})`;
         ctx.lineWidth = 3;
         ctx.shadowColor = "#00f0ff";
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 20;
         ctx.beginPath();
-        ctx.ellipse(0, -pH * 0.5, pW * 0.68, pH * 0.9, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, -pH * 0.5, pW * 0.7, pH * 0.92, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.shadowBlur = 0;
       }
 
       ctx.restore();
 
-      // Render Floating Combat / Combo Texts
+      // ── 8. RENDER FLOATING COMBAT TEXTS ──
       this.floatingTexts.forEach(ft => {
         ctx.save();
         ctx.fillStyle = ft.color;
         ctx.shadowColor = ft.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 14;
         ctx.font = "bold 18px 'Outfit', sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(ft.text, ft.x, ft.y);
         ctx.restore();
       });
 
-      // Render Interactive Holographic Steering Wheel HUD (Bottom Right)
-      const wheelX = w - 90;
-      const wheelY = h - 90;
+      // ── 9. HOLOGRAPHIC 3D STEERING WHEEL HUD (BOTTOM RIGHT) ──
+      const wheelX = w - 95;
+      const wheelY = h - 95;
       ctx.save();
       ctx.translate(wheelX, wheelY);
 
-      // Wheel outer glow rim
+      // Outer glow rim
       ctx.strokeStyle = "rgba(0, 240, 255, 0.25)";
       ctx.lineWidth = 10;
       ctx.beginPath();
-      ctx.arc(0, 0, 48, 0, Math.PI * 2);
+      ctx.arc(0, 0, 50, 0, Math.PI * 2);
       ctx.stroke();
 
       // Rotated Wheel Rim
@@ -2584,60 +2818,63 @@
       ctx.strokeStyle = "#00f0ff";
       ctx.lineWidth = 4;
       ctx.shadowColor = "#00f0ff";
-      ctx.shadowBlur = 12;
+      ctx.shadowBlur = 14;
       ctx.beginPath();
-      ctx.arc(0, 0, 48, 0, Math.PI * 2);
+      ctx.arc(0, 0, 50, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Center Spoke & Hub
-      ctx.fillStyle = "rgba(14, 19, 32, 0.9)";
+      // Center Hub
+      ctx.fillStyle = "rgba(14, 19, 32, 0.92)";
       ctx.beginPath();
-      ctx.arc(0, 0, 18, 0, Math.PI * 2);
+      ctx.arc(0, 0, 20, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
       // Spoke bars
       ctx.fillStyle = "#00f0ff";
-      ctx.fillRect(-44, -3, 88, 6);
-      ctx.fillRect(-3, 0, 6, 44);
+      ctx.fillRect(-46, -3, 92, 6);
+      ctx.fillRect(-3, 0, 6, 46);
 
-      // Grip points
+      // Hand Sensor Grip Nodes
       ctx.fillStyle = trackingState.hand1.detected ? "#10b981" : "#f59e0b";
       ctx.beginPath();
-      ctx.arc(-48, 0, 6, 0, Math.PI * 2);
+      ctx.arc(-50, 0, 6.5, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = trackingState.hand2.detected ? "#10b981" : (trackingState.hand1.detected ? "#94a3b8" : "#f59e0b");
       ctx.beginPath();
-      ctx.arc(48, 0, 6, 0, Math.PI * 2);
+      ctx.arc(50, 0, 6.5, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
 
-      // Steering Wheel Telemetry Label
+      // Telemetry Labels
       ctx.fillStyle = "#00f0ff";
-      ctx.font = "bold 11px 'JetBrains Mono', monospace";
+      ctx.font = "bold 12px 'JetBrains Mono', monospace";
       ctx.textAlign = "center";
-      ctx.fillText(`${Math.round(this.steeringAngle)}° TILT`, wheelX, wheelY + 64);
-      ctx.font = "9px 'JetBrains Mono', monospace";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.fillText(this.steerMode, wheelX, wheelY + 76);
+      ctx.fillText(`${Math.round(this.steeringAngle)}° TILT`, wheelX, wheelY + 70);
+      ctx.font = "10px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.fillText(this.steerMode, wheelX, wheelY + 84);
 
-      // Top Dashboard Telemetry (Speed, Distance, Nitro)
+      // ── 10. TOP SPEEDOMETER & TELEMETRY HUD ──
       ctx.textAlign = "left";
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "bold 26px 'JetBrains Mono', monospace";
+      ctx.font = "bold 28px 'JetBrains Mono', monospace";
       ctx.fillText(`${Math.round(this.speed)} KM/H`, 28, 44);
 
       ctx.font = "12px 'JetBrains Mono', monospace";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
       ctx.fillText(`DIST: ${(this.distance / 1000).toFixed(2)} KM | SHIELD: ${this.shieldActive ? "ACTIVE 🛡️" : "DEPLETED ⚠️"}`, 28, 68);
 
       // Nitro Fuel Gauge Bar
-      ctx.fillStyle = "rgba(15, 23, 42, 0.8)";
-      ctx.fillRect(28, 78, 140, 8);
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fillRect(28, 80, 150, 9);
       ctx.fillStyle = this.nitroActive ? "#ff007f" : "#00f0ff";
-      ctx.fillRect(28, 78, 140 * (this.nitroFuel / 100), 8);
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.shadowBlur = 8;
+      ctx.fillRect(28, 80, 150 * (this.nitroFuel / 100), 9);
+      ctx.shadowBlur = 0;
 
       ctx.restore();
     }
@@ -2657,6 +2894,7 @@
       this.laserBeams = [];
       this.floatingTexts = [];
       this.recoil = 0;
+      this.blasterRecoil = 0;
       this.ammo = 8;
       this.maxAmmo = 8;
       this.wasPinching = false;
@@ -2677,7 +2915,7 @@
 
     spawnTarget() {
       const types = ["drone", "bullseye", "stealth", "civilian"];
-      const randType = types[Math.floor(Math.random() * (types.length))];
+      const randType = types[Math.floor(Math.random() * types.length)];
       const rad = randType === "bullseye" ? 34 : (randType === "civilian" ? 30 : 28);
 
       this.targets.push({
@@ -2687,14 +2925,14 @@
         life: randType === "civilian" ? 5.5 : 4.2,
         maxLife: randType === "civilian" ? 5.5 : 4.2,
         type: randType,
-        vx: (Math.random() - 0.5) * 75,
-        vy: (Math.random() - 0.5) * 75,
+        vx: (Math.random() - 0.5) * 80,
+        vy: (Math.random() - 0.5) * 80,
         rotorAngle: 0
       });
     }
 
     update(dt) {
-      super.update(dt);
+      if (!super.update(dt)) return; // Pauses physics on lost hand tracking
 
       this.timer -= dt;
       if (this.timer <= 0) {
@@ -2704,13 +2942,13 @@
 
       this.radarAngle = (this.radarAngle + dt * 2.2) % (Math.PI * 2);
 
-      // Smooth Crosshair Tracking to Index Fingertip
+      // Smooth Crosshair Tracking to Index Fingertip Landmark
       const p = this.pointer || this.getPointerPos();
       const targetX = (p.rawX != null ? p.rawX : 0.5) * this.width;
       const targetY = (p.rawY != null ? p.rawY : 0.5) * this.height;
 
-      this.crosshairX += (targetX - this.crosshairX) * 22 * dt;
-      this.crosshairY += (targetY - this.crosshairY) * 22 * dt;
+      this.crosshairX += (targetX - this.crosshairX) * 24 * dt;
+      this.crosshairY += (targetY - this.crosshairY) * 24 * dt;
 
       // Check hovered target for Tactical Lock-On
       this.hoveredTarget = null;
@@ -2723,22 +2961,23 @@
         }
       }
 
-      // Shoot Trigger on Pinch Snap or Mouse Click / Space Key
-      const isPinching = p.isPinch || p.isTrigger || trackingState.keys[" "];
+      // Shoot Trigger strictly on Pinch Snap (Index + Thumb)
+      const isPinching = p.isPinch || p.isTrigger;
       if (isPinching && !this.wasPinching) {
         this.shoot();
       }
       this.wasPinching = isPinching;
 
-      // Gesture Reload on Open Palm or 'R' Key
-      const isReloading = p.isOpenPalm || trackingState.keys["r"] || trackingState.keys["R"];
+      // Gesture Reload strictly on Open Palm
+      const isReloading = p.isOpenPalm;
       if (isReloading && !this.wasReloading && this.ammo < this.maxAmmo) {
         this.reload();
       }
       this.wasReloading = isReloading;
 
       // Recoil Recovery
-      this.recoil = Math.max(0, this.recoil - 45 * dt);
+      this.recoil = Math.max(0, this.recoil - 50 * dt);
+      this.blasterRecoil = Math.max(0, this.blasterRecoil - 60 * dt);
 
       // Target Spawner & Lifecycles
       this.spawnTimer += dt;
@@ -2752,7 +2991,7 @@
         t.x += t.vx * dt;
         t.y += t.vy * dt;
         t.life -= dt;
-        t.rotorAngle = (t.rotorAngle + dt * 12) % (Math.PI * 2);
+        t.rotorAngle = (t.rotorAngle + dt * 14) % (Math.PI * 2);
 
         // Boundary bounce
         if (t.x < t.radius + 30 || t.x > this.width - t.radius - 30) t.vx *= -1;
@@ -2789,7 +3028,7 @@
       // Floating text rise & fade
       for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
         const ft = this.floatingTexts[i];
-        ft.y -= 45 * dt;
+        ft.y -= 46 * dt;
         ft.life -= dt;
         if (ft.life <= 0) this.floatingTexts.splice(i, 1);
       }
@@ -2803,14 +3042,15 @@
           color: "#ef4444",
           x: this.crosshairX,
           y: this.crosshairY - 30,
-          life: 0.8
+          life: 0.85
         });
         return;
       }
 
       this.ammo--;
       this.shotsFired++;
-      this.recoil = 22;
+      this.recoil = 24;
+      this.blasterRecoil = 32;
       audio.playLaser();
 
       const shotY = this.crosshairY - this.recoil;
@@ -2821,7 +3061,7 @@
         y1: this.height,
         x2: this.crosshairX,
         y2: shotY,
-        life: 0.12
+        life: 0.14
       });
 
       // Hit collision test
@@ -2876,14 +3116,14 @@
             }
 
             // Explosion sparks
-            for (let k = 0; k < 22; k++) {
+            for (let k = 0; k < 28; k++) {
               this.particles.push({
                 x: t.x,
                 y: t.y,
-                vx: (Math.random() - 0.5) * 360,
-                vy: (Math.random() - 0.5) * 360,
+                vx: (Math.random() - 0.5) * 400,
+                vy: (Math.random() - 0.5) * 400,
                 color: isCritical ? "#f59e0b" : "#ef4444",
-                life: 0.45 + Math.random() * 0.25
+                life: 0.5 + Math.random() * 0.28
               });
             }
           }
@@ -2911,7 +3151,7 @@
         color: "#10b981",
         x: this.crosshairX,
         y: this.crosshairY - 30,
-        life: 0.9
+        life: 0.95
       });
     }
 
@@ -2920,8 +3160,8 @@
       const w = this.width;
       const h = this.height;
 
-      // Cyber Tactical Shooting Range Grid
-      ctx.fillStyle = "#07090e";
+      // ── 1. 3D CYBER TACTICAL SHOOTING RANGE CHAMBER ──
+      ctx.fillStyle = "#06080e";
       ctx.fillRect(0, 0, w, h);
 
       // Perspective Wall Grid Lines
@@ -2940,9 +3180,9 @@
         ctx.stroke();
       }
 
-      // Radar Sweep Arc
+      // Radar Sweep Cone
       ctx.save();
-      ctx.strokeStyle = "rgba(0, 240, 255, 0.12)";
+      ctx.strokeStyle = "rgba(0, 240, 255, 0.14)";
       ctx.beginPath();
       ctx.moveTo(w * 0.5, h * 0.5);
       ctx.lineTo(w * 0.5 + Math.cos(this.radarAngle) * w * 0.7, h * 0.5 + Math.sin(this.radarAngle) * w * 0.7);
@@ -2952,9 +3192,9 @@
       // Scorch Marks / Bullet Holes
       this.bulletHoles.forEach(bh => {
         ctx.save();
-        ctx.fillStyle = "rgba(239, 68, 68, 0.6)";
+        ctx.fillStyle = "rgba(239, 68, 68, 0.65)";
         ctx.shadowColor = "#ef4444";
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.arc(bh.x, bh.y, 4, 0, Math.PI * 2);
         ctx.fill();
@@ -2965,9 +3205,17 @@
       this.laserBeams.forEach(lb => {
         ctx.save();
         ctx.strokeStyle = "#ff0055";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 3.5;
         ctx.shadowColor = "#ff0055";
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.moveTo(lb.x1, lb.y1);
+        ctx.lineTo(lb.x2, lb.y2);
+        ctx.stroke();
+
+        // White hot core
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(lb.x1, lb.y1);
         ctx.lineTo(lb.x2, lb.y2);
@@ -2975,7 +3223,7 @@
         ctx.restore();
       });
 
-      // Render Targets
+      // ── 2. RENDER TARGET ENTITIES ──
       this.targets.forEach(t => {
         ctx.save();
         ctx.translate(t.x, t.y);
@@ -2983,32 +3231,38 @@
         if (t.type === "drone") {
           // Tactical Drone Body
           ctx.strokeStyle = "#ef4444";
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2.8;
           ctx.shadowColor = "#ef4444";
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 12;
           ctx.beginPath();
           ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
           ctx.stroke();
 
           // Dual spinning rotor arms
           ctx.rotate(t.rotorAngle);
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+          ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.moveTo(-t.radius * 1.3, 0);
-          ctx.lineTo(t.radius * 1.3, 0);
-          ctx.moveTo(0, -t.radius * 1.3);
-          ctx.lineTo(0, t.radius * 1.3);
+          ctx.moveTo(-t.radius * 1.35, 0);
+          ctx.lineTo(t.radius * 1.35, 0);
+          ctx.moveTo(0, -t.radius * 1.35);
+          ctx.lineTo(0, t.radius * 1.35);
           ctx.stroke();
 
-          // Red Drone Core
+          // Red Drone Core with optical eye lens
           ctx.fillStyle = "#ef4444";
           ctx.beginPath();
           ctx.arc(0, 0, t.radius * 0.45, 0, Math.PI * 2);
           ctx.fill();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(0, 0, 3, 0, Math.PI * 2);
+          ctx.fill();
         } else if (t.type === "bullseye") {
           // Concentric Golden Target
           ctx.strokeStyle = "#f59e0b";
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2.8;
           ctx.beginPath();
           ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
           ctx.stroke();
@@ -3021,14 +3275,16 @@
           // Golden Bullseye Core (Critical)
           ctx.fillStyle = "#f59e0b";
           ctx.shadowColor = "#f59e0b";
-          ctx.shadowBlur = 12;
+          ctx.shadowBlur = 16;
           ctx.beginPath();
           ctx.arc(0, 0, t.radius * 0.35, 0, Math.PI * 2);
           ctx.fill();
         } else if (t.type === "stealth") {
           // Stealth Interceptor
           ctx.strokeStyle = "#c084fc";
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2.8;
+          ctx.shadowColor = "#c084fc";
+          ctx.shadowBlur = 12;
           ctx.beginPath();
           ctx.moveTo(0, -t.radius);
           ctx.lineTo(t.radius, 0);
@@ -3042,7 +3298,9 @@
         } else {
           // Friendly Civilian Hologram (Do Not Shoot)
           ctx.strokeStyle = "#00f0ff";
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = "#00f0ff";
+          ctx.shadowBlur = 10;
           ctx.beginPath();
           ctx.arc(0, 0, t.radius, 0, Math.PI * 2);
           ctx.stroke();
@@ -3057,10 +3315,10 @@
         }
 
         // Life Countdown Ring
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(0, 0, t.radius + 6, 0, (t.life / t.maxLife) * Math.PI * 2);
+        ctx.arc(0, 0, t.radius + 7, 0, (t.life / t.maxLife) * Math.PI * 2);
         ctx.stroke();
 
         ctx.restore();
@@ -3069,9 +3327,12 @@
       // Explosion Sparks
       this.particles.forEach(p => {
         ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
       });
 
       // Floating Combat Texts
@@ -3079,14 +3340,42 @@
         ctx.save();
         ctx.fillStyle = ft.color;
         ctx.shadowColor = ft.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
         ctx.font = "bold 16px 'Outfit', sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(ft.text, ft.x, ft.y);
         ctx.restore();
       });
 
-      // Render Tactical Laser Crosshair
+      // ── 3. RENDER 3D FUTURISTIC HEAVY BLASTER CANNON (BOTTOM RIGHT) ──
+      ctx.save();
+      const gunBaseX = w * 0.88;
+      const gunBaseY = h + this.blasterRecoil;
+      ctx.translate(gunBaseX, gunBaseY);
+
+      // Blaster chassis barrel
+      ctx.fillStyle = "#1e293b";
+      ctx.strokeStyle = "#00f0ff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-28, 0);
+      ctx.lineTo(-12, -75);
+      ctx.lineTo(12, -75);
+      ctx.lineTo(28, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Energy power core slit
+      ctx.fillStyle = "#ef4444";
+      ctx.shadowColor = "#ef4444";
+      ctx.shadowBlur = 12;
+      ctx.fillRect(-4, -60, 8, 35);
+      ctx.shadowBlur = 0;
+
+      ctx.restore();
+
+      // ── 4. RENDER TACTICAL SMART LASER CROSSHAIR ──
       const chX = this.crosshairX;
       const chY = this.crosshairY - this.recoil;
       const isLocked = this.hoveredTarget && this.hoveredTarget.type !== "civilian";
@@ -3095,45 +3384,45 @@
 
       ctx.save();
       ctx.strokeStyle = reticleColor;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.2;
       ctx.shadowColor = reticleColor;
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 12;
 
       // Outer Range Ring
       ctx.beginPath();
-      ctx.arc(chX, chY, isLocked ? 26 : 22, 0, Math.PI * 2);
+      ctx.arc(chX, chY, isLocked ? 28 : 22, 0, Math.PI * 2);
       ctx.stroke();
 
       // Precision Crossbars
       ctx.beginPath();
-      ctx.moveTo(chX - 34, chY);
+      ctx.moveTo(chX - 36, chY);
       ctx.lineTo(chX - 8, chY);
       ctx.moveTo(chX + 8, chY);
-      ctx.lineTo(chX + 34, chY);
-      ctx.moveTo(chX, chY - 34);
-      ctx.lineTo(chX - 8, chY);
+      ctx.lineTo(chX + 36, chY);
+      ctx.moveTo(chX, chY - 36);
+      ctx.lineTo(chX, chY - 8);
       ctx.moveTo(chX, chY + 8);
-      ctx.lineTo(chX, chY + 34);
+      ctx.lineTo(chX, chY + 36);
       ctx.stroke();
 
       // Center Laser Dot
       ctx.fillStyle = reticleColor;
       ctx.beginPath();
-      ctx.arc(chX, chY, 3.5, 0, Math.PI * 2);
+      ctx.arc(chX, chY, 3.8, 0, Math.PI * 2);
       ctx.fill();
 
       // Target Lock Status Tag
       if (isLocked) {
-        ctx.font = "bold 10px 'JetBrains Mono', monospace";
-        ctx.fillText("TARGET LOCKED [PINCH/CLICK]", chX + 30, chY - 12);
+        ctx.font = "bold 11px 'JetBrains Mono', monospace";
+        ctx.fillText("TARGET LOCKED [PINCH SNAP TO FIRE]", chX + 34, chY - 14);
       } else if (isFriendlyWarning) {
-        ctx.font = "bold 10px 'JetBrains Mono', monospace";
-        ctx.fillText("NO FIRE - FRIENDLY", chX + 30, chY - 12);
+        ctx.font = "bold 11px 'JetBrains Mono', monospace";
+        ctx.fillText("NO FIRE - FRIENDLY", chX + 34, chY - 14);
       }
 
       ctx.restore();
 
-      // Telemetry HUD
+      // ── 5. TELEMETRY HUD (STRICTLY PURE GESTURE) ──
       ctx.fillStyle = "#f8fafc";
       ctx.font = "bold 16px 'JetBrains Mono', monospace";
       ctx.fillText(`AMMO: ${"▮".repeat(this.ammo)}${"▯".repeat(this.maxAmmo - this.ammo)}`, 28, 44);
@@ -3141,8 +3430,8 @@
 
       const acc = this.shotsFired > 0 ? Math.round((this.shotsHit / this.shotsFired) * 100) : 100;
       ctx.font = "12px 'JetBrains Mono', monospace";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-      ctx.fillText(`ACCURACY: ${acc}% | HEADSHOTS: ${this.headshots} | PINCH/CLICK TO FIRE · PALM/KEY 'R' TO RELOAD`, 28, 68);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.78)";
+      ctx.fillText(`ACCURACY: ${acc}% | HEADSHOTS: ${this.headshots} | 🤏 PINCH TO FIRE · ✋ OPEN PALM TO RELOAD`, 28, 68);
     }
   }
 
@@ -3373,7 +3662,7 @@
     arenaModal.style.display = "flex";
 
     // Start webcam if not yet active
-    if (!trackingState.cameraActive && !trackingState.simulatorMode) {
+    if (!trackingState.cameraActive) {
       startWebcam();
     }
 
@@ -3387,9 +3676,14 @@
       const dt = (now - lastTimestamp) / 1000;
       lastTimestamp = now;
 
-      if (activeGameInstance && !activeGameInstance.isPaused && !activeGameInstance.isOver) {
-        activeGameInstance.update(dt);
+      if (activeGameInstance && !activeGameInstance.isOver) {
+        if (!activeGameInstance.isPaused) {
+          activeGameInstance.update(dt);
+        }
         activeGameInstance.render();
+        if (activeGameInstance.isAwaitingHands) {
+          activeGameInstance.drawAwaitingHandsOverlay();
+        }
       }
 
       activeGameAnimationId = requestAnimationFrame(gameLoop);
@@ -3526,9 +3820,6 @@
     }
 
     // Header Controls
-    const simBtn = document.getElementById("arcadeSimModeBtn");
-    if (simBtn) simBtn.addEventListener("click", () => toggleSimulatorMode());
-
     const recalBtn = document.getElementById("arcadeRecalibrateBtn");
     if (recalBtn) recalBtn.addEventListener("click", () => {
       stopWebcam();
@@ -3553,49 +3844,6 @@
 
     const dialogExitBtn = document.getElementById("btnDialogExit");
     if (dialogExitBtn) dialogExitBtn.addEventListener("click", closeGameArena);
-
-    // Canvas Simulator Event Bindings (Mouse & Touch)
-    const canvas = document.getElementById("arcadeGameCanvas");
-    if (canvas) {
-      const updateSimPos = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        trackingState.simMouseX = (e.clientX - rect.left) / rect.width;
-        trackingState.simMouseY = (e.clientY - rect.top) / rect.height;
-        if (e.shiftKey) {
-          trackingState.simHand2Y = trackingState.simMouseY;
-        }
-      };
-
-      canvas.addEventListener("mousemove", updateSimPos);
-      canvas.addEventListener("mousedown", (e) => {
-        updateSimPos(e);
-        trackingState.simIsDown = true;
-      });
-      window.addEventListener("mouseup", () => {
-        trackingState.simIsDown = false;
-      });
-
-      canvas.addEventListener("touchmove", (e) => {
-        if (e.touches && e.touches[0]) {
-          const t = e.touches[0];
-          const rect = canvas.getBoundingClientRect();
-          trackingState.simMouseX = (t.clientX - rect.left) / rect.width;
-          trackingState.simMouseY = (t.clientY - rect.top) / rect.height;
-          trackingState.simIsDown = true;
-        }
-      });
-      canvas.addEventListener("touchend", () => {
-        trackingState.simIsDown = false;
-      });
-    }
-
-    // Global Keyboard Listeners for Simulator Fallback
-    window.addEventListener("keydown", (e) => {
-      trackingState.keys[e.key] = true;
-    });
-    window.addEventListener("keyup", (e) => {
-      trackingState.keys[e.key] = false;
-    });
 
     // Window Resize Observer for Game Canvas
     window.addEventListener("resize", () => {
