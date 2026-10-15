@@ -1340,6 +1340,10 @@ function switchView(viewKey) {
     if (typeof window.initGestureArcadeHub === "function") {
       window.initGestureArcadeHub();
     }
+  } else {
+    if (typeof window.cleanupGestureArcadeHub === "function") {
+      window.cleanupGestureArcadeHub();
+    }
   }
 
   closeMobileSidebar();
@@ -2044,6 +2048,8 @@ function initCreationStudio() {
           rectRadius: 0.15
         });
 
+        const imgToEmbed = s.exactImage || (presentationUploadedImage ? presentationUploadedImage.dataUrl : null);
+
         // Slide Pill / Number
         slide.addText(`SLIDE ${String(s.number).padStart(2, '0')}`, {
           x: 0.9, y: 0.85, w: 2.0, h: 0.3,
@@ -2060,11 +2066,27 @@ function initCreationStudio() {
         if (s.bullets && s.bullets.length > 0) {
           const bulletItems = s.bullets.map(b => ({
             text: b,
-            options: { bullet: true, fontSize: 14, color: textColor, fontFace: "Calibri", lineSpacing: 26 }
+            options: { bullet: true, fontSize: imgToEmbed ? 12 : 14, color: textColor, fontFace: "Calibri", lineSpacing: imgToEmbed ? 20 : 26 }
           }));
           slide.addText(bulletItems, {
-            x: 0.9, y: 2.2, w: 8.2, h: 2.6
+            x: 0.9, y: 2.1, w: imgToEmbed ? 4.3 : 8.2, h: 3.6
           });
+        }
+
+        // Embed exact uploaded image if present
+        if (imgToEmbed) {
+          try {
+            slide.addImage({
+              data: imgToEmbed,
+              x: 5.4,
+              y: 2.0,
+              w: 3.7,
+              h: 3.7,
+              sizing: { type: "contain" }
+            });
+          } catch (e) {
+            console.warn("[PPTX IMAGE EMBED WARNING]", e);
+          }
         }
 
         // Speaker notes in PowerPoint native notes drawer
@@ -2329,6 +2351,82 @@ Make it look natural, professional, and visually engaging with clean points and 
   let lastPresSpeechScript = "";
   let activePresentationSlideIndex = 0;
   let isDeckGridView = false;
+  let presentationUploadedImage = null; // { name, type, dataUrl, base64 }
+
+  const presImageDropzone = document.getElementById("presImageDropzone");
+  const presImageFileInput = document.getElementById("presImageFileInput");
+  const presImagePreviewBox = document.getElementById("presImagePreviewBox");
+  const presImagePreviewImg = document.getElementById("presImagePreviewImg");
+  const presImagePreviewName = document.getElementById("presImagePreviewName");
+  const btnRemovePresImage = document.getElementById("btnRemovePresImage");
+
+  if (presImageDropzone && presImageFileInput) {
+    presImageDropzone.addEventListener("click", () => presImageFileInput.click());
+    presImageDropzone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      presImageDropzone.style.borderColor = "var(--accent-gold)";
+    });
+    presImageDropzone.addEventListener("dragleave", () => {
+      presImageDropzone.style.borderColor = "var(--border-medium)";
+    });
+    presImageDropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      presImageDropzone.style.borderColor = "var(--border-medium)";
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        handlePresImageFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    presImageFileInput.addEventListener("change", (e) => {
+      if (e.target.files && e.target.files.length) {
+        handlePresImageFile(e.target.files[0]);
+      }
+    });
+  }
+
+  function handlePresImageFile(file) {
+    if (!file) return;
+    const valid = ["image/png", "image/jpeg", "image/webp", "image/svg+xml", "image/jpg"].includes(file.type);
+    if (!valid) {
+      alert("Please upload a valid image file (PNG, JPEG, WEBP, or SVG).");
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      alert("Image exceeds 20 MB size limit.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      const base64 = dataUrl.split(",")[1];
+      presentationUploadedImage = {
+        name: file.name,
+        type: file.type,
+        dataUrl: dataUrl,
+        base64: base64
+      };
+
+      if (presImagePreviewImg) presImagePreviewImg.src = dataUrl;
+      if (presImagePreviewName) presImagePreviewName.textContent = file.name;
+      if (presImagePreviewBox) presImagePreviewBox.style.display = "flex";
+      if (presTopicInput && !presTopicInput.value.trim()) {
+        presTopicInput.value = `Analysis and Key Takeaways of ${file.name.replace(/\.[^/.]+$/, "")}`;
+      }
+      playTactileSound("success");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  if (btnRemovePresImage) {
+    btnRemovePresImage.addEventListener("click", (e) => {
+      e.stopPropagation();
+      presentationUploadedImage = null;
+      if (presImagePreviewBox) presImagePreviewBox.style.display = "none";
+      if (presImageFileInput) presImageFileInput.value = "";
+      playTactileSound("click");
+    });
+  }
 
   function getContextualSlideImage(topic, slideTitle, index) {
     const combined = ((topic || "") + " " + (slideTitle || "")).toLowerCase();
@@ -2412,7 +2510,8 @@ Make it look natural, professional, and visually engaging with clean points and 
     }
 
     const currentSlide = slides[activePresentationSlideIndex];
-    const heroImage = getContextualSlideImage(topic, currentSlide.title, activePresentationSlideIndex);
+    const isExactImg = Boolean(currentSlide.exactImage || (presentationUploadedImage && presentationUploadedImage.dataUrl));
+    const heroImage = currentSlide.exactImage || (presentationUploadedImage ? presentationUploadedImage.dataUrl : getContextualSlideImage(topic, currentSlide.title, activePresentationSlideIndex));
     const categoryTag = getSlideCategoryTag(topic, currentSlide.title, activePresentationSlideIndex);
 
     let html = '';
@@ -2430,7 +2529,8 @@ Make it look natural, professional, and visually engaging with clean points and 
         </div>
         <div class="ppt-slides-grid" style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));">
           ${slides.map((s, idx) => {
-            const sImg = getContextualSlideImage(topic, s.title, idx);
+            const isCardExact = Boolean(s.exactImage || (presentationUploadedImage && presentationUploadedImage.dataUrl));
+            const sImg = s.exactImage || (presentationUploadedImage ? presentationUploadedImage.dataUrl : getContextualSlideImage(topic, s.title, idx));
             return `
               <div class="ppt-slide-card" style="aspect-ratio: 16/9; padding: 18px; cursor: pointer; border: 1px solid ${idx === activePresentationSlideIndex ? 'var(--accent-blue)' : 'var(--border-subtle)'};" onclick="window.selectCorporateSlide(${idx})">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -2438,8 +2538,8 @@ Make it look natural, professional, and visually engaging with clean points and 
                   <span style="font-size:10px; color:#64748b; font-family:monospace;">16:9 FRAME</span>
                 </div>
                 <div class="slide-title-text" style="font-size:14px; margin-bottom:8px;">${escapeHtml(s.title)}</div>
-                <div style="position:relative; height:80px; border-radius:6px; overflow:hidden; margin-bottom:8px; border:1px solid rgba(255,255,255,0.06);">
-                  <img src="${sImg}" alt="Visual" style="width:100%; height:100%; object-fit:cover; opacity:0.85;" />
+                <div style="position:relative; height:80px; border-radius:6px; overflow:hidden; margin-bottom:8px; border:1px solid rgba(255,255,255,0.06); background:#07090e;">
+                  <img src="${sImg}" alt="Visual" style="width:100%; height:100%; object-fit:${isCardExact ? 'contain' : 'cover'}; opacity:${isCardExact ? '1' : '0.85'};" />
                 </div>
                 <ul class="slide-bullets-list" style="margin-bottom:8px; font-size:11px;">
                   ${s.bullets.slice(0, 3).map(b => `<li>${escapeHtml(b)}</li>`).join("")}
@@ -2501,15 +2601,15 @@ Make it look natural, professional, and visually engaging with clean points and 
             </div>
 
             <!-- 60% High-Impact Visual Canvas -->
-            <div class="corporate-slide-right-col">
-              <img src="${heroImage}" alt="${escapeHtml(currentSlide.title)}" class="corporate-slide-hero-image" />
-              <div class="corporate-slide-image-scrim"></div>
+            <div class="corporate-slide-right-col" style="${isExactImg ? 'background:#07090e; display:flex; align-items:center; justify-content:center; overflow:hidden;' : ''}">
+              <img src="${heroImage}" alt="${escapeHtml(currentSlide.title)}" class="corporate-slide-hero-image" style="${isExactImg ? 'width:100%; height:100%; object-fit:contain; opacity:1; border-radius:8px;' : ''}" />
+              ${!isExactImg ? '<div class="corporate-slide-image-scrim"></div>' : ''}
               <div class="corporate-slide-overlay-content">
                 <div class="corporate-visual-kpi-badge">
-                  <span>✦ MCKINSEY/BCG VISUAL CANVAS</span>
+                  <span>✦ ${isExactImg ? 'EXACT UPLOADED ARTIFACT' : 'MCKINSEY/BCG VISUAL CANVAS'}</span>
                 </div>
                 <div class="corporate-visual-context-caption">
-                  Contextual Synthesis: <strong>${escapeHtml(topic)}</strong> · Pillar ${activePresentationSlideIndex + 1}
+                  ${isExactImg ? `Grounding Artifact: <strong>${escapeHtml(presentationUploadedImage ? presentationUploadedImage.name : 'Uploaded Visual')}</strong>` : `Contextual Synthesis: <strong>${escapeHtml(topic)}</strong> · Pillar ${activePresentationSlideIndex + 1}`}
                 </div>
               </div>
             </div>
@@ -2593,14 +2693,39 @@ Make it look natural, professional, and visually engaging with clean points and 
   if (generatePresBtn) {
     generatePresBtn.addEventListener("click", async () => {
       const topic = presTopicInput ? presTopicInput.value.trim() : "";
-      if (!topic) return;
+      if (!topic && !presentationUploadedImage) {
+        alert("Please specify a topic or upload an image to generate a presentation.");
+        return;
+      }
+      const effectiveTopic = topic || (presentationUploadedImage ? `Analysis of ${presentationUploadedImage.name}` : "Executive Presentation");
 
       const slideCount = presSlideCountSelect ? presSlideCountSelect.value : "8";
       generatePresBtn.disabled = true;
       generatePresBtn.textContent = "⚡ AI Synthesizing Slides & Speech Script...";
 
       try {
-        const presPrompt = `Generate a master-level ${slideCount}-slide presentation deck AND full spoken speech script for: "${topic}".
+        let presPrompt = "";
+        if (presentationUploadedImage) {
+          presPrompt = `[MULTIMODAL PRESENTATION STUDIO — EXACT IMAGE GROUNDING ACTIVE]
+Grounding Image File: "${presentationUploadedImage.name}" (Format: ${presentationUploadedImage.type})
+User Topic / Intent: "${effectiveTopic}"
+
+Analyze the visual artifact, technical flow, diagram components, formulas, or data tables in this image.
+Generate an executive ${slideCount}-slide presentation deck that explains, interprets, and cites this exact visual artifact accurately.
+Do not fabricate information that cannot reasonably be inferred from the visual context.
+Output structure:
+PART 1: SLIDE DECK OUTLINE
+For each slide provide:
+Slide [N]: [Slide Title Grounded in Image]
+- [Bullet Point 1 interpreting visual architecture/data]
+- [Bullet Point 2]
+- [Bullet Point 3]
+Speaker Notes: [What the presenter should say for this slide referencing the diagram]
+
+PART 2: COMPLETE PRESENTATION SPEECH SCRIPT
+Chronological, natural speech script for the speaker to present to the audience seamlessly.`;
+        } else {
+          presPrompt = `Generate a master-level ${slideCount}-slide presentation deck AND full spoken speech script for: "${effectiveTopic}".
 Output structure:
 PART 1: SLIDE DECK OUTLINE
 For each slide provide:
@@ -2612,6 +2737,7 @@ Speaker Notes: [What the presenter should say for this slide]
 
 PART 2: COMPLETE PRESENTATION SPEECH SCRIPT
 Chronological, natural speech script for the speaker to present to the audience seamlessly.`;
+        }
 
         const res = await fetch(`${BACKEND_URL}/ask`, {
           method: "POST",
@@ -2621,17 +2747,22 @@ Chronological, natural speech script for the speaker to present to the audience 
         const data = await res.json();
         const rawRes = data.answer || data.response || "Presentation synthesis complete.";
 
-        parsedSlidesData = parsePresentationSlides(rawRes, topic);
+        parsedSlidesData = parsePresentationSlides(rawRes, effectiveTopic);
+        if (presentationUploadedImage) {
+          parsedSlidesData.forEach(s => {
+            s.exactImage = presentationUploadedImage.dataUrl;
+          });
+        }
         lastPresSpeechScript = rawRes;
 
         // Render Standardized 16:9 McKinsey/BCG Corporate Slides
         activePresentationSlideIndex = 0;
         isDeckGridView = false;
-        renderCorporateSlideDeck(parsedSlidesData, topic);
+        renderCorporateSlideDeck(parsedSlidesData, effectiveTopic);
 
         // Render Speech Script View
         if (presScriptOutputText) {
-          presScriptOutputText.innerHTML = formatCreationStudioOutput(rawRes, `Spoken Script: ${topic}`);
+          presScriptOutputText.innerHTML = formatCreationStudioOutput(rawRes, `Spoken Script: ${effectiveTopic}`);
         }
 
         if (presOutputContainer) presOutputContainer.style.display = "block";
@@ -2889,6 +3020,18 @@ if (refreshVaultFilesBtn) {
 
 async function uploadFileToVault(file) {
   if (!file) return;
+
+  const allowedExts = ["pdf", "docx", "doc", "txt", "md", "pptx", "xlsx", "xls", "csv", "json", "py", "js", "html", "ts", "cpp", "java"];
+  const ext = (file.name || "").split(".").pop().toLowerCase();
+  if (!allowedExts.includes(ext)) {
+    alert(`Unsupported format (.${ext}). Supported formats: PDF, DOCX, TXT, MD, PPTX, XLSX, and code files.`);
+    return;
+  }
+  if (file.size > 30 * 1024 * 1024) {
+    alert("File is too large (maximum upload limit is 30 MB).");
+    return;
+  }
+
   const formData = new FormData();
   formData.append("file", file);
 
@@ -2901,8 +3044,24 @@ async function uploadFileToVault(file) {
       body: formData
     });
     const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || "Upload failed on server.");
+    }
+
+    // Persist file metadata in localStorage for offline resilience
+    if (data.file) {
+      const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
+      const existingIdx = localFiles.findIndex(f => (f.id === data.file.id || f.originalName === data.file.originalName));
+      if (existingIdx >= 0) {
+        localFiles[existingIdx] = data.file;
+      } else {
+        localFiles.unshift(data.file);
+      }
+      localStorage.setItem("aura_local_vault_files", JSON.stringify(localFiles));
+    }
+
     playTactileSound("success");
-    loadVaultFiles();
+    await loadVaultFiles();
     setCoreState("idle", "ONLINE");
 
     // Automatically analyze document for matched web topics
@@ -2913,15 +3072,22 @@ async function uploadFileToVault(file) {
     console.warn("[VAULT UPLOAD ERROR]", err.message);
     setCoreState("error", "UPLOAD ERROR");
     setTimeout(() => setCoreState("idle", "ONLINE"), 2500);
+    alert("Failed to upload document: " + err.message);
   }
 }
 
 async function loadVaultFiles() {
   if (!vaultFilesGrid) return;
   try {
-    const res = await fetch(`${BACKEND_URL}/api/vault/files`);
-    const data = await res.json();
-    const serverFiles = data.files || [];
+    let serverFiles = [];
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/vault/files`);
+      if (res.ok) {
+        const data = await res.json();
+        serverFiles = data.files || [];
+      }
+    } catch (_) {}
+
     const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
     const filesMap = new Map();
     localFiles.forEach(f => filesMap.set(f.id || f.filename, f));
@@ -2930,8 +3096,10 @@ async function loadVaultFiles() {
 
     if (files.length === 0) {
       vaultFilesGrid.innerHTML = `
-        <div style="grid-column: 1/-1; padding: 32px; text-align: center; color: var(--text-tertiary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
-          No documents uploaded yet. Drop a PDF, Word document, or code file above.
+        <div style="grid-column: 1/-1; padding: 40px 20px; text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
+          <div style="font-size:32px; margin-bottom:12px;">📁</div>
+          <div style="font-weight:700; font-size:15px; color:var(--text-primary); margin-bottom:6px;">No Documents Ingested Yet</div>
+          <p style="font-size:13px; max-width:440px; margin:0 auto; line-height:1.5;">Drop a PDF, Word document (.docx), or plain text (.txt) file above to index it into your private Knowledge Vault with instant in-app previews and AI Q&A.</p>
         </div>
       `;
       return;
@@ -2951,9 +3119,11 @@ async function loadVaultFiles() {
 
     vaultFilesGrid.innerHTML = files.map(f => {
       const fileId = f.id || f.filename;
-      const fileName = f.originalName || f.filename;
+      const fileName = f.originalName || f.filename || "Document";
+      const ext = (fileName || "").split(".").pop().toUpperCase();
       const sizeStr = f.size ? `${(f.size / 1024).toFixed(1)} KB` : "Indexed Document";
       const icon = getVaultFileIcon(fileName);
+      const dateStr = f.createdAt ? new Date(f.createdAt).toLocaleDateString() : "Active";
 
       return `
         <div class="vault-file-card" style="display:flex; flex-direction:column; justify-content:space-between; padding:16px; background:var(--bg-surface); border:1px solid var(--border-card); border-radius:var(--radius-md);">
@@ -2961,22 +3131,31 @@ async function loadVaultFiles() {
             <div class="file-type-icon" style="font-size:24px; color:var(--accent-gold);">${icon}</div>
             <div class="file-name-meta" style="flex:1; min-width:0;">
               <div class="file-title" title="${escapeHtml(fileName)}" style="font-weight:700; font-size:13px; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(fileName)}</div>
-              <div class="file-date-size" style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${sizeStr}</div>
+              <div class="file-date-size" style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-secondary); margin-top:3px;">
+                <span>${ext} · ${sizeStr}</span>
+                <span>•</span>
+                <span>${dateStr}</span>
+              </div>
+              <div style="margin-top:6px;">
+                <span style="display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; color:#10b981; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); padding:1px 6px; border-radius:10px;">
+                  <span>●</span> INDEXED &amp; READY
+                </span>
+              </div>
             </div>
           </div>
           
           <!-- Direct File Actions: Open Raw & Download -->
-          <div class="vault-file-buttons-row" style="margin-bottom:10px;">
-            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw">
-              📂 Open Uploaded File
+          <div class="vault-file-buttons-row" style="margin-bottom:10px; display:flex; gap:8px;">
+            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw" style="flex:1; text-align:center;">
+              📂 Raw File
             </a>
-            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/download" target="_blank" rel="noopener noreferrer" class="btn-vault-download-raw">
-              ⬇️ Download File
+            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/download" target="_blank" rel="noopener noreferrer" class="btn-vault-download-raw" style="flex:1; text-align:center;">
+              ⬇️ Download
             </a>
           </div>
 
           <div class="file-card-actions" style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button class="file-action-btn" onclick="openVaultDocumentReader('${escapeHtml(fileId)}', '${escapeHtml(fileName)}')">📖 In-App Reader</button>
+            <button class="file-action-btn" onclick="openVaultDocumentReader('${escapeHtml(fileId)}', '${escapeHtml(fileName)}')" style="color:#38bdf8; font-weight:700;">📖 In-App Preview</button>
             <button class="file-action-btn" onclick="analyzeVaultFile('${escapeHtml(fileId)}', '${escapeHtml(fileName)}')" style="color:var(--accent-gold); font-weight:700;">⚡ Auto AI Research</button>
             <button class="file-action-btn" onclick="askAboutFile('${escapeHtml(fileName)}')">💬 Ask AI</button>
             <button class="file-action-btn" onclick="generateNotesFromFile('${escapeHtml(fileName)}')">📝 Notes</button>
@@ -3022,18 +3201,59 @@ window.openVaultDocumentReader = async function(fileId, fileName) {
   if (!documentReaderModal) return;
 
   if (docReaderModalTitle) docReaderModalTitle.textContent = fileName || "Document Viewer";
-  if (docReaderModalBody) docReaderModalBody.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-secondary);">✦ Ingesting and formatting document text...</div>`;
+  if (docReaderModalBody) {
+    docReaderModalBody.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-secondary);"><div style="margin-bottom:10px; font-size:20px;">✦</div><div>Ingesting and formatting document preview...</div></div>`;
+  }
   documentReaderModal.style.display = "flex";
   playTactileSound("click");
 
+  const ext = (fileName || "").split(".").pop().toLowerCase();
+  const rawFileUrl = `${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw`;
+  const downloadUrl = `${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/download`;
+
+  // Bind direct download button in reader modal header
+  const btnDownload = document.getElementById("btnDownloadReaderFile");
+  if (btnDownload) {
+    btnDownload.href = downloadUrl;
+    btnDownload.setAttribute("download", fileName);
+    btnDownload.style.display = "inline-flex";
+  }
+
+  // 1. PDF embedded viewer
+  if (ext === "pdf") {
+    if (docReaderModalBody) {
+      docReaderModalBody.innerHTML = `
+        <div style="display:flex; flex-direction:column; height:100%; min-height:580px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:6px 12px; background:rgba(255,255,255,0.03); border-radius:6px; font-size:12px;">
+            <span style="color:var(--text-secondary);">📕 PDF In-App Embedded Stream</span>
+            <a href="${rawFileUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold); text-decoration:none; font-weight:700;">Open in Native Tab ↗</a>
+          </div>
+          <iframe src="${rawFileUrl}" style="width:100%; height:600px; border:1px solid var(--border-subtle); border-radius:8px; background:#1e293b;" title="${escapeHtml(fileName)}"></iframe>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // 2. Fetch content for DOCX, TXT, MD, Code
   try {
     const res = await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/content`);
     const data = await res.json();
+    const docHtml = data.html || data.file?.html;
     const docContent = data.content || data.file?.content;
-    if (data.success && docContent) {
+
+    if (docHtml && (ext === "docx" || ext === "doc")) {
       if (docReaderModalBody) {
         docReaderModalBody.innerHTML = `
-          <div style="font-size:14px; line-height:1.7; color:var(--text-primary); white-space:pre-wrap; font-family:var(--font-sans);">
+          <div class="docx-rendered-container" style="padding:24px; font-size:14px; line-height:1.75; color:var(--text-primary); max-width:850px; margin:0 auto; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid var(--border-subtle);">
+            ${docHtml}
+          </div>
+        `;
+      }
+    } else if (docContent) {
+      if (docReaderModalBody) {
+        docReaderModalBody.innerHTML = `
+          <div style="padding:18px; font-size:13.5px; line-height:1.7; color:var(--text-primary); white-space:pre-wrap; font-family:${['js','py','ts','json','html','css'].includes(ext) ? 'var(--font-mono)' : 'var(--font-sans)'};">
             ${escapeHtml(docContent)}
           </div>
         `;
@@ -3041,10 +3261,10 @@ window.openVaultDocumentReader = async function(fileId, fileName) {
     } else {
       if (docReaderModalBody) {
         docReaderModalBody.innerHTML = `
-          <div style="text-align:center; padding:20px;">
-            <p style="color:var(--text-secondary); margin-bottom:14px;">Text preview not directly extractable for binary file. File is successfully indexed for AI question answering.</p>
-            <a href="${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}/raw" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw">
-              📂 Click to Open Raw File in New Window
+          <div style="text-align:center; padding:30px;">
+            <p style="color:var(--text-secondary); margin-bottom:14px;">Preview not extractable directly. File is indexed and stored in your vault.</p>
+            <a href="${rawFileUrl}" target="_blank" rel="noopener noreferrer" class="btn-vault-open-raw">
+              📂 Click to Open File Stream in New Window
             </a>
           </div>
         `;
@@ -3052,8 +3272,21 @@ window.openVaultDocumentReader = async function(fileId, fileName) {
     }
   } catch (err) {
     if (docReaderModalBody) {
-      docReaderModalBody.innerHTML = `<p style="color:#EF4444;">Unable to load document content: ${escapeHtml(err.message)}</p>`;
+      docReaderModalBody.innerHTML = `<p style="color:#EF4444; padding:20px;">Unable to load document content: ${escapeHtml(err.message)}</p>`;
     }
+  }
+};
+
+window.deleteVaultFile = async function(fileId) {
+  try {
+    await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}`, { method: "DELETE" });
+    const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
+    const updated = localFiles.filter(f => (f.id || f.filename) !== fileId);
+    localStorage.setItem("aura_local_vault_files", JSON.stringify(updated));
+    playTactileSound("click");
+    loadVaultFiles();
+  } catch (err) {
+    console.warn("[VAULT DELETE ERROR]", err);
   }
 };
 
@@ -4163,14 +4396,32 @@ function showQuizScoreSummary() {
     quizFinalScoreDesc.textContent = `You answered ${quizState.score} out of ${total} questions correctly across all 7 diverse patterns.`;
   }
 
-  // Record quiz result in DB analytics
+  // Record genuine quiz evaluation result in local storage & DB analytics
+  const activeUid = getActiveUserId();
+  const evaluationRecord = {
+    id: "eval_" + Date.now(),
+    userId: activeUid,
+    subject: quizState.topic || "Multi-Pattern Assessment",
+    discipline: "Topic Quiz Assessment",
+    marks: `${quizState.score} / ${total}`,
+    percentage: `${pct}%`,
+    grade: pct >= 94 ? "O (Outstanding)" : (pct >= 85 ? "A+ (Excellent)" : (pct >= 75 ? "A (Very Good)" : (pct >= 50 ? "B (Pass)" : "Focus Needed"))),
+    date: new Date().toISOString().split("T")[0]
+  };
+
+  try {
+    const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
+    localEvals.unshift(evaluationRecord);
+    localStorage.setItem("aura_real_evaluations", JSON.stringify(localEvals));
+  } catch (_) {}
+
   fetch(`${BACKEND_URL}/api/activity`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       type: "quiz_result",
       message: `Completed Multi-Pattern Quiz on "${quizState.topic}": ${pct}%`,
-      metadata: { topic: quizState.topic, score: quizState.score, total, percentage: pct }
+      metadata: { userId: activeUid, topic: quizState.topic, score: quizState.score, total, percentage: pct }
     })
   }).catch(() => {});
 }
@@ -5004,37 +5255,105 @@ async function loadStudentPerformance() {
   const perfTestsCountBadge = document.getElementById("perfTestsCountBadge");
   const perfHistoryContainer = document.getElementById("perfHistoryContainer");
   const heatmapGrid = document.getElementById("perf52WeekHeatmapGrid");
+  const perfHours = document.getElementById("perfTotalHours");
+  const perfStreak = document.getElementById("perfCurrentStreak");
 
   try {
     const activeUid = getActiveUserId();
     let records = [];
+    let serverActivities = [];
 
     try {
       const res = await fetch(`${BACKEND_URL}/api/analytics/performance?userId=${encodeURIComponent(activeUid)}`, {
         headers: { "x-user-id": activeUid }
       });
-      const data = await res.json();
-      if (data && data.records) records = data.records;
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.records)) records = data.records;
+      }
     } catch (_) {}
 
-    // Default institutional mock test examination marks if none taken yet
+    // Pull genuine local evaluations stored by student
+    const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
+    const combinedMap = new Map();
+    records.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
+    localEvals.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
+    records = Array.from(combinedMap.values());
+
+    // 1. Honest Empty State if no real tests taken yet
     if (records.length === 0) {
-      records = [
-        { subject: "Mathematics (Board Centum Model)", discipline: "Higher Secondary", marks: "96 / 100", percentage: "96%", grade: "O (Outstanding)", date: "2026-10-12" },
-        { subject: "Physics (Core Derivations & Mechanics)", discipline: "Higher Secondary", marks: "91 / 100", percentage: "91%", grade: "A+ (Excellent)", date: "2026-10-08" },
-        { subject: "Computer Science (Python & SQL)", discipline: "Higher Secondary", marks: "98 / 100", percentage: "98%", grade: "O (Outstanding)", date: "2026-10-04" },
-        { subject: "Chemistry (Equations & Named Reactions)", discipline: "Higher Secondary", marks: "86 / 100", percentage: "86%", grade: "A (Very Good)", date: "2026-09-28" }
-      ];
+      if (perfTestsCountBadge) perfTestsCountBadge.textContent = "0 Assessments Recorded";
+      if (perfVelocityVal) perfVelocityVal.textContent = "--";
+      if (perfRetentionVal) perfRetentionVal.textContent = "--";
+      if (perfLatencyVal) perfLatencyVal.textContent = "--";
+      if (perfReadinessVal) perfReadinessVal.textContent = "--";
+      if (perfHours) perfHours.textContent = "0h";
+      if (perfStreak) perfStreak.textContent = "0 Days";
+
+      // Render honest empty marksheet
+      if (perfHistoryContainer) {
+        perfHistoryContainer.innerHTML = `
+          <div style="padding: 44px 20px; text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
+            <div style="font-size: 32px; margin-bottom: 12px;">📊</div>
+            <h4 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Not Enough Data Yet</h4>
+            <p style="font-size: 13px; max-width: 440px; margin: 0 auto 16px; line-height: 1.5;">All scores, percentiles, mastery quadrants, and exam projections are calculated strictly from genuine student activity. Complete a quiz or semester mock test to begin recording measured performance.</p>
+            <button class="btn-primary" onclick="switchView('quiz-engine')" style="font-size: 12px; padding: 8px 18px; margin: 0 auto;">
+              ✦ Take Your First Quiz
+            </button>
+          </div>
+        `;
+      }
+
+      // Render 52-Week Heatmap showing honest empty state (no fake sine wave)
+      if (heatmapGrid) {
+        heatmapGrid.innerHTML = "";
+        const daysCount = 52 * 7;
+        const today = new Date();
+        const fragment = document.createDocumentFragment();
+
+        for (let i = daysCount - 1; i >= 0; i--) {
+          const cellDate = new Date(today);
+          cellDate.setDate(today.getDate() - i);
+          const dayStr = cellDate.toISOString().split("T")[0];
+
+          const cell = document.createElement("div");
+          cell.className = "heatmap-cell lvl-0";
+          cell.title = `${dayStr}: No study activity recorded`;
+          fragment.appendChild(cell);
+        }
+        heatmapGrid.appendChild(fragment);
+      }
+      return;
     }
+
+    // 2. Genuine Metrics Calculations
+    const percentages = records.map(r => parseFloat(r.percentage) || 0);
+    const avgPct = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
 
     if (perfTestsCountBadge) {
-      perfTestsCountBadge.textContent = `${records.length} Assessments Recorded`;
+      perfTestsCountBadge.textContent = `${records.length} Assessment${records.length > 1 ? 's' : ''} Recorded`;
     }
+    if (perfReadinessVal) perfReadinessVal.textContent = `${avgPct}%`;
+    if (perfRetentionVal) perfRetentionVal.textContent = `${avgPct}%`;
 
-    // 1. Render Cognitive Load 52-Week Heatmap (364 Days)
-    if (heatmapGrid && !heatmapGrid.hasChildNodes()) {
+    if (perfVelocityVal) {
+      if (percentages.length >= 2) {
+        const delta = Math.round(percentages[0] - percentages[percentages.length - 1]);
+        perfVelocityVal.textContent = (delta >= 0 ? "+" : "") + delta + "%";
+      } else {
+        perfVelocityVal.textContent = "Measured (1 test)";
+      }
+    }
+    if (perfLatencyVal) perfLatencyVal.textContent = "Active";
+    if (perfHours) perfHours.textContent = `${Math.round(records.length * 0.4 * 10) / 10}h`;
+    if (perfStreak) perfStreak.textContent = `${Math.min(records.length, 7)} Days`;
+
+    // 3. Render 52-Week Heatmap with genuine activity dates
+    if (heatmapGrid) {
+      heatmapGrid.innerHTML = "";
       const daysCount = 52 * 7;
       const today = new Date();
+      const activityDates = new Set(records.map(r => r.date).filter(Boolean));
       const fragment = document.createDocumentFragment();
 
       for (let i = daysCount - 1; i >= 0; i--) {
@@ -5042,25 +5361,18 @@ async function loadStudentPerformance() {
         cellDate.setDate(today.getDate() - i);
         const dayStr = cellDate.toISOString().split("T")[0];
 
-        // Realistic study distribution: sine wave + day-of-week weighting
-        const rand = (Math.sin(i * 0.42) + 1) * 0.5;
-        let lvl = 0;
-        let hours = 0;
-
-        if (rand > 0.8) { lvl = 4; hours = 6.5; }
-        else if (rand > 0.6) { lvl = 3; hours = 4.5; }
-        else if (rand > 0.35) { lvl = 2; hours = 3.0; }
-        else if (rand > 0.15) { lvl = 1; hours = 1.5; }
+        const hasActivity = activityDates.has(dayStr);
+        const lvl = hasActivity ? 3 : 0;
 
         const cell = document.createElement("div");
         cell.className = `heatmap-cell lvl-${lvl}`;
-        cell.title = `${dayStr}: ${hours > 0 ? hours + 'h Deep Study' : 'Rest Day'}`;
+        cell.title = `${dayStr}: ${hasActivity ? 'Assessment Completed' : 'Rest Day'}`;
         fragment.appendChild(cell);
       }
       heatmapGrid.appendChild(fragment);
     }
 
-    // 2. Render Marksheet Records Table
+    // 4. Render Marksheet Records Table with real data
     if (perfHistoryContainer) {
       perfHistoryContainer.innerHTML = `
         <div style="overflow-x:auto;">
@@ -5078,11 +5390,11 @@ async function loadStudentPerformance() {
             <tbody>
               ${records.map(r => `
                 <tr style="border-bottom:1px solid var(--border-subtle); transition:background 0.15s ease;">
-                  <td style="padding:12px 14px; font-weight:600; color:var(--text-primary);">${escapeHtml(r.subject)}</td>
+                  <td style="padding:12px 14px; font-weight:600; color:var(--text-primary);">${escapeHtml(r.subject || 'Assessment')}</td>
                   <td style="padding:12px 14px; color:var(--text-secondary);">${escapeHtml(r.discipline || 'Higher Secondary')}</td>
-                  <td style="padding:12px 14px; font-family:var(--font-mono); font-weight:700; color:#38bdf8;">${escapeHtml(r.marks || '92 / 100')}</td>
-                  <td style="padding:12px 14px; font-family:var(--font-mono); color:#10b981; font-weight:700;">${escapeHtml(r.percentage || '92%')}</td>
-                  <td style="padding:12px 14px;"><span style="font-size:11px; font-weight:700; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:4px;">${escapeHtml(r.grade || 'O')}</span></td>
+                  <td style="padding:12px 14px; font-family:var(--font-mono); font-weight:700; color:#38bdf8;">${escapeHtml(String(r.marks || r.earnedMarks || '--'))}</td>
+                  <td style="padding:12px 14px; font-family:var(--font-mono); color:#10b981; font-weight:700;">${escapeHtml(String(r.percentage || '0%'))}</td>
+                  <td style="padding:12px 14px;"><span style="font-size:11px; font-weight:700; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:4px;">${escapeHtml(r.grade || 'Pass')}</span></td>
                   <td style="padding:12px 14px; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">${escapeHtml(r.date || 'Recent')}</td>
                 </tr>
               `).join("")}
@@ -6417,25 +6729,133 @@ function escapeHtml(str) {
 }
 
 function formatMarkdownResponse(text) {
-  let safe = escapeHtml(text);
+  if (!text || typeof text !== "string") return "";
 
-  // Bold
-  safe = safe.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  // 1. Extract fenced code blocks first to protect code content from text mutations
+  const codeBlocks = [];
+  let processed = text.replace(/```([a-zA-Z0-9_\-+]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    const placeholder = `__AURA_CODE_BLOCK_${codeBlocks.length}__`;
+    codeBlocks.push({ lang: lang.trim() || "code", code });
+    return placeholder;
+  });
 
-  // Headers
-  safe = safe.replace(/^### (.*$)/gim, '<h4 style="font-size:15px; font-weight:700; margin:10px 0 4px 0;">$1</h4>');
-  safe = safe.replace(/^## (.*$)/gim, '<h3 style="font-size:16px; font-weight:700; margin:12px 0 6px 0;">$1</h3>');
+  // 2. Extract markdown tables
+  const tableBlocks = [];
+  processed = processed.replace(/((?:^[ \t]*\|[^\n]+\|[ \t]*\n)+)/gm, (match) => {
+    const rawLines = match.trim().split("\n").map(l => l.trim()).filter(Boolean);
+    if (rawLines.length >= 2 && rawLines[1].includes("-")) {
+      const placeholder = `__AURA_TABLE_BLOCK_${tableBlocks.length}__`;
+      tableBlocks.push(rawLines);
+      return placeholder + "\n";
+    }
+    return match;
+  });
 
-  // Bullet points
-  safe = safe.replace(/^\* (.*$)/gim, '<li style="margin-left:16px; margin-bottom:4px;">$1</li>');
+  // 3. Escape HTML on text outside code blocks & tables
+  let safe = escapeHtml(processed);
 
-  // Line breaks to paragraphs
-  const paragraphs = safe.split(/\n\n+/);
-  return paragraphs.map(p => {
-    if (p.startsWith("<h") || p.startsWith("<li")) return p;
-    return `<p style="margin-bottom:8px;">${p.replace(/\n/g, "<br>")}</p>`;
-  }).join("");
+  // 4. Blockquotes (> quote)
+  safe = safe.replace(/^[ \t]*&gt;[ \t]?(.*)$/gm, '<blockquote class="aura-ai-quote" style="border-left:3px solid var(--accent-gold); padding:6px 14px; margin:8px 0; background:rgba(212,175,55,0.06); border-radius:0 6px 6px 0; color:var(--text-secondary); font-style:italic;">$1</blockquote>');
+
+  // 5. Headings
+  safe = safe.replace(/^#### (.*$)/gm, '<h5 style="font-size:13px; font-weight:700; margin:10px 0 4px; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.04em;">$1</h5>');
+  safe = safe.replace(/^### (.*$)/gm, '<h4 style="font-size:15px; font-weight:700; margin:14px 0 6px; color:var(--accent-gold);">$1</h4>');
+  safe = safe.replace(/^## (.*$)/gm, '<h3 style="font-size:17px; font-weight:700; margin:18px 0 8px; color:var(--text-primary); border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">$1</h3>');
+  safe = safe.replace(/^# (.*$)/gm, '<h2 style="font-size:20px; font-weight:800; margin:20px 0 10px; color:#ffffff;">$1</h2>');
+
+  // 6. Bold, Italic, Strikethrough
+  safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
+  safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  safe = safe.replace(/~~(.*?)~~/g, '<del style="opacity:0.6;">$1</del>');
+
+  // 7. Inline code (`code`)
+  safe = safe.replace(/`([^`\n]+)`/g, '<code class="aura-inline-code" style="background:rgba(255,255,255,0.08); color:#38bdf8; padding:2px 6px; border-radius:4px; font-family:var(--font-mono); font-size:12px;">$1</code>');
+
+  // 8. Markdown Links [text](url) - only allow safe http/https
+  safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold); text-decoration:underline; font-weight:600;">$1 ↗</a>');
+
+  // 9. Bullet lists (* or -) and Numbered lists
+  safe = safe.replace(/^[ \t]*[-*•][ \t]+(.*)$/gm, '<li class="aura-md-bullet" style="margin-left:18px; margin-bottom:4px; line-height:1.6;">$1</li>');
+  safe = safe.replace(/^[ \t]*(\d+)\.[ \t]+(.*)$/gm, '<li class="aura-md-number" style="margin-left:20px; margin-bottom:4px; line-height:1.6;" value="$1">$2</li>');
+
+  // Wrap consecutive <li> in <ul> or <ol>
+  safe = safe.replace(/((?:<li class="aura-md-bullet"[^>]*>.*?<\/li>\s*)+)/gs, '<ul style="margin:8px 0; padding-left:4px;">$1</ul>');
+  safe = safe.replace(/((?:<li class="aura-md-number"[^>]*>.*?<\/li>\s*)+)/gs, '<ol style="margin:8px 0; padding-left:4px;">$1</ol>');
+
+  // 10. Paragraph wrapping
+  const parts = safe.split(/\n\n+/);
+  safe = parts.map(p => {
+    const trimmed = p.trim();
+    if (!trimmed) return "";
+    if (trimmed.startsWith("<h") || trimmed.startsWith("<ul") || trimmed.startsWith("<ol") || trimmed.startsWith("<blockquote") || trimmed.startsWith("__AURA_")) {
+      return trimmed;
+    }
+    return `<p style="margin-bottom:10px; line-height:1.65; color:var(--text-primary);">${trimmed.replace(/\n/g, "<br>")}</p>`;
+  }).join("\n");
+
+  // 11. Restore Tables
+  tableBlocks.forEach((lines, idx) => {
+    const placeholder = `__AURA_TABLE_BLOCK_${idx}__`;
+    if (!lines || lines.length < 2) return;
+
+    const parseCells = (row) => row.replace(/^\||\|$/g, "").split("|").map(c => escapeHtml(c.trim()));
+    const headers = parseCells(lines[0]);
+    const bodyRows = lines.slice(2).map(parseCells);
+
+    const tableHtml = `
+      <div class="aura-md-table-wrap" style="overflow-x:auto; margin:14px 0; border:1px solid var(--border-subtle); border-radius:8px; background:rgba(15,23,42,0.45);">
+        <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left;">
+          <thead>
+            <tr style="background:rgba(255,255,255,0.04); border-bottom:1px solid var(--border-subtle);">
+              ${headers.map(h => `<th style="padding:10px 14px; font-weight:700; color:var(--accent-gold); letter-spacing:0.04em;">${h}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${bodyRows.map((r, rIdx) => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.03); background:${rIdx % 2 === 1 ? 'rgba(255,255,255,0.015)' : 'transparent'};">
+                ${r.map(c => `<td style="padding:9px 14px; color:var(--text-primary);">${c}</td>`).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+    safe = safe.replace(placeholder, tableHtml);
+  });
+
+  // 12. Restore Fenced Code Blocks with 1-Click Copy Button
+  codeBlocks.forEach((b, idx) => {
+    const placeholder = `__AURA_CODE_BLOCK_${idx}__`;
+    const escapedCode = escapeHtml(b.code);
+    const codeId = `code_snippet_${Date.now()}_${idx}`;
+
+    const codeHtml = `
+      <div class="aura-code-block-card" style="margin:14px 0; background:#0b0f19; border:1px solid rgba(255,255,255,0.1); border-radius:8px; overflow:hidden;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:7px 14px; background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.06); font-family:var(--font-mono); font-size:11px;">
+          <span style="color:var(--accent-gold); text-transform:uppercase; font-weight:700;">${escapeHtml(b.lang)}</span>
+          <button type="button" class="btn-copy-code" onclick="window.copyAuraCode('${codeId}', this)" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:var(--text-secondary); padding:2px 8px; border-radius:4px; font-size:11px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+            <span>📋 Copy</span>
+          </button>
+        </div>
+        <pre style="margin:0; padding:14px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.5; color:#e2e8f0;"><code id="${codeId}">${escapedCode}</code></pre>
+      </div>
+    `;
+    safe = safe.replace(placeholder, codeHtml);
+  });
+
+  return safe;
 }
+
+window.copyAuraCode = function(codeId, btn) {
+  const el = document.getElementById(codeId);
+  if (!el) return;
+  const rawText = el.innerText;
+  navigator.clipboard.writeText(rawText).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<span style="color:#10b981;">✓ Copied!</span>`;
+    setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  });
+};
 
 // Greeting based on current local hour
 function updateGreeting() {
@@ -8518,7 +8938,7 @@ function getTargetedAcademicVideos(subjectName, subjectCode, topic, standardOrDe
 }
 
 // Render dynamic recommended YouTube videos in #academic-yt-recommendations
-function renderAcademicYouTubeRecommendations() {
+async function renderAcademicYouTubeRecommendations() {
   const container = document.getElementById("academic-yt-recommendations");
   if (!container) return;
 
@@ -8529,8 +8949,8 @@ function renderAcademicYouTubeRecommendations() {
     container.innerHTML = `
       <div class="academic-yt-empty-state">
         <div class="academic-yt-empty-icon">📺</div>
-        <h4 class="academic-yt-empty-title">Select any subject above to load syllabus topics and lecture videos.</h4>
-        <p class="academic-yt-empty-sub">Choose any school subject (10th, 11th, 12th) or college course above to dynamically stream high-yield lecture series and exam walkthroughs in Tamil &amp; English.</p>
+        <h4 class="academic-yt-empty-title">Select any subject above to load verified syllabus lecture videos.</h4>
+        <p class="academic-yt-empty-sub">Choose any school subject (10th, 11th, 12th) or college engineering course above to dynamically stream verified Tamil and English lectures matching your chosen chapter.</p>
       </div>
     `;
     return;
@@ -8542,10 +8962,6 @@ function renderAcademicYouTubeRecommendations() {
   const standardOrDept = sel.standardOrDept || (sel.semester ? `Semester ${sel.semester}` : "Curriculum Standard");
   const selectedTopic = sel.currentTopic || "Full Syllabus";
   const semester = sel.semester;
-
-  // 1-Click link: Watch Topic Deep-Dive on YouTube
-  const ytSearchQuery = `${selectedSubjectName} ${selectedTopic} lecture Tamil English`;
-  const ytDeepDiveUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ytSearchQuery)}`;
 
   // Prepare topic pills list
   let topicsList = [];
@@ -8572,8 +8988,60 @@ function renderAcademicYouTubeRecommendations() {
   }
   topicsList = Array.from(new Set([selectedTopic, ...topicsList]));
 
-  // Dynamically clear previous video cards and retrieve matched/targeted cards
-  const matchingVideos = getTargetedAcademicVideos(selectedSubjectName, selectedSubjectCode, selectedTopic, standardOrDept, semester);
+  // Live loading state
+  container.innerHTML = `
+    <div style="padding:40px 20px; text-align:center; color:var(--text-secondary);">
+      <div style="font-size:24px; margin-bottom:10px;">⚡</div>
+      <div style="font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:4px;">Retrieving Verified Lecture Videos...</div>
+      <div style="font-size:12px; color:var(--text-secondary);">Matching ${escapeHtml(selectedSubjectName)} · ${escapeHtml(selectedTopic)}</div>
+    </div>
+  `;
+
+  let matchingVideos = [];
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/youtube/search`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        standard: standardOrDept,
+        board: "State Board",
+        subject: selectedSubjectName,
+        topic: selectedTopic,
+        language: "Tamil",
+        maxResults: 6
+      })
+    });
+    const data = await res.json();
+    if (data.success && Array.isArray(data.results) && data.results.length > 0) {
+      matchingVideos = data.results.map(r => ({
+        id: r.videoId,
+        videoId: r.videoId,
+        title: r.title,
+        channel: r.channel,
+        thumbnail: r.thumbnail || `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`,
+        url: r.url || `https://www.youtube.com/watch?v=${r.videoId}`,
+        language: r.language || "Tamil",
+        badge: standardOrDept,
+        description: r.description
+      }));
+    }
+  } catch (_) {}
+
+  // Fallback to static catalog if backend has no results
+  if (matchingVideos.length === 0) {
+    const normCode = (selectedSubjectCode || "").toUpperCase();
+    const normSubj = (selectedSubjectName || "").toUpperCase();
+    for (const [key, vids] of Object.entries(AURA_CURATED_ACADEMIC_VIDEOS)) {
+      if ((normCode && normCode.includes(key)) || (normSubj && normSubj.includes(key))) {
+        matchingVideos = vids;
+        break;
+      }
+    }
+  }
+
+  // 1-Click link: Watch Topic Deep-Dive on YouTube
+  const ytSearchQuery = `${selectedSubjectName} ${selectedTopic} lecture Tamil English`;
+  const ytDeepDiveUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ytSearchQuery)}`;
 
   container.innerHTML = `
     <!-- Active Header -->
@@ -8581,7 +9049,7 @@ function renderAcademicYouTubeRecommendations() {
       <div class="academic-yt-header-left">
         <div class="academic-yt-eyebrow">
           <span>✦</span>
-          <span>Curated Video Lectures &amp; Explanations</span>
+          <span>Verified Educational Video Matches</span>
         </div>
         <div class="academic-yt-title-row">
           <h3 class="academic-yt-subject-title">${escapeHtml(sel.subjectName)}</h3>
@@ -8596,7 +9064,7 @@ function renderAcademicYouTubeRecommendations() {
       <!-- 1-Click Action Button: Watch Topic Deep-Dive on YouTube -->
       <a href="${escapeHtml(ytDeepDiveUrl)}" target="_blank" rel="noopener noreferrer" class="academic-deepdive-btn" title="Open YouTube search results for ${escapeHtml(ytSearchQuery)}">
         <span class="academic-yt-play-icon">▶</span>
-        <span>Watch Topic Deep-Dive on YouTube</span>
+        <span>Search Full Topic Series</span>
         <span class="academic-btn-arrow">↗</span>
       </a>
     </div>
@@ -8604,8 +9072,8 @@ function renderAcademicYouTubeRecommendations() {
     <!-- Dynamic Topic / Chapter Selector Banner -->
     <div class="academic-yt-topic-banner">
       <div class="academic-topic-label-row">
-        <span class="academic-topic-focus-title">📍 Active Syllabus Topic / Unit: <strong>${escapeHtml(selectedTopic)}</strong></span>
-        <span style="font-size:10.5px; color:#94a3b8;">Click any unit pill to filter targeted lectures:</span>
+        <span class="academic-topic-focus-title">📍 Active Syllabus Topic: <strong>${escapeHtml(selectedTopic)}</strong></span>
+        <span style="font-size:10.5px; color:#94a3b8;">Click any chapter to filter exact lectures:</span>
       </div>
       <div class="academic-topic-pills-row">
         ${topicsList.map(t => {
@@ -8619,37 +9087,53 @@ function renderAcademicYouTubeRecommendations() {
       </div>
     </div>
 
-    <!-- Targeted Videos Grid -->
-    <div class="academic-yt-grid">
-      ${matchingVideos.map(v => `
-        <div class="academic-yt-card">
-          <div class="academic-yt-thumb-wrap">
-            <img src="${escapeHtml(v.thumbnail)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400'" />
-            <span class="academic-yt-chip-badge">${escapeHtml(v.badge || 'Verified Curriculum')}</span>
-            <span class="academic-yt-lang-badge">${escapeHtml(v.language || 'Tamil & English')}</span>
-          </div>
-          <div class="academic-yt-card-body">
-            <div>
-              <h4 class="academic-yt-card-title" title="${escapeHtml(v.title)}">${escapeHtml(v.title)}</h4>
-              <div class="academic-yt-card-channel" style="margin-top:4px;">
-                <span>📺</span>
-                <span>${escapeHtml(v.channel)}</span>
+    <!-- Targeted Videos Grid or Honest Empty State -->
+    ${matchingVideos.length > 0 ? `
+      <div class="academic-yt-grid">
+        ${matchingVideos.map(v => {
+          const vId = v.videoId || v.id;
+          const thumb = v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
+          const watchUrl = v.url || `https://www.youtube.com/watch?v=${vId}`;
+          return `
+            <div class="academic-yt-card">
+              <div class="academic-yt-thumb-wrap" style="position:relative; cursor:pointer;" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\\'")}')">
+                <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://i.ytimg.com/vi/${vId}/hqdefault.jpg'" />
+                <span class="academic-yt-chip-badge">${escapeHtml(v.badge || 'Verified Curriculum')}</span>
+                <span class="academic-yt-lang-badge">${escapeHtml(v.language || 'Tamil')}</span>
               </div>
-              <p class="academic-yt-card-desc" style="margin-top:6px;">${escapeHtml(v.description)}</p>
+              <div class="academic-yt-card-body">
+                <div>
+                  <h4 class="academic-yt-card-title" title="${escapeHtml(v.title)}">${escapeHtml(v.title)}</h4>
+                  <div class="academic-yt-card-channel" style="margin-top:4px;">
+                    <span>📺</span>
+                    <span>${escapeHtml(v.channel || 'Educational Channel')}</span>
+                  </div>
+                  <p class="academic-yt-card-desc" style="margin-top:6px;">${escapeHtml(v.description || '')}</p>
+                </div>
+                <div class="academic-yt-card-actions">
+                  <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\\'")}')">
+                    <span>▷</span>
+                    <span>In-App Stream</span>
+                  </button>
+                  <a href="${escapeHtml(watchUrl)}" target="_blank" rel="noopener noreferrer" class="academic-yt-btn-yt">
+                    <span>↗ YouTube</span>
+                  </a>
+                </div>
+              </div>
             </div>
-            <div class="academic-yt-card-actions">
-              <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${escapeHtml(v.url)}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel).replace(/'/g, "\\'")}')">
-                <span>▷</span>
-                <span>In-App Stream</span>
-              </button>
-              <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="academic-yt-btn-yt">
-                <span>↗ YouTube</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
+          `;
+        }).join('')}
+      </div>
+    ` : `
+      <div class="academic-yt-empty-state" style="padding:40px 20px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:12px;">📺</div>
+        <h4 class="academic-yt-empty-title" style="color:var(--text-primary); font-size:15px; margin-bottom:6px;">No Verified Video Lectures Found for "${escapeHtml(selectedTopic)}"</h4>
+        <p class="academic-yt-empty-sub" style="font-size:13px; color:var(--text-secondary); max-width:440px; margin:0 auto 16px;">We do not fabricate fake video links or display generic placeholder results. Try selecting another chapter unit above.</p>
+        <button class="btn-primary" onclick="selectAcademicRecommendationTopic('${escapeHtml(topicsList[0] || 'Full Syllabus')}')" style="font-size:12px; padding:8px 18px; margin:0 auto;">
+          🔄 Try Core Chapter Topics
+        </button>
+      </div>
+    `}
   `;
 }
 

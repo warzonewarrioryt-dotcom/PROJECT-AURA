@@ -310,6 +310,9 @@ async function processFile(
 
             chunks,
 
+            html:
+                result.html || "",
+
             status:
                 "READY"
         });
@@ -365,6 +368,20 @@ function getKnowledgeStats() {
 }
 
 
+function deleteFile(fileId) {
+    const res = auraDB.deleteFile(fileId);
+    if (res.file && res.file.serverPath) {
+        try {
+            const fs = require("fs");
+            if (fs.existsSync(res.file.serverPath)) {
+                fs.unlinkSync(res.file.serverPath);
+            }
+        } catch (_) {}
+    }
+    return res;
+}
+
+
 // ============================================================
 // EXPORT
 // ============================================================
@@ -375,6 +392,7 @@ module.exports = {
     buildKnowledgeContext,
     processFile,
     getKnowledgeStats,
+    deleteFile,
 
     extractKeywords,
     scoreChunk,

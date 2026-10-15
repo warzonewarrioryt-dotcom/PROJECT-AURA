@@ -38,7 +38,26 @@ const upload = multer({
    GET /api/files or /api/vault/files
 --------------------------------------------------------- */
 router.get(["/", "/files"], (req, res) => {
-  const files = auraDB.getFiles();
+  const rawFiles = auraDB.getFiles();
+  const files = rawFiles.map(f => {
+    const ext = (f.originalName || f.filename || "").split(".").pop().toUpperCase() || "TXT";
+    return {
+      id: f.id || f.filename,
+      name: f.originalName || f.name || f.filename || "Untitled Document",
+      originalName: f.originalName || f.name || f.filename || "Untitled Document",
+      type: f.type || ext,
+      size: f.size || 0,
+      createdAt: f.createdAt || new Date().toISOString(),
+      status: f.status || "INDEXED & READY",
+      rawUrl: `/api/files/${encodeURIComponent(f.id || f.filename)}/raw`,
+      downloadUrl: `/api/files/${encodeURIComponent(f.id || f.filename)}/download`,
+      relatedTopics: f.relatedTopics || [],
+      relationInfo: f.relationInfo || [],
+      aiSummary: f.aiSummary || "",
+      matchedLinks: f.matchedLinks || [],
+      chunksCount: f.chunks?.length || 0
+    };
+  });
   const stats = knowledgeEngine.getKnowledgeStats();
   res.json({
     success: true,
@@ -242,13 +261,24 @@ router.get("/:id/content", (req, res) => {
     res.json({
       success: true,
       content: fullContent || "No previewable text extracted for this file.",
+      html: file.html || "",
+      type: file.type || "TXT",
+      rawUrl: `/api/files/${encodeURIComponent(file.id)}/raw`,
+      downloadUrl: `/api/files/${encodeURIComponent(file.id)}/download`,
       file: {
         id: file.id,
-        name: file.originalName || file.filename,
+        name: file.originalName || file.filename || file.name,
+        originalName: file.originalName || file.filename || file.name,
+        type: file.type || "TXT",
         size: file.size,
+        status: file.status || "READY",
+        createdAt: file.createdAt,
         chunksCount: file.chunks?.length || 0,
         content: fullContent || "No previewable text extracted for this file.",
-        relatedTopics: file.relatedTopics || []
+        html: file.html || "",
+        relatedTopics: file.relatedTopics || [],
+        rawUrl: `/api/files/${encodeURIComponent(file.id)}/raw`,
+        downloadUrl: `/api/files/${encodeURIComponent(file.id)}/download`
       }
     });
   } catch (err) {

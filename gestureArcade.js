@@ -330,15 +330,16 @@
     return false;
   }
 
-  // ── MASTER TRACKING STATE (PURE HAND TRACKING — NO MOUSE/TOUCH SIMULATOR) ──
+  // ── MASTER TRACKING STATE (HAND TRACKING WITH ROBUST LIFECYCLE & FALLBACK) ──
   const trackingState = {
     cameraActive: false,
     cameraInitialized: false,
     handsDetector: null,
     cameraStream: null,
     handsInitRetry: null,
+    videoAnimId: null,
     lastFrameTime: performance.now(),
-    fps: 60,
+    fps: 0,
     fpsHistory: [],
     landmarks: [], // Multi-hand landmarks array for multi-hand engines
 
@@ -440,6 +441,12 @@
       initMediaPipeHands();
     }
 
+    // Cancel existing loop before starting new one
+    if (trackingState.videoAnimId) {
+      cancelAnimationFrame(trackingState.videoAnimId);
+      trackingState.videoAnimId = null;
+    }
+
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         throw new Error("WebRTC getUserMedia not supported in this browser context.");
@@ -467,7 +474,7 @@
       const banner = document.getElementById("arcadeCameraPermissionBanner");
       if (banner) banner.style.display = "none";
 
-      updateWebcamStatusUI(true, "🟢 Camera Active (60 FPS)");
+      updateWebcamStatusUI(true, "🟢 Camera Active");
 
       // Continuous low-latency frame dispatch to MediaPipe Hands
       let isFrameProcessing = false;
@@ -488,10 +495,12 @@
             isFrameProcessing = false;
           }
         }
-        requestAnimationFrame(processVideoFrame);
+        if (trackingState.cameraActive) {
+          trackingState.videoAnimId = requestAnimationFrame(processVideoFrame);
+        }
       };
 
-      requestAnimationFrame(processVideoFrame);
+      trackingState.videoAnimId = requestAnimationFrame(processVideoFrame);
     } catch (err) {
       console.warn("[GESTURE ARCADE] Webcam access denied or unavailable:", err.message);
       trackingState.cameraActive = false;
@@ -500,17 +509,41 @@
       const banner = document.getElementById("arcadeCameraPermissionBanner");
       if (banner) banner.style.display = "block";
 
-      updateWebcamStatusUI(false, "❌ Camera Access Denied — Enable Camera");
+      updateWebcamStatusUI(false, "❌ Camera Inactive / Denied — Mouse Fallback Ready");
     }
   }
 
   function stopWebcam() {
     trackingState.cameraActive = false;
+    if (trackingState.videoAnimId) {
+      cancelAnimationFrame(trackingState.videoAnimId);
+      trackingState.videoAnimId = null;
+    }
     const video = document.getElementById("gesture-cam") || document.getElementById("gestureWebcamVideo");
     if (video && video.srcObject) {
-      video.srcObject.getTracks().forEach(t => t.stop());
+      try {
+        video.srcObject.getTracks().forEach(t => t.stop());
+      } catch (_) {}
       video.srcObject = null;
     }
+    if (trackingState.cameraStream) {
+      try {
+        trackingState.cameraStream.getTracks().forEach(t => t.stop());
+      } catch (_) {}
+      trackingState.cameraStream = null;
+    }
+    trackingState.hand1.detected = false;
+    trackingState.hand2.detected = false;
+    trackingState.landmarks = [];
+    trackingState.fps = 0;
+
+    const fpsHub = document.getElementById("arcadeFpsVal");
+    const lmHub = document.getElementById("arcadeLandmarksVal");
+    if (fpsHub) fpsHub.textContent = "0 FPS";
+    if (lmHub) lmHub.textContent = "0 Points";
+    const fpsArena = document.getElementById("arenaFpsDisplay");
+    if (fpsArena) fpsArena.textContent = "0 FPS";
+
     updateWebcamStatusUI(false, "⚪ Camera Standby");
   }
 
@@ -525,12 +558,15 @@
     const sensorDot = document.getElementById("arcadeHandSensorDot");
     const sensorLabel = document.getElementById("arcadeHandSensorLabel");
     if (sensorDot && sensorLabel) {
-      if (trackingState.hand1.detected) {
+      if (isActive && trackingState.hand1.detected) {
         sensorDot.className = "arcade-status-dot active";
         sensorLabel.textContent = `✋ Hand Tracking (${trackingState.hand1.handedness})`;
+      } else if (isActive) {
+        sensorDot.className = "arcade-status-dot active";
+        sensorLabel.textContent = "✋ Camera Ready · Searching for Hand";
       } else {
         sensorDot.className = "arcade-status-dot standby";
-        sensorLabel.textContent = "✋ Searching for Hands...";
+        sensorLabel.textContent = "✋ Sensor Idle (Camera Standby)";
       }
     }
   }
@@ -540,6 +576,7 @@
     calculateFPS();
 
     trackingState.landmarks = (results && results.multiHandLandmarks) ? results.multiHandLandmarks : [];
+    const lmHub = document.getElementById("arcadeLandmarksVal");
 
     const skeletonCanvas = document.getElementById("gestureSkeletonCanvas");
     let ctx = null;
@@ -556,9 +593,13 @@
       trackingState.landmarks = [];
       trackingState.hand1.detected = false;
       trackingState.hand2.detected = false;
+      if (lmHub) lmHub.textContent = "0 Points";
       updateCornerHudLabel("Searching for hands...");
       return;
     }
+
+    const totalPts = trackingState.landmarks.length * 21;
+    if (lmHub) lmHub.textContent = `${totalPts} Points`;
 
     // Process Primary Hand (Hand 0)
     const landmarks1 = results.multiHandLandmarks[0];
@@ -733,6 +774,8 @@
       trackingState.fps = Math.round(avg);
       const fpsEl = document.getElementById("arenaFpsDisplay");
       if (fpsEl) fpsEl.textContent = `${trackingState.fps} FPS`;
+      const fpsHub = document.getElementById("arcadeFpsVal");
+      if (fpsHub) fpsHub.textContent = `${trackingState.fps} FPS`;
     }
   }
 
@@ -763,7 +806,59 @@
       this.currentGesture = "neutral";
       this.pointer = null;
 
+      // Mouse and Keyboard fallback controls
+      this.mousePos = { x: 0.5, y: 0.5, isDown: false, active: false };
+      this.keysDown = {};
+
+      this._onMouseMove = (e) => {
+        const rect = this.canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          this.mousePos.x = Math.max(0.01, Math.min(0.99, (e.clientX - rect.left) / rect.width));
+          this.mousePos.y = Math.max(0.01, Math.min(0.99, (e.clientY - rect.top) / rect.height));
+          this.mousePos.active = true;
+          this.isAwaitingHands = false;
+        }
+      };
+
+      this._onMouseDown = () => {
+        this.mousePos.isDown = true;
+        this.mousePos.active = true;
+        this.isAwaitingHands = false;
+      };
+
+      this._onMouseUp = () => {
+        this.mousePos.isDown = false;
+      };
+
+      this._onKeyDown = (e) => {
+        this.keysDown[e.key] = true;
+        if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " ", "Enter"].includes(e.key)) {
+          this.mousePos.active = true;
+          this.isAwaitingHands = false;
+        }
+      };
+
+      this._onKeyUp = (e) => {
+        this.keysDown[e.key] = false;
+      };
+
+      this.canvas.addEventListener("mousemove", this._onMouseMove);
+      this.canvas.addEventListener("mousedown", this._onMouseDown);
+      window.addEventListener("mouseup", this._onMouseUp);
+      window.addEventListener("keydown", this._onKeyDown);
+      window.addEventListener("keyup", this._onKeyUp);
+
       this.resize();
+    }
+
+    cleanup() {
+      try {
+        this.canvas.removeEventListener("mousemove", this._onMouseMove);
+        this.canvas.removeEventListener("mousedown", this._onMouseDown);
+        window.removeEventListener("mouseup", this._onMouseUp);
+        window.removeEventListener("keydown", this._onKeyDown);
+        window.removeEventListener("keyup", this._onKeyUp);
+      } catch (_) {}
     }
 
     resize() {
@@ -796,47 +891,82 @@
     }
 
     getPointerPos() {
-      if (!trackingState.hand1.detected) {
+      // 1. If hand tracking is active and hand is detected, use hand tracking
+      if (trackingState.hand1 && trackingState.hand1.detected) {
+        const h1 = trackingState.hand1;
+        const h2 = trackingState.hand2;
         return {
-          detected: false,
-          x: this.width * 0.5,
-          y: this.height * 0.5,
-          palmX: this.width * 0.5,
-          palmY: this.height * 0.5,
-          rawX: 0.5,
-          rawY: 0.5,
-          isTrigger: false,
-          isPinch: false,
-          isFist: false,
-          isOpenPalm: false,
-          isScissors: false,
-          tilt: 0,
-          velocity: 0,
-          fingerHeights: [0.5, 0.5, 0.5, 0.5, 0.5],
-          hand2Y: this.height * 0.5,
-          twoHandsDetected: false
+          detected: true,
+          fallbackMode: false,
+          x: h1.indexTipX * this.width,
+          y: h1.indexTipY * this.height,
+          palmX: h1.palmX * this.width,
+          palmY: h1.palmY * this.height,
+          rawX: h1.indexTipX,
+          rawY: h1.indexTipY,
+          isTrigger: h1.isPinching || h1.velocity > 0.08 || h1.isFist,
+          isPinch: h1.isPinching,
+          isFist: h1.isFist,
+          isOpenPalm: h1.isOpenPalm,
+          isScissors: h1.isScissors,
+          tilt: h1.tiltAngle,
+          velocity: h1.velocity,
+          fingerHeights: h1.fingerHeights,
+          hand2Y: h2 && h2.detected ? h2.palmY * this.height : (this.height * 0.5),
+          twoHandsDetected: Boolean(h1.detected && h2 && h2.detected)
         };
       }
-      const h1 = trackingState.hand1;
-      const h2 = trackingState.hand2;
+
+      // 2. Otherwise, check for mouse / keyboard fallback
+      if (this.mousePos.active) {
+        if (this.keysDown["ArrowLeft"]) this.mousePos.x = Math.max(0.02, this.mousePos.x - 0.02);
+        if (this.keysDown["ArrowRight"]) this.mousePos.x = Math.min(0.98, this.mousePos.x + 0.02);
+        if (this.keysDown["ArrowUp"]) this.mousePos.y = Math.max(0.02, this.mousePos.y - 0.02);
+        if (this.keysDown["ArrowDown"]) this.mousePos.y = Math.min(0.98, this.mousePos.y + 0.02);
+
+        const isTrigger = this.mousePos.isDown || Boolean(this.keysDown[" "] || this.keysDown["Enter"]);
+        return {
+          detected: true,
+          fallbackMode: true,
+          x: this.mousePos.x * this.width,
+          y: this.mousePos.y * this.height,
+          palmX: this.mousePos.x * this.width,
+          palmY: this.mousePos.y * this.height,
+          rawX: this.mousePos.x,
+          rawY: this.mousePos.y,
+          isTrigger: isTrigger,
+          isPinch: isTrigger,
+          isFist: Boolean(this.keysDown["f"] || this.keysDown["F"]),
+          isOpenPalm: !isTrigger,
+          isScissors: Boolean(this.keysDown["s"] || this.keysDown["S"]),
+          tilt: (this.mousePos.x - 0.5) * 60,
+          velocity: 0.1,
+          fingerHeights: [0.5, 0.5, 0.5, 0.5, 0.5],
+          hand2Y: (1 - this.mousePos.y) * this.height,
+          twoHandsDetected: true
+        };
+      }
+
+      // 3. Neither hand nor mouse active yet:
       return {
-        detected: true,
-        x: h1.indexTipX * this.width,
-        y: h1.indexTipY * this.height,
-        palmX: h1.palmX * this.width,
-        palmY: h1.palmY * this.height,
-        rawX: h1.indexTipX,
-        rawY: h1.indexTipY,
-        isTrigger: h1.isPinching || h1.velocity > 0.08 || h1.isFist,
-        isPinch: h1.isPinching,
-        isFist: h1.isFist,
-        isOpenPalm: h1.isOpenPalm,
-        isScissors: h1.isScissors,
-        tilt: h1.tiltAngle,
-        velocity: h1.velocity,
-        fingerHeights: h1.fingerHeights,
-        hand2Y: h2.detected ? h2.palmY * this.height : (this.height * 0.5),
-        twoHandsDetected: h1.detected && h2.detected
+        detected: false,
+        fallbackMode: false,
+        x: this.width * 0.5,
+        y: this.height * 0.5,
+        palmX: this.width * 0.5,
+        palmY: this.height * 0.5,
+        rawX: 0.5,
+        rawY: 0.5,
+        isTrigger: false,
+        isPinch: false,
+        isFist: false,
+        isOpenPalm: false,
+        isScissors: false,
+        tilt: 0,
+        velocity: 0,
+        fingerHeights: [0.5, 0.5, 0.5, 0.5, 0.5],
+        hand2Y: this.height * 0.5,
+        twoHandsDetected: false
       };
     }
 
@@ -980,7 +1110,7 @@
       // System telemetry subtext
       ctx.fillStyle = "rgba(148, 163, 184, 0.85)";
       ctx.font = "11px 'JetBrains Mono', monospace";
-      ctx.fillText("MEDIAPIPE REAL-TIME SENSING · MOUSE INPUT DISABLED", w / 2, boxY + 218);
+      ctx.fillText("SHOW HANDS TO CAMERA OR MOVE MOUSE / USE ARROW KEYS TO PLAY", w / 2, boxY + 218);
 
       ctx.restore();
     }
@@ -3697,6 +3827,9 @@
       cancelAnimationFrame(activeGameAnimationId);
       activeGameAnimationId = null;
     }
+    if (activeGameInstance && typeof activeGameInstance.cleanup === "function") {
+      activeGameInstance.cleanup();
+    }
     activeGameInstance = null;
     const arenaModal = document.getElementById("gestureGameArenaModal");
     if (arenaModal) arenaModal.style.display = "none";
@@ -3851,7 +3984,14 @@
     });
   }
 
+  function cleanupGestureArcadeHub() {
+    closeGameArena();
+    stopWebcam();
+  }
+
   // Export globally
   window.initGestureArcadeHub = initGestureArcadeHub;
   window.launchGameArena = launchGameArena;
+  window.cleanupGestureArcadeHub = cleanupGestureArcadeHub;
+  window.closeGestureGameArena = closeGameArena;
 })();

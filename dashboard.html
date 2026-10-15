@@ -808,6 +808,28 @@
                   <input type="text" id="presTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
                     placeholder="e.g. Autonomous AI Agents for Healthcare: Architecture, Ethics, and Roadmap..." />
                 </div>
+
+                <!-- Exact Uploaded Image Grounding Dropzone -->
+                <div class="form-group">
+                  <label class="form-label">Attach Topic Image or Diagram (Visual Grounding)</label>
+                  <div class="vault-upload-dropzone" id="presImageDropzone" style="padding:16px; cursor:pointer; background:var(--bg-surface-subtle); border:1px dashed var(--border-medium); border-radius:var(--radius-md);">
+                    <input type="file" id="presImageFileInput" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/jpg" style="display:none;" />
+                    <div style="font-size:24px; margin-bottom:4px;">🖼️</div>
+                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);" id="presImageDropzoneTitle">Upload Image or Diagram to Ground Presentation</div>
+                    <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">PNG, JPG, WEBP — AURA analyzes this exact image and embeds it into slides &amp; PPTX</div>
+                  </div>
+                  <div id="presImagePreviewBox" style="display:none; margin-top:10px; padding:10px 14px; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                      <img id="presImagePreviewImg" src="" alt="Uploaded visual" style="width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--border-subtle);" />
+                      <div>
+                        <div style="font-size:12px; font-weight:700; color:var(--text-primary);" id="presImagePreviewName">diagram.png</div>
+                        <div style="font-size:11px; color:var(--accent-gold);" id="presImagePreviewMeta">Exact Image Grounding Active · Will Embed in PPTX</div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-vault-action delete" id="btnRemovePresImage" style="color:#EF4444; font-size:11px;">✕ Remove</button>
+                  </div>
+                </div>
+
                 <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
                   <div style="flex:1; min-width:180px;">
                     <label class="form-label">Slide Count</label>
@@ -1628,11 +1650,11 @@
                 <span class="kpi-icon">⚡</span>
               </div>
               <div class="kpi-value-row">
-                <span class="kpi-val" id="perfVelocityVal">+14.8%</span>
+                <span class="kpi-val" id="perfVelocityVal">--</span>
                 <span class="kpi-sub-unit">/ week</span>
               </div>
-              <div class="kpi-trend positive">
-                <span>▲ +2.4% vs institutional benchmark</span>
+              <div class="kpi-trend" id="perfVelocityTrend">
+                <span>Awaiting verified activity</span>
               </div>
             </div>
 
@@ -1642,11 +1664,11 @@
                 <span class="kpi-icon">🧠</span>
               </div>
               <div class="kpi-value-row">
-                <span class="kpi-val" id="perfRetentionVal">89.4%</span>
-                <span class="kpi-sub-unit">Ebbinghaus Curve</span>
+                <span class="kpi-val" id="perfRetentionVal">--</span>
+                <span class="kpi-sub-unit">Recall Accuracy</span>
               </div>
-              <div class="kpi-trend positive">
-                <span>Optimal recall decay interval</span>
+              <div class="kpi-trend" id="perfRetentionTrend">
+                <span>No test data yet</span>
               </div>
             </div>
 
@@ -1656,11 +1678,11 @@
                 <span class="kpi-icon">⏱️</span>
               </div>
               <div class="kpi-value-row">
-                <span class="kpi-val" id="perfLatencyVal">2m 45s</span>
-                <span class="kpi-sub-unit">/ problem</span>
+                <span class="kpi-val" id="perfLatencyVal">--</span>
+                <span class="kpi-sub-unit">/ question</span>
               </div>
-              <div class="kpi-trend positive">
-                <span>▼ -18s speedup vs target</span>
+              <div class="kpi-trend" id="perfLatencyTrend">
+                <span>No timed assessments yet</span>
               </div>
             </div>
 
@@ -1670,11 +1692,11 @@
                 <span class="kpi-icon">🎯</span>
               </div>
               <div class="kpi-value-row">
-                <span class="kpi-val" id="perfReadinessVal">92</span>
+                <span class="kpi-val" id="perfReadinessVal">--</span>
                 <span class="kpi-sub-unit">/ 100</span>
               </div>
-              <div class="kpi-trend positive">
-                <span>Tier A1 Projected Distinction</span>
+              <div class="kpi-trend" id="perfReadinessTrend">
+                <span>Not enough data yet</span>
               </div>
             </div>
           </div>
@@ -1688,44 +1710,16 @@
                   <span>🧭</span>
                   <span>Subject Competency Radar Matrix</span>
                 </div>
-                <span class="eng-badge-pill">High Mastery vs Priority Need</span>
+                <span class="eng-badge-pill" id="perfCompetencyBadge">Measured Activity</span>
               </div>
               <p class="eng-subline">Quadrant mapping categorizing core curriculum disciplines by verified mastery vs semester exam weightage urgency.</p>
 
               <div class="competency-quadrant-container" id="competencyQuadrantGrid">
-                <!-- Quadrant I: High Mastery, High Priority -->
-                <div class="quadrant-box q-top-right">
-                  <div class="quadrant-label">Q1 · High Mastery · Core Board Priority</div>
-                  <div class="quadrant-items" id="quadrantQ1Items">
-                    <div class="quadrant-chip master-high">📐 Mathematics (94%)</div>
-                    <div class="quadrant-chip master-high">⚡ Physics Derivations (91%)</div>
-                  </div>
-                </div>
-
-                <!-- Quadrant II: High Mastery, Low Need -->
-                <div class="quadrant-box q-top-left">
-                  <div class="quadrant-label">Q2 · High Mastery · Stable Retention</div>
-                  <div class="quadrant-items" id="quadrantQ2Items">
-                    <div class="quadrant-chip master-stable">💻 Computer Science (96%)</div>
-                    <div class="quadrant-chip master-stable">📜 Language Paper 1 (90%)</div>
-                  </div>
-                </div>
-
-                <!-- Quadrant III: Low Mastery, High Priority Need (Revision Focus) -->
-                <div class="quadrant-box q-bottom-right priority-focus">
-                  <div class="quadrant-label">Q3 · Priority Revision · Focus Directive</div>
-                  <div class="quadrant-items" id="quadrantQ3Items">
-                    <div class="quadrant-chip need-focus">🧪 Organic Named Reactions (68%)</div>
-                    <div class="quadrant-chip need-focus">🔬 Plant Tissue Culture (72%)</div>
-                  </div>
-                </div>
-
-                <!-- Quadrant IV: Low Mastery, Low Priority -->
-                <div class="quadrant-box q-bottom-left">
-                  <div class="quadrant-label">Q4 · Maintenance · Periodic Review</div>
-                  <div class="quadrant-items" id="quadrantQ4Items">
-                    <div class="quadrant-chip need-maint">📖 English Letter Writing (85%)</div>
-                  </div>
+                <!-- Populated dynamically based on genuine completed assessments -->
+                <div id="quadrantEmptyNotice" style="grid-column: 1/-1; padding: 40px 20px; text-align: center; color: var(--text-tertiary); background: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+                  <div style="font-size:24px; margin-bottom:6px;">🧭</div>
+                  <div style="font-weight:700; font-size:13px; color:var(--text-secondary); margin-bottom:4px;">No Competency Data Recorded Yet</div>
+                  <div style="font-size:12px;">Take a quiz in Quiz Engine or submit a Semester Mock Test to map verified mastery.</div>
                 </div>
               </div>
             </div>
@@ -1737,37 +1731,20 @@
                   <span>📊</span>
                   <span>Predictive Score Projector</span>
                 </div>
-                <span class="eng-badge-pill" style="background:rgba(56,189,248,0.12); color:#38bdf8;">Statistical Confidence 95%</span>
+                <span class="eng-badge-pill" id="projConfidenceBadge" style="background:rgba(56,189,248,0.12); color:#38bdf8;">Requires >= 3 Tests</span>
               </div>
               <p class="eng-subline">Projected board exam and university semester outcome calculated from timed mock accuracy &amp; active recall trends.</p>
 
               <div class="projector-big-score-box">
-                <div class="proj-headline">Projected Board Aggregate</div>
-                <div class="proj-number" id="projScoreDisplay">93.8%</div>
-                <div class="proj-interval">Confidence Interval: 92.4% — 95.2% (Distinction Range)</div>
+                <div class="proj-headline">Projected Examination Aggregate</div>
+                <div class="proj-number" id="projScoreDisplay">--%</div>
+                <div class="proj-interval" id="projIntervalDisplay">Requires at least 3 completed assessments to project score</div>
               </div>
 
               <!-- Subject Projection Breakdown Progress Bars -->
               <div class="proj-subject-breakdown" id="projSubjectBreakdown">
-                <div class="proj-sub-row">
-                  <div class="proj-sub-meta"><span>Mathematics (Calculus &amp; Vectors)</span><span>96%</span></div>
-                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:96%; background:#38bdf8;"></div></div>
-                </div>
-                <div class="proj-sub-row">
-                  <div class="proj-sub-meta"><span>Physics (Theory &amp; Derivations)</span><span>92%</span></div>
-                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:92%; background:#10b981;"></div></div>
-                </div>
-                <div class="proj-sub-row">
-                  <div class="proj-sub-meta"><span>Chemistry (Named Equations)</span><span>88%</span></div>
-                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:88%; background:#f59e0b;"></div></div>
-                </div>
-                <div class="proj-sub-row">
-                  <div class="proj-sub-meta"><span>Computer Science / Biology</span><span>95%</span></div>
-                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:95%; background:#a855f7;"></div></div>
-                </div>
-                <div class="proj-sub-row">
-                  <div class="proj-sub-meta"><span>Part 1 &amp; Part 2 Languages</span><span>94%</span></div>
-                  <div class="proj-bar-bg"><div class="proj-bar-fill" style="width:94%; background:#06b6d4;"></div></div>
+                <div style="text-align:center; padding:24px 12px; color:var(--text-tertiary); font-size:12px;">
+                  Subject projections unlock automatically after taking at least 3 graded assessments.
                 </div>
               </div>
             </div>
@@ -1781,9 +1758,9 @@
                 <span>Cognitive Load &amp; Deep-Work Activity Heatmap (52 Weeks)</span>
               </div>
               <div class="heatmap-telemetry-badge">
-                <span>Total Deep Work: <strong>486 Hours</strong></span>
+                <span id="perfTotalHours">Total Deep Work: <strong>0 Hours</strong></span>
                 <span>·</span>
-                <span>Current Streak: <strong>28 Days</strong></span>
+                <span id="perfCurrentStreak">Current Streak: <strong>0 Days</strong></span>
               </div>
             </div>
             <p class="eng-subline">Continuous tracking of deep focus study sprints, timed mock test sessions, and syllabus chapter coverage across all 52 academic weeks.</p>
@@ -1798,13 +1775,13 @@
             </div>
 
             <div class="heatmap-legend-row">
-              <span class="legend-text">Less Intensity</span>
+              <span class="legend-text">No Activity</span>
               <div class="heatmap-cell lvl-0"></div>
               <div class="heatmap-cell lvl-1"></div>
               <div class="heatmap-cell lvl-2"></div>
               <div class="heatmap-cell lvl-3"></div>
               <div class="heatmap-cell lvl-4"></div>
-              <span class="legend-text">6+ Hours / Day</span>
+              <span class="legend-text">High Focus Session</span>
             </div>
           </div>
 
@@ -1815,7 +1792,7 @@
                 <span>📜</span>
                 <span>Examination Marksheets History &amp; Transcript Archive</span>
               </div>
-              <span class="eng-badge-pill" id="perfTestsCountBadge">2 Assessments Completed</span>
+              <span class="eng-badge-pill" id="perfTestsCountBadge">0 Assessments Recorded</span>
             </div>
             <div id="perfHistoryContainer"></div>
           </div>
@@ -2343,15 +2320,15 @@
               <div class="arcade-stat-card">
                 <div class="arcade-stat-icon">⚡</div>
                 <div>
-                  <div class="arcade-stat-val">60 FPS</div>
-                  <div class="arcade-stat-label">Target Refresh Rate</div>
+                  <div class="arcade-stat-val" id="arcadeFpsVal">Standby</div>
+                  <div class="arcade-stat-label">Live Frame Rate</div>
                 </div>
               </div>
               <div class="arcade-stat-card">
                 <div class="arcade-stat-icon">🖐️</div>
                 <div>
-                  <div class="arcade-stat-val">21 Points</div>
-                  <div class="arcade-stat-label">3D Skeletal Mesh</div>
+                  <div class="arcade-stat-val" id="arcadeLandmarksVal">0 Points</div>
+                  <div class="arcade-stat-label">Detected Landmarks</div>
                 </div>
               </div>
             </div>
@@ -2403,7 +2380,8 @@
           <h3 style="font-size:16px; font-weight:800; color:var(--text-primary); margin:2px 0 0 0;"
             id="docReaderModalTitle">Document Title</h3>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; align-items:center;">
+          <a class="btn-vault-action" id="btnDownloadReaderFile" href="#" target="_blank" rel="noopener noreferrer" style="display:none; color:var(--accent-gold); font-weight:700; text-decoration:none;">⬇️ Download</a>
           <button class="btn-vault-action" id="btnCopyReaderContent">📋 Copy Text</button>
           <button class="btn-vault-action delete" id="btnCloseReaderModal">✕ Close</button>
         </div>

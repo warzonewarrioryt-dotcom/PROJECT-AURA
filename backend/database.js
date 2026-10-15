@@ -453,6 +453,19 @@ function getFiles() {
 }
 
 
+function deleteFile(id) {
+    const database = loadDatabase();
+    const initialCount = database.files.length;
+    const file = database.files.find(f => f.id === id || f.filename === id || f.name === id || f.originalName === id);
+    database.files = database.files.filter(f => f.id !== id && f.filename !== id && f.name !== id && f.originalName !== id);
+    saveDatabase(database);
+    return {
+        deleted: database.files.length < initialCount,
+        file
+    };
+}
+
+
 /* ==========================================
    EXPORT
 ========================================== */
@@ -479,5 +492,6 @@ module.exports = {
     getInterests,
 
     addFile,
-    getFiles
+    getFiles,
+    deleteFile
 };

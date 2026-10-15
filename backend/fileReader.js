@@ -57,10 +57,17 @@ async function readDOCX(filePath) {
             path: filePath
         });
 
+        let html = "";
+        try {
+            const htmlResult = await mammoth.convertToHtml({ path: filePath });
+            html = htmlResult.value || "";
+        } catch (_) {}
+
         return {
             success: true,
             type: "DOCX",
             text: result.value || "",
+            html: html,
             pages: 0
         };
 
