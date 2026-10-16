@@ -22,14 +22,70 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="gestureArcade.css">
+
+  <!-- Immediate Hard Timeout & Skip Intro Fail-Safe Script -->
+  <script>
+    (function() {
+      window.dismissProjectAuraIntro = function(rememberSkip) {
+        if (rememberSkip) {
+          try { localStorage.setItem("aura_skip_intro", "true"); } catch (_) {}
+        }
+        const intros = document.querySelectorAll(
+          '#auraStartupCinematic, #intro-overlay, #startup-animation, #cinematic-loader, .intro-screen, .aura-startup-cinematic, .intro-cinematic-wrap, #auraBootOverlay'
+        );
+        intros.forEach(function(intro) {
+          intro.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          intro.style.opacity = '0';
+          intro.style.pointerEvents = 'none';
+          setTimeout(function() {
+            try { intro.remove(); } catch (_) { intro.style.display = 'none'; }
+          }, 500);
+        });
+        const dashboards = document.querySelectorAll(
+          '#dashboard, .dashboard-container, .aura-shell, main.aura-main'
+        );
+        dashboards.forEach(function(dashboard) {
+          dashboard.style.display = 'flex';
+          dashboard.style.visibility = 'visible';
+          dashboard.style.opacity = '1';
+        });
+        if (document.body) {
+          document.body.style.display = 'block';
+          document.body.style.visibility = 'visible';
+          document.body.style.overflow = 'auto';
+        }
+      };
+
+      // Auto-bypass if user previously skipped intro
+      try {
+        if (localStorage.getItem("aura_skip_intro") === "true") {
+          document.addEventListener("DOMContentLoaded", function() {
+            window.dismissProjectAuraIntro(false);
+          });
+        }
+      } catch (_) {}
+
+      // Hard Timeout Fail-Safe: exactly 2.5 seconds (2500ms) forcefully fades out & removes intro
+      setTimeout(function() {
+        window.dismissProjectAuraIntro(false);
+      }, 2500);
+    })();
+  </script>
 </head>
 
 <body data-theme="enterprise-dark">
 
   <!-- =======================================================
        1. CINEMATIC STARTUP SEQUENCE (Xbox-Inspired Minimal Energy Sweep)
+       Equipped with Top-Right Skip Intro Button & Hard Timeout
   ======================================================= -->
-  <div class="aura-startup-cinematic" id="auraStartupCinematic">
+  <div class="aura-startup-cinematic intro-screen" id="auraStartupCinematic">
+    <!-- Visible, High-Z-Index "Skip Intro →" Button at Top-Right Corner -->
+    <button type="button" class="startup-skip-direct-btn" id="btnDirectSkipIntro" onclick="window.dismissProjectAuraIntro(true)" title="Skip Intro Immediately">
+      <span>Skip Intro</span>
+      <span>→</span>
+    </button>
+
     <canvas class="startup-canvas" id="startupCanvas"></canvas>
     <div class="startup-energy-core" id="startupEnergyCore">
       <div class="startup-energy-ring"></div>
@@ -40,7 +96,7 @@
     </div>
     <div class="startup-controls">
       <button type="button" class="startup-ctrl-btn" id="btnStartupMute" title="Toggle Startup Sound">♫ Audio: On</button>
-      <button type="button" class="startup-ctrl-btn" id="btnStartupSkip" title="Skip Startup Sequence">Skip ↷</button>
+      <button type="button" class="startup-ctrl-btn" id="btnStartupSkip" onclick="window.dismissProjectAuraIntro(true)" title="Skip Startup Sequence">Skip ↷</button>
     </div>
   </div>
 

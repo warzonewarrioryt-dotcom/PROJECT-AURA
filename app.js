@@ -10586,10 +10586,16 @@ topbarLatencyTicker();
   /* ---------------------------------------------------------
      1. CINEMATIC STARTUP SEQUENCE (XBOX INSPIRED)
   --------------------------------------------------------- */
-  const introOverlay = document.getElementById("auraStartupCinematic");
-  const introCanvas = document.getElementById("auraIntroCanvas");
-  const introSkipBtn = document.getElementById("auraIntroSkipBtn");
-  const introMuteBtn = document.getElementById("auraIntroMuteBtn");
+  const introOverlay = document.getElementById("auraStartupCinematic") || 
+                       document.getElementById("intro-overlay") || 
+                       document.querySelector(".intro-screen");
+  const introCanvas = document.getElementById("auraIntroCanvas") || 
+                      document.getElementById("startupCanvas");
+  const introSkipBtn = document.getElementById("btnDirectSkipIntro") || 
+                       document.getElementById("btnStartupSkip") || 
+                       document.getElementById("auraIntroSkipBtn");
+  const introMuteBtn = document.getElementById("btnStartupMute") || 
+                       document.getElementById("auraIntroMuteBtn");
   const introProgress = document.getElementById("auraIntroProgress");
 
   let introAnimId = null;
@@ -10601,7 +10607,7 @@ topbarLatencyTicker();
     if (isIntroFinished) return;
     isIntroFinished = true;
     if (rememberSkip) {
-      localStorage.setItem("aura_skip_intro", "true");
+      try { localStorage.setItem("aura_skip_intro", "true"); } catch (_) {}
     }
     if (introAnimId) {
       cancelAnimationFrame(introAnimId);
@@ -10611,15 +10617,43 @@ topbarLatencyTicker();
       try { introAudioCtx.close(); } catch (_) {}
       introAudioCtx = null;
     }
-    if (introOverlay) {
-      introOverlay.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s ease";
-      introOverlay.style.opacity = "0";
-      introOverlay.style.transform = "scale(1.02)";
+
+    // Forcefully fade out and remove all intro overlays
+    const intros = document.querySelectorAll(
+      '#auraStartupCinematic, #intro-overlay, #startup-animation, #cinematic-loader, .intro-screen, .aura-startup-cinematic, .intro-cinematic-wrap, #auraBootOverlay'
+    );
+    intros.forEach(intro => {
+      intro.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+      intro.style.opacity = "0";
+      intro.style.pointerEvents = "none";
       setTimeout(() => {
-        if (introOverlay) introOverlay.style.display = "none";
-      }, 650);
+        try { intro.remove(); } catch (_) { intro.style.display = "none"; }
+      }, 500);
+    });
+
+    // Forcefully reveal all dashboard elements
+    const dashboards = document.querySelectorAll(
+      '#dashboard, .dashboard-container, .aura-shell, main.aura-main'
+    );
+    dashboards.forEach(dashboard => {
+      dashboard.style.display = 'flex';
+      dashboard.style.visibility = 'visible';
+      dashboard.style.opacity = '1';
+    });
+    if (document.body) {
+      document.body.style.display = 'block';
+      document.body.style.visibility = 'visible';
+      document.body.style.overflow = 'auto';
     }
   }
+
+  // Export globally for inline onclick handlers and fail-safe calls
+  window.dismissProjectAuraIntro = dismissIntroSequence;
+
+  // HARD TIMEOUT FAIL-SAFE: After exactly 2.5 seconds (2500ms), forcefully fade out and reveal dashboard
+  setTimeout(() => {
+    dismissIntroSequence(false);
+  }, 2500);
 
   function playCalmStartupChime() {
     if (isIntroMuted) return;
@@ -10628,7 +10662,7 @@ topbarLatencyTicker();
       if (!AudioContext) return;
       introAudioCtx = new AudioContext();
       if (introAudioCtx.state === "suspended") {
-        introAudioCtx.resume();
+        introAudioCtx.resume().catch(() => {});
       }
 
       // Calm ambient chord: Emaj9 (E3, B3, E4, G#4, D#5)
@@ -10659,8 +10693,8 @@ topbarLatencyTicker();
         osc.start(introAudioCtx.currentTime + idx * 0.08);
         osc.stop(introAudioCtx.currentTime + 3.2);
       });
-    } catch (e) {
-      console.debug("[STARTUP CHIME NOTICE]", e);
+    } catch (_) {
+      // Audio autoplay policy blocked or not supported — ignore completely and transition
     }
   }
 
@@ -10738,10 +10772,13 @@ topbarLatencyTicker();
       introOverlay.style.display = "none";
     } else {
       introOverlay.style.display = "flex";
-      // Wire Skip & Mute controls
-      if (introSkipBtn) {
-        introSkipBtn.addEventListener("click", () => dismissIntroSequence(true));
-      }
+      // Wire all Skip buttons (top-right direct button and bottom controls)
+      document.querySelectorAll("#btnDirectSkipIntro, #btnStartupSkip, #auraIntroSkipBtn, .startup-skip-direct-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          dismissIntroSequence(true);
+        });
+      });
       if (introMuteBtn) {
         introMuteBtn.addEventListener("click", () => {
           isIntroMuted = !isIntroMuted;
