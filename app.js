@@ -2226,26 +2226,39 @@ Make it look natural, professional, and visually engaging with clean points and 
 
       const lang = codingLangSelect ? codingLangSelect.value : "TypeScript";
       generateCodeBtn.disabled = true;
-      generateCodeBtn.textContent = "Generating Code...";
+      generateCodeBtn.textContent = "⚡ Generating Code Only...";
 
       try {
         const res = await fetch(`${BACKEND_URL}/ask`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: buildCreationPrompt(`Write production-ready code in ${lang} with clean architecture, comments, and tests.`, spec, "Coding")
+            message: `Write production-ready ${lang} code for: ${spec}`,
+            mode: "code_only"
           })
         });
         const data = await res.json();
-        lastCodeResult = data.answer || data.response || "Complete.";
+        let rawAnswer = data.answer || data.response || "";
+
+        // Strict Code-Only Extraction: Strip any markdown prose or code fences
+        let pureCode = rawAnswer.trim();
+        const codeBlockMatch = pureCode.match(/```(?:[a-zA-Z0-9#+_-]+)?\s*([\s\S]*?)```/);
+        if (codeBlockMatch) {
+          pureCode = codeBlockMatch[1].trim();
+        }
+        lastCodeResult = pureCode;
 
         if (codingOutputText && codingOutputContainer) {
           codingOutputText.textContent = lastCodeResult;
           codingOutputContainer.style.display = "block";
         }
         playTactileSound("success");
-      } catch (_) { }
-      finally {
+      } catch (err) {
+        if (codingOutputText && codingOutputContainer) {
+          codingOutputText.textContent = "// Error generating code: " + err.message;
+          codingOutputContainer.style.display = "block";
+        }
+      } finally {
         generateCodeBtn.disabled = false;
         generateCodeBtn.textContent = "Generate Production Code";
       }
@@ -2778,17 +2791,101 @@ Chronological, natural speech script for the speaker to present to the audience 
     });
   }
 
-  const triggerPptxDownload = () => {
-    const topic = presTopicInput ? presTopicInput.value.trim() : "Project Aura Presentation";
+  async function triggerPresentationExport(format = "pptx") {
+    const topic = (presTopicInput ? presTopicInput.value.trim() : "") || "Project Aura Presentation";
     const theme = presThemeSelect ? presThemeSelect.value : "cyber-dark";
     if (parsedSlidesData.length === 0) {
       parsedSlidesData = parsePresentationSlides(lastPresSpeechScript || topic, topic);
     }
-    downloadPptxPresentation(parsedSlidesData, topic, theme);
-  };
 
-  if (downloadPptxFileBtn) downloadPptxFileBtn.addEventListener("click", triggerPptxDownload);
-  if (directPptxBtn) directPptxBtn.addEventListener("click", triggerPptxDownload);
+    const pptxBtn = document.getElementById("downloadPptxFileBtn");
+    const pdfBtn = document.getElementById("downloadPdfFileBtn");
+    const targetBtn = format === "pdf" ? pdfBtn : pptxBtn;
+    const originalText = targetBtn ? targetBtn.textContent : "";
+    if (targetBtn) {
+      targetBtn.disabled = true;
+      targetBtn.textContent = `⚡ Exporting ${format.toUpperCase()}...`;
+    }
+
+    try {
+      // 1. Primary: Direct high-fidelity binary stream from Backend API
+      const response = await fetch(`${BACKEND_URL}/api/presentation/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic,
+          slides: parsedSlidesData,
+          theme,
+          format
+        })
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const cleanName = (topic.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 32) || "presentation") + `.${format}`;
+        a.href = url;
+        a.download = cleanName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 1500);
+        if (typeof playTactileSound === "function") playTactileSound("success");
+        return;
+      }
+      throw new Error(`Server returned ${response.status}`);
+    } catch (err) {
+      console.warn(`[PRESENTATION EXPORT API FALLBACK]`, err);
+      // 2. Client-side fallback
+      if (format === "pptx") {
+        downloadPptxPresentation(parsedSlidesData, topic, theme);
+      } else if (format === "pdf") {
+        if (typeof window.jspdf !== "undefined" && window.jspdf.jsPDF) {
+          const doc = new window.jspdf.jsPDF({ orientation: "landscape", unit: "pt", format: [960, 540] });
+          parsedSlidesData.forEach((s, idx) => {
+            if (idx > 0) doc.addPage([960, 540], "landscape");
+            doc.setFillColor(15, 19, 26);
+            doc.rect(0, 0, 960, 540, "F");
+            doc.setTextColor(197, 160, 89);
+            doc.setFontSize(22);
+            doc.text(`SLIDE ${s.number || idx + 1}: ${s.title || ""}`, 50, 60);
+            doc.setTextColor(240, 240, 240);
+            doc.setFontSize(14);
+            let y = 110;
+            (s.bullets || []).forEach(b => {
+              doc.text(`• ${b}`, 60, y, { maxWidth: 840 });
+              y += 30;
+            });
+            if (s.notes) {
+              doc.setTextColor(140, 150, 170);
+              doc.setFontSize(10);
+              doc.text(`Notes: ${s.notes}`, 60, 480, { maxWidth: 840 });
+            }
+          });
+          const cleanName = (topic.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 32) || "presentation") + ".pdf";
+          doc.save(cleanName);
+          if (typeof playTactileSound === "function") playTactileSound("success");
+        } else {
+          window.print();
+        }
+      }
+    } finally {
+      if (targetBtn) {
+        targetBtn.disabled = false;
+        targetBtn.textContent = originalText;
+      }
+    }
+  }
+
+  const downloadPdfFileBtn = document.getElementById("downloadPdfFileBtn");
+  const directPdfBtn = document.getElementById("directPdfBtn");
+  if (downloadPptxFileBtn) downloadPptxFileBtn.addEventListener("click", () => triggerPresentationExport("pptx"));
+  if (directPptxBtn) directPptxBtn.addEventListener("click", () => triggerPresentationExport("pptx"));
+  if (downloadPdfFileBtn) downloadPdfFileBtn.addEventListener("click", () => triggerPresentationExport("pdf"));
+  if (directPdfBtn) directPdfBtn.addEventListener("click", () => triggerPresentationExport("pdf"));
 
   if (copyPresBtn) {
     copyPresBtn.addEventListener("click", () => {
@@ -10476,3 +10573,658 @@ function topbarLatencyTicker() {
   }, 3500);
 }
 topbarLatencyTicker();
+
+/* =========================================================
+   PROJECT AURA 3.0 — PRODUCTION UPGRADE MASTER CONTROLLER
+   1. Cinematic Startup Sequence (Xbox Inspired)
+   2. Jarvis-Style Voice Assistant HUD & Command Router
+   3. Global Hand Gesture Recognition & HUD
+   4. Knowledge Vault V3 & Academic Doubt Solver
+========================================================= */
+
+(function initAura3ProductionSuite() {
+  /* ---------------------------------------------------------
+     1. CINEMATIC STARTUP SEQUENCE (XBOX INSPIRED)
+  --------------------------------------------------------- */
+  const introOverlay = document.getElementById("auraStartupCinematic");
+  const introCanvas = document.getElementById("auraIntroCanvas");
+  const introSkipBtn = document.getElementById("auraIntroSkipBtn");
+  const introMuteBtn = document.getElementById("auraIntroMuteBtn");
+  const introProgress = document.getElementById("auraIntroProgress");
+
+  let introAnimId = null;
+  let introAudioCtx = null;
+  let isIntroMuted = false;
+  let isIntroFinished = false;
+
+  function dismissIntroSequence(rememberSkip = false) {
+    if (isIntroFinished) return;
+    isIntroFinished = true;
+    if (rememberSkip) {
+      localStorage.setItem("aura_skip_intro", "true");
+    }
+    if (introAnimId) {
+      cancelAnimationFrame(introAnimId);
+      introAnimId = null;
+    }
+    if (introAudioCtx) {
+      try { introAudioCtx.close(); } catch (_) {}
+      introAudioCtx = null;
+    }
+    if (introOverlay) {
+      introOverlay.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s ease";
+      introOverlay.style.opacity = "0";
+      introOverlay.style.transform = "scale(1.02)";
+      setTimeout(() => {
+        if (introOverlay) introOverlay.style.display = "none";
+      }, 650);
+    }
+  }
+
+  function playCalmStartupChime() {
+    if (isIntroMuted) return;
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      introAudioCtx = new AudioContext();
+      if (introAudioCtx.state === "suspended") {
+        introAudioCtx.resume();
+      }
+
+      // Calm ambient chord: Emaj9 (E3, B3, E4, G#4, D#5)
+      const freqs = [164.81, 246.94, 329.63, 415.30, 622.25];
+      const masterGain = introAudioCtx.createGain();
+      masterGain.gain.setValueAtTime(0.0001, introAudioCtx.currentTime);
+      masterGain.gain.exponentialRampToValueAtTime(0.18, introAudioCtx.currentTime + 0.9);
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, introAudioCtx.currentTime + 3.0);
+      masterGain.connect(introAudioCtx.destination);
+
+      freqs.forEach((freq, idx) => {
+        const osc = introAudioCtx.createOscillator();
+        const oscGain = introAudioCtx.createGain();
+        osc.type = idx % 2 === 0 ? "sine" : "triangle";
+        osc.frequency.setValueAtTime(freq, introAudioCtx.currentTime);
+        // Subtle micro-detune for lush cinematic warmth
+        osc.detune.setValueAtTime((idx - 2) * 4, introAudioCtx.currentTime);
+
+        const filter = introAudioCtx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(800, introAudioCtx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(2400, introAudioCtx.currentTime + 1.2);
+
+        osc.connect(oscGain);
+        oscGain.connect(filter);
+        filter.connect(masterGain);
+
+        osc.start(introAudioCtx.currentTime + idx * 0.08);
+        osc.stop(introAudioCtx.currentTime + 3.2);
+      });
+    } catch (e) {
+      console.debug("[STARTUP CHIME NOTICE]", e);
+    }
+  }
+
+  function runIntroCanvasVisuals() {
+    if (!introCanvas) return;
+    const ctx = introCanvas.getContext("2d");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    introCanvas.width = w * dpr;
+    introCanvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
+    const particles = [];
+    const count = 45;
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: w / 2 + (Math.random() - 0.5) * 40,
+        y: h / 2 + (Math.random() - 0.5) * 40,
+        vx: (Math.random() - 0.5) * 1.8,
+        vy: (Math.random() - 0.5) * 1.8,
+        radius: Math.random() * 2 + 1,
+        alpha: Math.random() * 0.7 + 0.3,
+        hue: Math.random() > 0.6 ? 42 : 210 // Champagne gold or clean ice blue
+      });
+    }
+
+    const startTime = performance.now();
+    function loop(now) {
+      const elapsed = (now - startTime) / 1000;
+      ctx.clearRect(0, 0, w, h);
+
+      // Central restrained energy ring expanding smoothly
+      const progress = Math.min(elapsed / 2.8, 1);
+      const ringRadius = 40 + progress * (Math.min(w, h) * 0.42);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2, ringRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(197, 160, 89, ${Math.max(0, 0.45 - progress * 0.4)})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Subtle particle float
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.003;
+        if (p.alpha <= 0) p.alpha = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.hue === 42 ? `rgba(197, 160, 89, ${p.alpha})` : `rgba(140, 180, 255, ${p.alpha * 0.8})`;
+        ctx.fill();
+      });
+      ctx.restore();
+
+      if (introProgress) {
+        introProgress.style.width = `${Math.min(progress * 100, 100)}%`;
+      }
+
+      if (elapsed < 3.2 && !isIntroFinished) {
+        introAnimId = requestAnimationFrame(loop);
+      } else {
+        dismissIntroSequence(false);
+      }
+    }
+    introAnimId = requestAnimationFrame(loop);
+  }
+
+  // Check skip preference and reduced motion
+  const userPrefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const userSkippedIntro = localStorage.getItem("aura_skip_intro") === "true";
+
+  if (introOverlay) {
+    if (userSkippedIntro || userPrefersReducedMotion) {
+      introOverlay.style.display = "none";
+    } else {
+      introOverlay.style.display = "flex";
+      // Wire Skip & Mute controls
+      if (introSkipBtn) {
+        introSkipBtn.addEventListener("click", () => dismissIntroSequence(true));
+      }
+      if (introMuteBtn) {
+        introMuteBtn.addEventListener("click", () => {
+          isIntroMuted = !isIntroMuted;
+          introMuteBtn.textContent = isIntroMuted ? "🔇 Unmute" : "🔊 Mute";
+          if (introAudioCtx && isIntroMuted) {
+            try { introAudioCtx.suspend(); } catch (_) {}
+          }
+        });
+      }
+      // Start visuals
+      runIntroCanvasVisuals();
+      // Try playing chime on first interaction or right away if permitted
+      const startChime = () => {
+        playCalmStartupChime();
+        window.removeEventListener("pointerdown", startChime);
+        window.removeEventListener("keydown", startChime);
+      };
+      playCalmStartupChime();
+      window.addEventListener("pointerdown", startChime, { once: true });
+      window.addEventListener("keydown", startChime, { once: true });
+    }
+  }
+
+
+  /* ---------------------------------------------------------
+     2. JARVIS VOICE ASSISTANT HUD & STRUCTURED COMMAND ROUTER
+  --------------------------------------------------------- */
+  const voiceOverlay = document.getElementById("jarvisVoiceOverlay");
+  const voiceAssistantTopBtn = document.getElementById("globalVoiceAssistantBtn");
+  const jarvisMicToggleBtn = document.getElementById("jarvisMicToggleBtn");
+  const jarvisStopSpeakingBtn = document.getElementById("jarvisStopSpeakingBtn");
+  const jarvisCloseBtn = document.getElementById("jarvisCloseBtn");
+  const jarvisMuteToggleBtn = document.getElementById("jarvisMuteToggleBtn");
+  const jarvisStatusLine = document.getElementById("jarvisStatusLine");
+  const jarvisTranscriptText = document.getElementById("jarvisTranscriptText");
+  const jarvisResponseBox = document.getElementById("jarvisResponseBox");
+  const jarvisResponseText = document.getElementById("jarvisResponseText");
+  const jarvisLangBadge = document.getElementById("jarvisLangBadge");
+  const jarvisHologramDisc = document.getElementById("jarvisHologramDisc");
+
+  let jarvisSpeechRec = null;
+  let isJarvisListening = false;
+  let isJarvisMuted = false;
+  let lastSpokenTelemetry = "";
+  let jarvisSilenceTimer = null;
+  let currentVoiceLang = "en-IN"; // Supports English, Tamil (ta-IN), Tanglish
+
+  function setJarvisVisualState(state, label) {
+    if (jarvisStatusLine) jarvisStatusLine.textContent = label;
+    if (jarvisHologramDisc) {
+      jarvisHologramDisc.className = "jarvis-hologram-disc " + state;
+    }
+  }
+
+  function speakJarvisResponse(text) {
+    if (!text || isJarvisMuted || !window.speechSynthesis) return;
+    if (text === lastSpokenTelemetry) return; // Prevent repeated double speaking
+    lastSpokenTelemetry = text;
+
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.05;
+    utter.pitch = 0.98;
+
+    // Pick crisp English or regional voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const isTa = /[\u0B80-\u0BFF]/.test(text) || currentVoiceLang === "ta-IN";
+    if (isTa) {
+      const taVoice = voices.find(v => v.lang.includes("ta") || v.lang.includes("IN"));
+      if (taVoice) utter.voice = taVoice;
+    } else {
+      const enVoice = voices.find(v => v.name.includes("Natural") || v.name.includes("Google UK") || v.name.includes("Samantha") || (v.lang.startsWith("en") && !v.localService));
+      if (enVoice) utter.voice = enVoice;
+    }
+
+    utter.onstart = () => {
+      setJarvisVisualState("speaking", "AURA Intelligence Speaking...");
+    };
+    utter.onend = () => {
+      setJarvisVisualState("idle", "Neural Core Standing By · Ready");
+    };
+    utter.onerror = () => {
+      setJarvisVisualState("idle", "Neural Core Standing By");
+    };
+
+    window.speechSynthesis.speak(utter);
+  }
+
+  // Structured Command Router: executes application features and clarifies hardware limits
+  async function routeJarvisCommand(rawTranscript) {
+    const raw = (rawTranscript || "").trim();
+    if (!raw) return;
+
+    setJarvisVisualState("processing", "Processing Neural Command...");
+    const cmd = raw.toLowerCase().replace(/[.,?!;:_]/g, " ").replace(/\s+/g, " ").trim();
+
+    if (jarvisResponseBox && jarvisResponseText) {
+      jarvisResponseBox.style.display = "block";
+      jarvisResponseText.textContent = `Directive: "${raw}"`;
+    }
+
+    // 1. Navigation Directives
+    if (cmd.includes("academic hub") || cmd.includes("school") || cmd.includes("college") || cmd.includes("syllabus")) {
+      switchView("academic-hub-workspace");
+      const confirmation = "Navigating to Academic Hub. Curriculum, school standards, and doubt solver ready.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("notes") || cmd.includes("open my notes") || cmd.includes("study notes")) {
+      switchView("knowledge-vault");
+      if (typeof window.switchKnowledgeVaultSubTab === "function") {
+        window.switchKnowledgeVaultSubTab("memory");
+      }
+      const confirmation = "Opening your personal notes and saved study directives.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("quiz") || cmd.includes("start a quiz") || cmd.includes("test")) {
+      switchView("quiz-engine");
+      const confirmation = "Launching Quiz Engine. Active recall challenge ready.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("presentation") || cmd.includes("slide") || cmd.includes("deck")) {
+      if (cmd.includes("download")) {
+        triggerPresentationExport("pptx");
+        const confirmation = "Triggered PowerPoint presentation download.";
+        jarvisResponseText.textContent = confirmation;
+        speakJarvisResponse(confirmation);
+        return;
+      }
+      switchView("creation-lab");
+      const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
+      if (presTab) presTab.click();
+      const confirmation = "Opening Executive Presentation Studio.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("documents")) {
+      switchView("knowledge-vault");
+      const confirmation = "Opening Topic Knowledge Vault.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("gesture") || cmd.includes("gesture mode") || cmd.includes("hand track")) {
+      toggleGlobalGestureHUD(true);
+      const confirmation = "Hand gesture tracking mode enabled. Camera active.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("dark theme") || cmd.includes("theme")) {
+      const themeBtn = document.getElementById("themeToggleBtn");
+      if (themeBtn) themeBtn.click();
+      const confirmation = "Toggled visual theme mode.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("stop speaking") || cmd.includes("mute") || cmd.includes("be quiet") || cmd.includes("silent")) {
+      window.speechSynthesis?.cancel();
+      setJarvisVisualState("idle", "Speech Silenced");
+      jarvisResponseText.textContent = "Audio speech cancelled.";
+      return;
+    }
+
+    if (cmd.includes("go back") || cmd.includes("home") || cmd.includes("command center")) {
+      switchView("command-center");
+      const confirmation = "Returned to Command Center.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    // 2. Hardware / OS Control Limitations Explained Realistically
+    if (cmd.includes("shutdown") || cmd.includes("lock computer") || cmd.includes("turn off") || cmd.includes("bluetooth")) {
+      const limitationExplanation = "Browser security sandbox prevents arbitrary operating system power or raw hardware alteration without an installed, authenticated native desktop companion. I have full command over all Project Aura web systems.";
+      jarvisResponseText.textContent = limitationExplanation;
+      speakJarvisResponse(limitationExplanation);
+      return;
+    }
+
+    // 3. Fallback: Ask Backend AI Knowledge Engine
+    try {
+      const res = await fetch(`${BACKEND_URL}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: raw })
+      });
+      const data = await res.json();
+      const answer = data.answer || data.response || "Directive processed.";
+      jarvisResponseText.textContent = answer;
+      speakJarvisResponse(answer);
+    } catch (err) {
+      jarvisResponseText.textContent = "Telemetry error: " + err.message;
+      setJarvisVisualState("error", "Network / AI Gateway Disconnected");
+    }
+  }
+
+  function startJarvisListening() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      alert("Web Speech Recognition is not supported in this browser. Please use Google Chrome, Edge, or a WebRTC-compliant browser.");
+      return;
+    }
+
+    try {
+      if (jarvisSpeechRec) {
+        try { jarvisSpeechRec.stop(); } catch (_) {}
+      }
+      jarvisSpeechRec = new SpeechRec();
+      jarvisSpeechRec.continuous = true;
+      jarvisSpeechRec.interimResults = true;
+      jarvisSpeechRec.lang = currentVoiceLang;
+
+      jarvisSpeechRec.onstart = () => {
+        isJarvisListening = true;
+        setJarvisVisualState("listening", "Listening for Directive or Question...");
+        if (jarvisMicToggleBtn) jarvisMicToggleBtn.textContent = "⏹️ Stop Listening";
+      };
+
+      jarvisSpeechRec.onresult = (e) => {
+        let finalTxt = "";
+        let interimTxt = "";
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            finalTxt += e.results[i][0].transcript;
+          } else {
+            interimTxt += e.results[i][0].transcript;
+          }
+        }
+        const text = (finalTxt || interimTxt).trim();
+        if (text && jarvisTranscriptText) {
+          jarvisTranscriptText.textContent = `"${text}"`;
+          jarvisTranscriptText.style.color = "var(--text-primary)";
+
+          // Execute automatically after student pauses for 900ms
+          if (jarvisSilenceTimer) clearTimeout(jarvisSilenceTimer);
+          jarvisSilenceTimer = setTimeout(() => {
+            if (text.length > 2) {
+              routeJarvisCommand(text);
+            }
+          }, 900);
+        }
+      };
+
+      jarvisSpeechRec.onerror = (err) => {
+        console.warn("[JARVIS SPEECH ERROR]", err.error);
+        if (err.error === "not-allowed") {
+          setJarvisVisualState("error", "Microphone Permission Denied");
+          if (jarvisTranscriptText) jarvisTranscriptText.textContent = "Please grant microphone permission in your browser address bar.";
+        } else {
+          setJarvisVisualState("idle", "Standing By");
+        }
+      };
+
+      jarvisSpeechRec.onend = () => {
+        isJarvisListening = false;
+        if (jarvisMicToggleBtn) jarvisMicToggleBtn.textContent = "🎙️ Start Listening";
+        if (voiceOverlay && voiceOverlay.style.display !== "none") {
+          setJarvisVisualState("idle", "Neural Core Standing By · Click Mic to Speak");
+        }
+      };
+
+      jarvisSpeechRec.start();
+    } catch (e) {
+      console.warn("[JARVIS START FAILED]", e);
+    }
+  }
+
+  function stopJarvisListening() {
+    isJarvisListening = false;
+    if (jarvisSpeechRec) {
+      try { jarvisSpeechRec.stop(); } catch (_) {}
+    }
+    if (jarvisMicToggleBtn) jarvisMicToggleBtn.textContent = "🎙️ Start Listening";
+    setJarvisVisualState("idle", "Neural Core Standing By");
+  }
+
+  function openJarvisOverlay() {
+    if (!voiceOverlay) return;
+    voiceOverlay.style.display = "flex";
+    voiceOverlay.setAttribute("aria-hidden", "false");
+    setJarvisVisualState("idle", "Neural Core Standing By · Initializing Mic...");
+    startJarvisListening();
+  }
+
+  function closeJarvisOverlay() {
+    if (!voiceOverlay) return;
+    voiceOverlay.style.display = "none";
+    voiceOverlay.setAttribute("aria-hidden", "true");
+    stopJarvisListening();
+    window.speechSynthesis?.cancel();
+  }
+
+  if (voiceAssistantTopBtn) {
+    voiceAssistantTopBtn.addEventListener("click", openJarvisOverlay);
+  }
+  if (jarvisCloseBtn) {
+    jarvisCloseBtn.addEventListener("click", closeJarvisOverlay);
+  }
+  if (jarvisMicToggleBtn) {
+    jarvisMicToggleBtn.addEventListener("click", () => {
+      if (isJarvisListening) stopJarvisListening();
+      else startJarvisListening();
+    });
+  }
+  if (jarvisStopSpeakingBtn) {
+    jarvisStopSpeakingBtn.addEventListener("click", () => {
+      window.speechSynthesis?.cancel();
+      setJarvisVisualState("idle", "Speech Halted");
+    });
+  }
+  if (jarvisMuteToggleBtn) {
+    jarvisMuteToggleBtn.addEventListener("click", () => {
+      isJarvisMuted = !isJarvisMuted;
+      jarvisMuteToggleBtn.textContent = isIntroMuted ? "🔇" : "🔊";
+      if (isJarvisMuted) window.speechSynthesis?.cancel();
+    });
+  }
+
+  // Suggestion chips click handler
+  document.querySelectorAll(".jarvis-command-suggestions .sugg-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const cmd = chip.getAttribute("data-cmd") || chip.textContent.replace(/^"|"$/g, "").trim();
+      if (jarvisTranscriptText) jarvisTranscriptText.textContent = `"${cmd}"`;
+      routeJarvisCommand(cmd);
+    });
+  });
+
+
+  /* ---------------------------------------------------------
+     3. GLOBAL FLOATING GESTURE HUD & TRACKING
+  --------------------------------------------------------- */
+  const gestureWidget = document.getElementById("globalGestureHudWidget");
+  const gestureToggleTopBtn = document.getElementById("globalGestureToggleBtn");
+  const gestureCloseBtn = document.getElementById("btnGlobalGestureClose");
+  const gestureCamVideo = document.getElementById("globalGestureCam");
+  const gestureSkelCanvas = document.getElementById("globalGestureSkeletonCanvas");
+  const gestureRecognizedLabel = document.getElementById("globalGestureRecognizedLabel");
+  const gestureActionLabel = document.getElementById("globalGestureActionLabel");
+
+  let isGlobalGestureActive = false;
+  let globalGestureStream = null;
+  let gestureCooldownTimer = null;
+  let lastTriggeredGesture = "";
+
+  async function toggleGlobalGestureHUD(forceOpen = null) {
+    const shouldOpen = forceOpen !== null ? forceOpen : !isGlobalGestureActive;
+    if (shouldOpen) {
+      if (gestureWidget) {
+        gestureWidget.style.display = "block";
+        gestureWidget.setAttribute("aria-hidden", "false");
+      }
+      isGlobalGestureActive = true;
+      if (gestureToggleTopBtn) gestureToggleTopBtn.classList.add("active");
+
+      // Initialize Webcam Feed
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error("getUserMedia not supported.");
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+        });
+        globalGestureStream = stream;
+        if (gestureCamVideo) {
+          gestureCamVideo.srcObject = stream;
+          await gestureCamVideo.play();
+        }
+        if (gestureActionLabel) gestureActionLabel.textContent = "Camera Live";
+        if (gestureRecognizedLabel) gestureRecognizedLabel.textContent = "Detecting Hand...";
+
+        // If Arcade Hands detector exists, activate it
+        if (window.AuraGestureEngine && typeof window.AuraGestureEngine.start === "function") {
+          window.AuraGestureEngine.start();
+        }
+      } catch (err) {
+        if (gestureRecognizedLabel) gestureRecognizedLabel.textContent = "Camera Unavailable";
+        if (gestureActionLabel) gestureActionLabel.textContent = "Permission Required";
+      }
+    } else {
+      // Clean teardown: release camera hardware completely to save battery and protect privacy
+      isGlobalGestureActive = false;
+      if (gestureWidget) {
+        gestureWidget.style.display = "none";
+        gestureWidget.setAttribute("aria-hidden", "true");
+      }
+      if (gestureToggleTopBtn) gestureToggleTopBtn.classList.remove("active");
+
+      if (globalGestureStream) {
+        try {
+          globalGestureStream.getTracks().forEach(t => t.stop());
+        } catch (_) {}
+        globalGestureStream = null;
+      }
+      if (gestureCamVideo) gestureCamVideo.srcObject = null;
+      if (gestureSkelCanvas) {
+        const ctx = gestureSkelCanvas.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, gestureSkelCanvas.width, gestureSkelCanvas.height);
+      }
+      if (window.AuraGestureEngine && typeof window.AuraGestureEngine.stop === "function") {
+        window.AuraGestureEngine.stop();
+      }
+    }
+  }
+
+  if (gestureToggleTopBtn) {
+    gestureToggleTopBtn.addEventListener("click", () => toggleGlobalGestureHUD());
+  }
+  if (gestureCloseBtn) {
+    gestureCloseBtn.addEventListener("click", () => toggleGlobalGestureHUD(false));
+  }
+
+  // Global listener called by gesture classification engine with 800ms cooldown
+  window.onAuraGestureDetected = function(gestureName, handState) {
+    if (!isGlobalGestureActive) return;
+
+    if (gestureRecognizedLabel) {
+      gestureRecognizedLabel.textContent = gestureName;
+    }
+
+    // Cooldown check: prevent rapid repeated execution of the same gesture
+    if (gestureCooldownTimer || gestureName === "TRACKING" || gestureName === "NONE") return;
+
+    let actionName = "Recognized";
+    if (gestureName === "OPEN_PALM") {
+      actionName = "Navigating Home";
+      switchView("command-center");
+    } else if (gestureName === "PEACE_SIGN") {
+      actionName = "Opening Academic Hub";
+      switchView("academic-hub-workspace");
+    } else if (gestureName === "THUMBS_UP") {
+      actionName = "Confirm / Next";
+      if (typeof playTactileSound === "function") playTactileSound("click");
+    } else if (gestureName === "INDEX_POINT") {
+      actionName = "Scroll View";
+      window.scrollBy({ top: 300, behavior: "smooth" });
+    } else if (gestureName === "PINCH") {
+      actionName = "Opening Voice Core";
+      openJarvisOverlay();
+    } else if (gestureName === "CLOSED_FIST") {
+      actionName = "Close Active / Halt";
+      window.speechSynthesis?.cancel();
+      closeJarvisOverlay();
+    }
+
+    if (gestureActionLabel) {
+      gestureActionLabel.textContent = actionName;
+    }
+
+    // Set 800ms cooldown
+    gestureCooldownTimer = setTimeout(() => {
+      gestureCooldownTimer = null;
+    }, 800);
+  };
+
+
+  /* ---------------------------------------------------------
+     4. KNOWLEDGE VAULT V3 & ACADEMIC GROUNDING INTEGRATION
+  --------------------------------------------------------- */
+  const vaultSearchInput = document.getElementById("vaultSearchInput") || document.getElementById("memorySearchInput");
+  if (vaultSearchInput) {
+    vaultSearchInput.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll("#vaultFilesGrid .vault-file-card, #memoryNotesGrid .memory-card").forEach(el => {
+        const text = el.textContent.toLowerCase();
+        el.style.display = (!q || text.includes(q)) ? "" : "none";
+      });
+    });
+  }
+
+  console.log("[PROJECT AURA 3.0] Master Production Suite fully operational.");
+})();

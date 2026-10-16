@@ -460,8 +460,24 @@ async function processCommand(command, options = {}) {
   }
 
   // 5. Build AI Messages
-  const moduleInstruction = MODULE_INSTRUCTIONS[route.module] || MODULE_INSTRUCTIONS.GENERAL_AI;
-  const systemInstruction = `
+  const isCodeOnly = options.mode === "code_only" || options.codeOnly === true;
+  let moduleInstruction = MODULE_INSTRUCTIONS[route.module] || MODULE_INSTRUCTIONS.GENERAL_AI;
+  
+  let systemInstruction = "";
+  if (isCodeOnly) {
+    systemInstruction = `
+You are an expert software engineer for PROJECT AURA.
+MANDATORY CODE-ONLY SYSTEM DIRECTIVE:
+1. Return ONLY the raw requested code.
+2. Absolutely NO introductory text, greetings, markdown chit-chat, or explanations before the code.
+3. Absolutely NO summaries, tutorials, concluding paragraphs, or suggestions after the code.
+4. Output valid, working code in the requested language.
+5. Use the simplest correct solution suitable for the problem.
+6. Include essential comments only when requested or genuinely necessary for complex logic.
+7. If the user explicitly asks for an explanation (e.g., "explain this code"), provide an explanation; otherwise output pure code only.
+`;
+  } else {
+    systemInstruction = `
 ${AURA_SYSTEM_PROMPT}
 
 CURRENT ACTIVE ROUTE: ${route.module}
@@ -477,6 +493,7 @@ If the user's language is Tamil, respond in Tamil.
 If English, respond in English.
 ${extraContext}
 `;
+  }
 
   const messages = [
     { role: "system", content: systemInstruction },
@@ -487,12 +504,22 @@ ${extraContext}
   // 6. Execute Multi-AI Fallback
   const aiResult = await executeAIFallback(messages);
 
+  let finalResponse = aiResult.text || "";
+  if (isCodeOnly && finalResponse) {
+    const codeBlockMatch = finalResponse.match(/```(?:[a-zA-Z0-9_\-\.\+#]+)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch && codeBlockMatch[1]) {
+      finalResponse = codeBlockMatch[1].trim();
+    } else {
+      finalResponse = finalResponse.replace(/^(?:Here is the code|Here's the code|Certainly|Sure|Below is the code)[^\n]*\n+/i, "").trim();
+    }
+  }
+
   return {
     success: true,
     command: cleanCmd,
     route,
     language: lang,
-    response: aiResult.text,
+    response: finalResponse,
     provider: aiResult.provider,
     model: aiResult.model,
     fallbackCount: aiResult.fallbackCount,

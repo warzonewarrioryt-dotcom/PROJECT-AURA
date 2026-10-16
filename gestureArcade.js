@@ -619,8 +619,10 @@
     const h1 = trackingState.hand1;
     let gestureName = "Tracking";
     if (h1.isPinching) gestureName = "Pinch 🤏";
+    else if (h1.isThumbsUp) gestureName = "Thumbs Up 👍";
+    else if (h1.isPeaceSign || h1.isScissors) gestureName = "Peace Sign ✌️";
+    else if (h1.isIndexPointing) gestureName = "Index Point ☝️";
     else if (h1.isFist) gestureName = "Fist ✊";
-    else if (h1.isScissors) gestureName = "Scissors ✌️";
     else if (h1.isOpenPalm) gestureName = "Open Palm ✋";
 
     updateCornerHudLabel(`${h1.handedness} Hand: ${gestureName}`);
@@ -659,26 +661,64 @@
     stateObj.lastX = stateObj.palmX;
     stateObj.lastY = stateObj.palmY;
 
+    // 3D Euclidean distance helper
+    const dist3D = (p1, p2) => {
+      const dX = p1.x - p2.x;
+      const dY = p1.y - p2.y;
+      const dZ = (p1.z || 0) - (p2.z || 0);
+      return Math.sqrt(dX * dX + dY * dY + dZ * dZ);
+    };
+
     // Pinch distance (Thumb tip to Index tip in 3D Euclidean distance)
-    const pinchDx = thumbTip.x - indexTip.x;
-    const pinchDy = thumbTip.y - indexTip.y;
-    const pinchDz = (thumbTip.z || 0) - (indexTip.z || 0);
-    stateObj.pinchDist = Math.sqrt(pinchDx * pinchDx + pinchDy * pinchDy + pinchDz * pinchDz);
-    stateObj.isPinching = stateObj.pinchDist < 0.088;
+    stateObj.pinchDist = dist3D(thumbTip, indexTip);
+    stateObj.isPinching = stateObj.pinchDist < 0.082;
 
     // Hand Tilt angle (wrist landmark 0 to middle mcp landmark 9)
     const angleRad = Math.atan2(lm[9].y - wrist.y, lm[9].x - wrist.x);
     stateObj.tiltAngle = (angleRad * 180) / Math.PI;
 
-    // Finger extensions test
-    const indexExtended = indexTip.y < indexPip.y;
-    const middleExtended = middleTip.y < middlePip.y;
-    const ringExtended = ringTip.y < ringPip.y;
-    const pinkyExtended = pinkyTip.y < pinkyPip.y;
+    // 3D Invariant Finger Extensions (comparing tip distance from wrist vs PIP distance from wrist)
+    const wristToIndexTip = dist3D(wrist, indexTip);
+    const wristToIndexPip = dist3D(wrist, indexPip);
+    const indexExtended = wristToIndexTip > wristToIndexPip * 1.12;
 
-    stateObj.isFist = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
+    const wristToMiddleTip = dist3D(wrist, middleTip);
+    const wristToMiddlePip = dist3D(wrist, middlePip);
+    const middleExtended = wristToMiddleTip > wristToMiddlePip * 1.12;
+
+    const wristToRingTip = dist3D(wrist, ringTip);
+    const wristToRingPip = dist3D(wrist, ringPip);
+    const ringExtended = wristToRingTip > wristToRingPip * 1.12;
+
+    const wristToPinkyTip = dist3D(wrist, pinkyTip);
+    const wristToPinkyPip = dist3D(wrist, pinkyPip);
+    const pinkyExtended = wristToPinkyTip > wristToPinkyPip * 1.12;
+
+    const wristToThumbTip = dist3D(wrist, thumbTip);
+    const wristToThumbIp = dist3D(wrist, lm[3]);
+    const thumbExtended = wristToThumbTip > wristToThumbIp * 1.15;
+
+    // 6 Canonical Gesture Classifications
+    stateObj.isFist = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended && !thumbExtended;
     stateObj.isOpenPalm = indexExtended && middleExtended && ringExtended && pinkyExtended;
+    stateObj.isThumbsUp = thumbExtended && (thumbTip.y < wrist.y - 0.08) && !indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
     stateObj.isScissors = indexExtended && middleExtended && !ringExtended && !pinkyExtended;
+    stateObj.isPeaceSign = stateObj.isScissors;
+    stateObj.isIndexPointing = indexExtended && !middleExtended && !ringExtended && !pinkyExtended && !stateObj.isPinching;
+
+    // Determine current primary gesture name
+    if (stateObj.isPinching) stateObj.currentGesture = "PINCH";
+    else if (stateObj.isThumbsUp) stateObj.currentGesture = "THUMBS_UP";
+    else if (stateObj.isPeaceSign) stateObj.currentGesture = "PEACE_SIGN";
+    else if (stateObj.isIndexPointing) stateObj.currentGesture = "INDEX_POINT";
+    else if (stateObj.isFist) stateObj.currentGesture = "CLOSED_FIST";
+    else if (stateObj.isOpenPalm) stateObj.currentGesture = "OPEN_PALM";
+    else stateObj.currentGesture = "TRACKING";
+
+    // Broadcast gesture event for global UI / listeners if present
+    if (!isSecond && typeof window.onAuraGestureDetected === "function") {
+      window.onAuraGestureDetected(stateObj.currentGesture, stateObj);
+    }
 
     // 5-Finger Heights
     stateObj.fingerHeights = [thumbTip.y, indexTip.y, middleTip.y, ringTip.y, pinkyTip.y];
@@ -842,11 +882,45 @@
         this.keysDown[e.key] = false;
       };
 
+      // Mobile Touchscreen Support
+      this._onTouchStart = (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        const rect = this.canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const t = e.touches[0];
+          this.mousePos.x = Math.max(0.01, Math.min(0.99, (t.clientX - rect.left) / rect.width));
+          this.mousePos.y = Math.max(0.01, Math.min(0.99, (t.clientY - rect.top) / rect.height));
+          this.mousePos.isDown = true;
+          this.mousePos.active = true;
+          this.isAwaitingHands = false;
+        }
+        e.preventDefault();
+      };
+
+      this._onTouchMove = (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        const rect = this.canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const t = e.touches[0];
+          this.mousePos.x = Math.max(0.01, Math.min(0.99, (t.clientX - rect.left) / rect.width));
+          this.mousePos.y = Math.max(0.01, Math.min(0.99, (t.clientY - rect.top) / rect.height));
+          this.mousePos.active = true;
+        }
+        e.preventDefault();
+      };
+
+      this._onTouchEnd = () => {
+        this.mousePos.isDown = false;
+      };
+
       this.canvas.addEventListener("mousemove", this._onMouseMove);
       this.canvas.addEventListener("mousedown", this._onMouseDown);
       window.addEventListener("mouseup", this._onMouseUp);
       window.addEventListener("keydown", this._onKeyDown);
       window.addEventListener("keyup", this._onKeyUp);
+      this.canvas.addEventListener("touchstart", this._onTouchStart, { passive: false });
+      this.canvas.addEventListener("touchmove", this._onTouchMove, { passive: false });
+      window.addEventListener("touchend", this._onTouchEnd);
 
       this.resize();
     }
@@ -858,6 +932,9 @@
         window.removeEventListener("mouseup", this._onMouseUp);
         window.removeEventListener("keydown", this._onKeyDown);
         window.removeEventListener("keyup", this._onKeyUp);
+        this.canvas.removeEventListener("touchstart", this._onTouchStart);
+        this.canvas.removeEventListener("touchmove", this._onTouchMove);
+        window.removeEventListener("touchend", this._onTouchEnd);
       } catch (_) {}
     }
 
@@ -3972,6 +4049,15 @@
     const restartBtn = document.getElementById("btnArenaRestart");
     if (restartBtn) restartBtn.addEventListener("click", restartCurrentGame);
 
+    const pauseBtn = document.getElementById("btnArenaPause");
+    if (pauseBtn) {
+      pauseBtn.addEventListener("click", () => {
+        if (!activeGameInstance) return;
+        activeGameInstance.isPaused = !activeGameInstance.isPaused;
+        pauseBtn.textContent = activeGameInstance.isPaused ? "▶️ Resume" : "⏸️ Pause";
+      });
+    }
+
     const dialogRestartBtn = document.getElementById("btnDialogRestart");
     if (dialogRestartBtn) dialogRestartBtn.addEventListener("click", restartCurrentGame);
 
@@ -3994,4 +4080,9 @@
   window.launchGameArena = launchGameArena;
   window.cleanupGestureArcadeHub = cleanupGestureArcadeHub;
   window.closeGestureGameArena = closeGameArena;
+  window.AuraGestureEngine = {
+    start: startWebcam,
+    stop: stopWebcam,
+    getState: () => trackingState
+  };
 })();

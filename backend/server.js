@@ -35,6 +35,7 @@ const analyticsRoutes = require("./routes/analytics");
 const voiceRoutes = require("./routes/voice");
 const studentRoutes = require("./routes/student");
 const authRoutes = require("./routes/auth");
+const presentationRoutes = require("./routes/presentation");
 
 /* =========================================================
    MIDDLEWARE
@@ -89,6 +90,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/voice", voiceRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/presentation", presentationRoutes);
 
 // Public Google Auth Config Route
 app.get('/api/auth/google-client-id', (req, res) => {
@@ -149,9 +151,11 @@ const handleAsk = async (req, res) => {
     }
 
     const fullPrompt = attachmentContext ? `${attachmentContext}${prompt}` : prompt;
+    const mode = req.body.mode || (req.body.codeOnly ? "code_only" : undefined);
 
     // Process via AI router
     const commandResult = await aiRouterService.processCommand(fullPrompt, {
+      mode,
       conversationHistory: []
     });
 
