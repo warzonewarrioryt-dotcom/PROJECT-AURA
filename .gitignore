@@ -53,3 +53,5 @@ Thumbs.db
 scripts/
 .env
 backend/.env
+.env
+backend/.env
