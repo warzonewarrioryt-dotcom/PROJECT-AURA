@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "title": "Project Aura Command Center"
+    },
+    {
+      "path": "/dashboard",
+      "title": "Project Aura Command Center"
+    },
+    {
+      "path": "/dashboard.html",
+      "title": "Project Aura Command Center"
+    }
+  ]
+}

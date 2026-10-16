@@ -56,9 +56,9 @@
         }
       };
 
-      // Auto-bypass if user previously skipped intro
+      // Auto-bypass if user previously skipped intro or prefers reduced motion
       try {
-        if (localStorage.getItem("aura_skip_intro") === "true") {
+        if (localStorage.getItem("aura_skip_intro") === "true" || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
           document.addEventListener("DOMContentLoaded", function() {
             window.dismissProjectAuraIntro(false);
           });

@@ -66,6 +66,11 @@ app.get("/index.html", (req, res) => {
   res.redirect("/dashboard.html");
 });
 
+// Serve route metadata
+app.get("/manus-routes.json", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "manus-routes.json"));
+});
+
 // Serve frontend static files if accessed directly via backend
 app.use(express.static(path.join(__dirname, ".."), { index: false }));
 
