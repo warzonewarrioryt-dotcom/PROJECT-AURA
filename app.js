@@ -1445,12 +1445,24 @@ document.querySelectorAll(".action-card").forEach(card => {
   });
 });
 
-// Live Clock
+// Live Sci-Fi Animated Cryptographic Clock
 function updateClock() {
   const clockEl = document.getElementById("osClock");
   if (clockEl) {
     const now = new Date();
-    clockEl.textContent = now.toLocaleTimeString("en-IN", { hour12: false });
+    const timeStr = now.toLocaleTimeString("en-GB", { hour12: false });
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    
+    // Live animated cryptographic micro-hash
+    const hex = "0123456789ABCDEF";
+    let hash = "";
+    for (let i = 0; i < 4; i++) {
+      hash += hex[Math.floor(Math.random() * 16)];
+    }
+    
+    clockEl.innerHTML = `<span class="crypto-date">${y}.${m}.${d}</span> <span class="crypto-sep">//</span> <span class="crypto-time">${timeStr}</span> <span class="crypto-hash">[HASH: 0x${hash}]</span>`;
   }
 }
 setInterval(updateClock, 1000);
@@ -10562,15 +10574,15 @@ window.grantProfileStorePermission = function(encodedQuery) {
 };
 
 
-// Discreet Telemetry Latency Simulator
+// Discreet Sci-Fi Telemetry Latency Simulator (Centered at 14ms)
 function topbarLatencyTicker() {
   setInterval(() => {
     const topbarLatency = document.getElementById("topbarLatency");
     const heroLatency = document.getElementById("ccHeroLatency");
-    const ms = 21 + Math.floor(Math.random() * 6);
+    const ms = 13 + Math.floor(Math.random() * 3); // 13ms, 14ms, 15ms
     if (topbarLatency) topbarLatency.textContent = `${ms}ms`;
     if (heroLatency) heroLatency.textContent = `${ms}ms`;
-  }, 3500);
+  }, 2500);
 }
 topbarLatencyTicker();
 
@@ -10831,6 +10843,19 @@ topbarLatencyTicker();
     if (jarvisHologramDisc) {
       jarvisHologramDisc.className = "jarvis-hologram-disc " + state;
     }
+
+    // Sync floating Holographic Voice & Audio Waveform HUD
+    const holoFloatStatus = document.getElementById("holoFloatStatusText");
+    const holoEnergyDisc = document.getElementById("holoEnergyCoreDisc");
+    const holoWaveBars = document.getElementById("holoAudioWaveformBars");
+    const holoMiniStatus = document.querySelector(".holo-mini-status");
+    const holoFloatMicBtn = document.getElementById("holoFloatMicBtn");
+
+    if (holoFloatStatus) holoFloatStatus.textContent = label;
+    if (holoEnergyDisc) holoEnergyDisc.className = "holo-energy-core-disc " + state;
+    if (holoWaveBars) holoWaveBars.className = "holo-audio-waveform-bars " + state;
+    if (holoMiniStatus) holoMiniStatus.textContent = state.toUpperCase() + " // " + (state === "speaking" ? "SPEAKING" : (state === "listening" ? "LISTENING" : "READY"));
+    if (holoFloatMicBtn) holoFloatMicBtn.textContent = isJarvisListening ? "⏹️ Stop Mic" : "🎙️ Start Mic";
   }
 
   function speakJarvisResponse(text) {
@@ -11070,18 +11095,30 @@ topbarLatencyTicker();
     setJarvisVisualState("idle", "Neural Core Standing By");
   }
 
+  const holoVoiceFloatHud = document.getElementById("holoVoiceFloatHud");
+
   function openJarvisOverlay() {
-    if (!voiceOverlay) return;
-    voiceOverlay.style.display = "flex";
-    voiceOverlay.setAttribute("aria-hidden", "false");
+    if (voiceOverlay) {
+      voiceOverlay.style.display = "flex";
+      voiceOverlay.setAttribute("aria-hidden", "false");
+    }
+    if (holoVoiceFloatHud) {
+      holoVoiceFloatHud.style.display = "flex";
+      holoVoiceFloatHud.setAttribute("aria-hidden", "false");
+    }
     setJarvisVisualState("idle", "Neural Core Standing By · Initializing Mic...");
     startJarvisListening();
   }
 
   function closeJarvisOverlay() {
-    if (!voiceOverlay) return;
-    voiceOverlay.style.display = "none";
-    voiceOverlay.setAttribute("aria-hidden", "true");
+    if (voiceOverlay) {
+      voiceOverlay.style.display = "none";
+      voiceOverlay.setAttribute("aria-hidden", "true");
+    }
+    if (holoVoiceFloatHud) {
+      holoVoiceFloatHud.style.display = "none";
+      holoVoiceFloatHud.setAttribute("aria-hidden", "true");
+    }
     stopJarvisListening();
     window.speechSynthesis?.cancel();
   }
@@ -11111,6 +11148,51 @@ topbarLatencyTicker();
       if (isJarvisMuted) window.speechSynthesis?.cancel();
     });
   }
+
+  // Floating Holographic Audio Waveform HUD Event Handlers
+  const holoFloatCloseBtn = document.getElementById("holoFloatCloseBtn");
+  const holoFloatMicBtn = document.getElementById("holoFloatMicBtn");
+  const holoFloatExpandBtn = document.getElementById("holoFloatExpandBtn");
+
+  if (holoFloatCloseBtn) {
+    holoFloatCloseBtn.addEventListener("click", () => {
+      if (holoVoiceFloatHud) holoVoiceFloatHud.style.display = "none";
+    });
+  }
+  if (holoFloatMicBtn) {
+    holoFloatMicBtn.addEventListener("click", () => {
+      if (isJarvisListening) stopJarvisListening();
+      else startJarvisListening();
+    });
+  }
+  if (holoFloatExpandBtn) {
+    holoFloatExpandBtn.addEventListener("click", () => {
+      if (voiceOverlay) {
+        voiceOverlay.style.display = "flex";
+        voiceOverlay.setAttribute("aria-hidden", "false");
+      }
+    });
+  }
+
+  // Window Global Helpers for Modular Holographic Grid Widgets
+  window.openAcademicHub = function() {
+    if (typeof switchView === "function") switchView("academic-hub-workspace");
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  };
+  window.openKnowledgeVault = function() {
+    if (typeof switchView === "function") switchView("knowledge-vault");
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  };
+  window.openDeckStudio = function() {
+    if (typeof switchView === "function") switchView("creation-lab");
+    const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
+    if (presTab) presTab.click();
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  };
+  window.openNeuralVoiceCore = function() {
+    openJarvisOverlay();
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  };
 
   // Suggestion chips click handler
   document.querySelectorAll(".jarvis-command-suggestions .sugg-chip").forEach(chip => {

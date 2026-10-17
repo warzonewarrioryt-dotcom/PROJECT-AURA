@@ -11,42 +11,44 @@
    1. DESIGN TOKENS
 ========================================================= */
 :root {
-  /* Disciplined Enterprise Monochrome Architecture */
-  --bg-canvas: #090A0F;
-  --bg-surface: #0F1218;
-  --bg-surface-subtle: #141720;
-  --bg-surface-elevated: #161B22;
-  --bg-surface-hover: #1C222E;
-  --bg-glass: rgba(15, 18, 24, 0.94);
+  /* Ultra-Futuristic Quantum Slate & Cyberpunk Neural OS Architecture */
+  --bg-canvas: #030408;
+  --bg-surface: rgba(10, 14, 23, 0.7);
+  --bg-surface-subtle: rgba(13, 19, 33, 0.65);
+  --bg-surface-elevated: rgba(16, 24, 40, 0.75);
+  --bg-surface-hover: rgba(22, 33, 56, 0.85);
+  --bg-glass: rgba(10, 14, 23, 0.7);
 
-  /* Typography (Inter / SF Pro / Geist) */
+  /* Typography (Inter / JetBrains Mono / SF Pro) */
   --text-primary: #F8FAFC;
   --text-secondary: #94A3B8;
   --text-tertiary: #64748B;
-  --text-inverse: #090A0F;
+  --text-inverse: #030408;
 
   /* Contrast Selection & Active Tokens */
-  --active-bg: rgba(56, 189, 248, 0.08);
-  --active-text: #F8FAFC;
-  --selection-bg: rgba(56, 189, 248, 0.25);
+  --active-bg: rgba(0, 240, 255, 0.12);
+  --active-text: #00F0FF;
+  --selection-bg: rgba(0, 240, 255, 0.3);
   --selection-text: #FFFFFF;
 
-  /* Borders & Dividers - Crisp 1px institutional borders */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-card: rgba(255, 255, 255, 0.08);
-  --border-focus: #38BDF8;
+  /* Borders & Dividers - Razor-sharp 1px cyber borders */
+  --border-subtle: rgba(0, 240, 255, 0.15);
+  --border-medium: rgba(0, 240, 255, 0.25);
+  --border-card: rgba(0, 240, 255, 0.15);
+  --border-focus: #00F0FF;
 
-  /* Enterprise Accents (Muted Champagne Gold & Crisp Cyan) */
-  --accent-gold: #D4AF37;
-  --accent-gold-soft: rgba(212, 175, 55, 0.12);
-  --accent-gold-hover: #E2B714;
-  --accent-cyan: #38BDF8;
-  --accent-cyan-soft: rgba(56, 189, 248, 0.12);
+  /* Holographic Sci-Fi Accents (Neon Cyan · Emerald · Amber) */
+  --accent-gold: #00F0FF;
+  --accent-gold-soft: rgba(0, 240, 255, 0.15);
+  --accent-gold-hover: #38F4FF;
+  --accent-cyan: #00F0FF;
+  --accent-cyan-soft: rgba(0, 240, 255, 0.15);
   --accent-sage: #10B981;
-  --accent-sage-soft: rgba(16, 185, 129, 0.14);
-  --accent-blue: #38BDF8;
-  --accent-blue-soft: rgba(56, 189, 248, 0.12);
+  --accent-sage-soft: rgba(16, 185, 129, 0.16);
+  --accent-amber: #F59E0B;
+  --accent-amber-soft: rgba(245, 158, 11, 0.16);
+  --accent-blue: #00F0FF;
+  --accent-blue-soft: rgba(0, 240, 255, 0.15);
   --accent-rose: #F43F5E;
   --accent-rose-soft: rgba(244, 63, 94, 0.14);
 
@@ -266,7 +268,6 @@ body[data-theme="rugged-tactical"] {
 ========================================================= */
 
 /* 1. ROSE & OLIVE — Dusty Rose (#c9a0a0) & Botanical Olive (#8a8f6b) [Dark Mode] */
-body[data-theme="enterprise-dark"],
 body[data-theme="rose-olive"],
 body[data-theme="default-rose-olive"] {
   --bg-canvas: #090A0F;
@@ -15604,3 +15605,1101 @@ body {
 
 
 
+
+
+/* ==========================================================================
+   PROJECT AURA 3.0 — HOLOGRAPHIC NEURAL OPERATING SYSTEM
+   CYBERPUNK HUD COMMAND CENTER & GLOW ARCHITECTURE MASTER SPECIFICATION
+   ========================================================================== */
+
+/* 1. FUTURISTIC COLOR ARCHITECTURE & QUANTUM SLATE GLOW SYSTEM */
+:root {
+  --bg-canvas: #030408 !important;
+  --bg-surface: rgba(10, 14, 23, 0.7) !important;
+  --bg-surface-subtle: rgba(13, 19, 33, 0.65) !important;
+  --bg-surface-elevated: rgba(16, 24, 40, 0.75) !important;
+  --bg-surface-hover: rgba(22, 33, 56, 0.85) !important;
+  --bg-glass: rgba(10, 14, 23, 0.7) !important;
+
+  /* Typography */
+  --text-primary: #F8FAFC !important;
+  --text-secondary: #94A3B8 !important;
+  --text-tertiary: #64748B !important;
+  --text-inverse: #030408 !important;
+
+  /* Neon Cyan (#00f0ff) for active elements */
+  --accent-cyan: #00F0FF !important;
+  --accent-cyan-soft: rgba(0, 240, 255, 0.15) !important;
+  --accent-gold: #00F0FF !important;
+  --accent-gold-soft: rgba(0, 240, 255, 0.15) !important;
+  --accent-gold-hover: #38F4FF !important;
+  --accent-blue: #00F0FF !important;
+  --accent-blue-soft: rgba(0, 240, 255, 0.15) !important;
+  --active-bg: rgba(0, 240, 255, 0.12) !important;
+  --active-text: #00F0FF !important;
+  --selection-bg: rgba(0, 240, 255, 0.3) !important;
+  --selection-text: #FFFFFF !important;
+
+  /* Holographic Emerald (#10b981) for operational status */
+  --accent-sage: #10B981 !important;
+  --accent-sage-soft: rgba(16, 185, 129, 0.16) !important;
+
+  /* Electric Amber (#f59e0b) for alerts */
+  --accent-amber: #F59E0B !important;
+  --accent-amber-soft: rgba(245, 158, 11, 0.16) !important;
+  --accent-rose: #F43F5E !important;
+  --accent-rose-soft: rgba(244, 63, 94, 0.14) !important;
+
+  /* Razor-sharp 1px cyber borders */
+  --border-subtle: rgba(0, 240, 255, 0.15) !important;
+  --border-medium: rgba(0, 240, 255, 0.25) !important;
+  --border-card: rgba(0, 240, 255, 0.15) !important;
+  --border-focus: #00F0FF !important;
+  --aura-line: rgba(0, 240, 255, 0.15) !important;
+  --aura-glass: rgba(10, 14, 23, 0.7) !important;
+}
+
+body,
+body[data-theme="enterprise-dark"],
+.aura-shell,
+.aura-main-stage {
+  background-color: #030408 !important;
+  background-image: 
+    radial-gradient(ellipse 95% 65% at 50% -20%, rgba(14, 30, 85, 0.55), transparent 70%),
+    radial-gradient(circle at 100% 100%, rgba(40, 15, 80, 0.38), transparent 60%),
+    radial-gradient(circle at 0% 50%, rgba(0, 240, 255, 0.08), transparent 50%),
+    radial-gradient(circle at 50% 120%, rgba(16, 185, 129, 0.05), transparent 60%) !important;
+  background-attachment: fixed !important;
+  color: #f8fafc !important;
+}
+
+/* Sci-Fi Micro-Grid Backdrop Overlay */
+.aura-main-stage::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: 
+    linear-gradient(rgba(0, 240, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.018) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%);
+}
+
+/* 2. TRANSLUCENT GLASS PANELS & RAZOR-SHARP CYBER BORDERS */
+.aura-topbar,
+.aura-sidebar,
+.workspace-card,
+.creation-crisp-card,
+.grounded-chat-card,
+.dialogue-modal-card,
+.research-brief-card,
+.study-intel-tab-pane,
+.quiz-question-card,
+.mock-exam-header-bar,
+.holo-grid-widget,
+.holo-sat-card,
+.holo-voice-float-hud,
+.jarvis-hud-modal,
+.modal-content,
+.global-gesture-hud-widget,
+.topbar-telemetry,
+.holo-hud-hero {
+  background: rgba(10, 14, 23, 0.7) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 240, 255, 0.15) !important;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.05), 0 12px 36px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 3. NEON ACCENTS: CYAN (#00f0ff), EMERALD (#10b981), AMBER (#f59e0b) */
+.holo-cyan-text,
+.tel-cyan {
+  color: #00f0ff !important;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.holo-emerald-text,
+.tel-operational {
+  color: #10b981 !important;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.holo-amber-text {
+  color: #f59e0b !important;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.pulse-dot-green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981 !important;
+  box-shadow: 0 0 10px #10b981, 0 0 18px rgba(16, 185, 129, 0.8) !important;
+  animation: holoPulseDot 1.8s infinite alternate !important;
+  display: inline-block;
+}
+
+@keyframes holoPulseDot {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Sidebar Cyber Accents */
+.aura-sidebar {
+  border-right: 1px solid rgba(0, 240, 255, 0.15) !important;
+}
+
+.brand-monogram {
+  color: #00f0ff !important;
+  text-shadow: 0 0 12px rgba(0, 240, 255, 0.8) !important;
+}
+
+.nav-item.active {
+  background: rgba(0, 240, 255, 0.12) !important;
+  border-left: 2px solid #00f0ff !important;
+  color: #00f0ff !important;
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.08) !important;
+}
+
+.nav-item:hover:not(.active) {
+  background: rgba(0, 240, 255, 0.06) !important;
+  color: #e0f2fe !important;
+}
+
+.nav-item.active .nav-svg-icon svg,
+.nav-item:hover .nav-svg-icon svg {
+  stroke: #00f0ff !important;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
+}
+
+.nav-badge {
+  background: rgba(0, 240, 255, 0.12) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  color: #00f0ff !important;
+  font-family: var(--font-mono) !important;
+}
+
+.sidebar-version-pill {
+  background: rgba(0, 240, 255, 0.12) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  color: #00f0ff !important;
+  font-family: var(--font-mono) !important;
+}
+
+/* 4. TOP TELEMETRY HEADER & LIVE CRYPTOGRAPHIC CLOCK */
+.holo-telemetry-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-family: var(--font-mono) !important;
+  background: rgba(10, 14, 23, 0.8) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  border-radius: 6px !important;
+  padding: 5px 12px !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.08) !important;
+}
+
+.holo-telemetry-header .tel-tag {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+}
+
+.holo-telemetry-header .tel-k {
+  color: #64748b !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.holo-telemetry-header .tel-sep {
+  color: rgba(0, 240, 255, 0.2) !important;
+}
+
+.holo-crypto-clock {
+  background: rgba(10, 14, 23, 0.85) !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.1) !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
+  color: #00f0ff !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.08em !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.holo-crypto-clock .crypto-date {
+  color: #94a3b8;
+}
+
+.holo-crypto-clock .crypto-sep {
+  color: rgba(0, 240, 255, 0.4);
+}
+
+.holo-crypto-clock .crypto-time {
+  color: #00f0ff;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.holo-crypto-clock .crypto-hash {
+  color: #f59e0b;
+  font-size: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  text-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+.holo-hud-btn {
+  background: rgba(10, 14, 23, 0.8) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  color: #00f0ff !important;
+  transition: all 0.2s ease !important;
+}
+
+.holo-hud-btn:hover {
+  background: rgba(0, 240, 255, 0.15) !important;
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.holo-user-badge {
+  background: rgba(10, 14, 23, 0.8) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+}
+
+.holo-emerald-pill {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  color: #10b981 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* 5. MODULAR HOLOGRAPHIC GRID & FLOATING GLASS WIDGETS */
+.holo-hud-hero {
+  border: 1px solid rgba(0, 240, 255, 0.15) !important;
+  background: rgba(10, 14, 23, 0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-radius: 16px !important;
+  padding: 26px !important;
+  position: relative !important;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.05), inset 0 0 30px rgba(0, 240, 255, 0.02) !important;
+  margin-bottom: 24px !important;
+}
+
+.holo-hud-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #00f0ff, transparent);
+}
+
+.holo-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.14em;
+  margin-bottom: 8px;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.holo-headline {
+  color: #ffffff !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 8px !important;
+}
+
+.holo-subline {
+  color: #94a3b8 !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  max-width: 820px !important;
+}
+
+.holo-telemetry-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 24px 0;
+  padding: 12px 16px;
+  background: rgba(6, 9, 16, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  border-radius: 8px;
+}
+
+.holo-tel-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+}
+
+/* Holographic 4-Widget Matrix */
+.holo-modular-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .holo-modular-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.holo-grid-widget {
+  background: rgba(10, 14, 23, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 240, 255, 0.16) !important;
+  border-radius: 12px !important;
+  padding: 22px 24px !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 220px !important;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.04), 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden !important;
+}
+
+/* Sharp Cyber Corner Brackets */
+.holo-grid-widget::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid #00f0ff;
+  border-left: 2px solid #00f0ff;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.holo-grid-widget::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid #00f0ff;
+  border-right: 2px solid #00f0ff;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.holo-grid-widget:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(0, 240, 255, 0.45) !important;
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.16), 0 16px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+.holo-grid-widget:hover::before,
+.holo-grid-widget:hover::after {
+  width: 18px;
+  height: 18px;
+  border-color: #38f4ff;
+  filter: drop-shadow(0 0 8px #00f0ff);
+}
+
+.holo-widget-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.holo-node-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #64748b;
+}
+
+.holo-status-pill {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.holo-status-pill.emerald {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+}
+
+.holo-status-pill.cyan {
+  background: rgba(0, 240, 255, 0.14);
+  color: #00f0ff;
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.holo-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.holo-widget-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.holo-widget-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.holo-widget-icon.cyan {
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.holo-widget-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.holo-widget-sub {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-family: var(--font-mono);
+}
+
+.holo-widget-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #94a3b8;
+  margin: 8px 0 12px 0;
+}
+
+.holo-widget-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.holo-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.holo-chip.emerald {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.holo-chip.cyan {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
+}
+
+.holo-widget-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 240, 255, 0.12);
+  padding-top: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+}
+
+.holo-grid-widget:hover .holo-widget-action {
+  color: #38f4ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+.holo-grid-widget:hover .holo-widget-action svg {
+  transform: translateX(4px);
+  transition: transform 0.2s ease;
+}
+
+/* Mini visualizer inside voice widget */
+.holo-mini-visualizer-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: rgba(0, 240, 255, 0.05);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 6px;
+  margin: 6px 0 10px 0;
+}
+
+.holo-mini-ring {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px dashed #00f0ff;
+  animation: holoRotateClockwise 6s linear infinite;
+}
+
+.holo-mini-bars {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 14px;
+}
+
+.holo-mini-bars span {
+  width: 2.5px;
+  height: 6px;
+  background: #00f0ff;
+  border-radius: 1px;
+  animation: holoMiniWave 0.7s ease-in-out infinite alternate;
+}
+
+.holo-mini-bars span:nth-child(2) { animation-delay: 0.1s; height: 10px; }
+.holo-mini-bars span:nth-child(3) { animation-delay: 0.2s; height: 14px; }
+.holo-mini-bars span:nth-child(4) { animation-delay: 0.15s; height: 11px; }
+.holo-mini-bars span:nth-child(5) { animation-delay: 0.25s; height: 8px; }
+.holo-mini-bars span:nth-child(6) { animation-delay: 0.05s; height: 12px; }
+.holo-mini-bars span:nth-child(7) { animation-delay: 0.3s; height: 5px; }
+
+@keyframes holoMiniWave {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1.2); }
+}
+
+.holo-mini-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.06em;
+}
+
+/* Secondary Cyber Satellite Grid */
+.holo-satellite-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .holo-satellite-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .holo-satellite-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.holo-sat-card {
+  background: rgba(10, 14, 23, 0.65) !important;
+  border: 1px solid rgba(0, 240, 255, 0.12) !important;
+  border-radius: 8px !important;
+  padding: 12px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-align: left !important;
+  width: 100% !important;
+}
+
+.holo-sat-card:hover {
+  background: rgba(0, 240, 255, 0.08) !important;
+  border-color: rgba(0, 240, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.08) !important;
+}
+
+.sat-icon {
+  font-size: 18px;
+}
+
+.sat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sat-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sat-sub {
+  display: block;
+  font-size: 10.5px;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sat-arrow {
+  color: #00f0ff;
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.holo-sat-card:hover .sat-arrow {
+  transform: translateX(3px);
+}
+
+/* 6. FLOATING HOLOGRAPHIC AUDIO WAVEFORM & CONCENTRIC ENERGY RING VISUALIZER */
+.holo-voice-float-hud {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 350px;
+  z-index: 99995;
+  background: rgba(10, 14, 23, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  border-radius: 14px !important;
+  padding: 18px 20px !important;
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: holoHudSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes holoHudSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.holo-float-brackets {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border-radius: 14px;
+}
+
+.holo-float-brackets::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid #00f0ff;
+  border-left: 2px solid #00f0ff;
+  border-top-left-radius: 14px;
+}
+
+.holo-float-brackets::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid #00f0ff;
+  border-right: 2px solid #00f0ff;
+  border-bottom-right-radius: 14px;
+}
+
+.holo-float-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+  padding-bottom: 8px;
+}
+
+.holo-float-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #00f0ff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.holo-pulse-core {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: holoPulseDot 1.2s infinite alternate;
+}
+
+.holo-float-close-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.holo-float-close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+/* Concentric Energy Rings & Audio Waveform Stage */
+.holo-energy-orb-stage {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-energy-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.holo-energy-ring.ring-outer {
+  width: 104px;
+  height: 104px;
+  border: 1px dashed rgba(0, 240, 255, 0.35);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+  animation: holoRotateClockwise 10s linear infinite;
+}
+
+.holo-energy-ring.ring-mid {
+  width: 76px;
+  height: 76px;
+  border: 1.5px solid transparent;
+  border-top-color: #00f0ff;
+  border-bottom-color: #10b981;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  animation: holoRotateCounter 6s linear infinite;
+}
+
+.holo-energy-ring.ring-inner {
+  width: 52px;
+  height: 52px;
+  border: 1px dotted rgba(0, 240, 255, 0.5);
+  animation: holoPulseRing 2s ease-in-out infinite alternate;
+}
+
+@keyframes holoRotateClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes holoRotateCounter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes holoPulseRing {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 10px #00f0ff); }
+}
+
+.holo-energy-core-disc {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, rgba(10, 14, 23, 0.95) 75%);
+  border: 1.5px solid #00f0ff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.holo-energy-core-disc.speaking {
+  border-color: #38f4ff;
+  box-shadow: 0 0 30px #00f0ff, inset 0 0 15px #00f0ff;
+  animation: holoCoreSpeaking 0.4s infinite alternate;
+}
+
+.holo-energy-core-disc.listening {
+  border-color: #10b981;
+  box-shadow: 0 0 25px #10b981, inset 0 0 12px #10b981;
+  animation: holoCoreListening 0.8s infinite alternate;
+}
+
+@keyframes holoCoreSpeaking {
+  0% { transform: scale(0.95); filter: drop-shadow(0 0 8px #00f0ff); }
+  100% { transform: scale(1.12); filter: drop-shadow(0 0 18px #00f0ff); }
+}
+
+@keyframes holoCoreListening {
+  0% { transform: scale(0.95); filter: drop-shadow(0 0 6px #10b981); }
+  100% { transform: scale(1.08); filter: drop-shadow(0 0 14px #10b981); }
+}
+
+.holo-core-glyph {
+  font-size: 16px;
+  color: #00f0ff;
+  text-shadow: 0 0 10px #00f0ff;
+}
+
+/* Holographic Audio Waveform Spectrum */
+.holo-audio-waveform-bars {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3.5px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.holo-audio-waveform-bars .holo-bar {
+  width: 3px;
+  height: 6px;
+  background: #00f0ff;
+  border-radius: 1.5px;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.5);
+  animation: holoWaveformPulse 0.9s ease-in-out infinite alternate;
+}
+
+.holo-audio-waveform-bars .holo-bar:nth-child(2) { animation-delay: 0.1s; height: 10px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(3) { animation-delay: 0.25s; height: 16px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(4) { animation-delay: 0.05s; height: 12px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(5) { animation-delay: 0.3s; height: 20px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(6) { animation-delay: 0.15s; height: 14px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(7) { animation-delay: 0.35s; height: 22px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(8) { animation-delay: 0.2s; height: 18px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(9) { animation-delay: 0.4s; height: 14px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(10) { animation-delay: 0.12s; height: 10px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(11) { animation-delay: 0.28s; height: 16px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(12) { animation-delay: 0.08s; height: 8px; }
+.holo-audio-waveform-bars .holo-bar:nth-child(13) { animation-delay: 0.22s; height: 12px; }
+
+@keyframes holoWaveformPulse {
+  0% { transform: scaleY(0.3); opacity: 0.4; }
+  100% { transform: scaleY(1.3); opacity: 1; }
+}
+
+.holo-audio-waveform-bars.speaking .holo-bar {
+  background: #38f4ff;
+  box-shadow: 0 0 10px #00f0ff;
+  animation-duration: 0.4s;
+}
+
+.holo-audio-waveform-bars.listening .holo-bar {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation-duration: 0.7s;
+}
+
+.holo-float-telemetry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.holo-float-status {
+  color: #00f0ff;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+}
+
+.holo-float-lang {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.holo-float-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.holo-float-action-btn {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.holo-float-action-btn.primary {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: rgba(0, 240, 255, 0.4);
+  color: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+}
+
+.holo-float-action-btn.primary:hover {
+  background: rgba(0, 240, 255, 0.25);
+  border-color: #00f0ff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+  color: #ffffff;
+}
+
+.holo-float-action-btn.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+}
+
+.holo-float-action-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* 7. REVAMPED J.A.R.V.I.S. MODAL HUD STYLING */
+.jarvis-hud-modal {
+  background: rgba(10, 14, 23, 0.88) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  box-shadow: 0 0 45px rgba(0, 240, 255, 0.12), 0 25px 70px rgba(0, 0, 0, 0.85) !important;
+}
+
+.jarvis-hud-modal::before {
+  background: linear-gradient(90deg, transparent, #00f0ff, #10b981, transparent) !important;
+}
+
+.jarvis-brand-title {
+  color: #00f0ff !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.5) !important;
+}
+
+.jarvis-lang-pill {
+  background: rgba(0, 240, 255, 0.12) !important;
+  color: #00f0ff !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+}
+
+.jarvis-orbital-ring.outer {
+  border-color: rgba(0, 240, 255, 0.35) !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.1) !important;
+}
+
+.jarvis-orbital-ring.inner {
+  border-color: rgba(16, 185, 129, 0.45) transparent rgba(0, 240, 255, 0.45) transparent !important;
+}
+
+.jarvis-hologram-disc {
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.25) 0%, rgba(10, 14, 23, 0.95) 70%) !important;
+  border: 1px solid rgba(0, 240, 255, 0.5) !important;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.3) !important;
+}
+
+.jarvis-hologram-glyph {
+  color: #00f0ff !important;
+  text-shadow: 0 0 15px #00f0ff !important;
+}
+
+.jarvis-acoustic-bars span {
+  background: #00f0ff !important;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.6) !important;
+}
+
+.jarvis-status-line {
+  color: #00f0ff !important;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.4) !important;
+}
+
+.jarvis-action-btn.primary {
+  background: rgba(0, 240, 255, 0.18) !important;
+  border-color: rgba(0, 240, 255, 0.4) !important;
+  color: #00f0ff !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.2) !important;
+}
+
+.jarvis-action-btn.primary:hover {
+  background: rgba(0, 240, 255, 0.3) !important;
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.4) !important;
+  color: #ffffff !important;
+}
+
+/* 8. FORM CONTROLS & SELECTION */
+input, textarea, select {
+  background-color: rgba(10, 14, 23, 0.8) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.25) !important;
+  outline: none !important;
+}
+
+::selection {
+  background: rgba(0, 240, 255, 0.3) !important;
+  color: #ffffff !important;
+}
