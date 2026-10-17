@@ -2094,6 +2094,37 @@
               </div>
               <p class="eng-subline">Explore verified Tamil Nadu State Board (Samacheer Kalvi) &amp; CBSE syllabus breakdown, core units, high-yield board exam formulas, and chapter summaries.</p>
 
+              <!-- Top Prominent Board Selection Segmented Switcher -->
+              <div class="academic-board-segmented-wrap" id="academicBoardSelectorWrap">
+                <div class="academic-board-selector-header">
+                  <div class="academic-board-tag">
+                    <span class="board-indicator-pulse"></span>
+                    <span>CURRICULUM BOARD SELECTION</span>
+                  </div>
+                  <span class="academic-board-hint">Filters syllabus, units &amp; YouTube recommendations instantly</span>
+                </div>
+                <div class="academic-board-segmented-switch" id="academicBoardSwitcher" role="tablist" aria-label="Select Academic Curriculum Board">
+                  <button type="button" class="board-segmented-btn active" data-board="TN_STATE" id="btnBoardTNState" role="tab" aria-selected="true">
+                    <div class="board-btn-glow"></div>
+                    <span class="board-btn-icon">🏛️</span>
+                    <div class="board-btn-text">
+                      <div class="board-btn-title">Tamil Nadu State Board (SSLC / HSC)</div>
+                      <div class="board-btn-sub">Samacheer Kalvi · State Syllabus · Kalvi TV &amp; State Experts</div>
+                    </div>
+                    <span class="board-active-badge">ACTIVE</span>
+                  </button>
+                  <button type="button" class="board-segmented-btn" data-board="CBSE" id="btnBoardCBSE" role="tab" aria-selected="false">
+                    <div class="board-btn-glow"></div>
+                    <span class="board-btn-icon">🌐</span>
+                    <div class="board-btn-text">
+                      <div class="board-btn-title">CBSE Board</div>
+                      <div class="board-btn-sub">NCERT National Curriculum · Physics Wallah, Khan Academy &amp; Magnet Brains</div>
+                    </div>
+                    <span class="board-active-badge">ACTIVE</span>
+                  </button>
+                </div>
+              </div>
+
               <!-- Standard Selection Row -->
               <div class="school-selector-container">
                 <div style="font-size:11px; font-weight:800; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.06em;">Select Class / Standard:</div>
@@ -2103,23 +2134,14 @@
                   <button class="school-std-pill active" data-schoolstd="STD_12">🎓 12th Standard (Board Centum Track)</button>
                 </div>
 
-                <!-- 10th Standard Board Selector Sub-Tabs -->
-                <div id="schoolBoardSelectorBox" style="margin-top:8px; display:none;">
-                  <div style="font-size:11px; font-weight:800; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Select 10th Curriculum Board:</div>
-                  <div class="school-chips-row" id="schoolBoardChipsRow">
-                    <button class="school-board-pill active" data-board="TN_SSLC">🏛️ Tamil Nadu SSLC (State Board)</button>
-                    <button class="school-board-pill" data-board="CBSE">📘 CBSE Board (NCERT National)</button>
-                  </div>
-                </div>
-
                 <!-- 11th & 12th Stream / Group Selector -->
-                <div id="schoolGroupSelectorBox" style="margin-top:4px;">
+                <div id="schoolGroupSelectorBox" style="margin-top:12px;">
                   <div style="font-size:11px; font-weight:800; color:var(--accent-gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;">Select Stream / Group:</div>
                   <div class="school-chips-row" id="schoolGroupChipsRow">
-                    <button class="school-group-pill active" data-schoolgroup="BIO_MATHS">🌿 Bio-Maths Group (Maths, Physics, Chem, Bio)</button>
-                    <button class="school-group-pill" data-schoolgroup="COMP_SCI">💻 Computer Science Group (Maths, Physics, Chem, CS)</button>
-                    <button class="school-group-pill" data-schoolgroup="PURE_SCI">🔬 Pure Science Group (Physics, Chem, Botany, Zoology)</button>
-                    <button class="school-group-pill" data-schoolgroup="COMMERCE">📊 Commerce Group (Accountancy, Commerce, Eco, BM/CA)</button>
+                    <button class="school-group-pill active" data-schoolgroup="BIO_MATHS">🌿 Bio-Maths / Science (Maths, Physics, Chem, Bio)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMP_SCI">💻 Computer Science (Maths, Physics, Chem, CS)</button>
+                    <button class="school-group-pill" data-schoolgroup="PURE_SCI">🔬 Pure Science (Physics, Chem, Botany, Zoology)</button>
+                    <button class="school-group-pill" data-schoolgroup="COMMERCE">📊 Commerce Group (Accountancy, Business Studies, Eco, BM)</button>
                     <button class="school-group-pill" data-schoolgroup="ARTS">🎨 Arts &amp; Humanities (History, Pol Sci, Eco, Geo)</button>
                   </div>
                 </div>
