@@ -1850,165 +1850,160 @@
         <!-- =====================================================
              VIEW 6B: STUDENT PERFORMANCE & ANALYTICS — NEW!
         ===================================================== -->
+        <!-- =====================================================
+             VIEW 6B: STUDENT PERFORMANCE & ANALYTICS — USER FRIENDLY!
+        ===================================================== -->
         <section class="aura-view" id="view-student-performance">
           <div class="view-header">
-            <div class="view-eyebrow">Institutional Academic Telemetry</div>
-            <h2 class="view-title">Executive Performance &amp; Diagnostic Analytics</h2>
-            <p class="view-desc">Predictive mastery projections, syllabus completion velocity, retention decay modeling, and 52-week cognitive load analytics.</p>
+            <div class="view-eyebrow">
+              <span style="font-weight:700; color:var(--accent-gold); letter-spacing:0.05em;">📊 MY ACADEMIC REPORT CARD</span>
+            </div>
+            <h2 class="view-title">Performance &amp; Marks Analysis</h2>
+            <p class="view-desc">Clear summary of your test scores, subject strengths, areas to revise, and study streak — explained simply with smart AI recommendations.</p>
           </div>
 
-          <!-- 1. Executive KPI Cards -->
+          <!-- Quick Action Bar & Student Info -->
+          <div class="perf-top-action-bar">
+            <div class="perf-student-badge">
+              <span class="perf-avatar-emoji">🎓</span>
+              <div>
+                <div class="perf-student-name" id="perfStudentNameGreeting">Student Report Card</div>
+                <div class="perf-student-sub" id="perfStudentClassSub">12th Standard · Bio-Maths Track</div>
+              </div>
+            </div>
+            <div class="perf-action-buttons">
+              <button class="btn-perf-action primary" onclick="switchView('quiz-engine')">
+                <span>✦ Take Quick Quiz (5 Mins)</span>
+              </button>
+              <button class="btn-perf-action secondary" onclick="switchView('mock-test')">
+                <span>🏛️ Semester Mock Test</span>
+              </button>
+              <button class="btn-perf-action outline" id="btnTogglePerfDemo" title="Toggle sample student data preview">
+                <span>🧪 Demo Preview</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Friendly 4-Card Scorecard Overview -->
           <div class="perf-kpi-grid">
-            <div class="perf-kpi-card">
-              <div class="kpi-card-header">
-                <span class="kpi-title">Syllabus Completion Velocity</span>
-                <span class="kpi-icon">⚡</span>
-              </div>
-              <div class="kpi-value-row">
-                <span class="kpi-val" id="perfVelocityVal">--</span>
-                <span class="kpi-sub-unit">/ week</span>
-              </div>
-              <div class="kpi-trend" id="perfVelocityTrend">
-                <span>Awaiting verified activity</span>
-              </div>
-            </div>
-
-            <div class="perf-kpi-card">
-              <div class="kpi-card-header">
-                <span class="kpi-title">Cumulative Retention Index</span>
-                <span class="kpi-icon">🧠</span>
-              </div>
-              <div class="kpi-value-row">
-                <span class="kpi-val" id="perfRetentionVal">--</span>
-                <span class="kpi-sub-unit">Recall Accuracy</span>
-              </div>
-              <div class="kpi-trend" id="perfRetentionTrend">
-                <span>No test data yet</span>
-              </div>
-            </div>
-
-            <div class="perf-kpi-card">
-              <div class="kpi-card-header">
-                <span class="kpi-title">Average Problem Latency</span>
-                <span class="kpi-icon">⏱️</span>
-              </div>
-              <div class="kpi-value-row">
-                <span class="kpi-val" id="perfLatencyVal">--</span>
-                <span class="kpi-sub-unit">/ question</span>
-              </div>
-              <div class="kpi-trend" id="perfLatencyTrend">
-                <span>No timed assessments yet</span>
-              </div>
-            </div>
-
+            <!-- Card 1: Overall Average -->
             <div class="perf-kpi-card highlight">
-              <div class="kpi-card-header">
-                <span class="kpi-title">Exam Readiness Score</span>
-                <span class="kpi-icon">🎯</span>
+              <div class="perf-kpi-header">
+                <span class="perf-kpi-label">Overall Average Score</span>
+                <span class="perf-kpi-icon">🏆</span>
               </div>
-              <div class="kpi-value-row">
-                <span class="kpi-val" id="perfReadinessVal">--</span>
-                <span class="kpi-sub-unit">/ 100</span>
+              <div class="perf-kpi-val-row">
+                <span class="perf-kpi-value" id="perfReadinessVal">--</span>
+                <span class="perf-kpi-grade-badge" id="perfAvgGradeBadge">Awaiting Test</span>
               </div>
-              <div class="kpi-trend" id="perfReadinessTrend">
-                <span>Not enough data yet</span>
+              <div class="perf-kpi-subtext" id="perfReadinessTrend">Calculated from all your completed tests &amp; quizzes</div>
+            </div>
+
+            <!-- Card 2: Tests Completed -->
+            <div class="perf-kpi-card">
+              <div class="perf-kpi-header">
+                <span class="perf-kpi-label">Tests Completed</span>
+                <span class="perf-kpi-icon">📝</span>
               </div>
+              <div class="perf-kpi-val-row">
+                <span class="perf-kpi-value" id="perfTestsTakenVal">0</span>
+                <span class="perf-kpi-unit">tests graded</span>
+              </div>
+              <div class="perf-kpi-subtext" id="perfVelocityVal">Saved to your marksheet records</div>
+            </div>
+
+            <!-- Card 3: Top Strength -->
+            <div class="perf-kpi-card">
+              <div class="perf-kpi-header">
+                <span class="perf-kpi-label">Top Strength Subject</span>
+                <span class="perf-kpi-icon">🌟</span>
+              </div>
+              <div class="perf-kpi-val-row">
+                <span class="perf-kpi-value-sm" id="perfTopStrengthVal">No Data Yet</span>
+              </div>
+              <div class="perf-kpi-subtext" id="perfTopStrengthSub">Scored 75%+ in this subject</div>
+            </div>
+
+            <!-- Card 4: Study Streak -->
+            <div class="perf-kpi-card">
+              <div class="perf-kpi-header">
+                <span class="perf-kpi-label">Study Streak &amp; Time</span>
+                <span class="perf-kpi-icon">🔥</span>
+              </div>
+              <div class="perf-kpi-val-row">
+                <span class="perf-kpi-value" id="perfCurrentStreak">0 Days</span>
+                <span class="perf-kpi-time-pill" id="perfTotalHours">0h Practice</span>
+              </div>
+              <div class="perf-kpi-subtext">Consistent daily practice builds exam confidence</div>
             </div>
           </div>
 
-          <!-- 2. Middle Row: Subject Competency Quadrant Matrix + Predictive Score Projector -->
-          <div class="perf-middle-grid">
-            <!-- Left: Subject Competency Quadrant Matrix -->
-            <div class="workspace-card perf-matrix-card">
+          <!-- Hidden anchors for safe backward compatibility -->
+          <span id="perfRetentionVal" style="display:none;"></span>
+          <span id="perfLatencyVal" style="display:none;"></span>
+          <span id="perfCompetencyBadge" style="display:none;"></span>
+          <span id="projScoreDisplay" style="display:none;"></span>
+          <span id="projIntervalDisplay" style="display:none;"></span>
+          <div id="projSubjectBreakdown" style="display:none;"></div>
+          <div id="competencyQuadrantGrid" style="display:none;"></div>
+
+          <!-- 2. Main Middle Section: Subject Scores & AI Recommendations -->
+          <div class="perf-two-col-grid">
+            <!-- Left: Subject-by-Subject Score Breakdown -->
+            <div class="workspace-card perf-subcard">
               <div class="eng-title-row">
                 <div class="eng-title-headline">
-                  <span>🧭</span>
-                  <span>Subject Competency Radar Matrix</span>
+                  <span>📚</span>
+                  <span>Subject Mastery &amp; Progress</span>
                 </div>
-                <span class="eng-badge-pill" id="perfCompetencyBadge">Measured Activity</span>
+                <span class="eng-badge-pill" id="perfSubjectCountBadge">0 Subjects</span>
               </div>
-              <p class="eng-subline">Quadrant mapping categorizing core curriculum disciplines by verified mastery vs semester exam weightage urgency.</p>
-
-              <div class="competency-quadrant-container" id="competencyQuadrantGrid">
-                <!-- Populated dynamically based on genuine completed assessments -->
-                <div id="quadrantEmptyNotice" style="grid-column: 1/-1; padding: 40px 20px; text-align: center; color: var(--text-tertiary); background: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
-                  <div style="font-size:24px; margin-bottom:6px;">🧭</div>
-                  <div style="font-weight:700; font-size:13px; color:var(--text-secondary); margin-bottom:4px;">No Competency Data Recorded Yet</div>
-                  <div style="font-size:12px;">Take a quiz in Quiz Engine or submit a Semester Mock Test to map verified mastery.</div>
-                </div>
-              </div>
+              <p class="eng-subline">See your marks and progress bar for each subject. Green indicates mastery, amber shows good standing, and coral highlights topics to revise.</p>
+              
+              <div class="perf-subjects-list" id="perfSubjectsContainer"></div>
             </div>
 
-            <!-- Right: Predictive Score Projector -->
-            <div class="workspace-card perf-projector-card">
+            <!-- Right: Smart AI Study Advice & Action Tips -->
+            <div class="workspace-card perf-subcard">
               <div class="eng-title-row">
                 <div class="eng-title-headline">
-                  <span>📊</span>
-                  <span>Predictive Score Projector</span>
+                  <span>💡</span>
+                  <span>Personal AI Study Recommendations</span>
                 </div>
-                <span class="eng-badge-pill" id="projConfidenceBadge" style="background:rgba(56,189,248,0.12); color:#38bdf8;">Requires >= 3 Tests</span>
+                <span class="eng-badge-pill" style="background:rgba(212,175,55,0.12); color:#e2b714;">AI Exam Coach</span>
               </div>
-              <p class="eng-subline">Projected board exam and university semester outcome calculated from timed mock accuracy &amp; active recall trends.</p>
-
-              <div class="projector-big-score-box">
-                <div class="proj-headline">Projected Examination Aggregate</div>
-                <div class="proj-number" id="projScoreDisplay">--%</div>
-                <div class="proj-interval" id="projIntervalDisplay">Requires at least 3 completed assessments to project score</div>
-              </div>
-
-              <!-- Subject Projection Breakdown Progress Bars -->
-              <div class="proj-subject-breakdown" id="projSubjectBreakdown">
-                <div style="text-align:center; padding:24px 12px; color:var(--text-tertiary); font-size:12px;">
-                  Subject projections unlock automatically after taking at least 3 graded assessments.
-                </div>
-              </div>
+              <p class="eng-subline">Personalized suggestions to boost your grades based on your latest test results.</p>
+              
+              <div class="perf-advice-container" id="perfAdviceContainer"></div>
             </div>
           </div>
 
-          <!-- 3. Cognitive Load & Time-on-Task 52-Week Heatmap -->
+          <!-- 3. Weekly Study Activity Tracker -->
           <div class="workspace-card" style="margin-bottom:20px;">
             <div class="eng-title-row">
               <div class="eng-title-headline">
                 <span>🗓️</span>
-                <span>Cognitive Load &amp; Deep-Work Activity Heatmap (52 Weeks)</span>
+                <span>Weekly Study Activity &amp; Practice Log</span>
               </div>
               <div class="heatmap-telemetry-badge">
-                <span id="perfTotalHours">Total Deep Work: <strong>0 Hours</strong></span>
-                <span>·</span>
-                <span id="perfCurrentStreak">Current Streak: <strong>0 Days</strong></span>
+                <span id="perfWeeklySummaryLabel">This Week: <strong>0 Tests Taken</strong></span>
               </div>
             </div>
-            <p class="eng-subline">Continuous tracking of deep focus study sprints, timed mock test sessions, and syllabus chapter coverage across all 52 academic weeks.</p>
+            <p class="eng-subline">Track your study consistency across the week. Daily short practice is proven to improve long-term recall for board &amp; semester exams.</p>
 
-            <div class="heatmap-calendar-wrapper">
-              <div class="heatmap-day-labels">
-                <span>Mon</span>
-                <span>Wed</span>
-                <span>Fri</span>
-              </div>
-              <div class="heatmap-grid" id="perf52WeekHeatmapGrid"></div>
-            </div>
-
-            <div class="heatmap-legend-row">
-              <span class="legend-text">No Activity</span>
-              <div class="heatmap-cell lvl-0"></div>
-              <div class="heatmap-cell lvl-1"></div>
-              <div class="heatmap-cell lvl-2"></div>
-              <div class="heatmap-cell lvl-3"></div>
-              <div class="heatmap-cell lvl-4"></div>
-              <span class="legend-text">High Focus Session</span>
-            </div>
+            <div class="perf-weekly-strip" id="perfWeeklyStrip"></div>
           </div>
 
-          <!-- 4. Test Marksheets Examination History Table -->
+          <!-- 4. Marksheets & Test Records History -->
           <div class="workspace-card">
             <div class="eng-title-row">
               <div class="eng-title-headline">
                 <span>📜</span>
-                <span>Examination Marksheets History &amp; Transcript Archive</span>
+                <span>My Examination Marksheets &amp; Test Records</span>
               </div>
               <span class="eng-badge-pill" id="perfTestsCountBadge">0 Assessments Recorded</span>
             </div>
+            <p class="eng-subline">Full record of all your quizzes and semester mock tests with individual question scores, grade evaluations, and dates.</p>
             <div id="perfHistoryContainer"></div>
           </div>
         </section>

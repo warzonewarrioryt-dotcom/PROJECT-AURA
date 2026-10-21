@@ -5345,168 +5345,548 @@ function initSemesterMockTest() {
 }
 
 /* =========================================================
-   11C. STUDENT PERFORMANCE & ANALYTICS CONTROLLER
+   11C. STUDENT PERFORMANCE & ANALYTICS CONTROLLER (USER-FRIENDLY)
 ========================================================= */
+let isPerfDemoActive = false;
+
 async function loadStudentPerformance() {
-  const perfVelocityVal = document.getElementById("perfVelocityVal");
-  const perfRetentionVal = document.getElementById("perfRetentionVal");
-  const perfLatencyVal = document.getElementById("perfLatencyVal");
   const perfReadinessVal = document.getElementById("perfReadinessVal");
+  const perfAvgGradeBadge = document.getElementById("perfAvgGradeBadge");
+  const perfTestsTakenVal = document.getElementById("perfTestsTakenVal");
+  const perfVelocityVal = document.getElementById("perfVelocityVal");
+  const perfTopStrengthVal = document.getElementById("perfTopStrengthVal");
+  const perfTopStrengthSub = document.getElementById("perfTopStrengthSub");
+  const perfCurrentStreak = document.getElementById("perfCurrentStreak");
+  const perfTotalHours = document.getElementById("perfTotalHours");
+  const perfStudentNameGreeting = document.getElementById("perfStudentNameGreeting");
+  const perfStudentClassSub = document.getElementById("perfStudentClassSub");
+  const perfSubjectCountBadge = document.getElementById("perfSubjectCountBadge");
+  const perfSubjectsContainer = document.getElementById("perfSubjectsContainer");
+  const perfAdviceContainer = document.getElementById("perfAdviceContainer");
+  const perfWeeklyStrip = document.getElementById("perfWeeklyStrip");
+  const perfWeeklySummaryLabel = document.getElementById("perfWeeklySummaryLabel");
   const perfTestsCountBadge = document.getElementById("perfTestsCountBadge");
   const perfHistoryContainer = document.getElementById("perfHistoryContainer");
-  const heatmapGrid = document.getElementById("perf52WeekHeatmapGrid");
-  const perfHours = document.getElementById("perfTotalHours");
-  const perfStreak = document.getElementById("perfCurrentStreak");
+  const btnTogglePerfDemo = document.getElementById("btnTogglePerfDemo");
+
+  // Load student profile for personalized greeting
+  try {
+    const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+    if (perfStudentNameGreeting) {
+      perfStudentNameGreeting.textContent = profile.name ? `${profile.name}'s Academic Report` : "Student Report Card";
+    }
+    if (perfStudentClassSub) {
+      const std = profile.standard || localStorage.getItem("aura_school_standard") || "12th Standard";
+      const grp = profile.group || localStorage.getItem("aura_school_group") || "Bio-Maths Track";
+      perfStudentClassSub.textContent = `${String(std).replace("STD_", "")} · ${String(grp).replace(/_/g, " ")}`;
+    }
+  } catch (_) {}
+
+  // Hook Demo Preview Toggle Button
+  if (btnTogglePerfDemo && !btnTogglePerfDemo.dataset.bound) {
+    btnTogglePerfDemo.dataset.bound = "true";
+    btnTogglePerfDemo.addEventListener("click", () => {
+      isPerfDemoActive = !isPerfDemoActive;
+      btnTogglePerfDemo.innerHTML = isPerfDemoActive ? "<span>✕ Clear Demo</span>" : "<span>🧪 Demo Preview</span>";
+      if (isPerfDemoActive) {
+        btnTogglePerfDemo.classList.add("primary");
+        btnTogglePerfDemo.classList.remove("outline");
+      } else {
+        btnTogglePerfDemo.classList.remove("primary");
+        btnTogglePerfDemo.classList.add("outline");
+      }
+      loadStudentPerformance();
+    });
+  }
 
   try {
     const activeUid = getActiveUserId();
     let records = [];
-    let serverActivities = [];
 
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/analytics/performance?userId=${encodeURIComponent(activeUid)}`, {
-        headers: { "x-user-id": activeUid }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.records)) records = data.records;
-      }
-    } catch (_) {}
+    if (!isPerfDemoActive) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/analytics/performance?userId=${encodeURIComponent(activeUid)}`, {
+          headers: { "x-user-id": activeUid }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.records)) records = data.records;
+        }
+      } catch (_) {}
 
-    // Pull genuine local evaluations stored by student
-    const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
-    const combinedMap = new Map();
-    records.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
-    localEvals.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
-    records = Array.from(combinedMap.values());
+      // Pull genuine local evaluations stored by student
+      const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
+      const combinedMap = new Map();
+      records.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
+      localEvals.forEach(r => combinedMap.set(r.id || `${r.subject}_${r.date}`, r));
+      records = Array.from(combinedMap.values());
+    } else {
+      // Realistic high-quality sample data for demo preview
+      const today = new Date();
+      const d0 = today.toISOString().split("T")[0];
+      const d1 = new Date(today.getTime() - 86400000 * 1).toISOString().split("T")[0];
+      const d2 = new Date(today.getTime() - 86400000 * 2).toISOString().split("T")[0];
+      const d3 = new Date(today.getTime() - 86400000 * 3).toISOString().split("T")[0];
 
-    // 1. Honest Empty State if no real tests taken yet
+      records = [
+        {
+          id: "demo_1",
+          subject: "Mathematics",
+          discipline: "Semester Mock Exam",
+          marks: "32 / 34",
+          percentage: "94%",
+          grade: "O (Outstanding)",
+          date: d0,
+          focusTopics: [{ topic: "Vector Algebra", guidance: "Review cross product geometrical properties." }]
+        },
+        {
+          id: "demo_2",
+          subject: "Physics",
+          discipline: "Topic Quiz Assessment",
+          marks: "8 / 10",
+          percentage: "80%",
+          grade: "A+ (Excellent)",
+          date: d1,
+          focusTopics: [{ topic: "Current Electricity", guidance: "Practice Kirchhoff's circuit numericals." }]
+        },
+        {
+          id: "demo_3",
+          subject: "Computer Science",
+          discipline: "Topic Quiz Assessment",
+          marks: "9 / 10",
+          percentage: "90%",
+          grade: "O (Outstanding)",
+          date: d2,
+          focusTopics: [{ topic: "Python Functions", guidance: "Master recursive base cases." }]
+        },
+        {
+          id: "demo_4",
+          subject: "Chemistry",
+          discipline: "Semester Mock Exam",
+          marks: "18 / 34",
+          percentage: "53%",
+          grade: "B (Needs Revision)",
+          date: d3,
+          focusTopics: [{ topic: "Coordination Compounds", guidance: "Review IUPAC nomenclature rules." }]
+        }
+      ];
+    }
+
+    // 1. EMPTY STATE (When 0 real tests and demo inactive)
     if (records.length === 0) {
-      if (perfTestsCountBadge) perfTestsCountBadge.textContent = "0 Assessments Recorded";
-      if (perfVelocityVal) perfVelocityVal.textContent = "--";
-      if (perfRetentionVal) perfRetentionVal.textContent = "--";
-      if (perfLatencyVal) perfLatencyVal.textContent = "--";
       if (perfReadinessVal) perfReadinessVal.textContent = "--";
-      if (perfHours) perfHours.textContent = "0h";
-      if (perfStreak) perfStreak.textContent = "0 Days";
+      if (perfAvgGradeBadge) {
+        perfAvgGradeBadge.textContent = "Awaiting First Test";
+        perfAvgGradeBadge.style.background = "rgba(255,255,255,0.06)";
+        perfAvgGradeBadge.style.color = "var(--text-tertiary)";
+        perfAvgGradeBadge.style.borderColor = "var(--border-subtle)";
+      }
+      if (perfTestsTakenVal) perfTestsTakenVal.textContent = "0";
+      if (perfVelocityVal) perfVelocityVal.textContent = "Start with a 5-min quiz";
+      if (perfTopStrengthVal) perfTopStrengthVal.textContent = "No Data Yet";
+      if (perfTopStrengthSub) perfTopStrengthSub.textContent = "Take a quiz to discover your strengths";
+      if (perfCurrentStreak) perfCurrentStreak.textContent = "0 Days";
+      if (perfTotalHours) perfTotalHours.textContent = "0h Practice";
+      if (perfSubjectCountBadge) perfSubjectCountBadge.textContent = "0 Subjects";
+      if (perfTestsCountBadge) perfTestsCountBadge.textContent = "0 Assessments Recorded";
 
-      // Render honest empty marksheet
+      // Welcome Banner in Subject Container
+      if (perfSubjectsContainer) {
+        perfSubjectsContainer.innerHTML = `
+          <div class="perf-welcome-hero" style="margin:0;">
+            <div class="perf-welcome-icon">🚀</div>
+            <div class="perf-welcome-title">Ready to Track Your Academic Progress?</div>
+            <div class="perf-welcome-desc">
+              As soon as you take a 5-minute quiz in <strong>Quiz Engine</strong> or attempt a <strong>Semester Mock Exam</strong>, your marks, subject strength bars, and AI study tips will appear here automatically!
+            </div>
+            <div class="perf-welcome-btn-row">
+              <button class="btn-perf-action primary" onclick="switchView('quiz-engine')">
+                <span>✦ Start a Quick Quiz (5 Mins)</span>
+              </button>
+              <button class="btn-perf-action secondary" onclick="switchView('mock-test')">
+                <span>🏛️ Try Semester Mock Exam</span>
+              </button>
+              <button class="btn-perf-action outline" onclick="document.getElementById('btnTogglePerfDemo').click()">
+                <span>🧪 Preview Sample Demo</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      // Friendly AI Advice Welcome Card
+      if (perfAdviceContainer) {
+        perfAdviceContainer.innerHTML = `
+          <div class="perf-advice-card" style="border-left:3px solid var(--accent-gold); background:rgba(212,175,55,0.04);">
+            <div class="perf-advice-card-header" style="color:var(--accent-gold);">
+              <span>💡</span> <span>How Performance Analysis Works</span>
+            </div>
+            <p><strong>1. Instant Automatic Grading:</strong> Every quiz and mock test you submit is scored immediately.</p>
+            <p><strong>2. Clear Strengths &amp; Focus Topics:</strong> High scoring subjects show green 🌟. Topics needing attention turn amber so you know exactly where to revise 🎯.</p>
+            <p><strong>3. Practical Study Tips:</strong> AURA suggests key concepts, derivations, and formulas to maximize marks in exams.</p>
+          </div>
+        `;
+      }
+
+      // Empty Weekly Activity Strip
+      if (perfWeeklyStrip) {
+        renderWeeklyStrip([]);
+      }
+
+      // Empty History Container
       if (perfHistoryContainer) {
         perfHistoryContainer.innerHTML = `
-          <div style="padding: 44px 20px; text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-card);">
-            <div style="font-size: 32px; margin-bottom: 12px;">📊</div>
-            <h4 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Not Enough Data Yet</h4>
-            <p style="font-size: 13px; max-width: 440px; margin: 0 auto 16px; line-height: 1.5;">All scores, percentiles, mastery quadrants, and exam projections are calculated strictly from genuine student activity. Complete a quiz or semester mock test to begin recording measured performance.</p>
-            <button class="btn-primary" onclick="switchView('quiz-engine')" style="font-size: 12px; padding: 8px 18px; margin: 0 auto;">
-              ✦ Take Your First Quiz
+          <div style="padding: 36px 20px; text-align: center; color: var(--text-tertiary); background: rgba(255,255,255,0.02); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+            <div style="font-size: 28px; margin-bottom: 8px;">📜</div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">No Test Marksheets Recorded Yet</div>
+            <div style="font-size: 12px; margin-bottom: 14px;">Complete your first test to see your detailed question scores, grades, and dates here.</div>
+            <button class="btn-perf-action primary" onclick="switchView('quiz-engine')">Take Your First Quiz</button>
+          </div>
+        `;
+      }
+
+      return;
+    }
+
+    // 2. LIVE / DEMO DATA CALCULATIONS
+    const numericPercentages = records.map(r => {
+      const p = parseFloat(String(r.percentage).replace("%", ""));
+      return isNaN(p) ? 0 : p;
+    });
+
+    const avgPct = Math.round(numericPercentages.reduce((a, b) => a + b, 0) / numericPercentages.length);
+
+    // Compute friendly overall grade label
+    let gradeLabel = "Grade B · Pass";
+    let gradeColor = "#38bdf8";
+    let gradeBg = "rgba(56,189,248,0.15)";
+    let gradeBorder = "rgba(56,189,248,0.3)";
+
+    if (avgPct >= 90) {
+      gradeLabel = "Grade O · Outstanding 🌟";
+      gradeColor = "#10b981";
+      gradeBg = "rgba(16,185,129,0.15)";
+      gradeBorder = "rgba(16,185,129,0.35)";
+    } else if (avgPct >= 75) {
+      gradeLabel = "Grade A · Very Good 👍";
+      gradeColor = "#10b981";
+      gradeBg = "rgba(16,185,129,0.15)";
+      gradeBorder = "rgba(16,185,129,0.35)";
+    } else if (avgPct >= 60) {
+      gradeLabel = "Grade B+ · Good Progress";
+      gradeColor = "#38bdf8";
+      gradeBg = "rgba(56,189,248,0.15)";
+      gradeBorder = "rgba(56,189,248,0.3)";
+    } else {
+      gradeLabel = "Focus Needed ⚠️";
+      gradeColor = "#f59e0b";
+      gradeBg = "rgba(245,158,11,0.15)";
+      gradeBorder = "rgba(245,158,11,0.35)";
+    }
+
+    // Populate Top Scorecard Cards
+    if (perfReadinessVal) perfReadinessVal.textContent = `${avgPct}%`;
+    if (perfAvgGradeBadge) {
+      perfAvgGradeBadge.textContent = gradeLabel;
+      perfAvgGradeBadge.style.color = gradeColor;
+      perfAvgGradeBadge.style.background = gradeBg;
+      perfAvgGradeBadge.style.borderColor = gradeBorder;
+    }
+
+    if (perfTestsTakenVal) perfTestsTakenVal.textContent = `${records.length}`;
+    if (perfVelocityVal) {
+      if (numericPercentages.length >= 2) {
+        const delta = Math.round(numericPercentages[0] - numericPercentages[numericPercentages.length - 1]);
+        perfVelocityVal.textContent = (delta >= 0 ? "+" : "") + delta + "% vs initial test";
+      } else {
+        perfVelocityVal.textContent = "Saved to your marksheet records";
+      }
+    }
+
+    // Calculate Subject Breakdown Map
+    const subjectMap = new Map();
+    records.forEach(r => {
+      const subj = (r.subject || "General Academic").trim();
+      const p = parseFloat(String(r.percentage).replace("%", "")) || 0;
+      if (!subjectMap.has(subj)) {
+        subjectMap.set(subj, { name: subj, scores: [], count: 0, latestDate: r.date, focusTopics: [] });
+      }
+      const entry = subjectMap.get(subj);
+      entry.scores.push(p);
+      entry.count += 1;
+      if (r.focusTopics && Array.isArray(r.focusTopics)) {
+        entry.focusTopics.push(...r.focusTopics);
+      }
+    });
+
+    const subjectsArray = Array.from(subjectMap.values()).map(s => {
+      const avg = Math.round(s.scores.reduce((a, b) => a + b, 0) / s.scores.length);
+      return {
+        name: s.name,
+        avg,
+        count: s.count,
+        latestDate: s.latestDate,
+        focusTopics: s.focusTopics
+      };
+    }).sort((a, b) => b.avg - a.avg);
+
+    // Top Strength Subject
+    const topSubj = subjectsArray[0];
+    if (perfTopStrengthVal) {
+      perfTopStrengthVal.textContent = topSubj ? `${topSubj.name} (${topSubj.avg}%)` : "In Progress";
+    }
+    if (perfTopStrengthSub) {
+      perfTopStrengthSub.textContent = topSubj ? `Highest average across ${topSubj.count} test${topSubj.count > 1 ? 's' : ''}` : "Keep practicing!";
+    }
+
+    // Active Study Streak & Hours
+    const activityDates = new Set(records.map(r => r.date).filter(Boolean));
+    const streakDays = Math.min(Math.max(activityDates.size, 1), 7);
+    if (perfCurrentStreak) perfCurrentStreak.textContent = `${streakDays} Day${streakDays > 1 ? 's' : ''} 🔥`;
+    if (perfTotalHours) perfTotalHours.textContent = `${Math.round(records.length * 0.4 * 10) / 10}h Practice`;
+    if (perfSubjectCountBadge) perfSubjectCountBadge.textContent = `${subjectsArray.length} Subject${subjectsArray.length > 1 ? 's' : ''} Tracked`;
+    if (perfTestsCountBadge) perfTestsCountBadge.textContent = `${records.length} Assessment${records.length > 1 ? 's' : ''} Recorded`;
+
+    // 3. RENDER SUBJECT BREAKDOWN (Left Column)
+    if (perfSubjectsContainer) {
+      perfSubjectsContainer.innerHTML = subjectsArray.map(subj => {
+        let statusClass = "good";
+        let statusLabel = "Good Progress 👍";
+        if (subj.avg >= 75) {
+          statusClass = "mastered";
+          statusLabel = "Strong Topic 🌟";
+        } else if (subj.avg < 55) {
+          statusClass = "needs-revision";
+          statusLabel = "Needs Revision ⚠️";
+        }
+
+        // Subject icon heuristic
+        let icon = "📖";
+        const lower = subj.name.toLowerCase();
+        if (lower.includes("math") || lower.includes("calculus") || lower.includes("algebra")) icon = "📐";
+        else if (lower.includes("phys") || lower.includes("circuit") || lower.includes("electro")) icon = "⚡";
+        else if (lower.includes("chem") || lower.includes("organic") || lower.includes("element")) icon = "🧪";
+        else if (lower.includes("comp") || lower.includes("python") || lower.includes("data") || lower.includes("code")) icon = "💻";
+        else if (lower.includes("bio") || lower.includes("botany") || lower.includes("zoology")) icon = "🧬";
+        else if (lower.includes("account") || lower.includes("commerce") || lower.includes("eco")) icon = "📊";
+
+        return `
+          <div class="perf-subject-row">
+            <div class="perf-subject-header">
+              <span class="perf-subject-title">
+                <span>${icon}</span>
+                <span>${escapeHtml(subj.name)}</span>
+              </span>
+              <span class="perf-subject-score" style="color:${subj.avg >= 75 ? '#10b981' : (subj.avg < 55 ? '#ef4444' : '#38bdf8')};">
+                ${subj.avg}%
+              </span>
+            </div>
+            <div class="perf-subject-bar-wrap">
+              <div class="perf-subject-bar-fill ${statusClass}" style="width: ${Math.max(subj.avg, 6)}%;"></div>
+            </div>
+            <div class="perf-subject-footer">
+              <span class="perf-status-chip ${statusClass}">${statusLabel} · ${subj.count} test${subj.count > 1 ? 's' : ''}</span>
+              <button class="perf-btn-practice-sub" onclick="startPracticeForSubject('${escapeHtml(subj.name)}')">
+                Practice 5-Min Quiz →
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // 4. RENDER SMART AI ADVICE (Right Column)
+    if (perfAdviceContainer) {
+      const strongSubjs = subjectsArray.filter(s => s.avg >= 75);
+      const weakSubjs = subjectsArray.filter(s => s.avg < 65);
+
+      let strengthHtml = "";
+      if (strongSubjs.length > 0) {
+        strengthHtml = `
+          <div class="perf-advice-card strength">
+            <div class="perf-advice-card-header">
+              <span>🌟</span> <span>Where You Excel</span>
+            </div>
+            <p>Great job! You have strong mastery in <strong>${strongSubjs.map(s => escapeHtml(s.name) + ` (${s.avg}%)`).join(", ")}</strong>. Keep up this momentum to secure full centum / university distinction.</p>
+          </div>
+        `;
+      } else {
+        strengthHtml = `
+          <div class="perf-advice-card strength">
+            <div class="perf-advice-card-header">
+              <span>🌟</span> <span>Foundation Building</span>
+            </div>
+            <p>Every test you complete strengthens your recall! Keep taking 5-minute quizzes to turn your core subjects into top strengths.</p>
+          </div>
+        `;
+      }
+
+      let revisionHtml = "";
+      if (weakSubjs.length > 0) {
+        const primaryWeak = weakSubjs[0];
+        let tipText = `Focus on <strong>${escapeHtml(primaryWeak.name)}</strong> (${primaryWeak.avg}%).`;
+        if (primaryWeak.focusTopics && primaryWeak.focusTopics.length > 0) {
+          const t = primaryWeak.focusTopics[0];
+          tipText += ` AI Recommendation: ${escapeHtml(t.guidance || t.topic || 'Review core formulas & definitions.')}`;
+        } else {
+          tipText += ` Revising key textbook definitions and taking one 5-minute practice quiz can lift your score past 75%.`;
+        }
+
+        revisionHtml = `
+          <div class="perf-advice-card revision">
+            <div class="perf-advice-card-header">
+              <span>🎯</span> <span>Recommended Next Focus</span>
+            </div>
+            <p>${tipText}</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn-perf-action primary" style="font-size:11px; padding:6px 12px;" onclick="startPracticeForSubject('${escapeHtml(primaryWeak.name)}')">
+                <span>✦ Practice ${escapeHtml(primaryWeak.name)} Quiz</span>
+              </button>
+              <button class="btn-perf-action secondary" style="font-size:11px; padding:6px 12px;" onclick="switchView('knowledge-vault')">
+                <span>📖 Open Topic Notes</span>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        revisionHtml = `
+          <div class="perf-advice-card" style="border-left:3px solid #38bdf8; background:rgba(56,189,248,0.03);">
+            <div class="perf-advice-card-header" style="color:#38bdf8;">
+              <span>🎯</span> <span>Next Level Challenge</span>
+            </div>
+            <p>All your tested subjects are above 65%! Try a full-length <strong>Semester Mock Exam</strong> with university blueprint questions to test your timed exam stamina.</p>
+            <button class="btn-perf-action secondary" style="font-size:11px; padding:6px 12px;" onclick="switchView('mock-test')">
+              <span>🏛️ Take Semester Mock Exam</span>
             </button>
           </div>
         `;
       }
 
-      // Render 52-Week Heatmap showing honest empty state (no fake sine wave)
-      if (heatmapGrid) {
-        heatmapGrid.innerHTML = "";
-        const daysCount = 52 * 7;
-        const today = new Date();
-        const fragment = document.createDocumentFragment();
-
-        for (let i = daysCount - 1; i >= 0; i--) {
-          const cellDate = new Date(today);
-          cellDate.setDate(today.getDate() - i);
-          const dayStr = cellDate.toISOString().split("T")[0];
-
-          const cell = document.createElement("div");
-          cell.className = "heatmap-cell lvl-0";
-          cell.title = `${dayStr}: No study activity recorded`;
-          fragment.appendChild(cell);
-        }
-        heatmapGrid.appendChild(fragment);
-      }
-      return;
+      perfAdviceContainer.innerHTML = strengthHtml + revisionHtml;
     }
 
-    // 2. Genuine Metrics Calculations
-    const percentages = records.map(r => parseFloat(r.percentage) || 0);
-    const avgPct = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
-
-    if (perfTestsCountBadge) {
-      perfTestsCountBadge.textContent = `${records.length} Assessment${records.length > 1 ? 's' : ''} Recorded`;
-    }
-    if (perfReadinessVal) perfReadinessVal.textContent = `${avgPct}%`;
-    if (perfRetentionVal) perfRetentionVal.textContent = `${avgPct}%`;
-
-    if (perfVelocityVal) {
-      if (percentages.length >= 2) {
-        const delta = Math.round(percentages[0] - percentages[percentages.length - 1]);
-        perfVelocityVal.textContent = (delta >= 0 ? "+" : "") + delta + "%";
-      } else {
-        perfVelocityVal.textContent = "Measured (1 test)";
-      }
-    }
-    if (perfLatencyVal) perfLatencyVal.textContent = "Active";
-    if (perfHours) perfHours.textContent = `${Math.round(records.length * 0.4 * 10) / 10}h`;
-    if (perfStreak) perfStreak.textContent = `${Math.min(records.length, 7)} Days`;
-
-    // 3. Render 52-Week Heatmap with genuine activity dates
-    if (heatmapGrid) {
-      heatmapGrid.innerHTML = "";
-      const daysCount = 52 * 7;
-      const today = new Date();
-      const activityDates = new Set(records.map(r => r.date).filter(Boolean));
-      const fragment = document.createDocumentFragment();
-
-      for (let i = daysCount - 1; i >= 0; i--) {
-        const cellDate = new Date(today);
-        cellDate.setDate(today.getDate() - i);
-        const dayStr = cellDate.toISOString().split("T")[0];
-
-        const hasActivity = activityDates.has(dayStr);
-        const lvl = hasActivity ? 3 : 0;
-
-        const cell = document.createElement("div");
-        cell.className = `heatmap-cell lvl-${lvl}`;
-        cell.title = `${dayStr}: ${hasActivity ? 'Assessment Completed' : 'Rest Day'}`;
-        fragment.appendChild(cell);
-      }
-      heatmapGrid.appendChild(fragment);
+    // 5. RENDER WEEKLY STUDY STRIP (Mon-Sun)
+    if (perfWeeklyStrip) {
+      renderWeeklyStrip(records);
     }
 
-    // 4. Render Marksheet Records Table with real data
+    // 6. RENDER MARKSHEET HISTORY TABLE
     if (perfHistoryContainer) {
       perfHistoryContainer.innerHTML = `
         <div style="overflow-x:auto;">
           <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
             <thead>
-              <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-secondary); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;">
-                <th style="padding:10px 14px;">Examination / Subject</th>
-                <th style="padding:10px 14px;">Discipline</th>
-                <th style="padding:10px 14px;">Score Marks</th>
+              <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-tertiary); font-size:11px; text-transform:uppercase; letter-spacing:0.06em;">
+                <th style="padding:10px 14px;">Subject / Examination</th>
+                <th style="padding:10px 14px;">Assessment Type</th>
+                <th style="padding:10px 14px;">Marks Scored</th>
                 <th style="padding:10px 14px;">Percentage</th>
-                <th style="padding:10px 14px;">Evaluation Grade</th>
-                <th style="padding:10px 14px;">Completed Date</th>
+                <th style="padding:10px 14px;">Grade Evaluation</th>
+                <th style="padding:10px 14px;">Date Completed</th>
+                <th style="padding:10px 14px; text-align:right;">Action</th>
               </tr>
             </thead>
             <tbody>
-              ${records.map(r => `
-                <tr style="border-bottom:1px solid var(--border-subtle); transition:background 0.15s ease;">
-                  <td style="padding:12px 14px; font-weight:600; color:var(--text-primary);">${escapeHtml(r.subject || 'Assessment')}</td>
-                  <td style="padding:12px 14px; color:var(--text-secondary);">${escapeHtml(r.discipline || 'Higher Secondary')}</td>
-                  <td style="padding:12px 14px; font-family:var(--font-mono); font-weight:700; color:#38bdf8;">${escapeHtml(String(r.marks || r.earnedMarks || '--'))}</td>
-                  <td style="padding:12px 14px; font-family:var(--font-mono); color:#10b981; font-weight:700;">${escapeHtml(String(r.percentage || '0%'))}</td>
-                  <td style="padding:12px 14px;"><span style="font-size:11px; font-weight:700; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:4px;">${escapeHtml(r.grade || 'Pass')}</span></td>
-                  <td style="padding:12px 14px; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">${escapeHtml(r.date || 'Recent')}</td>
-                </tr>
-              `).join("")}
+              ${records.map(r => {
+                const p = parseFloat(String(r.percentage).replace("%", "")) || 0;
+                const isGood = p >= 75;
+                const isPass = p >= 50;
+                const badgeColor = isGood ? "#10b981" : (isPass ? "#38bdf8" : "#ef4444");
+                const badgeBg = isGood ? "rgba(16,185,129,0.12)" : (isPass ? "rgba(56,189,248,0.12)" : "rgba(239,68,68,0.12)");
+                const badgeBorder = isGood ? "rgba(16,185,129,0.3)" : (isPass ? "rgba(56,189,248,0.3)" : "rgba(239,68,68,0.3)");
+
+                return `
+                  <tr style="border-bottom:1px solid var(--border-subtle); transition:background 0.15s ease;">
+                    <td style="padding:12px 14px; font-weight:700; color:var(--text-primary);">${escapeHtml(r.subject || 'Assessment')}</td>
+                    <td style="padding:12px 14px; color:var(--text-secondary); font-size:12px;">${escapeHtml(r.discipline || 'Topic Quiz')}</td>
+                    <td style="padding:12px 14px; font-family:var(--font-mono); font-weight:700; color:#38bdf8;">${escapeHtml(String(r.marks || r.earnedMarks || '--'))}</td>
+                    <td style="padding:12px 14px; font-family:var(--font-mono); color:${badgeColor}; font-weight:800;">${escapeHtml(String(r.percentage || '0%'))}</td>
+                    <td style="padding:12px 14px;">
+                      <span style="font-size:11px; font-weight:700; background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder}; padding:3px 8px; border-radius:4px;">
+                        ${escapeHtml(r.grade || 'Pass')}
+                      </span>
+                    </td>
+                    <td style="padding:12px 14px; font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary);">${escapeHtml(r.date || 'Recent')}</td>
+                    <td style="padding:12px 14px; text-align:right;">
+                      <button class="perf-btn-practice-sub" onclick="startPracticeForSubject('${escapeHtml(r.subject || 'Physics')}')">
+                        Retake / Practice ↺
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join("")}
             </tbody>
           </table>
         </div>
       `;
     }
+
   } catch (err) {
     console.warn("[STUDENT PERFORMANCE ERROR]", err);
   }
 }
+
+// Helper: Render simple, cheerful 7-day Weekly Habit Tracker
+function renderWeeklyStrip(records) {
+  const perfWeeklyStrip = document.getElementById("perfWeeklyStrip");
+  const perfWeeklySummaryLabel = document.getElementById("perfWeeklySummaryLabel");
+  if (!perfWeeklyStrip) return;
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const today = new Date();
+  const currentDayOfWeek = today.getDay(); // 0 is Sun
+
+  // Compute Monday of current week
+  const mondayOffset = (currentDayOfWeek + 6) % 7; // days from Monday
+  const mondayDate = new Date(today);
+  mondayDate.setDate(today.getDate() - mondayOffset);
+
+  const weekCards = [];
+  let testsThisWeek = 0;
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mondayDate);
+    d.setDate(mondayDate.getDate() + i);
+    const dayStr = d.toISOString().split("T")[0];
+    const dayName = dayNames[d.getDay()];
+    const dateNum = d.getDate();
+
+    // Match tests on this day
+    const dayTests = records.filter(r => r.date === dayStr);
+    const count = dayTests.length;
+    if (count > 0) testsThisWeek += count;
+
+    const isActive = count > 0;
+    const isToday = dayStr === today.toISOString().split("T")[0];
+
+    weekCards.push(`
+      <div class="perf-day-card ${isActive ? 'active' : ''}" style="${isToday ? 'border-color:var(--accent-gold); box-shadow:0 0 10px rgba(212,175,55,0.2);' : ''}">
+        <span class="perf-day-name" style="${isToday ? 'color:var(--accent-gold);' : ''}">${dayName}${isToday ? ' (Today)' : ''}</span>
+        <span class="perf-day-date">${dateNum}</span>
+        <span class="perf-day-badge ${isActive ? 'active' : 'rest'}">
+          ${isActive ? `🔥 ${count} Test${count > 1 ? 's' : ''}` : '⚪ Rest'}
+        </span>
+      </div>
+    `);
+  }
+
+  perfWeeklyStrip.innerHTML = weekCards.join("");
+  if (perfWeeklySummaryLabel) {
+    perfWeeklySummaryLabel.innerHTML = `This Week: <strong>${testsThisWeek} Test${testsThisWeek !== 1 ? 's' : ''} Taken</strong>`;
+  }
+}
+
+// Helper: One-click practice for any subject
+window.startPracticeForSubject = function(subjectName) {
+  switchView("quiz-engine");
+  setTimeout(() => {
+    const topicInput = document.getElementById("quizTopicInput") || document.getElementById("quizTopic");
+    if (topicInput) {
+      topicInput.value = subjectName;
+      topicInput.focus();
+    }
+  }, 200);
+};
 
 /* =========================================================
    12. PROVIDERS & SYSTEM TELEMETRY
