@@ -1307,7 +1307,6 @@ function switchView(viewKey) {
     "mock-test": { scope: "EVALUATION ENGINE", title: "SEMESTER MOCK TEST" },
     "quiz-engine": { scope: "EVALUATION ENGINE", title: "QUIZ ENGINE" },
     "study-intel": { scope: "EVALUATION ENGINE", title: "STUDY & TASK PLANNER" },
-    "gesture-arcade-workspace": { scope: "INTERACTIVE LABS", title: "NEURAL GESTURE LAB" },
     "youtube-intel": { scope: "INTERACTIVE LABS", title: "YOUTUBE INTELLIGENCE" }
   };
   const crumbInfo = BREADCRUMB_MAP[viewKey];
@@ -1336,15 +1335,7 @@ function switchView(viewKey) {
       window.loadYouTubeLectures();
     }
   }
-  if (viewKey === "gesture-arcade-workspace" || viewKey === "view-gesture-arcade-workspace") {
-    if (typeof window.initGestureArcadeHub === "function") {
-      window.initGestureArcadeHub();
-    }
-  } else {
-    if (typeof window.cleanupGestureArcadeHub === "function") {
-      window.cleanupGestureArcadeHub();
-    }
-  }
+
 
   closeMobileSidebar();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2979,7 +2970,7 @@ Chronological, natural speech script for the speaker to present to the audience 
 
   const PLATFORM_TEMPLATES_LIST = [
     { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Figma Design System & Token Spec", desc: "Color tokens, typography scale, 8pt spacing hierarchy, component props & variants." },
-    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Mobile App User Flow & Wireframe Blueprint", desc: "User journey map, core screen states, modal interactions & gesture navigation." },
+    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Mobile App User Flow & Wireframe Blueprint", desc: "User journey map, core screen states, modal interactions & mobile navigation." },
     { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva High-Stakes Investor Pitch Deck", desc: "10-slide venture narrative: Hook, TAM/SAM, Product Moat, Unit Economics, Ask." },
     { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva Product Launch Visual Campaign Outline", desc: "Social launch banners, carousel assets, email marketing header specs & typography." },
     { cat: "spline", badgeClass: "spline", badge: "Spline 3D", title: "Spline 3D Interactive Web Scene Structure & Lighting", desc: "3D camera coordinates, glassmorphic materials, event triggers, Webflow embeds." },
@@ -10100,6 +10091,13 @@ const AURA_CURATED_ACADEMIC_VIDEOS = {
   ],
   "COMMERCE": [
     { id: "P_v2B8n4m91", title: "12th Accountancy & Commerce Complete Course in Tamil", channel: "Tamil Commerce Academy", desc: "Partnership accounts, admission of partner, goodwill valuation, and company accounts.", url: "https://www.youtube.com/watch?v=P_v2B8n4m91", thumbnail: "https://i.ytimg.com/vi/P_v2B8n4m91/hqdefault.jpg", language: "Tamil", badge: "State Board Commerce" }
+  ],
+  "ENGLISH": [
+    { id: "eR71x8fJ-qA", title: "12th English Complete Flamingo, Vistas & Grammar in Tamil", channel: "Tamil English Hub", desc: "Line-by-line prose and poetry walkthrough, poetic devices, vocabulary, and grammar rules.", url: "https://www.youtube.com/watch?v=eR71x8fJ-qA", thumbnail: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=400", language: "Tamil & English", badge: "English Core" },
+    { id: "WS070h7kY3I", title: "Class 12 English Core Full Syllabus & NCERT Solutions", channel: "Magnet Brains", desc: "Complete Flamingo prose and poetry, Vistas supplementary, and high-yield board question patterns.", url: "https://www.youtube.com/watch?v=WS070h7kY3I", thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400", language: "English", badge: "NCERT Core" }
+  ],
+  "TAMIL": [
+    { id: "ta-kalvi-12", title: "12-ஆம் வகுப்பு பொதுத்தமிழ்: செய்யுள் & உரைநடை முழு விளக்கம்", channel: "Kalvi TV Official", desc: "தமிழ்நாடு அரசுப் பாடநூல் செய்யுள் வரிகள், உரைநடை விளக்கம் மற்றும் இலக்கண விதிகள்.", url: "https://www.youtube.com/results?search_query=12th+Standard+Tamil+Samacheer+Kalvi+lecture", thumbnail: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400", language: "Tamil", badge: "Samacheer Kalvi" }
   ]
 };
 
@@ -11805,9 +11803,7 @@ function initAura3CoreModules() {
   if (typeof initKnowledgeVaultTopicIngest === "function") initKnowledgeVaultTopicIngest();
   if (typeof initYouTubeUrlDecoder === "function") initYouTubeUrlDecoder();
   if (typeof initStudentAuthModal === "function") initStudentAuthModal();
-  if (typeof window.initGestureArcadeHub === "function") window.initGestureArcadeHub();
 }
-
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initAura3CoreModules);
 } else {
@@ -11934,8 +11930,7 @@ topbarLatencyTicker();
    PROJECT AURA 3.0 — PRODUCTION UPGRADE MASTER CONTROLLER
    1. Cinematic Startup Sequence (Xbox Inspired)
    2. Jarvis-Style Voice Assistant HUD & Command Router
-   3. Global Hand Gesture Recognition & HUD
-   4. Knowledge Vault V3 & Academic Doubt Solver
+   3. Knowledge Vault V3 & Academic Doubt Solver
 ========================================================= */
 
 (function initAura3ProductionSuite() {
@@ -12302,13 +12297,7 @@ topbarLatencyTicker();
       return;
     }
 
-    if (cmd.includes("gesture") || cmd.includes("gesture mode") || cmd.includes("hand track")) {
-      toggleGlobalGestureHUD(true);
-      const confirmation = "Hand gesture tracking mode enabled. Camera active.";
-      jarvisResponseText.textContent = confirmation;
-      speakJarvisResponse(confirmation);
-      return;
-    }
+
 
     if (cmd.includes("dark theme") || cmd.includes("theme")) {
       const themeBtn = document.getElementById("themeToggleBtn");
@@ -12548,131 +12537,7 @@ topbarLatencyTicker();
   });
 
 
-  /* ---------------------------------------------------------
-     3. GLOBAL FLOATING GESTURE HUD & TRACKING
-  --------------------------------------------------------- */
-  const gestureWidget = document.getElementById("globalGestureHudWidget");
-  const gestureToggleTopBtn = document.getElementById("globalGestureToggleBtn");
-  const gestureCloseBtn = document.getElementById("btnGlobalGestureClose");
-  const gestureCamVideo = document.getElementById("globalGestureCam");
-  const gestureSkelCanvas = document.getElementById("globalGestureSkeletonCanvas");
-  const gestureRecognizedLabel = document.getElementById("globalGestureRecognizedLabel");
-  const gestureActionLabel = document.getElementById("globalGestureActionLabel");
 
-  let isGlobalGestureActive = false;
-  let globalGestureStream = null;
-  let gestureCooldownTimer = null;
-  let lastTriggeredGesture = "";
-
-  async function toggleGlobalGestureHUD(forceOpen = null) {
-    const shouldOpen = forceOpen !== null ? forceOpen : !isGlobalGestureActive;
-    if (shouldOpen) {
-      if (gestureWidget) {
-        gestureWidget.style.display = "block";
-        gestureWidget.setAttribute("aria-hidden", "false");
-      }
-      isGlobalGestureActive = true;
-      if (gestureToggleTopBtn) gestureToggleTopBtn.classList.add("active");
-
-      // Initialize Webcam Feed
-      try {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error("getUserMedia not supported.");
-        }
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
-        });
-        globalGestureStream = stream;
-        if (gestureCamVideo) {
-          gestureCamVideo.srcObject = stream;
-          await gestureCamVideo.play();
-        }
-        if (gestureActionLabel) gestureActionLabel.textContent = "Camera Live";
-        if (gestureRecognizedLabel) gestureRecognizedLabel.textContent = "Detecting Hand...";
-
-        // If Arcade Hands detector exists, activate it
-        if (window.AuraGestureEngine && typeof window.AuraGestureEngine.start === "function") {
-          window.AuraGestureEngine.start();
-        }
-      } catch (err) {
-        if (gestureRecognizedLabel) gestureRecognizedLabel.textContent = "Camera Unavailable";
-        if (gestureActionLabel) gestureActionLabel.textContent = "Permission Required";
-      }
-    } else {
-      // Clean teardown: release camera hardware completely to save battery and protect privacy
-      isGlobalGestureActive = false;
-      if (gestureWidget) {
-        gestureWidget.style.display = "none";
-        gestureWidget.setAttribute("aria-hidden", "true");
-      }
-      if (gestureToggleTopBtn) gestureToggleTopBtn.classList.remove("active");
-
-      if (globalGestureStream) {
-        try {
-          globalGestureStream.getTracks().forEach(t => t.stop());
-        } catch (_) {}
-        globalGestureStream = null;
-      }
-      if (gestureCamVideo) gestureCamVideo.srcObject = null;
-      if (gestureSkelCanvas) {
-        const ctx = gestureSkelCanvas.getContext("2d");
-        if (ctx) ctx.clearRect(0, 0, gestureSkelCanvas.width, gestureSkelCanvas.height);
-      }
-      if (window.AuraGestureEngine && typeof window.AuraGestureEngine.stop === "function") {
-        window.AuraGestureEngine.stop();
-      }
-    }
-  }
-
-  if (gestureToggleTopBtn) {
-    gestureToggleTopBtn.addEventListener("click", () => toggleGlobalGestureHUD());
-  }
-  if (gestureCloseBtn) {
-    gestureCloseBtn.addEventListener("click", () => toggleGlobalGestureHUD(false));
-  }
-
-  // Global listener called by gesture classification engine with 800ms cooldown
-  window.onAuraGestureDetected = function(gestureName, handState) {
-    if (!isGlobalGestureActive) return;
-
-    if (gestureRecognizedLabel) {
-      gestureRecognizedLabel.textContent = gestureName;
-    }
-
-    // Cooldown check: prevent rapid repeated execution of the same gesture
-    if (gestureCooldownTimer || gestureName === "TRACKING" || gestureName === "NONE") return;
-
-    let actionName = "Recognized";
-    if (gestureName === "OPEN_PALM") {
-      actionName = "Navigating Home";
-      switchView("command-center");
-    } else if (gestureName === "PEACE_SIGN") {
-      actionName = "Opening Academic Hub";
-      switchView("academic-hub-workspace");
-    } else if (gestureName === "THUMBS_UP") {
-      actionName = "Confirm / Next";
-      if (typeof playTactileSound === "function") playTactileSound("click");
-    } else if (gestureName === "INDEX_POINT") {
-      actionName = "Scroll View";
-      window.scrollBy({ top: 300, behavior: "smooth" });
-    } else if (gestureName === "PINCH") {
-      actionName = "Opening Voice Core";
-      openJarvisOverlay();
-    } else if (gestureName === "CLOSED_FIST") {
-      actionName = "Close Active / Halt";
-      window.speechSynthesis?.cancel();
-      closeJarvisOverlay();
-    }
-
-    if (gestureActionLabel) {
-      gestureActionLabel.textContent = actionName;
-    }
-
-    // Set 800ms cooldown
-    gestureCooldownTimer = setTimeout(() => {
-      gestureCooldownTimer = null;
-    }, 800);
-  };
 
 
   /* ---------------------------------------------------------

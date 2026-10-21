@@ -13660,7 +13660,6 @@ body[data-theme="obsidian-pure"] {
   border-bottom: 1px solid var(--border-subtle) !important;
 }
 
-.topbar-gesture-btn,
 .topbar-voice-btn {
   display: inline-flex;
   align-items: center;
@@ -13676,18 +13675,11 @@ body[data-theme="obsidian-pure"] {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.topbar-gesture-btn:hover,
 .topbar-voice-btn:hover {
   border-color: var(--accent-gold);
   background: var(--accent-gold-soft);
   color: var(--accent-gold);
   transform: translateY(-1px);
-}
-
-.topbar-gesture-btn.active {
-  border-color: var(--accent-emerald);
-  background: var(--accent-emerald-soft);
-  color: #34D399;
 }
 
 .topbar-voice-btn.listening {
@@ -14230,111 +14222,7 @@ body[data-theme="obsidian-pure"] {
   border-color: #EF4444;
 }
 
-/* =========================================================
-   4. GLOBAL FLOATING GESTURE HUD WIDGET
-========================================================= */
-.global-gesture-hud-widget {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 250px;
-  background: rgba(14, 18, 25, 0.94);
-  border: 1px solid rgba(197, 160, 89, 0.35);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(197, 160, 89, 0.1);
-  overflow: hidden;
-  z-index: 9990;
-  display: flex;
-  flex-direction: column;
-  backdrop-filter: blur(12px);
-  animation: widgetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
 
-@keyframes widgetSlideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.global-gesture-header {
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.global-gesture-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent-gold);
-  letter-spacing: 0.04em;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.global-gesture-close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-tertiary);
-  cursor: pointer;
-  font-size: 13px;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.global-gesture-close-btn:hover {
-  color: #EF4444;
-  background: rgba(239, 68, 68, 0.15);
-}
-
-.global-gesture-viewport {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: #000000;
-  overflow: hidden;
-}
-
-.global-gesture-viewport video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scaleX(-1);
-}
-
-.global-gesture-viewport canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.global-gesture-footer {
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.global-gesture-recognized-badge {
-  font-size: 11px;
-  font-weight: 700;
-  color: #34D399;
-}
-
-.global-gesture-action-badge {
-  font-size: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--accent-gold);
-  background: rgba(197, 160, 89, 0.12);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
 
 /* =========================================================
    5. REDESIGNED ACADEMIC HUB V3
@@ -14600,15 +14488,8 @@ body[data-theme="obsidian-pure"] {
     display: none !important;
   }
 
-  .topbar-voice-btn .voice-btn-label,
-  .topbar-gesture-btn .gesture-btn-label {
+  .topbar-voice-btn .voice-btn-label {
     display: none !important;
-  }
-
-  .global-gesture-hud-widget {
-    bottom: 12px;
-    right: 12px;
-    width: 190px;
   }
 
   .jarvis-hud-modal {
@@ -14648,9 +14529,7 @@ body[data-theme="obsidian-pure"] {
     height: 110px;
   }
 
-  .global-gesture-hud-widget {
-    width: 160px;
-  }
+
 
   .vault-file-row {
     flex-direction: column;
@@ -14850,8 +14729,7 @@ body {
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6) !important;
 }
 
-.topbar-voice-btn,
-.topbar-gesture-btn {
+.topbar-voice-btn {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
@@ -14868,8 +14746,7 @@ body {
   flex-shrink: 0 !important;
 }
 
-.topbar-voice-btn:hover,
-.topbar-gesture-btn:hover {
+.topbar-voice-btn:hover {
   border-color: rgba(201, 164, 92, 0.5) !important;
   background: rgba(201, 164, 92, 0.08) !important;
   color: #c9a45c !important;
@@ -14975,12 +14852,10 @@ body {
   .topbar-telemetry {
     display: none !important;
   }
-  .topbar-voice-btn .voice-btn-label,
-  .topbar-gesture-btn .gesture-btn-label {
+  .topbar-voice-btn .voice-btn-label {
     display: none !important;
   }
-  .topbar-voice-btn,
-  .topbar-gesture-btn {
+  .topbar-voice-btn {
     padding: 6px 9px !important;
   }
   .operator-badge-pill {
@@ -15047,7 +14922,6 @@ body {
     gap: 4px !important;
   }
   .topbar-voice-btn,
-  .topbar-gesture-btn,
   .topbar-theme-btn {
     padding: 4px 6px !important;
   }
@@ -15704,7 +15578,6 @@ body[data-theme="enterprise-dark"],
 .holo-voice-float-hud,
 .jarvis-hud-modal,
 .modal-content,
-.global-gesture-hud-widget,
 .topbar-telemetry,
 .holo-hud-hero {
   background: rgba(10, 14, 23, 0.7) !important;
@@ -16937,4 +16810,146 @@ input:focus, textarea:focus, select:focus {
   border: 1px solid rgba(0, 240, 255, 0.3);
   color: #00f0ff;
 }
+
+/* =========================================================
+   DYNAMIC ACADEMIC HUB VIDEO RESOLVER CARDS
+   Tamil Nadu State Board & CBSE Dynamic Binding
+========================================================= */
+
+.tn-state-board-core {
+  background: rgba(14, 18, 27, 0.75);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.tn-state-board-core:hover {
+  border-color: #00f0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 240, 255, 0.15);
+}
+
+.video-thumbnail-placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.12) 0%, rgba(10, 14, 23, 0.95) 100%);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.video-thumbnail-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+
+.subject-badge {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: rgba(10, 14, 23, 0.85);
+  color: #00f0ff;
+  border: 1px solid #00f0ff;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.video-meta {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 12px;
+}
+
+.video-meta h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.video-meta p {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.btn-watch {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #f59e0b;
+  color: #020617;
+  font-weight: 700;
+  font-size: 11.5px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-watch:hover {
+  background: #fbbf24;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
+  color: #000000;
+}
+
+.btn-resolver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: rgba(0, 240, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  color: #00f0ff;
+  font-weight: 700;
+  font-size: 11.5px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-resolver:hover {
+  background: rgba(0, 240, 255, 0.25);
+  border-color: #00f0ff;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+  color: #ffffff;
+}
+
 

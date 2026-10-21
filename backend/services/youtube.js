@@ -120,8 +120,20 @@ const VERIFIED_EDUCATIONAL_CATALOG = [
   {
     subjects: ["commerce", "accountancy", "partnership", "goodwill", "balance sheet", "economics"],
     standards: ["11th", "std_11", "12th", "std_12"],
-    tamil: { id: "e_e07fJ85V8", title: "12th Commerce & Accountancy: Partnership Accounts in Tamil", channel: "Tamil Commerce Academy", desc: "Admission of partner, sacrifice ratio, revaluation account, capital account, and balance sheet preparation." },
+    tamil: { id: "P_v2B8n4m91", title: "12th Commerce & Accountancy: Partnership Accounts in Tamil", channel: "Tamil Commerce Academy", desc: "Admission of partner, sacrifice ratio, revaluation account, capital account, and balance sheet preparation." },
     english: { id: "0IAPZzGSbME", title: "Accounting Basics: Financial Statements & Balance Sheet", channel: "Accounting Stuff", desc: "Debit and credit rules, balance sheets, profit and loss statements, and partnership accounting." }
+  },
+  {
+    subjects: ["english", "english core", "flamingo", "vistas", "prose", "poetry", "grammar", "reading skills"],
+    standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
+    tamil: { id: "eR71x8fJ-qA", title: "12th General English: Complete Prose, Poetry & Grammar in Tamil", channel: "Tamil English Tutor", desc: "Line-by-line explanation, poetic devices, grammar exercises, and public exam blueprint." },
+    english: { id: "WS070h7kY3I", title: "Class 12 English Core: Complete Flamingo & Vistas", channel: "Magnet Brains", desc: "Summary, character sketches, themes, and board exam high-weightage question analysis." }
+  },
+  {
+    subjects: ["tamil", "பொதுத்தமிழ்", "தமிழ்", "செய்யுள்", "உரைநடை", "இலக்கணம்"],
+    standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
+    tamil: { id: "ta-kalvi-12", title: "12-ஆம் வகுப்பு பொதுத்தமிழ்: செய்யுள் & உரைநடை விளக்கம்", channel: "Kalvi TV Official", desc: "பாடநூல் செய்யுள் வரிகள், சொல்லும் பொருளும், நயம்பாராட்டல் மற்றும் இலக்கணக் குறிப்புகள்." },
+    english: { id: "ta-cbse-12", title: "CBSE Class 12 Tamil (Code 106) Full Revision", channel: "Tamil Kalvi Guide", desc: "Comprehensive chapter-by-chapter walkthrough for CBSE Tamil core syllabus." }
   }
 ];
 
@@ -260,32 +272,28 @@ async function searchAcademicVideos({ standard = "", board = "", subject = "", t
         title: `CBSE ${stdLabel} ${subjLabel}: ${cleanTopic} Full Lecture (NCERT)`,
         desc: `Comprehensive CBSE board exam & NCERT line-by-line coverage for ${cleanTopic} with solved exemplar questions.`,
         badge: "CBSE NCERT Core",
-        language: "English / Hinglish",
-        videoId: "bHIhgxav9LY"
+        language: "English / Hinglish"
       },
       {
         channel: "Khan Academy India",
         title: `${subjLabel} — ${cleanTopic} Conceptual Proofs & Visual Derivations`,
-        desc: `NCERT conceptual foundations, animations, and step-by-step mathematical reasoning for ${cleanTopic}.`,
+        desc: `NCERT conceptual foundations, animations, and step-by-step reasoning for ${cleanTopic}.`,
         badge: "NCERT Concept Mastery",
-        language: "English",
-        videoId: "WS070h7kY3I"
+        language: "English"
       },
       {
         channel: "Magnet Brains",
         title: `${subjLabel} Class ${stdLabel.replace(/[^0-9]/g, '') || '12'} | ${cleanTopic} Full Chapter Revision`,
         desc: `100% free complete CBSE curriculum revision, board blueprint high-yield questions and NCERT solutions.`,
         badge: "CBSE Centum Blueprint",
-        language: "English / Hindi",
-        videoId: "e_e07fJ85V8"
+        language: "English / Hindi"
       },
       {
         channel: "LearnoHub - Class 11, 12",
         title: `CBSE ${stdLabel} ${subjLabel} — ${cleanTopic} One Shot & Solved Numericals`,
         desc: `One-shot revision for ${cleanTopic} covering all formulas, diagrams, and Previous Year Questions (PYQs).`,
         badge: "One-Shot Revision",
-        language: "English",
-        videoId: "bC79K6V3M6E"
+        language: "English"
       }
     ] : [
       {
@@ -293,44 +301,42 @@ async function searchAcademicVideos({ standard = "", board = "", subject = "", t
         title: `${stdLabel} ${subjLabel}: ${cleanTopic} Samacheer Kalvi அரசுப் பாடம்`,
         desc: `Government of Tamil Nadu Kalvi TV official video lecture series for ${subjLabel} covering ${cleanTopic}.`,
         badge: "TN State Board Core",
-        language: "Tamil",
-        videoId: "m6x8A4V4B9o"
+        language: "Tamil"
       },
       {
         channel: "Tamil Nadu State Board Masters",
         title: `${subjLabel} — ${cleanTopic} Samacheer Kalvi Vol 1 & 2 in Tamil`,
         desc: `Line-by-line textbook explanation, book-back numerical solutions, and government exam scoring strategies.`,
         badge: "Samacheer Kalvi",
-        language: "Tamil",
-        videoId: "e_e07fJ85V8"
+        language: "Tamil"
       },
       {
-        channel: "Tamil Physics & Science Tutor",
-        title: `${subjLabel} — ${cleanTopic} High-Yield 5-Mark Derivations (Tamil)`,
-        desc: `Step-by-step mathematical proof, ray diagrams, and board exam centum presentation techniques in Tamil.`,
+        channel: "Tamil Science & Arts Hub",
+        title: `${subjLabel} — ${cleanTopic} High-Yield 5-Mark Derivations & Solutions (Tamil)`,
+        desc: `Step-by-step syllabus proof, diagrams, and board exam centum presentation techniques in Tamil.`,
         badge: "Centum Scoring Tips",
-        language: "Tamil & English",
-        videoId: "bHIhgxav9LY"
+        language: "Tamil & English"
       },
       {
         channel: "Samacheer Kalvi Guide",
         title: `${stdLabel} ${subjLabel} Public Exam Important Questions — ${cleanTopic}`,
         desc: `Master high-probability Part A, B & C questions and model question paper analysis for ${subjLabel}.`,
         badge: "TN Board Blueprint",
-        language: "Tamil",
-        videoId: "c_u8A2Z5N3o"
+        language: "Tamil"
       }
     ];
 
     for (const tpl of boardTemplates) {
       if (matched.length >= maxResults) break;
       if (!matched.some(m => m.channel === tpl.channel)) {
+        const itemSearchQuery = `${boardQueryName} ${stdLabel} ${subjLabel} ${cleanTopic} ${tpl.channel} lecture`;
+        const itemResolverUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(itemSearchQuery)}`;
         matched.push({
-          videoId: tpl.videoId,
+          videoId: `query-${encodeURIComponent(subjLabel).slice(0, 10)}-${matched.length + 1}`,
           title: tpl.title,
           channel: tpl.channel,
-          thumbnail: `https://i.ytimg.com/vi/${tpl.videoId}/hqdefault.jpg`,
-          url: `https://www.youtube.com/watch?v=${tpl.videoId}`,
+          thumbnail: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400`,
+          url: itemResolverUrl,
           publishedAt: new Date().toISOString(),
           description: tpl.desc,
           badge: tpl.badge,
