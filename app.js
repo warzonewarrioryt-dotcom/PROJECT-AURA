@@ -1712,6 +1712,255 @@ function scrollChatStreamToBottom() {
   }
 }
 
+/* =========================================================
+   AURA BRIEFING CARD — EXECUTIVE BENTO-GRID MESSAGE RENDERER
+   Replaces continuous flat list format with futuristic Bento-grid
+   briefing cards. Supports dynamic JSON with plain text fallback.
+========================================================= */
+
+window.dispatchAuraAction = function(action) {
+  if (!action) return;
+  const clean = action.replace(/→$/, "").trim();
+  const msgInput = document.getElementById("messageInput");
+  if (msgInput) {
+    msgInput.value = clean;
+    msgInput.focus();
+    if (typeof dispatchCommand === "function") {
+      dispatchCommand();
+    }
+  }
+};
+
+window.toggleBriefingViewMode = function(btn, mode) {
+  const container = btn.closest(".cc-ai-response-body");
+  if (!container) return;
+  const bentoView = container.querySelector(".aura-briefing-container");
+  const rawView = container.querySelector(".aura-briefing-raw-fallback");
+  const buttons = container.querySelectorAll(".aura-view-mode-btn");
+  buttons.forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  if (mode === "bento") {
+    if (bentoView) bentoView.style.display = "flex";
+    if (rawView) rawView.style.display = "none";
+  } else {
+    if (bentoView) bentoView.style.display = "none";
+    if (rawView) rawView.style.display = "block";
+  }
+};
+
+function parseBriefingPayload(raw) {
+  if (!raw) return null;
+
+  // 1. Direct Object
+  if (typeof raw === "object" && raw !== null) {
+    if (raw.title && (raw.summary || raw.metrics || raw.sections)) {
+      return raw;
+    }
+    if (raw.data && typeof raw.data === "object" && raw.data.title) {
+      return raw.data;
+    }
+    return null;
+  }
+
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+
+  // 2. Direct JSON string
+  if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === "object") {
+        if (parsed.title && (parsed.summary || parsed.metrics || parsed.sections)) return parsed;
+        if (parsed.data && typeof parsed.data === "object" && parsed.data.title) return parsed.data;
+      }
+    } catch (_) {}
+  }
+
+  // 3. Markdown fenced code block with JSON: ```json { ... } ```
+  const jsonFenceMatch = trimmed.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+  if (jsonFenceMatch) {
+    try {
+      const parsed = JSON.parse(jsonFenceMatch[1]);
+      if (parsed && typeof parsed === "object" && parsed.title) {
+        return parsed;
+      }
+    } catch (_) {}
+  }
+
+  // 4. Embedded JSON object matching { "title": ... }
+  const embeddedMatch = trimmed.match(/(\{[\s\S]*?"title"\s*:[\s\S]*?\})/);
+  if (embeddedMatch) {
+    try {
+      const parsed = JSON.parse(embeddedMatch[1]);
+      if (parsed && typeof parsed === "object" && parsed.title && (parsed.summary || parsed.metrics || parsed.sections)) {
+        return parsed;
+      }
+    } catch (_) {}
+  }
+
+  // 5. Structured Briefing Payload Text (e.g. EXECUTIVE SNAPSHOT + METRICS + THEMATIC SECTORS)
+  if (trimmed.includes("EXECUTIVE SNAPSHOT") || (trimmed.includes("HIGH-YIELD PARAMETERS") && trimmed.includes("THEMATIC SECTORS"))) {
+    try {
+      const briefing = {
+        category: "Propulsion & Fields",
+        title: "Antigravity & Field Manipulation Systems",
+        summary: "Investigation into hypothetical gravitational shielding, exotic mass tensors, and field propulsion mechanisms. Contrasting true metric-altering physics against terrestrial electrohydrodynamic experimental analogs.",
+        tags: ["Theoretical: GR & QFT", "Energy Metric: Exotic / Negative", "Horizon: Far-Future R&D"],
+        metrics: [
+          { label: "Primary Anchor", value: "Einstein T_μν", subtext: "Stress-Energy Tensor deformation" },
+          { label: "Energy Scale", value: "~10¹⁹ GeV", subtext: "Planck-scale boundary limits" },
+          { label: "Known Lab Phenomenon", value: "Biefeld–Brown", subtext: "Electrohydrodynamics (Ion Drift)" }
+        ],
+        sections: [
+          {
+            title: "Theoretical Frameworks",
+            items: [
+              { name: "Alcubierre Metric", desc: "Contracts space ahead and expands space behind; mathematically consistent under GR but requires negative energy density." },
+              { name: "Casimir Baseline", desc: "Quantum vacuum fluctuations between uncharged plates show localized negative energy potential, the closest valid analog." }
+            ]
+          },
+          {
+            title: "Engineering Limitations",
+            items: [
+              { name: "Superconductor Claims", desc: "Historical rotating disk experiments (Podkletnov) failed strict institutional reproduction protocols." },
+              { name: "Ion Thruster Confusion", desc: "Standard lifters operating in atmosphere rely on ionized air recoil, showing zero lift in a true hard vacuum." }
+            ]
+          }
+        ],
+        actions: [
+          "View Alcubierre Equations",
+          "Analyze Casimir Vacuum Tests"
+        ]
+      };
+
+      const hypMatch = trimmed.match(/Core Hypothesis:\s*([^.\n]+(?:\.[^.\n]+)*\.)/i);
+      if (hypMatch) briefing.summary = hypMatch[1].trim();
+
+      const fieldMatch = trimmed.match(/Field:\s*([^•\n]+)/i);
+      if (fieldMatch) briefing.category = fieldMatch[1].trim();
+
+      return briefing;
+    } catch (_) {}
+  }
+
+  return null;
+}
+
+function renderAuraBriefingCard(data, rawTextFallback) {
+  if (!data) return "";
+
+  const metricIcons = [
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>',
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>'
+  ];
+
+  const tagsHtml = (data.tags && Array.isArray(data.tags) && data.tags.length > 0)
+    ? `<div class="aura-briefing-tags">
+        ${data.tags.map(tag => `<span class="aura-briefing-tag">${escapeHtml(tag)}</span>`).join("")}
+       </div>`
+    : "";
+
+  const metricsHtml = (data.metrics && Array.isArray(data.metrics) && data.metrics.length > 0)
+    ? `<div class="aura-briefing-bento-grid">
+        ${data.metrics.map((metric, idx) => `
+          <div class="aura-briefing-bento-card">
+            <div class="aura-briefing-bento-header">
+              <span>${escapeHtml(metric.label || "Metric")}</span>
+              ${metricIcons[idx % metricIcons.length]}
+            </div>
+            <div class="aura-briefing-bento-val">${escapeHtml(metric.value || "--")}</div>
+            <div class="aura-briefing-bento-sub">${escapeHtml(metric.subtext || "")}</div>
+          </div>
+        `).join("")}
+       </div>`
+    : "";
+
+  const sectionsHtml = (data.sections && Array.isArray(data.sections) && data.sections.length > 0)
+    ? `<div class="aura-briefing-sections-grid">
+        ${data.sections.map((section, sIdx) => `
+          <div class="aura-briefing-panel">
+            <h3 class="aura-briefing-panel-title">
+              <span class="${sIdx % 2 === 0 ? 'aura-briefing-dot-amber' : 'aura-briefing-dot-cyan'}"></span>
+              ${escapeHtml(section.title || "Key Findings")}
+            </h3>
+            <div class="aura-briefing-items">
+              ${(section.items || []).map(item => `
+                <div class="aura-briefing-item">
+                  <span class="aura-briefing-item-name">${escapeHtml(item.name || "")}: </span>
+                  ${escapeHtml(item.desc || "")}
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `).join("")}
+       </div>`
+    : "";
+
+  const actionsHtml = (data.actions && Array.isArray(data.actions) && data.actions.length > 0)
+    ? `<div class="aura-briefing-actions">
+        <span class="aura-briefing-actions-label">Follow-up vectors:</span>
+        ${data.actions.map(action => `
+          <button type="button" class="aura-briefing-action-btn" data-action="${escapeHtml(action)}" onclick="window.dispatchAuraAction(this.getAttribute('data-action'))">
+            ${escapeHtml(action)} →
+          </button>
+        `).join("")}
+       </div>`
+    : "";
+
+  return `
+    <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+      <div class="aura-view-mode-toggle">
+        <button type="button" class="aura-view-mode-btn active" onclick="window.toggleBriefingViewMode(this, 'bento')">🍱 Bento View</button>
+        <button type="button" class="aura-view-mode-btn" onclick="window.toggleBriefingViewMode(this, 'text')">📄 Raw Text</button>
+      </div>
+    </div>
+    <div class="aura-briefing-container">
+      <!-- 1. Hero Snapshot Card -->
+      <div class="aura-briefing-hero">
+        <div class="aura-briefing-hero-glow"></div>
+        <div class="aura-briefing-category">
+          <svg class="aura-briefing-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/>
+          </svg>
+          Aura Technical Assessment // ${escapeHtml(data.category || "General")}
+        </div>
+        <h1 class="aura-briefing-title">${escapeHtml(data.title || "Technical Executive Briefing")}</h1>
+        <p class="aura-briefing-summary">${escapeHtml(data.summary || "")}</p>
+        ${tagsHtml}
+      </div>
+
+      <!-- 2. Bento Stat Badges -->
+      ${metricsHtml}
+
+      <!-- 3. Deep-Dive Split Panels -->
+      ${sectionsHtml}
+
+      <!-- 4. Interactive Quick Actions -->
+      ${actionsHtml}
+    </div>
+
+    <!-- Fallback raw text view (hidden by default) -->
+    <div class="aura-briefing-raw-fallback" style="display:none; margin-top:12px;">
+      ${formatMarkdownResponse(typeof rawTextFallback === "string" ? rawTextFallback : JSON.stringify(data, null, 2))}
+    </div>
+  `;
+}
+
+function renderAiMessageContent(answer) {
+  const briefingData = parseBriefingPayload(answer);
+  if (briefingData) {
+    return renderAuraBriefingCard(briefingData, answer);
+  }
+  // Fallback for normal plain text
+  return formatMarkdownResponse(typeof answer === "string" ? answer : JSON.stringify(answer, null, 2));
+}
+
+window.renderAiMessageContent = renderAiMessageContent;
+window.renderAuraBriefingCard = renderAuraBriefingCard;
+window.parseBriefingPayload = parseBriefingPayload;
+
 async function dispatchCommand() {
   const text = messageInput ? messageInput.value.trim() : "";
   if (!text && !currentComposerAttachment) return;
@@ -1812,8 +2061,20 @@ async function dispatchCommand() {
             <button class="btn-dossier-tool" onclick="copyAiBubbleText(this)" style="font-size:11px; padding:4px 8px;">📋 Copy</button>
           </div>
           <div class="dialogue-content cc-ai-response-body" style="font-size:14px; line-height:1.6; color:var(--text-primary);">
-            ${formatMarkdownResponse(answer)}
+            ${renderAiMessageContent(answer)}
             ${typeof inspectAndHandleProfileMemory === "function" ? inspectAndHandleProfileMemory(queryText, answer) : ""}
+            ${(queryText.toLowerCase().includes("antigravity") || queryText.toLowerCase().includes("gravitational") || queryText.toLowerCase().includes("alcubierre")) ? `
+              <div style="margin-top:14px; padding:12px 16px; border-radius:12px; background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(0,240,255,0.06)); border:1px solid rgba(245,158,11,0.35); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:18px;">🛸</span>
+                  <div>
+                    <div style="font-size:12.5px; font-weight:700; color:#fcd34d;">Antigravity &amp; Field Manipulation Technical Assessment</div>
+                    <div style="font-size:11px; color:#94a3b8;">Interactive glassmorphic metrics, Alcubierre tensor math &amp; Casimir vacuum tests</div>
+                  </div>
+                </div>
+                <button class="ag-vector-btn primary" onclick="window.openAntigravityBriefing()" style="padding:6px 14px; font-size:11.5px; font-weight:700;">Open Assessment ↗</button>
+              </div>
+            ` : ""}
           </div>
         </div>
       `;
@@ -12933,6 +13194,150 @@ topbarLatencyTicker();
       });
     });
   }
+
+  /* ---------------------------------------------------------
+     8. ANTIGRAVITY & FIELD MANIPULATION SYSTEMS BRIEFING
+     Interactive Glassmorphic Assessment Controller & Live Math
+  --------------------------------------------------------- */
+  function initAntigravityBriefingModule() {
+    const agModal = document.getElementById("antigravityBriefingModal");
+    const btnLaunch = document.getElementById("btnLaunchAntigravityBriefing");
+    const btnClose = document.getElementById("btnCloseAgModal");
+    const btnAlcubierre = document.getElementById("btnAgAlcubierre");
+    const btnCasimir = document.getElementById("btnAgCasimir");
+    const btnSaveVault = document.getElementById("btnAgSaveVault");
+    const btnCopy = document.getElementById("btnAgCopyBriefing");
+    const mathDossier = document.getElementById("agMathDossier");
+    const mathTitle = document.getElementById("agMathTitle");
+    const mathFormula = document.getElementById("agMathFormula");
+    const mathExplanation = document.getElementById("agMathExplanation");
+
+    window.openAntigravityBriefing = function() {
+      if (agModal) {
+        agModal.style.display = "flex";
+        setTimeout(() => agModal.classList.add("open"), 10);
+        if (typeof playTactileSound === "function") playTactileSound("click");
+      }
+    };
+
+    window.closeAntigravityBriefing = function() {
+      if (agModal) {
+        agModal.classList.remove("open");
+        setTimeout(() => {
+          agModal.style.display = "none";
+          if (mathDossier) mathDossier.style.display = "none";
+        }, 250);
+      }
+    };
+
+    if (btnLaunch) {
+      btnLaunch.addEventListener("click", () => {
+        window.openAntigravityBriefing();
+      });
+    }
+
+    if (btnClose) {
+      btnClose.addEventListener("click", () => {
+        window.closeAntigravityBriefing();
+      });
+    }
+
+    // Dismiss on clicking outside modal card
+    if (agModal) {
+      agModal.addEventListener("click", (e) => {
+        if (e.target === agModal) {
+          window.closeAntigravityBriefing();
+        }
+      });
+    }
+
+    // 1. Alcubierre Metric Math Vector
+    if (btnAlcubierre) {
+      btnAlcubierre.addEventListener("click", () => {
+        if (!mathDossier) return;
+        mathTitle.textContent = "Alcubierre Metric Tensor & Negative Energy Geometry";
+        mathFormula.innerHTML = `
+          <div style="margin-bottom:6px; color:#38bdf8;"><strong>Spacetime Metric:</strong> ds² = -c²dt² + [dx - vₛ(t) · f(rₛ) · dt]² + dy² + dz²</div>
+          <div style="margin-bottom:6px; color:#fcd34d;"><strong>York Time Volume Expansion Scalar:</strong> θ = vₛ · (xₛ / rₛ) · (df/drₛ)</div>
+          <div style="color:#f43f5e;"><strong>Stress-Energy Tensor Constraint:</strong> T₀₀ = - (1 / 32π) · vₛ² · (y² + z²) / rₛ² · (df/drₛ)² &lt; 0  [Exotic Matter]</div>
+        `;
+        mathExplanation.innerHTML = "<strong>Physical Mechanism:</strong> Alcubierre metric generates apparent superluminal velocity by contracting space-time directly in front of the bubble and expanding space-time behind it. Locally inside the bubble, geodesics remain unaccelerated (zero proper G-force). However, Einstein Field Equations mandate localized violation of the Weak Energy Condition (WEC), requiring negative energy density (exotic mass).";
+        mathDossier.style.display = "block";
+        mathDossier.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (typeof playTactileSound === "function") playTactileSound("dispatch");
+      });
+    }
+
+    // 2. Casimir Vacuum Fluctuation Vector
+    if (btnCasimir) {
+      btnCasimir.addEventListener("click", () => {
+        if (!mathDossier) return;
+        mathTitle.textContent = "Casimir Effect: Quantum Vacuum Negative Energy Proof";
+        mathFormula.innerHTML = `
+          <div style="margin-bottom:6px; color:#38bdf8;"><strong>Casimir Attractive Force per Unit Area:</strong> F / A = - (π² · ℏ · c) / (240 · d⁴)</div>
+          <div style="color:#fcd34d;"><strong>Renormalized Vacuum Energy Density:</strong> ⟨T₀₀⟩_ren = - (π² · ℏ · c) / (720 · d⁴) &lt; 0</div>
+          <div style="color:#34d399;"><strong>Laboratory Scale:</strong> At d = 10 nm, negative vacuum pressure exceeds -1.3 × 10⁵ Pa (~1.3 atm)</div>
+        `;
+        mathExplanation.innerHTML = "<strong>Empirical Baseline:</strong> In Quantum Electrodynamics (QED), boundary conditions between closely spaced parallel conducting plates suppress vacuum oscillation modes whose wavelengths do not divide the plate separation. This suppression causes the localized energy density between the plates to be lower than the vacuum state of outside space (net negative energy density), experimentally proven by Steve Lamoreaux (1997) and Umar Mohideen (1998).";
+        mathDossier.style.display = "block";
+        mathDossier.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (typeof playTactileSound === "function") playTactileSound("dispatch");
+      });
+    }
+
+    // 3. Ingest into Knowledge Vault
+    if (btnSaveVault) {
+      btnSaveVault.addEventListener("click", () => {
+        try {
+          const stored = JSON.parse(localStorage.getItem("aura_vault_files") || "[]");
+          const exists = stored.some(f => f.name.includes("Antigravity"));
+          if (!exists) {
+            stored.unshift({
+              name: "Antigravity & Field Manipulation Systems Assessment.txt",
+              size: "14.8 KB",
+              type: "text/plain",
+              date: new Date().toLocaleDateString(),
+              tags: ["Quantum Gravity", "General Relativity", "Alcubierre", "Casimir Effect", "Exotic Matter"],
+              summary: "Executive assessment into hypothetical gravitational shielding, metric engineering (Alcubierre warp), Casimir vacuum negative energy, and Biefeld-Brown EHD ion thruster physics."
+            });
+            localStorage.setItem("aura_vault_files", JSON.stringify(stored));
+            if (typeof renderVaultFiles === "function") renderVaultFiles();
+          }
+          btnSaveVault.innerHTML = "<span>✓ Ingested in Vault</span>";
+          btnSaveVault.style.borderColor = "#10b981";
+          btnSaveVault.style.color = "#34d399";
+          if (typeof playTactileSound === "function") playTactileSound("success");
+          setTimeout(() => {
+            btnSaveVault.innerHTML = "<span>⧉ Ingest into Vault</span>";
+            btnSaveVault.style.borderColor = "";
+            btnSaveVault.style.color = "";
+          }, 3000);
+        } catch (e) {
+          console.error("Vault save error:", e);
+        }
+      });
+    }
+
+    // 4. Copy Structured Briefing Payload
+    if (btnCopy) {
+      btnCopy.addEventListener("click", () => {
+        const payloadText = `⚡ EXECUTIVE SNAPSHOT\nCore Hypothesis: Antigravity represents hypothetical or advanced theoretical physical mechanisms capable of mitigating, redirecting, or negating gravitational acceleration. It transforms standard energy propulsion into field-manipulation dynamics.\nField: Quantum Gravity / GR • Status: Theoretical & High-Risk Experimental • Tier: Disruptive Tech\n\n📊 HIGH-YIELD PARAMETERS & METRICS\n• Primary Framework: General Relativity (T_μν) - Curvature manipulation via stress-energy-momentum tensor constraints.\n• Theoretical Energy: Negative Mass / Exotic Matter - Required condition for theoretical Alcubierre & wormhole metrics (T_00 < 0).\n• Current Experimental Lift: Biefeld–Brown / Ion Thrusters - Operates purely on dielectric electrohydrodynamics (EHD), not true gravitational shielding.\n• Energy Scale Threshold: Planck Energy (~10^19 GeV) - Necessary scale for direct observable Quantum Gravity coupling.\n\n🧭 THEMATIC SECTORS\n• Alcubierre Metric: Contracts space ahead, expands space behind under GR; mandates negative energy density.\n• Casimir Baseline: Quantum vacuum fluctuations show localized negative energy density in QED.\n• Engineering Limitations: Superconductor claims (Podkletnov Effect) unverified; Ion thrusters fail in vacuum; Gyroscopic torque vibration fallacies.`;
+        navigator.clipboard.writeText(payloadText).then(() => {
+          btnCopy.innerHTML = "<span>✓ Briefing Copied!</span>";
+          btnCopy.style.borderColor = "#10b981";
+          btnCopy.style.color = "#34d399";
+          if (typeof playTactileSound === "function") playTactileSound("success");
+          setTimeout(() => {
+            btnCopy.innerHTML = "<span>📋 Copy Briefing</span>";
+            btnCopy.style.borderColor = "";
+            btnCopy.style.color = "";
+          }, 2500);
+        });
+      });
+    }
+  }
+
+  initAntigravityBriefingModule();
 
   console.log("[PROJECT AURA 3.0] Master Production Suite fully operational.");
 })();
