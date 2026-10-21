@@ -873,7 +873,6 @@
                 <button class="creation-tab-btn" data-tab="scripts">🎬 Script</button>
                 <button class="creation-tab-btn" data-tab="presentation">📊 Presentation</button>
                 <button class="creation-tab-btn" data-tab="social">📱 Social</button>
-                <button class="creation-tab-btn" data-tab="templates">📋 Templates</button>
               </div>
 
               <!-- Short & Crisp / Detailed Toggle -->
@@ -1135,115 +1134,6 @@
                     <button class="btn-vault-action" id="copySocialBtn">📋 Copy</button>
                   </div>
                   <div class="creation-cards-flow" id="socialOutputText"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- TAB 6: TEMPLATES (CATEGORIZED PLATFORM AI: FIGMA, CANVA, SPLINE, NOTION, SOCIAL, ACADEMIC) -->
-            <div class="creation-tab-content" id="tab-templates" style="display:none;">
-              <div class="workspace-card">
-                <div
-                  style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
-                  <div>
-                    <h3 class="card-section-title" style="margin-bottom:2px;">📋 Platform AI Templates & Design Systems
-                    </h3>
-                    <p style="font-size:12px; color:var(--text-secondary); margin:0;">Synthesize structured frameworks
-                      for Figma, Canva, Spline 3D, Webflow, Notion, and Academic Systems.</p>
-                  </div>
-                </div>
-
-                <!-- Template Category Pills -->
-                <div class="creation-subnav-tabs" id="templateCategoryBar" style="margin-bottom:16px; flex-wrap:wrap;">
-                  <button class="creation-tab-btn active" data-tplcat="all">All Platforms</button>
-                  <button class="creation-tab-btn" data-tplcat="figma">🎨 Figma UI/UX</button>
-                  <button class="creation-tab-btn" data-tplcat="canva">🪄 Canva Decks</button>
-                  <button class="creation-tab-btn" data-tplcat="spline">🔮 Spline 3D & Webflow</button>
-                  <button class="creation-tab-btn" data-tplcat="notion">📝 Notion OS</button>
-                  <button class="creation-tab-btn" data-tplcat="creator">📱 Creator Kits</button>
-                  <button class="creation-tab-btn" data-tplcat="academic">🎓 Academic IEEE</button>
-                </div>
-
-                <!-- Interactive Platform Template Cards Shelf -->
-                <div class="tpl-cards-shelf" id="templateCardsShelf">
-                  <!-- Dynamically populated or selectable cards -->
-                </div>
-
-                <div class="form-group" style="margin-top:16px;">
-                  <label class="form-label">Selected Template Specification</label>
-                  <select id="templateTypeSelect" class="form-textarea" title="Selected Template Specification"
-                    aria-label="Selected Template Specification"
-                    style="min-height:auto; height:42px; margin-bottom:12px;">
-                    <optgroup label="🎨 Figma & UI/UX Systems">
-                      <option value="Figma Design System & Token Spec" selected>Figma Design System Specification &
-                        Token Hierarchy</option>
-                      <option value="Mobile App User Flow & Wireframe Blueprint">Figma Mobile App User Flow & Wireframe
-                        Blueprint</option>
-                      <option value="SaaS Dashboard Component Architecture">Figma SaaS Component Library & Layout Matrix
-                      </option>
-                    </optgroup>
-                    <optgroup label="🪄 Canva & Pitch Decks">
-                      <option value="Canva High-Stakes Investor Pitch Deck">Canva High-Stakes Startup Investor Pitch
-                        Deck (10 Slides)</option>
-                      <option value="Canva Product Launch & Marketing Kit">Canva Product Launch Visual Campaign Outline
-                      </option>
-                      <option value="Canva Executive Infographic Blueprint">Canva Infographic Data Storytelling
-                        Structure</option>
-                    </optgroup>
-                    <optgroup label="🔮 Spline 3D & Webflow">
-                      <option value="Spline 3D Interactive Hero Scene Prompt">Spline 3D Interactive Web Scene Structure
-                        & Lighting</option>
-                      <option value="Webflow High-Converting Landing Page Spec">Webflow Landing Page Component & CMS
-                        Architecture</option>
-                      <option value="3D Product Showcase Experience Spec">3D Interactive Product Showcase Experience
-                        Blueprint</option>
-                    </optgroup>
-                    <optgroup label="📝 Notion & Productivity">
-                      <option value="Notion Second Brain & Knowledge Management OS">Notion Second Brain OS & Para Method
-                        Architecture</option>
-                      <option value="Notion Agile Sprint & Engineering Roadmap">Notion Engineering Sprint Tracker & Task
-                        Matrix</option>
-                      <option value="Notion Academic Literature Review Base">Notion Research Papers Literature Review
-                        Matrix</option>
-                    </optgroup>
-                    <optgroup label="📱 Social Media & Creator Kits">
-                      <option value="Viral LinkedIn Carousel Framework">Viral LinkedIn Carousel 7-Slide Framework
-                      </option>
-                      <option value="YouTube 10-Min Video Architecture (Hook+Story+CTA)">YouTube High-Retention 10-Min
-                        Video Architecture</option>
-                      <option value="Instagram High-Reach Storyboard">Instagram High-Reach Educational Storyboard
-                      </option>
-                    </optgroup>
-                    <optgroup label="🎓 Academic & Engineering">
-                      <option value="IEEE Research Conference Paper Structure">IEEE Research Conference Paper Format &
-                        Methodology</option>
-                      <option value="Software Requirements Specification (SRS IEEE 830)">Software Requirements
-                        Specification (SRS) - IEEE 830</option>
-                      <option value="Engineering Laboratory Experiment Report">Comprehensive Engineering Lab Report
-                        Template</option>
-                    </optgroup>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Project Context / Specific Requirements</label>
-                  <input type="text" id="templateTopicInput" class="form-textarea" style="min-height:auto; height:44px;"
-                    placeholder="e.g. Real-time Autonomous Drone Navigation System with edge AI..." />
-                </div>
-
-                <button class="btn-generate-gemini" id="generateTemplateBtn" style="width:auto; padding:10px 24px;">⚡
-                  Synthesize Platform Template</button>
-
-                <div class="creation-crisp-card" id="templateOutputContainer" style="margin-top:20px; display:none;">
-                  <div
-                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle); padding-bottom:8px; flex-wrap:wrap; gap:8px;">
-                    <span style="font-size:11px; font-weight:700; color:var(--accent-gold); text-transform:uppercase;">✦
-                      Synthesized Platform Template</span>
-                    <div style="display:flex; gap:6px;">
-                      <button class="btn-vault-action" id="copyTemplateBtn">📋 Copy</button>
-                      <button class="btn-vault-action" id="exportTemplateMdBtn">📥 Markdown</button>
-                    </div>
-                  </div>
-                  <div class="creation-cards-flow" id="templateOutputText"></div>
                 </div>
               </div>
             </div>

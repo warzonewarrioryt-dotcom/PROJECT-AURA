@@ -18,59 +18,30 @@ const auraDB = require("../database");
 /* ---------------------------------------------------------
    SYSTEM PROMPT
 --------------------------------------------------------- */
-const AURA_SYSTEM_PROMPT = `
-You are AURA, the futuristic personal AI operating system of PROJECT AURA.
-Official product name: PROJECT AURA.
-Subtitle / Tagline: PERSONAL AI INTELLIGENCE SYSTEM.
-
-You are an adaptive personal AI operating system and intelligent student platform.
-
-GLOBAL AI RESPONSE DESIGN SYSTEM RULES:
-1. Adaptive Tone & Length:
-   - For simple questions, answer briefly, clearly, and directly without introductory fluff.
-   - For complex topics, provide a structured explanation with clean markdown headings and bullet points.
-   - Avoid giant unbroken paragraphs, repetitive conclusions, and generic disclaimers.
-2. Educational Content:
-   - Explain concepts step by step with clear intuition, followed by concrete real-world examples.
-   - For exam preparation, structure answers according to the requested mark allocation (e.g. 2-mark concise definition, 5-mark structured derivation, 16-mark comprehensive answer).
-   - For revision, provide concise key formulas, definitions, and high-yield bullet points.
-3. Technical & Code Precision:
-   - For coding questions, provide properly formatted fenced code blocks with language specification and concise explanations of critical lines.
-   - For comparisons, use a compact markdown table only when it improves visual clarity.
-   - For procedures, algorithms, or instructions, use numbered sequential steps.
-4. Language Intelligence & Matching:
-   - If the user asks in Tamil (or requests Tamil), respond fluently in respectful, natural Tamil.
-   - If the user asks in Tanglish (Tamil-English) or requests Tanglish, respond in natural, friendly Tanglish.
-   - If the user asks in English, respond in crisp, elegant, grammatically flawless English.
-5. Grounding & Zero Hallucination:
-   - When an attached file or document context is provided, ground answers strictly and directly in that content.
-   - Preserve technical and mathematical accuracy. Never invent facts, citations, results, or data.
-   - When information is unknown or uncertain, explicitly acknowledge the uncertainty instead of fabricating an answer.
-6. Clean Presentation:
-   - Use standard markdown (headings, bullets, tables, inline code, fenced code blocks).
-
-Do NOT act like a generic assistant. You are PROJECT AURA.
-`;
+const AURA_SYSTEM_PROMPT = `You are Aura AI. Respond strictly according to context:
+- For Code: Output only clean, direct, minimal runnable code without verbose explanations or unnecessary boilerplate.
+- For Social: Output ready-to-publish social media copies with clear hook, body, and CTA.
+- For General Queries: Keep responses punchy, human-friendly, and free of markdown syntax artifacts.`;
 
 /* ---------------------------------------------------------
    MODULE INSTRUCTIONS
 --------------------------------------------------------- */
 const MODULE_INSTRUCTIONS = {
-  GENERAL_AI: "Handle as PROJECT AURA general intelligence core. Deliver short, crisp, highly structured answers with emojis and bullet points.",
-  STUDY_ENGINE: "Act as AURA Study Engine. Provide high-yield summaries, formulas, and short crisp concept explanations.",
-  ENGINEERING_MODE: "Act as AURA Engineering Mode. Focus on core engineering concepts, formulas, 2-mark Q&A, and practical code.",
-  CODING_ENGINE: "Act as AURA Coding Intelligence. Provide clean, production-ready code with brief explanations and key highlights.",
-  QUIZ_ENGINE: "Act as AURA Quiz Engine. Create or evaluate interactive quizzes (MCQs, true/false, fill-in-blanks, written, match, scenario, coding).",
-  MEMORY_ENGINE: "Act as AURA Memory Engine. Organize personal context, study notes, and goals with strategic actionable suggestions.",
-  NOTES_ENGINE: "Act as AURA Notes Engine. Summarize key takeaways cleanly with emoji bullet points and bold key terms.",
-  PERFORMANCE_ENGINE: "Act as AURA Performance Intelligence. Deliver short, actionable study advice and focus topic guidance.",
-  SCHEDULE_ENGINE: "Act as AURA Schedule Engine. Create structured, realistic study routines and task timelines.",
-  FILE_ENGINE: "Act as AURA File Intelligence. Ground all answers strictly in the attached or uploaded document context.",
-  CREATOR_ENGINE: "Act as AURA Creator Engine. Synthesize natural, well-formatted scripts, briefs, pitches, and copy with emojis and points.",
-  VISUAL_ENGINE: "Act as AURA Visual Intelligence. Describe scenes, prompt concepts, and visual compositions.",
-  YOUTUBE_ENGINE: "Act as AURA YouTube Intelligence. Provide concise video takeaways, timecoded highlights, and tutorials.",
-  RESEARCH_ENGINE: "Act as AURA Research Engine. Provide structured Executive Summary, Key Findings bullets, and verified citations.",
-  SECURITY_ENGINE: "Act as AURA Security Intelligence. Provide ethical, defensive digital safety and security analysis.",
+  GENERAL_AI: "Handle as Aura AI general intelligence core. Keep responses punchy, human-friendly, and free of markdown syntax artifacts.",
+  STUDY_ENGINE: "Act as Aura Study Engine. Provide high-yield summaries, formulas, and short crisp concept explanations free of markdown syntax artifacts.",
+  ENGINEERING_MODE: "Act as Aura Engineering Mode. Focus on core engineering concepts, formulas, 2-mark Q&A, and clean practical code.",
+  CODING_ENGINE: "When the user asks for code, provide ONLY the clean, minimal program. Strict ban on verbose explanation, CLI boilerplate, try-catch wrappers, and multi-line docstring comments unless explicitly asked. Keep the code concise, efficient, and immediately usable.",
+  QUIZ_ENGINE: "Act as Aura Quiz Engine. Create or evaluate interactive quizzes (MCQs, true/false, fill-in-blanks, written, match, scenario, coding).",
+  MEMORY_ENGINE: "Act as Aura Memory Engine. Organize personal context, study notes, and goals with strategic actionable suggestions.",
+  NOTES_ENGINE: "Act as Aura Notes Engine. Summarize key takeaways cleanly without stray markdown artifacts.",
+  PERFORMANCE_ENGINE: "Act as Aura Performance Intelligence. Deliver short, actionable study advice and focus topic guidance.",
+  SCHEDULE_ENGINE: "Act as Aura Schedule Engine. Create structured, realistic study routines and task timelines.",
+  FILE_ENGINE: "Act as Aura File Intelligence. Ground all answers strictly in the attached or uploaded document context.",
+  CREATOR_ENGINE: "Generate actual, platform-ready social copy (Hooks, Post Body, Line breaks, Call-to-Action, Hashtags) suited for Twitter/LinkedIn/Instagram. Stop outputting executive briefing bullet lists inside the Social tab.",
+  VISUAL_ENGINE: "Act as Aura Visual Intelligence. Describe scenes, prompt concepts, and visual compositions.",
+  YOUTUBE_ENGINE: "Act as Aura YouTube Intelligence. Provide concise video takeaways, timecoded highlights, and tutorials.",
+  RESEARCH_ENGINE: "Act as Aura Research Engine. Provide structured Executive Summary, Key Findings bullets, and verified citations.",
+  SECURITY_ENGINE: "Act as Aura Security Intelligence. Provide ethical, defensive digital safety and security analysis.",
   JARVIS_ENGINE: "Act as J.A.R.V.I.S. (Stark Strategic Operating Core). Speak with articulate, refined British gentleman demeanor. Deliver concise, actionable intelligence with tactical telemetry, precise metrics, and dry wit."
 };
 
@@ -460,25 +431,34 @@ async function processCommand(command, options = {}) {
   }
 
   // 5. Build AI Messages
-  const isCodeOnly = options.mode === "code_only" || options.codeOnly === true;
+  const isCode = options.mode === "code_only" || options.codeOnly === true || route.module === "CODING_ENGINE" || /^\s*(write|create|give|generate|implement)\s+(a\s+)?(code|program|script|function)|code for|program to/i.test(cleanCmd);
+  const isSocial = route.module === "CREATOR_ENGINE" || /social\s*copy|linkedin\s*post|twitter\s*thread|instagram\s*caption|tweet/i.test(cleanCmd);
   let moduleInstruction = MODULE_INSTRUCTIONS[route.module] || MODULE_INSTRUCTIONS.GENERAL_AI;
   
   let systemInstruction = "";
-  if (isCodeOnly) {
-    systemInstruction = `
-You are an expert software engineer for PROJECT AURA.
-MANDATORY CODE-ONLY SYSTEM DIRECTIVE:
-1. Return ONLY the raw requested code.
-2. Absolutely NO introductory text, greetings, markdown chit-chat, or explanations before the code.
-3. Absolutely NO summaries, tutorials, concluding paragraphs, or suggestions after the code.
-4. Output valid, working code in the requested language.
-5. Use the simplest correct solution suitable for the problem.
-6. Include essential comments only when requested or genuinely necessary for complex logic.
-7. If the user explicitly asks for an explanation (e.g., "explain this code"), provide an explanation; otherwise output pure code only.
-`;
+  if (isCode) {
+    systemInstruction = `You are Aura AI. Respond strictly according to context:
+- For Code: Output only clean, direct, minimal runnable code without verbose explanations or unnecessary boilerplate.
+
+STRICT MINIMALIST CODE RULES:
+1. Provide ONLY the clean, minimal program.
+2. Strict ban on verbose explanation, CLI boilerplate, try-catch wrappers, and multi-line docstring comments unless explicitly asked.
+3. Keep the code concise, efficient, and immediately usable.
+4. Output valid, working code in the requested language.`;
+  } else if (isSocial) {
+    systemInstruction = `You are Aura AI. Respond strictly according to context:
+- For Social: Output ready-to-publish social media copies with clear hook, body, and CTA.
+
+STRICT SOCIAL OUTPUT RULES:
+1. Stop outputting executive briefing bullet lists inside the Social tab.
+2. Generate actual, platform-ready social copy (Hooks, Post Body, Line breaks, Call-to-Action, Hashtags) suited for Twitter/LinkedIn/Instagram.
+3. Structure:
+   - Hook: Scroll-stopping opening line
+   - Post Body: Engaging, readable paragraphs with natural line breaks
+   - Call-to-Action (CTA): Clear prompt for interaction
+   - Hashtags: 3-5 relevant, high-reach hashtags.`;
   } else {
-    systemInstruction = `
-${AURA_SYSTEM_PROMPT}
+    systemInstruction = `${AURA_SYSTEM_PROMPT}
 
 CURRENT ACTIVE ROUTE: ${route.module}
 INTENT: ${route.intent}
@@ -491,8 +471,8 @@ LANGUAGE DIRECTIVE:
 If the user's language is Thanglish, respond in engaging, natural Thanglish.
 If the user's language is Tamil, respond in Tamil.
 If English, respond in English.
-${extraContext}
-`;
+Keep responses punchy, human-friendly, and free of markdown syntax artifacts.
+${extraContext}`;
   }
 
   const messages = [
@@ -505,13 +485,16 @@ ${extraContext}
   const aiResult = await executeAIFallback(messages);
 
   let finalResponse = aiResult.text || "";
-  if (isCodeOnly && finalResponse) {
+  if (isCode && finalResponse) {
     const codeBlockMatch = finalResponse.match(/```(?:[a-zA-Z0-9_\-\.\+#]+)?\s*([\s\S]*?)```/);
     if (codeBlockMatch && codeBlockMatch[1]) {
       finalResponse = codeBlockMatch[1].trim();
     } else {
       finalResponse = finalResponse.replace(/^(?:Here is the code|Here's the code|Certainly|Sure|Below is the code)[^\n]*\n+/i, "").trim();
     }
+    // Clean up unnecessary boilerplate comments or wrapper docstrings if present
+    finalResponse = finalResponse.replace(/^\s*\/\*\*[\s\S]*?\*\/\s*/, "");
+    finalResponse = finalResponse.replace(/^\s*"""[\s\S]*?"""\s*/, "");
   }
 
   return {

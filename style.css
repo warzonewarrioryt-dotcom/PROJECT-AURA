@@ -7535,104 +7535,36 @@ body[data-theme="action-cyber"] .spatial-3d-grid-plane {
   line-height: 1.4;
 }
 
-/* Categorized Templates Grid */
-.tpl-categories-bar {
+/* Ready-to-Publish Social Content Studio */
+.social-platform-post-card {
+  background: var(--bg-surface, #0f1420);
+  border: 1px solid var(--border-card, rgba(255, 255, 255, 0.08));
+  border-radius: var(--radius-lg, 16px);
+  padding: 22px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.social-ready-post-body {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-primary, #f1f5f9);
+}
+
+.social-hashtags-row {
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
 }
 
-.tpl-cat-pill {
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  background: var(--bg-surface-subtle);
-  border: 1px solid var(--border-card);
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.tpl-cat-pill.active,
-.tpl-cat-pill:hover {
-  background: var(--bg-surface-elevated);
-  border-color: #00F0FF;
-  color: #00F0FF;
-}
-
-.templates-showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
-  margin-top: 12px;
-}
-
-.platform-tpl-card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.platform-tpl-card:hover {
-  border-color: rgba(0, 240, 255, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-.platform-badge {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+.social-tag-pill {
+  font-size: 11px;
   font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.platform-badge.figma {
-  background: rgba(162, 89, 255, 0.15);
-  color: #A259FF;
-  border: 1px solid rgba(162, 89, 255, 0.3);
-}
-
-.platform-badge.canva {
-  background: rgba(0, 196, 204, 0.15);
-  color: #00C4CC;
-  border: 1px solid rgba(0, 196, 204, 0.3);
-}
-
-.platform-badge.spline {
-  background: rgba(255, 107, 107, 0.15);
-  color: #FF6B6B;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-}
-
-.platform-badge.notion {
-  background: rgba(255, 255, 255, 0.1);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.platform-badge.social {
-  background: rgba(0, 240, 255, 0.15);
-  color: #00F0FF;
-  border: 1px solid rgba(0, 240, 255, 0.3);
-}
-
-.platform-badge.academic {
-  background: rgba(194, 155, 72, 0.15);
-  color: #E5C07B;
-  border: 1px solid rgba(194, 155, 72, 0.3);
+  color: var(--accent-gold, #f59e0b);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 6px;
+  padding: 3px 8px;
 }
 
 /* Knowledge Vault Direct File Links & Chrome Web Results */
@@ -17150,8 +17082,8 @@ input:focus, textarea:focus, select:focus {
   align-items: center;
   justify-content: center;
   background: rgba(3, 4, 8, 0.88);
-  backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
   padding: 20px;
   opacity: 0;
   pointer-events: none;
@@ -17231,8 +17163,8 @@ input:focus, textarea:focus, select:focus {
   border-radius: 18px;
   border: 1px solid rgba(245, 158, 11, 0.35);
   background: linear-gradient(135deg, rgba(22, 17, 10, 0.85) 0%, rgba(9, 12, 20, 0.95) 100%);
-  backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
   padding: 24px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
   margin-bottom: 18px;
@@ -17350,8 +17282,8 @@ input:focus, textarea:focus, select:focus {
   background: rgba(15, 20, 32, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.25s ease;
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .ag-bento-card:hover {
@@ -17414,8 +17346,8 @@ input:focus, textarea:focus, select:focus {
   border-radius: 16px;
   background: rgba(15, 20, 32, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .ag-panel-title {
@@ -17602,8 +17534,8 @@ input:focus, textarea:focus, select:focus {
   border-radius: 16px;
   border: 1px solid rgba(245, 158, 11, 0.3);
   background: rgba(9, 9, 11, 0.75);
-  backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
   padding: 24px;
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(245, 158, 11, 0.08);
 }
@@ -17698,8 +17630,8 @@ input:focus, textarea:focus, select:focus {
   background: rgba(24, 24, 27, 0.45);
   border: 1px solid rgba(39, 39, 42, 0.9);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .aura-briefing-bento-card:hover {
@@ -17750,8 +17682,8 @@ input:focus, textarea:focus, select:focus {
   border-radius: 16px;
   background: rgba(24, 24, 27, 0.55);
   border: 1px solid #27272a;
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .aura-briefing-panel-title {

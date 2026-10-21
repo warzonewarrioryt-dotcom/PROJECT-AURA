@@ -1847,6 +1847,29 @@ function parseBriefingPayload(raw) {
   return null;
 }
 
+function cleanPillText(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")
+    .replace(/\*/g, "")
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^[-+•►✦✧]\s*/, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^["'`:]+|["'`:]+$/g, "")
+    .trim();
+}
+window.cleanPillText = cleanPillText;
+
+function cleanCardText(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+    .replace(/\*/g, "");
+}
+window.cleanCardText = cleanCardText;
+
 function renderAuraBriefingCard(data, rawTextFallback) {
   if (!data) return "";
 
@@ -1858,7 +1881,7 @@ function renderAuraBriefingCard(data, rawTextFallback) {
 
   const tagsHtml = (data.tags && Array.isArray(data.tags) && data.tags.length > 0)
     ? `<div class="aura-briefing-tags">
-        ${data.tags.map(tag => `<span class="aura-briefing-tag">${escapeHtml(tag)}</span>`).join("")}
+        ${data.tags.map(tag => `<span class="aura-briefing-tag">${escapeHtml(cleanPillText(tag))}</span>`).join("")}
        </div>`
     : "";
 
@@ -1867,11 +1890,11 @@ function renderAuraBriefingCard(data, rawTextFallback) {
         ${data.metrics.map((metric, idx) => `
           <div class="aura-briefing-bento-card">
             <div class="aura-briefing-bento-header">
-              <span>${escapeHtml(metric.label || "Metric")}</span>
+              <span>${escapeHtml(cleanPillText(metric.label || "Metric"))}</span>
               ${metricIcons[idx % metricIcons.length]}
             </div>
-            <div class="aura-briefing-bento-val">${escapeHtml(metric.value || "--")}</div>
-            <div class="aura-briefing-bento-sub">${escapeHtml(metric.subtext || "")}</div>
+            <div class="aura-briefing-bento-val">${escapeHtml(cleanPillText(metric.value || "--"))}</div>
+            <div class="aura-briefing-bento-sub">${escapeHtml(cleanPillText(metric.subtext || ""))}</div>
           </div>
         `).join("")}
        </div>`
@@ -1883,13 +1906,13 @@ function renderAuraBriefingCard(data, rawTextFallback) {
           <div class="aura-briefing-panel">
             <h3 class="aura-briefing-panel-title">
               <span class="${sIdx % 2 === 0 ? 'aura-briefing-dot-amber' : 'aura-briefing-dot-cyan'}"></span>
-              ${escapeHtml(section.title || "Key Findings")}
+              ${escapeHtml(cleanPillText(section.title || "Key Findings"))}
             </h3>
             <div class="aura-briefing-items">
               ${(section.items || []).map(item => `
                 <div class="aura-briefing-item">
-                  <span class="aura-briefing-item-name">${escapeHtml(item.name || "")}: </span>
-                  ${escapeHtml(item.desc || "")}
+                  <span class="aura-briefing-item-name">${escapeHtml(cleanPillText(item.name || ""))}: </span>
+                  ${escapeHtml(cleanPillText(item.desc || ""))}
                 </div>
               `).join("")}
             </div>
@@ -1901,11 +1924,14 @@ function renderAuraBriefingCard(data, rawTextFallback) {
   const actionsHtml = (data.actions && Array.isArray(data.actions) && data.actions.length > 0)
     ? `<div class="aura-briefing-actions">
         <span class="aura-briefing-actions-label">Follow-up vectors:</span>
-        ${data.actions.map(action => `
-          <button type="button" class="aura-briefing-action-btn" data-action="${escapeHtml(action)}" onclick="window.dispatchAuraAction(this.getAttribute('data-action'))">
-            ${escapeHtml(action)} →
+        ${data.actions.map(action => {
+          const cleanAct = cleanPillText(action);
+          return `
+          <button type="button" class="aura-briefing-action-btn" data-action="${escapeHtml(cleanAct)}" onclick="window.dispatchAuraAction(this.getAttribute('data-action'))">
+            ${escapeHtml(cleanAct)} →
           </button>
-        `).join("")}
+        `;
+        }).join("")}
        </div>`
     : "";
 
@@ -1924,10 +1950,10 @@ function renderAuraBriefingCard(data, rawTextFallback) {
           <svg class="aura-briefing-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14"/>
           </svg>
-          Aura Technical Assessment // ${escapeHtml(data.category || "General")}
+          Aura Technical Assessment // ${escapeHtml(cleanPillText(data.category || "General"))}
         </div>
-        <h1 class="aura-briefing-title">${escapeHtml(data.title || "Technical Executive Briefing")}</h1>
-        <p class="aura-briefing-summary">${escapeHtml(data.summary || "")}</p>
+        <h1 class="aura-briefing-title">${escapeHtml(cleanPillText(data.title || "Technical Executive Briefing"))}</h1>
+        <p class="aura-briefing-summary">${escapeHtml(cleanPillText(data.summary || ""))}</p>
         ${tagsHtml}
       </div>
 
@@ -2116,7 +2142,7 @@ window.copyAiBubbleText = function(btn) {
 
 /* =========================================================
    7. CREATION STUDIO (WORKSPACE 7) — MULTI-MODE EXECUTIVE STUDIO
-   Modes: Write · Code · Script · Presentation · Social · Templates
+   Modes: Write · Code · Script · Presentation · Social
    Features: Short & Crisp by Default · Emojis · Markdown / TXT / Print Exports
 ========================================================= */
 state.creationLengthMode = "short";
@@ -2158,6 +2184,15 @@ function initCreationStudio() {
     });
   }
 
+  function sanitizeCardMarkdown(text) {
+    if (!text) return "";
+    let s = escapeHtml(text);
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
+    s = s.replace(/\*([^*\n]+)\*/g, '<em style="color:var(--text-secondary);">$1</em>');
+    s = s.replace(/\*/g, '');
+    return s;
+  }
+
   function formatCreationStudioOutput(text, defaultTopic) {
     if (!text) return "";
 
@@ -2196,7 +2231,7 @@ function initCreationStudio() {
             <span class="eng-badge-pill" style="font-size:10px;">High-Yield Summary</span>
           </div>
           <div class="creation-exec-brief-text">
-            ${escapeHtml(summaryText).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}
+            ${sanitizeCardMarkdown(summaryText)}
           </div>
         </div>
 
@@ -2207,12 +2242,11 @@ function initCreationStudio() {
           </div>
           <ul class="creation-points-list">
             ${bulletPoints.map((pt, pIdx) => {
-              const boldFormatted = escapeHtml(pt).replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
               const glyph = String(pIdx + 1).padStart(2, '0');
               return `
                 <li class="creation-point-item">
                   <span class="point-glyph">${glyph}</span>
-                  <div style="flex:1;">${boldFormatted}</div>
+                  <div style="flex:1;">${sanitizeCardMarkdown(pt)}</div>
                 </li>
               `;
             }).join("")}
@@ -2222,6 +2256,61 @@ function initCreationStudio() {
     `;
   }
   window.formatCreationStudioOutput = formatCreationStudioOutput;
+
+  function formatSocialOutput(text, platform, defaultTopic) {
+    if (!text) return "";
+
+    let clean = text
+      .replace(/^(?:Executive Briefing|Executive Summary|Key Actionable Takeaways|High-Yield Summary)[^\n]*\n+/gim, "")
+      .replace(/^[=\-_*]{3,}\s*$/gm, "")
+      .trim();
+
+    const paragraphs = clean.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+
+    const formattedParagraphs = paragraphs.map(p => {
+      if (/^(?:#[\w\d_]+\s*)+$/.test(p)) {
+        const tags = p.match(/#[\w\d_]+/g) || [];
+        return `<div class="social-hashtags-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:14px;">
+          ${tags.map(t => `<span class="social-tag-pill" style="font-size:11px; font-weight:700; color:var(--accent-gold); background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); border-radius:6px; padding:3px 8px;">${escapeHtml(cleanPillText(t))}</span>`).join("")}
+        </div>`;
+      }
+
+      const lines = p.split('\n');
+      const isBulletList = lines.length > 1 && lines.every(l => /^[-*•►✦✧\d+\.]\s+/.test(l.trim()));
+      if (isBulletList) {
+        return `<ul style="margin:8px 0; padding-left:20px; line-height:1.65; color:var(--text-primary);">
+          ${lines.map(l => {
+            const cleanLine = l.replace(/^[-*•►✦✧]\s+/, '').replace(/^\d+[\.\)]\s+/, '').trim();
+            return `<li>${sanitizeCardMarkdown(cleanLine)}</li>`;
+          }).join("")}
+        </ul>`;
+      }
+
+      const bodyWithBreaks = p.split('\n').map(l => sanitizeCardMarkdown(l)).join('<br>');
+      return `<p style="margin-bottom:12px; line-height:1.7; font-size:13.5px; color:var(--text-primary);">${bodyWithBreaks}</p>`;
+    }).join("");
+
+    return `
+      <div class="social-platform-post-card" style="background:var(--bg-surface); border:1px solid var(--border-card); border-radius:var(--radius-lg); padding:20px; box-shadow:0 12px 30px rgba(0,0,0,0.35);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-subtle); padding-bottom:12px; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; background:rgba(0,240,255,0.12); color:#00f0ff; font-size:14px;">📱</span>
+            <div>
+              <div style="font-size:12px; font-weight:800; color:var(--text-primary); text-transform:uppercase; letter-spacing:0.04em;">Ready-to-Publish ${escapeHtml(cleanPillText(platform || "Social"))} Copy</div>
+              <div style="font-size:10.5px; color:var(--text-tertiary);">Platform-Optimized · Hooks, Spacing &amp; CTA Included</div>
+            </div>
+          </div>
+          <button type="button" class="btn-vault-action" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(clean)}')); this.textContent='✓ Copied!'; setTimeout(()=>this.textContent='📋 Copy Post', 1500);" style="font-size:11px; padding:5px 12px;">
+            📋 Copy Post
+          </button>
+        </div>
+        <div class="social-ready-post-body" style="font-family:var(--font-sans); color:var(--text-primary);">
+          ${formattedParagraphs}
+        </div>
+      </div>
+    `;
+  }
+  window.formatSocialOutput = formatSocialOutput;
 
   function parsePresentationSlides(rawText, topic) {
     // Try to extract slide blocks
@@ -2497,7 +2586,7 @@ Make it look natural, professional, and visually engaging with clean points and 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: `Write production-ready ${lang} code for: ${spec}`,
+            message: `Provide ONLY the clean, minimal ${lang} program for: ${spec}. Strict ban on verbose explanation, CLI boilerplate, try-catch wrappers, and multi-line docstring comments unless explicitly asked. Keep the code concise, efficient, and immediately usable.`,
             mode: "code_only"
           })
         });
@@ -2510,6 +2599,7 @@ Make it look natural, professional, and visually engaging with clean points and 
         if (codeBlockMatch) {
           pureCode = codeBlockMatch[1].trim();
         }
+        pureCode = pureCode.replace(/^\s*\/\*\*[\s\S]*?\*\/\s*/, "").replace(/^\s*"""[\s\S]*?"""\s*/, "");
         lastCodeResult = pureCode;
 
         if (codingOutputText && codingOutputContainer) {
@@ -3189,14 +3279,18 @@ Chronological, natural speech script for the speaker to present to the audience 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: buildCreationPrompt(`Craft high-engagement ${platform} copy with punchy hooks, clean spacing, bullet points, and trending hashtags. No messy lines.`, topic, "Social")
+            message: `Generate actual, platform-ready ${platform} social copy for: "${topic}".
+Strict Rules:
+- Stop outputting executive briefing bullet lists.
+- Output ready-to-publish social copy with a clear hook, post body with line breaks, call-to-action (CTA), and hashtags.
+- Tailor specifically for ${platform}.`
           })
         });
         const data = await res.json();
         lastSocialResult = data.answer || data.response || "Complete.";
 
         if (socialOutputText && socialOutputContainer) {
-          socialOutputText.innerHTML = formatCreationStudioOutput(lastSocialResult, `${platform}: ${topic}`);
+          socialOutputText.innerHTML = formatSocialOutput(lastSocialResult, platform, topic);
           socialOutputContainer.style.display = "block";
         }
         playTactileSound("success");
@@ -3215,120 +3309,6 @@ Chronological, natural speech script for the speaker to present to the audience 
       copySocialBtn.textContent = "✓ Copied!";
       setTimeout(() => { copySocialBtn.textContent = "📋 Copy"; }, 1500);
       playTactileSound("click");
-    });
-  }
-
-  // 6. Templates Tab (Platform AI: Figma, Canva, Spline 3D, Notion, Creator, Academic)
-  const templateCategoryBar = document.getElementById("templateCategoryBar");
-  const templateCardsShelf = document.getElementById("templateCardsShelf");
-  const generateTemplateBtn = document.getElementById("generateTemplateBtn");
-  const templateTopicInput = document.getElementById("templateTopicInput");
-  const templateTypeSelect = document.getElementById("templateTypeSelect");
-  const templateOutputContainer = document.getElementById("templateOutputContainer");
-  const templateOutputText = document.getElementById("templateOutputText");
-  const copyTemplateBtn = document.getElementById("copyTemplateBtn");
-  const exportTemplateMdBtn = document.getElementById("exportTemplateMdBtn");
-
-  const PLATFORM_TEMPLATES_LIST = [
-    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Figma Design System & Token Spec", desc: "Color tokens, typography scale, 8pt spacing hierarchy, component props & variants." },
-    { cat: "figma", badgeClass: "figma", badge: "Figma UI/UX", title: "Mobile App User Flow & Wireframe Blueprint", desc: "User journey map, core screen states, modal interactions & mobile navigation." },
-    { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva High-Stakes Investor Pitch Deck", desc: "10-slide venture narrative: Hook, TAM/SAM, Product Moat, Unit Economics, Ask." },
-    { cat: "canva", badgeClass: "canva", badge: "Canva AI", title: "Canva Product Launch Visual Campaign Outline", desc: "Social launch banners, carousel assets, email marketing header specs & typography." },
-    { cat: "spline", badgeClass: "spline", badge: "Spline 3D", title: "Spline 3D Interactive Web Scene Structure & Lighting", desc: "3D camera coordinates, glassmorphic materials, event triggers, Webflow embeds." },
-    { cat: "spline", badgeClass: "spline", badge: "Spline 3D", title: "Webflow High-Converting Landing Page Spec", desc: "Hero section, feature matrices, interactive demo embeds, CMS collection schema." },
-    { cat: "notion", badgeClass: "notion", badge: "Notion OS", title: "Notion Second Brain & Knowledge Management OS", desc: "PARA Method database relations (Projects, Areas, Resources, Archives), daily dashboard." },
-    { cat: "creator", badgeClass: "social", badge: "Creator Kit", title: "Viral LinkedIn Carousel Framework", desc: "7-slide educational visual framework with high-retention hooks and engagement loops." },
-    { cat: "academic", badgeClass: "academic", badge: "IEEE Academic", title: "IEEE Research Conference Paper Structure", desc: "Standard IEEE two-column structure: Abstract, Related Work, Methodology, Results." }
-  ];
-
-  function renderTemplateCards(filter = "all") {
-    if (!templateCardsShelf) return;
-    const filtered = filter === "all" ? PLATFORM_TEMPLATES_LIST : PLATFORM_TEMPLATES_LIST.filter(t => t.cat === filter);
-    templateCardsShelf.innerHTML = `
-      <div class="templates-showcase-grid">
-        ${filtered.map(t => `
-          <div class="platform-tpl-card" onclick="selectPlatformTemplate('${escapeHtml(t.title)}')">
-            <div>
-              <span class="platform-badge ${t.badgeClass}">${t.badge}</span>
-              <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(t.title)}</div>
-              <div style="font-size:11px; color:var(--text-secondary); line-height:1.4;">${escapeHtml(t.desc)}</div>
-            </div>
-            <div style="margin-top:10px; font-size:11px; color:var(--accent-gold); font-weight:700;">✦ Use Template →</div>
-          </div>
-        `).join("")}
-      </div>
-    `;
-  }
-
-  if (templateCategoryBar) {
-    templateCategoryBar.querySelectorAll("button[data-tplcat]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const cat = btn.getAttribute("data-tplcat") || "all";
-        templateCategoryBar.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
-        renderTemplateCards(cat);
-        playTactileSound("click");
-      });
-    });
-    renderTemplateCards("all");
-  }
-
-  window.selectPlatformTemplate = function(title) {
-    if (templateTypeSelect) templateTypeSelect.value = title;
-    if (templateTopicInput && !templateTopicInput.value) {
-      templateTopicInput.value = `Production-grade architecture for ${title}`;
-    }
-    if (generateTemplateBtn) generateTemplateBtn.click();
-    playTactileSound("click");
-  };
-
-  let lastTemplateResult = "";
-
-  if (generateTemplateBtn) {
-    generateTemplateBtn.addEventListener("click", async () => {
-      const topic = templateTopicInput ? templateTopicInput.value.trim() : "";
-      const tpl = templateTypeSelect ? templateTypeSelect.value : "Figma Design System";
-
-      generateTemplateBtn.disabled = true;
-      generateTemplateBtn.textContent = "⚡ Synthesizing Platform Specification...";
-
-      try {
-        const res = await fetch(`${BACKEND_URL}/ask`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: buildCreationPrompt(`Generate a production-ready ${tpl} specification with all tokens, layout hierarchies, parameters, and design/code guidelines. Format in clean points with topic headers and no messy lines.`, topic || tpl, "Template")
-          })
-        });
-        const data = await res.json();
-        lastTemplateResult = data.answer || data.response || "Complete.";
-
-        if (templateOutputText && templateOutputContainer) {
-          templateOutputText.innerHTML = formatCreationStudioOutput(lastTemplateResult, tpl);
-          templateOutputContainer.style.display = "block";
-        }
-        playTactileSound("success");
-      } catch (_) { }
-      finally {
-        generateTemplateBtn.disabled = false;
-        generateTemplateBtn.textContent = "⚡ Synthesize Platform Template";
-      }
-    });
-  }
-
-  if (copyTemplateBtn) {
-    copyTemplateBtn.addEventListener("click", () => {
-      if (!lastTemplateResult) return;
-      navigator.clipboard.writeText(lastTemplateResult);
-      copyTemplateBtn.textContent = "✓ Copied!";
-      setTimeout(() => { copyTemplateBtn.textContent = "📋 Copy"; }, 1500);
-      playTactileSound("click");
-    });
-  }
-
-  if (exportTemplateMdBtn) {
-    exportTemplateMdBtn.addEventListener("click", () => {
-      if (!lastTemplateResult) return;
-      downloadTextFile("project-aura-template.md", lastTemplateResult);
     });
   }
 }
@@ -3687,11 +3667,14 @@ window.renderVaultRelatedTopics = function(fileName, relatedTopics, relationInfo
           🏷️ Extracted Academic Topics (${topics.length})
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:6px;">
-          ${topics.map(t => `
-            <button class="youtube-quick-pill" onclick="askAboutTopic('${escapeHtml(t).replace(/'/g, "\\'")}')" style="font-size:11px; padding:4px 10px;">
-              ✦ ${escapeHtml(t)}
+          ${topics.map(t => {
+            const cleanT = cleanPillText(t);
+            return `
+            <button class="youtube-quick-pill" onclick="askAboutTopic('${escapeHtml(cleanT).replace(/'/g, "\\'")}')" style="font-size:11px; padding:4px 10px;">
+              ✦ ${escapeHtml(cleanT)}
             </button>
-          `).join("")}
+          `;
+          }).join("")}
         </div>
       </div>
     ` : ''}
@@ -7504,24 +7487,27 @@ function formatMarkdownResponse(text) {
   safe = safe.replace(/^## (.*$)/gm, '<h3 style="font-size:17px; font-weight:700; margin:18px 0 8px; color:var(--text-primary); border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">$1</h3>');
   safe = safe.replace(/^# (.*$)/gm, '<h2 style="font-size:20px; font-weight:800; margin:20px 0 10px; color:#ffffff;">$1</h2>');
 
-  // 6. Bold, Italic, Strikethrough
-  safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
-  safe = safe.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  safe = safe.replace(/~~(.*?)~~/g, '<del style="opacity:0.6;">$1</del>');
-
-  // 7. Inline code (`code`)
-  safe = safe.replace(/`([^`\n]+)`/g, '<code class="aura-inline-code" style="background:rgba(255,255,255,0.08); color:#38bdf8; padding:2px 6px; border-radius:4px; font-family:var(--font-mono); font-size:12px;">$1</code>');
-
-  // 8. Markdown Links [text](url) - only allow safe http/https
-  safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold); text-decoration:underline; font-weight:600;">$1 ↗</a>');
-
-  // 9. Bullet lists (* or -) and Numbered lists
+  // 6. Bullet lists (* or -) and Numbered lists
   safe = safe.replace(/^[ \t]*[-*•][ \t]+(.*)$/gm, '<li class="aura-md-bullet" style="margin-left:18px; margin-bottom:4px; line-height:1.6;">$1</li>');
   safe = safe.replace(/^[ \t]*(\d+)\.[ \t]+(.*)$/gm, '<li class="aura-md-number" style="margin-left:20px; margin-bottom:4px; line-height:1.6;" value="$1">$2</li>');
 
   // Wrap consecutive <li> in <ul> or <ol>
   safe = safe.replace(/((?:<li class="aura-md-bullet"[^>]*>.*?<\/li>\s*)+)/gs, '<ul style="margin:8px 0; padding-left:4px;">$1</ul>');
   safe = safe.replace(/((?:<li class="aura-md-number"[^>]*>.*?<\/li>\s*)+)/gs, '<ol style="margin:8px 0; padding-left:4px;">$1</ol>');
+
+  // 7. Bold, Italic, Strikethrough
+  safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--text-primary); font-weight:700;">$1</strong>');
+  safe = safe.replace(/\*([^*\n]+)\*/g, '<em>$1</em>');
+  safe = safe.replace(/~~(.*?)~~/g, '<del style="opacity:0.6;">$1</del>');
+
+  // 8. Strip any remaining stray raw asterisks so they NEVER leak as plain characters
+  safe = safe.replace(/\*/g, '');
+
+  // 9. Inline code (`code`)
+  safe = safe.replace(/`([^`\n]+)`/g, '<code class="aura-inline-code" style="background:rgba(255,255,255,0.08); color:#38bdf8; padding:2px 6px; border-radius:4px; font-family:var(--font-mono); font-size:12px;">$1</code>');
+
+  // 10. Markdown Links [text](url) - only allow safe http/https
+  safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold); text-decoration:underline; font-weight:600;">$1 ↗</a>');
 
   // 10. Paragraph wrapping
   const parts = safe.split(/\n\n+/);
@@ -11134,10 +11120,11 @@ async function renderAcademicYouTubeRecommendations() {
       </div>
       <div class="academic-topic-pills-row">
         ${topicsList.map(t => {
-          const isActive = t === selectedTopic;
+          const cleanT = cleanPillText(t);
+          const isActive = t === selectedTopic || cleanT === cleanPillText(selectedTopic);
           return `
-            <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(t).replace(/'/g, "\'")}')">
-              ${escapeHtml(t)}
+            <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(cleanT).replace(/'/g, "\'")}')">
+              ${escapeHtml(cleanT)}
             </button>
           `;
         }).join('')}

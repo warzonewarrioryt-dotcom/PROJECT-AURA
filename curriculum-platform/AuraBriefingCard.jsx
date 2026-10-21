@@ -1,6 +1,18 @@
 import React from "react";
 import { Sparkles, Activity, ShieldAlert, Compass } from "lucide-react";
 
+function cleanPillText(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/\*{1,3}([^*]+)\*{1,3}/g, "$1")
+    .replace(/\*/g, "")
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^[-+•►✦✧]\s*/, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^["'`:]+|["'`:]+$/g, "")
+    .trim();
+}
+
 export default function AuraBriefingCard({ data }) {
   if (!data) return null;
 
@@ -19,22 +31,22 @@ export default function AuraBriefingCard({ data }) {
         
         <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold tracking-widest uppercase mb-3">
           <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
-          Aura Technical Assessment // {data.category || "General"}
+          Aura Technical Assessment // {cleanPillText(data.category || "General")}
         </div>
 
         <h1 className="text-2xl font-bold text-white tracking-tight">
-          {data.title}
+          {cleanPillText(data.title)}
         </h1>
         
         <p className="text-sm text-slate-300 mt-2 leading-relaxed max-w-3xl">
-          {data.summary}
+          {cleanPillText(data.summary)}
         </p>
 
         {data.tags && (
           <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-zinc-800/80">
             {data.tags.map((tag, index) => (
               <span key={index} className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-zinc-800 border border-zinc-700 text-slate-300">
-                {tag}
+                {cleanPillText(tag)}
               </span>
             ))}
           </div>
@@ -83,15 +95,18 @@ export default function AuraBriefingCard({ data }) {
       {data.actions && (
         <div className="flex flex-wrap items-center gap-2 pt-2">
           <span className="text-xs text-zinc-500 font-mono">Follow-up vectors:</span>
-          {data.actions.map((action, aIndex) => (
-            <button key={aIndex} className="text-xs px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-slate-300 border border-zinc-800 hover:border-zinc-700 transition" onClick={() => {
-              if (typeof window !== "undefined" && window.dispatchAuraAction) {
-                window.dispatchAuraAction(action);
-              }
-            }}>
-              {action} →
-            </button>
-          ))}
+          {data.actions.map((action, aIndex) => {
+            const cleanAct = cleanPillText(action);
+            return (
+              <button key={aIndex} className="text-xs px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-slate-300 border border-zinc-800 hover:border-zinc-700 transition" onClick={() => {
+                if (typeof window !== "undefined" && window.dispatchAuraAction) {
+                  window.dispatchAuraAction(cleanAct);
+                }
+              }}>
+                {cleanAct} →
+              </button>
+            );
+          })}
         </div>
       )}
 
