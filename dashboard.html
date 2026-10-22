@@ -329,8 +329,13 @@
       <!-- TOPBAR -->
       <header class="aura-topbar">
         <div class="topbar-left">
-          <button class="mobile-nav-toggle" id="mobileNavToggleBtn">☰</button>
-          <div class="topbar-breadcrumbs">
+          <button class="mobile-nav-toggle" id="mobileNavToggleBtn" aria-label="Toggle Navigation">☰</button>
+          <div class="topbar-brand" onclick="switchView('command-center')" style="cursor:pointer;" title="PROJECT AURA">
+            <span class="topbar-brand-glyph">◈</span>
+            <span class="topbar-brand-name">PROJECT AURA</span>
+          </div>
+          <!-- Kept hidden for script backward compatibility -->
+          <div class="topbar-breadcrumbs" style="display:none;" aria-hidden="true">
             <span class="crumb-root">WORKSPACE</span>
             <span class="crumb-divider">/</span>
             <span class="crumb-scope" id="breadcrumbScope">ACADEMIC INTELLIGENCE</span>
@@ -348,32 +353,11 @@
         </div>
 
         <div class="topbar-right">
-          <!-- Futuristic HUD Telemetry Strip -->
-          <div class="topbar-telemetry holo-telemetry-header">
-            <span class="tel-tag tel-tag-system">
-              <span class="tel-k">SYSTEM:</span>
-              <span class="tel-v font-mono holo-cyan-text">AURA-OS v3.0</span>
-            </span>
-            <span class="tel-sep">·</span>
-            <span class="tel-tag tel-tag-quantum">
-              <span class="pulse-dot-green"></span>
-              <span class="tel-k">QUANTUM MESH:</span>
-              <span class="tel-v tel-operational">ONLINE</span>
-            </span>
-            <span class="tel-sep">·</span>
-            <span class="tel-tag tel-tag-latency">
-              <span class="tel-k">LATENCY:</span>
-              <span class="tel-v font-mono" id="topbarLatency">14ms</span>
-            </span>
-          </div>
-
-          <!-- Sleek Voice Assistant Global Controller -->
-          <button class="topbar-voice-btn holo-hud-btn" id="globalVoiceAssistantBtn" title="AURA Voice Assistant (Talk or Control Desktop)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-            <span class="voice-btn-label">Voice Neural</span>
+          <!-- Voice Assistant Controller -->
+          <button class="topbar-voice-btn" id="globalVoiceAssistantBtn" title="AURA Voice Assistant">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            <span class="voice-btn-label">Voice</span>
           </button>
-
-
 
           <!-- Voice Gender Switcher (kept hidden for JS listener compatibility) -->
           <button class="topbar-action-btn glass-voice-gender-pill" id="voiceGenderToggleBtn" title="Switch Voice Synthesis Engine" style="display:none;">
@@ -381,11 +365,10 @@
             <span id="voiceGenderLabel">Aura</span>
           </button>
 
-          <!-- Operator Profile Pill -->
-          <button class="topbar-user-btn holo-user-badge" id="userAuthBtn" title="Student Profile & Access Credentials">
+          <!-- Operator Profile Control -->
+          <button class="topbar-user-btn" id="userAuthBtn" title="Profile">
             <span class="operator-avatar-glyph">AO</span>
             <span id="userNameLabel" class="user-name-text">Aura Operator</span>
-            <span class="operator-badge-pill holo-emerald-pill">ACTIVE</span>
           </button>
 
           <!-- Sign Out Button (hidden) -->
@@ -393,15 +376,11 @@
             <span>⎋ Sign Out</span>
           </button>
 
-          <!-- Live Animated Cryptographic Clock -->
-          <div class="topbar-clock font-mono holo-crypto-clock" id="osClock" title="Quantum Cryptographic Clock">--:--:--</div>
-
-          <!-- Minimalist Theme Switcher -->
+          <!-- Settings & Theme Switcher -->
           <div class="theme-switcher-wrap" id="themeSwitcherWrap">
-            <button class="topbar-theme-btn" id="themeToggleBtn" title="Theme Selector">
+            <button class="topbar-theme-btn" id="themeToggleBtn" title="Theme & Settings">
               <span class="theme-icon-swatch">◐</span>
-              <span id="activeThemeName">Enterprise Dark</span>
-              <span style="font-size:9px; opacity:0.6;">▼</span>
+              <span id="activeThemeName">Theme</span>
             </button>
             <div class="theme-popover-dropdown" id="themePopoverDropdown">
               <div class="theme-popover-title">Institutional Themes</div>
@@ -431,6 +410,12 @@
               </div>
             </div>
           </div>
+
+          <!-- Compatibility hidden hooks for timers/scripts -->
+          <div style="display:none;" aria-hidden="true">
+            <span id="topbarLatency">14ms</span>
+            <span id="osClock">--:--:--</span>
+          </div>
         </div></header>
 
       <div class="aura-stage-scroll">
@@ -438,254 +423,131 @@
              VIEW 1: COMMAND CENTER — REDESIGNED
              Layout: Hero → Chat Stream → Input (sticky bottom)
         ===================================================== -->
+        <!-- =====================================================
+             VIEW 1: COMMAND CENTER — CLEAN MINIMAL AI WORKSPACE
+        ===================================================== -->
         <section class="aura-view active" id="view-command-center">
-          <div class="cc-layout">
+          <div class="workspace-container">
 
-            <!-- ── LEFT: CHAT COLUMN ── -->
-            <div class="cc-chat-col">
-
-              <!-- Greeting Hero (hides when chat starts) -->
-              <div class="cc-hero holo-hud-hero" id="ccHero">
-                <div class="cc-hero-top-meta">
-                  <div class="cc-hero-badge holo-cyber-badge">
-                    <span class="hero-badge-dot pulse-dot-green"></span>
-                    <span class="hero-badge-text">HOLOGRAPHIC NEURAL OS</span>
-                    <span class="hero-badge-separator">/</span>
-                    <span class="hero-badge-version">AURA-OS v3.0</span>
-                  </div>
-                  <div class="cc-greeting-label holo-mono-label" id="heroGreeting">QUANTUM MESH: ONLINE // NODE: 0x7F2A</div>
-                </div>
-
-                <div class="cc-hero-heading-block">
-                  <div class="holo-eyebrow">COMMAND INTERFACE MATRIX // LEVEL 01 ACTIVE</div>
-                  <h1 class="cc-headline holo-headline">Cybernetic Neural Command Center</h1>
-                  <p class="cc-subline holo-subline">Ultra-futuristic holographic workspace for multi-board curriculum mastery (10th-12th CBSE/SSLC), neural vector knowledge vaults, 16:9 presentation synthesis with visual grounding, and J.A.R.V.I.S. voice telemetry.</p>
-                </div>
-
-                <!-- Futuristic Telemetry Strip -->
-                <div class="cc-telemetry-strip holo-telemetry-strip">
-                  <div class="cc-tel-chip holo-tel-chip">
-                    <span class="pulse-dot-green"></span>
-                    <span class="tel-label">System Status:</span>
-                    <span class="tel-val holo-emerald-text">Operational // Mesh Online</span>
-                  </div>
-                  <div class="cc-tel-chip holo-tel-chip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    <span class="tel-label">Quantum Latency:</span>
-                    <span class="tel-val font-mono holo-cyan-text" id="ccHeroLatency">14ms</span>
-                  </div>
-                  <div class="cc-tel-chip holo-tel-chip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
-                    <span class="tel-label">Neural Pipeline:</span>
-                    <span class="tel-val">Multi-Model AI + Dual Speech</span>
-                  </div>
-                  <div class="cc-tel-chip holo-tel-chip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                    <span class="tel-label">Vector Knowledge:</span>
-                    <span class="tel-val holo-emerald-text">Synchronized // 100% Grounded</span>
-                  </div>
-                </div>
-
-                <!-- =======================================================
-                     MODULAR HOLOGRAPHIC GRID (4 Floating Glass Widgets)
-                ======================================================= -->
-                <div class="holo-modular-grid">
-                  
-                  <!-- WIDGET 1: ACADEMIC HUB -->
-                  <div class="holo-grid-widget cc-mod-card" data-view="academic-hub-workspace" id="widgetAcademicHub" onclick="window.openAcademicHub()">
-                    <div class="holo-widget-corner-brackets"></div>
-                    <div class="holo-widget-top">
-                      <span class="holo-node-tag">HOLO-NODE // 01</span>
-                      <span class="holo-status-pill emerald">
-                        <span class="holo-dot"></span> ACTIVE // 100% ONLINE
-                      </span>
-                    </div>
-                    <div class="holo-widget-body">
-                      <div class="holo-widget-icon-row">
-                        <div class="holo-widget-icon cyan">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-                        </div>
-                        <div class="holo-widget-titles">
-                          <h3 class="holo-widget-title">Academic Neural Hub</h3>
-                          <span class="holo-widget-sub">CBSE · SSLC (10th-12th) · College Engine</span>
-                        </div>
-                      </div>
-                      <p class="holo-widget-desc">Multi-board curriculum navigation for Tamil Nadu Samacheer & CBSE. Ingest textbook units, test past papers, and execute strict formula doubt solving.</p>
-                      <div class="holo-widget-chips">
-                        <span class="holo-chip">CBSE &amp; SSLC</span>
-                        <span class="holo-chip">TAMIL / ENGLISH</span>
-                        <span class="holo-chip emerald">GROUNDED SOLVER</span>
-                      </div>
-                    </div>
-                    <div class="holo-widget-action">
-                      <span>Launch Academic Hub</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </div>
-                  </div>
-
-                  <!-- WIDGET 2: KNOWLEDGE VAULT -->
-                  <div class="holo-grid-widget cc-mod-card" data-view="knowledge-vault" id="widgetKnowledgeVault" onclick="window.openKnowledgeVault()">
-                    <div class="holo-widget-corner-brackets"></div>
-                    <div class="holo-widget-top">
-                      <span class="holo-node-tag">HOLO-NODE // 02</span>
-                      <span class="holo-status-pill emerald">
-                        <span class="holo-dot"></span> RAG: SYNCHRONIZED
-                      </span>
-                    </div>
-                    <div class="holo-widget-body">
-                      <div class="holo-widget-icon-row">
-                        <div class="holo-widget-icon cyan">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                        </div>
-                        <div class="holo-widget-titles">
-                          <h3 class="holo-widget-title">Knowledge &amp; Vector Vault</h3>
-                          <span class="holo-widget-sub">Vector RAG Pipeline · Document Intelligence</span>
-                        </div>
-                      </div>
-                      <p class="holo-widget-desc">Neural RAG pipeline with high-yield in-app document previewer (PDF, DOCX, TXT, Code). Direct query grounding, semantic cluster search, and vector embeddings.</p>
-                      <div class="holo-widget-chips">
-                        <span class="holo-chip">VECTOR RAG</span>
-                        <span class="holo-chip">IN-APP PREVIEW</span>
-                        <span class="holo-chip emerald">INDEXED: 100%</span>
-                      </div>
-                    </div>
-                    <div class="holo-widget-action">
-                      <span>Explore Knowledge Vault</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </div>
-                  </div>
-
-                  <!-- WIDGET 3: DECK STUDIO -->
-                  <div class="holo-grid-widget cc-mod-card" data-view="creation-lab" id="widgetDeckStudio" onclick="window.openDeckStudio()">
-                    <div class="holo-widget-corner-brackets"></div>
-                    <div class="holo-widget-top">
-                      <span class="holo-node-tag">HOLO-NODE // 03</span>
-                      <span class="holo-status-pill cyan">
-                        <span class="holo-dot"></span> 16:9 WIDESCREEN READY
-                      </span>
-                    </div>
-                    <div class="holo-widget-body">
-                      <div class="holo-widget-icon-row">
-                        <div class="holo-widget-icon cyan">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                        </div>
-                        <div class="holo-widget-titles">
-                          <h3 class="holo-widget-title">Deck Studio &amp; Synthesis Lab</h3>
-                          <span class="holo-widget-sub">16:9 Presentation Generator · Context Vision</span>
-                        </div>
-                      </div>
-                      <p class="holo-widget-desc">Autonomous 16:9 slide generation with context visual image grounding, structured outline blueprints, automated speaker transcripts, and instant PPTX &amp; PDF export.</p>
-                      <div class="holo-widget-chips">
-                        <span class="holo-chip">16:9 WIDESCREEN</span>
-                        <span class="holo-chip">IMAGE GROUNDING</span>
-                        <span class="holo-chip cyan">PPTX &amp; PDF</span>
-                      </div>
-                    </div>
-                    <div class="holo-widget-action">
-                      <span>Synthesize 16:9 Deck</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </div>
-                  </div>
-
-                  <!-- WIDGET 4: NEURAL VOICE ASSISTANT -->
-                  <div class="holo-grid-widget voice-widget cc-mod-card" id="widgetVoiceAssistant" onclick="window.openNeuralVoiceCore()">
-                    <div class="holo-widget-corner-brackets"></div>
-                    <div class="holo-widget-top">
-                      <span class="holo-node-tag">HOLO-NODE // 04</span>
-                      <span class="holo-status-pill cyan">
-                        <span class="holo-dot"></span> AUDIO CORE: ARMED
-                      </span>
-                    </div>
-                    <div class="holo-widget-body">
-                      <div class="holo-widget-icon-row">
-                        <div class="holo-widget-icon cyan">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-                        </div>
-                        <div class="holo-widget-titles">
-                          <h3 class="holo-widget-title">J.A.R.V.I.S. Voice Core</h3>
-                          <span class="holo-widget-sub">Dual English/Tamil Spoken Intelligence</span>
-                        </div>
-                      </div>
-                      
-                      <!-- Mini Live Animated Visualizer Preview -->
-                      <div class="holo-mini-visualizer-preview">
-                        <div class="holo-mini-ring"></div>
-                        <div class="holo-mini-bars">
-                          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                        </div>
-                        <span class="holo-mini-status">STANDBY // READY</span>
-                      </div>
-
-                      <p class="holo-widget-desc">Neural spoken command core with bidirectional speech in English &amp; Tamil. Voice-driven app routing, real-time directive execution, and acoustic feedback.</p>
-                      <div class="holo-widget-chips">
-                        <span class="holo-chip">AUTO EN/TA</span>
-                        <span class="holo-chip">VOICE ROUTING</span>
-                        <span class="holo-chip cyan">ACOUSTIC WAVE</span>
-                      </div>
-                    </div>
-                    <div class="holo-widget-action voice-action">
-                      <span>🎙️ Engage Voice Assistant</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </div>
-                  </div>
-
-                </div>
-
-                <!-- Secondary Cyber Satellite Grid -->
-                <div class="holo-satellite-grid">
-                  <button class="holo-sat-card cc-mod-card" data-view="mock-test">
-                    <span class="sat-icon">📝</span>
-                    <div class="sat-info">
-                      <span class="sat-title">Semester Mock Test</span>
-                      <span class="sat-sub">PYQ Examination Simulator</span>
-                    </div>
-                    <span class="sat-arrow">→</span>
-                  </button>
-                  <button class="holo-sat-card cc-mod-card" data-view="quiz-engine">
-                    <span class="sat-icon">⚡</span>
-                    <div class="sat-info">
-                      <span class="sat-title">Quiz Engine</span>
-                      <span class="sat-sub">Adaptive Topic Diagnostics</span>
-                    </div>
-                    <span class="sat-arrow">→</span>
-                  </button>
-                  <button class="holo-sat-card cc-mod-card" data-view="study-intel">
-                    <span class="sat-icon">📅</span>
-                    <div class="sat-info">
-                      <span class="sat-title">Study Planner</span>
-                      <span class="sat-sub">Active Recall &amp; Sprint Kanban</span>
-                    </div>
-                    <span class="sat-arrow">→</span>
-                  </button>
-
-                  <button class="holo-sat-card cc-mod-card" data-view="student-performance">
-                    <span class="sat-icon">📊</span>
-                    <div class="sat-info">
-                      <span class="sat-title">Performance Analytics</span>
-                      <span class="sat-sub">Trajectory &amp; Assessment Reports</span>
-                    </div>
-                    <span class="sat-arrow">→</span>
-                  </button>
-                  <button class="holo-sat-card cc-mod-card" data-view="youtube-intel">
-                    <span class="sat-icon">▶️</span>
-                    <div class="sat-info">
-                      <span class="sat-title">YouTube Intelligence</span>
-                      <span class="sat-sub">Semantic Transcripts &amp; Synthesis</span>
-                    </div>
-                    <span class="sat-arrow">→</span>
-                  </button>
-                </div>
+            <!-- Welcome Header & 4 Main Feature Cards -->
+            <div class="workspace-hero" id="ccHero">
+              <div class="workspace-header">
+                <h1 class="workspace-welcome-heading">Your AI Workspace</h1>
+                <p class="workspace-welcome-subtitle">Everything you need to learn, create and explore.</p>
               </div>
 
+              <!-- 4 Main Feature Cards (2-Column Grid Desktop, 1-Column Mobile) -->
+              <div class="workspace-cards-grid">
+                
+                <!-- CARD 1: Academic Hub -->
+                <div class="workspace-feature-card cc-mod-card" data-view="academic-hub-workspace" id="widgetAcademicHub" onclick="window.openAcademicHub()">
+                  <div class="workspace-card-top">
+                    <div class="workspace-card-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                      </svg>
+                    </div>
+                    <div class="workspace-card-text">
+                      <h3 class="workspace-card-title">Academic Hub</h3>
+                      <p class="workspace-card-desc">Your learning space for CBSE, SSLC and college.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="workspace-card-btn" onclick="event.stopPropagation(); window.openAcademicHub();">
+                    <span>Open Academic Hub</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- CARD 2: Knowledge Vault -->
+                <div class="workspace-feature-card cc-mod-card" data-view="knowledge-vault" id="widgetKnowledgeVault" onclick="window.openKnowledgeVault()">
+                  <div class="workspace-card-top">
+                    <div class="workspace-card-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                      </svg>
+                    </div>
+                    <div class="workspace-card-text">
+                      <h3 class="workspace-card-title">Knowledge Vault</h3>
+                      <p class="workspace-card-desc">Search and explore your uploaded documents.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="workspace-card-btn" onclick="event.stopPropagation(); window.openKnowledgeVault();">
+                    <span>Open Knowledge Vault</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- CARD 3: Deck Studio -->
+                <div class="workspace-feature-card cc-mod-card" data-view="creation-lab" id="widgetDeckStudio" onclick="window.openDeckStudio()">
+                  <div class="workspace-card-top">
+                    <div class="workspace-card-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    </div>
+                    <div class="workspace-card-text">
+                      <h3 class="workspace-card-title">Deck Studio</h3>
+                      <p class="workspace-card-desc">Create presentations and export PPTX or PDF.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="workspace-card-btn" onclick="event.stopPropagation(); window.openDeckStudio();">
+                    <span>Create Presentation</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- CARD 4: J.A.R.V.I.S. Voice Assistant -->
+                <div class="workspace-feature-card cc-mod-card" id="widgetVoiceAssistant" onclick="window.openNeuralVoiceCore()">
+                  <div class="workspace-card-top">
+                    <div class="workspace-card-icon">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                      </svg>
+                    </div>
+                    <div class="workspace-card-text">
+                      <h3 class="workspace-card-title">J.A.R.V.I.S. Voice Assistant</h3>
+                      <p class="workspace-card-desc">Talk to AURA in Tamil or English.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="workspace-card-btn" onclick="event.stopPropagation(); window.openNeuralVoiceCore();">
+                    <span>Start Voice Assistant</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Dialogue & Prompt Area -->
+            <div class="workspace-dialogue-area">
               <div class="cc-chat-stream" id="ccChatStream">
-                <!-- Messages are injected here by JS -->
+                <!-- Messages are dynamically appended here -->
               </div>
 
-              <!-- Legacy directive stage (kept for compatibility) -->
+              <!-- Directive stage & dialogue stream for compatibility -->
               <div class="active-directive-stage" id="activeDirectiveStage" style="display:none;">
                 <div class="directive-header-card" id="directiveHeaderCard">
                   <div class="directive-meta-top">
-                    <span class="directive-tag-pill">◈ ACTIVE DIRECTIVE</span>
+                    <span class="directive-tag-pill">ACTIVE DIRECTIVE</span>
                     <div class="directive-status-telemetry" id="directiveTelemetry">
                       <span class="pulse-dot-green" id="directivePulseDot"></span>
                       <span id="directiveStatusText">EXECUTING DIRECTIVE</span>
@@ -699,8 +561,7 @@
                     <div class="thinking-core-orb">◈</div>
                     <div class="thinking-text-group">
                       <div class="thinking-status-headline" id="thinkingHeadline">Processing Academic Directive...</div>
-                      <div class="thinking-status-sub" id="thinkingSub">Academic Intelligence Pipeline · <span
-                          id="thinkingTimer">0.0s</span></div>
+                      <div class="thinking-status-sub" id="thinkingSub">Academic Intelligence Pipeline · <span id="thinkingTimer">0.0s</span></div>
                     </div>
                   </div>
                   <div class="thinking-synapse-track">
@@ -709,7 +570,7 @@
                 </div>
                 <div class="directive-resolution-dossier" id="directiveResolutionDossier" style="display:none;">
                   <div class="dossier-header-bar">
-                    <div class="dossier-provider-badge" id="dossierProviderBadge">✦ CHATGPT (OPENAI)</div>
+                    <div class="dossier-provider-badge" id="dossierProviderBadge">✦ AURA INTELLIGENCE</div>
                     <div class="dossier-actions-toolbar">
                       <button class="btn-dossier-tool" id="copyDossierBtn">📋 Copy</button>
                       <button class="btn-dossier-tool" id="saveVaultDossierBtn">⧉ Save</button>
@@ -721,135 +582,59 @@
               </div>
               <div class="command-dialogue-stream" id="chatMessages" style="display:none;"></div>
 
-              <!-- ── STICKY INPUT AREA (bottom of chat col) ── -->
-              <div class="cc-input-zone" id="ccInputZone">
-
-                <!-- Cognitive Pipeline (compact) -->
-                <div class="cc-pipeline" id="ccPipeline">
-                  <div class="cc-pipe-step active" id="pipeUnderstanding"><span class="cc-pipe-dot"></span>Understanding
-                  </div>
-                  <span class="cc-pipe-arrow">›</span>
-                  <div class="cc-pipe-step" id="pipeReasoning"><span class="cc-pipe-dot"></span>Reasoning</div>
-                  <span class="cc-pipe-arrow">›</span>
-                  <div class="cc-pipe-step" id="pipeSynthesizing"><span class="cc-pipe-dot"></span>Synthesizing</div>
-                  <span class="cc-pipe-arrow">›</span>
-                  <div class="cc-pipe-step" id="pipeCompleted"><span class="cc-pipe-dot"></span>Ready</div>
-                </div>
-
-                <!-- File Attachment Preview Strip -->
+              <!-- Minimal Clean AI Prompt Zone -->
+              <div class="workspace-input-zone" id="ccInputZone">
                 <div class="cc-attach-strip" id="ccAttachStrip" style="display:none;"></div>
-
-                <!-- Input Card -->
-                <div class="cc-input-card">
-                  <textarea id="messageInput" class="cc-textarea"
-                    placeholder="Ask PROJECT AURA anything — attach files, voice input, or type..." rows="1"></textarea>
-
-                  <div class="cc-input-toolbar">
-                    <div class="cc-tools-left">
-                      <button class="cc-tool-btn" id="vaultAttachBtn" title="Attach File">
-                        <span>📎</span>
+                <div class="workspace-prompt-section">
+                  <div class="workspace-prompt-box">
+                    <textarea id="messageInput" class="workspace-prompt-textarea" placeholder="Ask AURA anything or enter a directive..." rows="1"></textarea>
+                    <div class="workspace-prompt-actions">
+                      <button type="button" class="workspace-icon-btn" id="vaultAttachBtn" title="Attach Document">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
                       </button>
                       <input type="file" id="composerFileInput" multiple accept="*/*" style="display:none;" />
-
-                      <button class="cc-tool-btn" id="voiceBtn" title="Voice Input">
-                        <span id="voiceIcon">🎙</span>
-                      </button>
-
-                      <button class="cc-tool-btn" id="spatialTiltToggleBtn" title="3D Tilt">
-                        <span>◈</span>
+                      <button type="button" class="workspace-send-btn" id="sendBtn" title="Send (Enter)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="12" y1="19" x2="12" y2="5"/>
+                          <polyline points="5 12 12 5 19 12"/>
+                        </svg>
                       </button>
                     </div>
-
-                    <button class="cc-send-btn" id="sendBtn" title="Send (Enter)">↑</button>
                   </div>
-                </div>
-
-                <!-- Suggestion Chips -->
-                <div class="cc-chips-row">
-                  <button class="cc-chip" id="btnLaunchAntigravityBriefing" style="border-color:rgba(245, 158, 11, 0.45); color:#fcd34d; background:rgba(245, 158, 11, 0.1);" title="Launch Antigravity &amp; Field Manipulation Assessment">
-                    <span>🛸 Antigravity Briefing</span>
-                  </button>
-                  <button class="cc-chip" data-prompt="Summarize quantum computing architecture principles">⚡
-                    Quantum</button>
-                  <button class="cc-chip" data-prompt="Analyze the core themes in the uploaded documents">⧉ Analyze
-                    Docs</button>
-                  <button class="cc-chip"
-                    data-prompt="Research recent breakthroughs in solid-state battery technology">🌐 Research</button>
-                  <button class="cc-chip" data-prompt="Create a 5-question quiz on machine learning algorithms">✦
-                    Quiz</button>
-                  <button class="cc-chip" data-prompt="Remember that my priority this week is Project Aura 3.0 launch">◈
-                    Memory</button>
                 </div>
               </div>
             </div>
 
-            <!-- ── RIGHT: COMPANION PANEL ── -->
-            <div class="cc-companion-panel">
-
-              <!-- Minimalist Intelligence Showcase -->
-              <div class="cc-intel-card" id="projectAuraVisualContainer">
-                <div class="cc-intel-header">
-                  <div class="cc-intel-brand">
-                    <span class="cc-intel-glyph">◈</span>
-                    <div class="cc-intel-meta">
-                      <span class="cc-intel-title">Project Aura</span>
-                      <span class="cc-intel-subtitle">Workspace OS v3.0</span>
-                    </div>
-                  </div>
-                  <span class="cc-intel-status-pill">Active</span>
-                </div>
-                <div class="cc-intel-metric-grid">
-                  <div class="cc-metric-box">
-                    <span class="cc-metric-num">3</span>
-                    <span class="cc-metric-label">AI Providers</span>
-                  </div>
-                  <div class="cc-metric-box">
-                    <span class="cc-metric-num">12</span>
-                    <span class="cc-metric-label">Workspaces</span>
-                  </div>
-                  <div class="cc-metric-box">
-                    <span class="cc-metric-num">&lt;1.2s</span>
-                    <span class="cc-metric-label">Latency</span>
-                  </div>
-                </div>
-                <!-- Compatibility handles for script references -->
-                <div style="display:none;" aria-hidden="true">
-                  <img id="projectAuraVisualImg" alt="" src="" />
-                </div>
+            <!-- Preserved for script reference safety (zero errors in app.js) -->
+            <div style="display:none;" aria-hidden="true">
+              <div id="heroGreeting"></div>
+              <div id="ccHeroLatency"></div>
+              <div id="ccPipeline">
+                <div id="pipeUnderstanding"></div>
+                <div id="pipeReasoning"></div>
+                <div id="pipeSynthesizing"></div>
+                <div id="pipeCompleted"></div>
               </div>
-
-              <!-- AI Companion Core -->
-              <div class="companion-card" id="auraCompanionCard">
-                <div class="companion-header">
-                  <div class="companion-status-pill">
-                    <span class="pulse-dot-green" id="coreStateDot"></span>
-                    <span id="coreStateText">READY</span>
-                  </div>
-                  <div class="companion-core-toggle">
-                    <span class="core-toggle-pill active" id="coreToggleAuraBtn">AURA ◈</span>
-                  </div>
-                </div>
-                <div class="companion-visual-stage" id="auraCoreWidget">
-                  <canvas id="coreCanvas" width="300" height="150"></canvas>
-                </div>
-                <div class="companion-meta-list">
-                  <div class="meta-row">
-                    <span class="meta-label">Primary Engine</span>
-                    <span class="meta-value" id="compEngineVal">Gemini 1.5 Pro</span>
-                  </div>
-                  <div class="meta-row">
-                    <span class="meta-label">Neural State</span>
-                    <span class="meta-value" id="compCoreVal">Synchronized</span>
-                  </div>
-                  <div class="meta-row">
-                    <span class="meta-label">Cognitive Focus</span>
-                    <span class="meta-value" id="contextCurrentTask">Awaiting Directive</span>
-                  </div>
-                </div>
+              <button id="spatialTiltToggleBtn"></button>
+              <button id="voiceBtn"><span id="voiceIcon"></span></button>
+              <button id="btnLaunchAntigravityBriefing"></button>
+              <div id="projectAuraVisualContainer">
+                <img id="projectAuraVisualImg" alt="" src="" />
               </div>
+              <div id="auraCompanionCard">
+                <span id="coreStateDot"></span>
+                <span id="coreStateText"></span>
+                <span id="coreToggleAuraBtn"></span>
+                <canvas id="coreCanvas" width="10" height="10"></canvas>
+                <span id="compEngineVal"></span>
+                <span id="compCoreVal"></span>
+                <span id="contextCurrentTask"></span>
+              </div>
+            </div>
 
-            </div><!-- /cc-companion-panel -->
-          </div><!-- /cc-layout -->
+          </div>
         </section>
 
         <!-- =====================================================

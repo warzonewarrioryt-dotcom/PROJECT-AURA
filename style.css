@@ -17800,6 +17800,327 @@ input:focus, textarea:focus, select:focus {
   font-weight: 600;
 }
 
+/* =========================================================
+   PROJECT AURA — REDESIGNED MINIMAL AI WORKSPACE & TOPBAR
+========================================================= */
 
+.topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-primary, 'Outfit', 'Inter', system-ui, sans-serif);
+  text-decoration: none;
+  user-select: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
 
+.topbar-brand:hover {
+  opacity: 0.85;
+}
 
+.topbar-brand-glyph {
+  font-size: 15px;
+  color: #38bdf8;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+}
+
+.topbar-brand-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #f8fafc;
+}
+
+#view-command-center {
+  background: radial-gradient(circle at 50% 0%, rgba(30, 41, 59, 0.25) 0%, rgba(10, 14, 23, 0.95) 60%, #07090e 100%) !important;
+  min-height: calc(100vh - 65px) !important;
+  width: 100% !important;
+  padding: 0 !important;
+  display: none;
+  overflow-y: auto !important;
+}
+
+#view-command-center.active {
+  display: block !important;
+}
+
+#view-command-center .workspace-container {
+  max-width: 1040px !important;
+  margin: 0 auto !important;
+  padding: 44px 24px 60px 24px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 32px !important;
+}
+
+/* Welcome Heading Block */
+#view-command-center .workspace-header {
+  margin-bottom: 8px !important;
+  text-align: left !important;
+}
+
+#view-command-center .workspace-welcome-heading {
+  font-family: var(--font-primary, 'Outfit', 'Inter', system-ui, sans-serif) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: #f8fafc !important;
+  margin: 0 0 8px 0 !important;
+  line-height: 1.25 !important;
+}
+
+#view-command-center .workspace-welcome-subtitle {
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  color: #94a3b8 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* 4 Feature Cards Responsive Grid (2-columns on desktop, 1-column on mobile) */
+#view-command-center .workspace-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 20px !important;
+  width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  #view-command-center .workspace-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+/* Modern AI Feature Card */
+#view-command-center .workspace-feature-card {
+  background: rgba(14, 19, 32, 0.72) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 190px !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.2s ease, 
+              box-shadow 0.2s ease !important;
+  position: relative !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  overflow: hidden !important;
+}
+
+#view-command-center .workspace-feature-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.08) !important;
+}
+
+#view-command-center .workspace-feature-card:focus-visible {
+  outline: 2px solid #38bdf8 !important;
+  outline-offset: 2px !important;
+}
+
+#view-command-center .workspace-card-top {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+/* Simple Line Icon */
+#view-command-center .workspace-card-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 10px !important;
+  background: rgba(56, 189, 248, 0.08) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #38bdf8 !important;
+  flex-shrink: 0 !important;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
+
+#view-command-center .workspace-feature-card:hover .workspace-card-icon {
+  background: rgba(56, 189, 248, 0.16) !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  color: #7dd3fc !important;
+}
+
+#view-command-center .workspace-card-text {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+#view-command-center .workspace-card-title {
+  font-family: var(--font-primary, 'Outfit', 'Inter', system-ui, sans-serif) !important;
+  font-size: 17.5px !important;
+  font-weight: 600 !important;
+  color: #f8fafc !important;
+  margin: 0 0 6px 0 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.3 !important;
+}
+
+#view-command-center .workspace-card-desc {
+  font-size: 13.5px !important;
+  color: #94a3b8 !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Action Button */
+#view-command-center .workspace-card-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  padding: 11px 16px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 9px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  margin-top: 14px !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+}
+
+#view-command-center .workspace-card-btn span {
+  font-weight: 500 !important;
+}
+
+#view-command-center .workspace-card-btn svg {
+  color: #38bdf8 !important;
+  transition: transform 0.2s ease !important;
+}
+
+#view-command-center .workspace-feature-card:hover .workspace-card-btn {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  color: #ffffff !important;
+}
+
+#view-command-center .workspace-feature-card:hover .workspace-card-btn svg {
+  transform: translateX(4px) !important;
+  color: #7dd3fc !important;
+}
+
+/* Clean AI Prompt Area */
+#view-command-center .workspace-dialogue-area {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+#view-command-center .workspace-prompt-section {
+  background: rgba(14, 19, 32, 0.6) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#view-command-center .workspace-prompt-section:focus-within {
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.35), 0 0 15px rgba(56, 189, 248, 0.06) !important;
+}
+
+#view-command-center .workspace-prompt-box {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+#view-command-center .workspace-prompt-textarea {
+  flex: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: #f1f5f9 !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  resize: none !important;
+  padding: 4px 0 !important;
+  line-height: 1.5 !important;
+  min-height: 24px !important;
+  max-height: 140px !important;
+}
+
+#view-command-center .workspace-prompt-textarea::placeholder {
+  color: #64748b !important;
+}
+
+#view-command-center .workspace-prompt-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+#view-command-center .workspace-icon-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 7px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+#view-command-center .workspace-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+#view-command-center .workspace-send-btn {
+  background: #38bdf8 !important;
+  border: none !important;
+  color: #090d16 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-weight: 700 !important;
+  transition: all 0.15s ease !important;
+}
+
+#view-command-center .workspace-send-btn:hover {
+  background: #7dd3fc !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Clean Chat Stream */
+#view-command-center .cc-chat-stream {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  width: 100% !important;
+}
