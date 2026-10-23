@@ -103,10 +103,12 @@
       <div class="jarvis-hud-header">
         <div class="jarvis-header-brand">
           <span class="jarvis-core-indicator" id="jarvisCoreIndicator"></span>
-          <span class="jarvis-brand-title">J.A.R.V.I.S. // NEURAL COMMAND CORE</span>
+          <span class="jarvis-brand-title">J.A.R.V.I.S. // WINDOWS COMMAND CORE</span>
         </div>
         <div class="jarvis-header-actions">
-          <span class="jarvis-lang-pill" id="jarvisLangBadge">AUTO (EN/TA)</span>
+          <span class="jarvis-state-badge badge-listening" id="jarvisStateBadge">READY</span>
+          <button type="button" class="jarvis-mode-pill active" id="jarvisContinuousToggleBtn" title="Toggle Continuous Listening Mode">🔁 Continuous</button>
+          <button type="button" class="jarvis-lang-pill" id="jarvisLangBadge" title="Click to switch language: AUTO (EN/TA) ➔ தமிழ் ➔ English">AUTO (EN/TA)</button>
           <button type="button" class="jarvis-icon-btn" id="jarvisMuteToggleBtn" title="Mute Speech Output">🔊</button>
           <button type="button" class="jarvis-icon-btn close" id="jarvisCloseBtn" title="Close Voice Core">✕</button>
         </div>
@@ -125,6 +127,21 @@
 
       <div class="jarvis-status-line" id="jarvisStatusLine">Neural Core Standing By · Listening...</div>
 
+      <!-- Sensitive Windows Action Confirmation Banner -->
+      <div class="jarvis-confirm-banner" id="jarvisConfirmBanner" style="display:none;">
+        <div class="jarvis-confirm-header">
+          <span class="jarvis-confirm-icon">⚠️</span>
+          <div>
+            <div class="jarvis-confirm-title" id="jarvisConfirmTitle">Confirmation Required</div>
+            <div class="jarvis-confirm-text" id="jarvisConfirmText">Do you want to execute this Windows action?</div>
+          </div>
+        </div>
+        <div class="jarvis-confirm-actions">
+          <button type="button" class="jarvis-btn-confirm" id="jarvisBtnConfirmAction">✓ Confirm & Execute</button>
+          <button type="button" class="jarvis-btn-cancel" id="jarvisBtnCancelAction">✕ Cancel</button>
+        </div>
+      </div>
+
       <div class="jarvis-transcript-box">
         <div class="jarvis-transcript-label">VOICE TELEMETRY INPUT</div>
         <div class="jarvis-transcript-text" id="jarvisTranscriptText">"Speak a directive, question, or navigation command..."</div>
@@ -136,14 +153,18 @@
       </div>
 
       <div class="jarvis-command-suggestions">
+        <span class="sugg-chip" data-cmd="Camera open pannu">"Camera open pannu"</span>
+        <span class="sugg-chip" data-cmd="Open Chrome">"Open Chrome"</span>
+        <span class="sugg-chip" data-cmd="Open Notepad">"Open Notepad"</span>
+        <span class="sugg-chip" data-cmd="Open calculator">"Open calculator"</span>
+        <span class="sugg-chip" data-cmd="Open Downloads">"Open Downloads"</span>
+        <span class="sugg-chip" data-cmd="Bluetooth on pannu">"Bluetooth on pannu"</span>
+        <span class="sugg-chip" data-cmd="Set volume to 50 percent">"Set volume to 50%"</span>
+        <span class="sugg-chip" data-cmd="Take a screenshot">"Take a screenshot"</span>
+        <span class="sugg-chip" data-cmd="Computer-a shutdown pannu">"Computer shutdown pannu"</span>
+        <span class="sugg-chip" data-cmd="What can you control on my computer?">"What can you control?"</span>
+        <span class="sugg-chip" data-cmd="Cancel">"Cancel / Stop"</span>
         <span class="sugg-chip" data-cmd="Open Academic Hub">"Open Academic Hub"</span>
-        <span class="sugg-chip" data-cmd="Open my notes">"Open my notes"</span>
-        <span class="sugg-chip" data-cmd="Start a quiz">"Start a quiz"</span>
-        <span class="sugg-chip" data-cmd="Generate a presentation">"Generate a presentation"</span>
-        <span class="sugg-chip" data-cmd="Download my presentation">"Download my presentation"</span>
-        <span class="sugg-chip" data-cmd="Open the Vault">"Open the Vault"</span>
-        <span class="sugg-chip" data-cmd="Switch to dark theme">"Switch to dark theme"</span>
-        <span class="sugg-chip" data-cmd="Stop speaking">"Stop speaking"</span>
       </div>
 
       <div class="jarvis-hud-footer">

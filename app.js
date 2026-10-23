@@ -65,7 +65,7 @@ const DEFAULT_AURA_USER = {
     if (!currentProfile) {
       localStorage.setItem("aura_student_profile", JSON.stringify(DEFAULT_AURA_USER));
     }
-  } catch (_) {}
+  } catch (_) { }
 })();
 
 function getActiveUserId() {
@@ -75,7 +75,7 @@ function getActiveUserId() {
       const parsed = JSON.parse(sess);
       if (parsed.user && parsed.user.id) return parsed.user.id;
       if (parsed.student && parsed.student.id) return parsed.student.id;
-    } catch (_) {}
+    } catch (_) { }
   }
   let deviceUid = localStorage.getItem("aura_device_uid");
   if (!deviceUid) {
@@ -98,7 +98,7 @@ function getSharedAudioContext() {
     _auraAudioCtx = new AudioCtxClass();
   }
   if (_auraAudioCtx.state === "suspended") {
-    _auraAudioCtx.resume().catch(() => {});
+    _auraAudioCtx.resume().catch(() => { });
   }
   return _auraAudioCtx;
 }
@@ -225,7 +225,7 @@ class CinematicBootAudioEngine {
       this.voiceAudioEl = new Audio(this.voiceSrc);
       this.voiceAudioEl.preload = "auto";
       this.voiceAudioEl.volume = state.soundEnabled ? 1.0 : 0;
-    } catch (_) {}
+    } catch (_) { }
   }
 
   play() {
@@ -240,14 +240,14 @@ class CinematicBootAudioEngine {
       try {
         this.voiceAudioEl.currentTime = 0;
         this.voiceAudioEl.volume = state.soundEnabled ? 1.0 : 0;
-        this.voiceAudioEl.play().catch(() => {});
-      } catch (_) {}
+        this.voiceAudioEl.play().catch(() => { });
+      } catch (_) { }
     } else if (this.ambientAudioEl) {
       try {
         this.ambientAudioEl.currentTime = 0;
         this.ambientAudioEl.volume = state.soundEnabled ? 0.6 : 0;
-        this.ambientAudioEl.play().catch(() => {});
-      } catch (_) {}
+        this.ambientAudioEl.play().catch(() => { });
+      } catch (_) { }
     }
 
     // 3. Trigger authentic AURA Voice announcement: "Project Aura online..."
@@ -265,10 +265,10 @@ class CinematicBootAudioEngine {
       this.voiceTimer = null;
     }
     if (this.ambientAudioEl) {
-      try { this.ambientAudioEl.pause(); this.ambientAudioEl.currentTime = 0; } catch (_) {}
+      try { this.ambientAudioEl.pause(); this.ambientAudioEl.currentTime = 0; } catch (_) { }
     }
     if (this.voiceAudioEl) {
-      try { this.voiceAudioEl.pause(); this.voiceAudioEl.currentTime = 0; } catch (_) {}
+      try { this.voiceAudioEl.pause(); this.voiceAudioEl.currentTime = 0; } catch (_) { }
     }
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
@@ -508,11 +508,11 @@ function stopBootAudioSynth() {
         try {
           if (bootAudioNodes.droneOsc) bootAudioNodes.droneOsc.stop();
           if (bootAudioNodes.shimmerOsc) bootAudioNodes.shimmerOsc.stop();
-        } catch (_) {}
+        } catch (_) { }
         bootAudioNodes = null;
       }, 350);
     }
-  } catch (_) {}
+  } catch (_) { }
 }
 
 function resizeBootFXCanvas() {
@@ -631,7 +631,7 @@ function drawBootFX(elapsedSec, phase) {
   // 1. Concentric Golden Reactor Rings
   const ringScale = phase === 2 ? 1.2 : (phase === 4 ? 1.35 : 1.0);
   const ringAlpha = phase === 1 ? 0.35 : 0.75;
-  
+
   ctx.save();
   ctx.translate(cx, cy);
 
@@ -744,7 +744,7 @@ function completeBootImmediately() {
   state.bootFinished = true;
   if (bootAnimId) cancelAnimationFrame(bootAnimId);
   stopBootAudioSynth();
-  try { realSoundPlayer.stopAndCleanup(); } catch (_) {}
+  try { realSoundPlayer.stopAndCleanup(); } catch (_) { }
 
   if (bootOverlay) {
     bootOverlay.classList.add("boot-done");
@@ -1229,7 +1229,7 @@ function toggleMobileSidebar() {
   }
 }
 
-window.switchKnowledgeVaultSubTab = function(subtab) {
+window.switchKnowledgeVaultSubTab = function (subtab) {
   const btnDocs = document.getElementById("kvTabDocsBtn");
   const btnMem = document.getElementById("kvTabMemBtn");
   const paneDocs = document.getElementById("kvSubTabDocs");
@@ -1250,7 +1250,7 @@ window.switchKnowledgeVaultSubTab = function(subtab) {
   }
 };
 
-window.switchStudyPlannerSubTab = function(subtab) {
+window.switchStudyPlannerSubTab = function (subtab) {
   const btnMilestones = document.getElementById("studySubtabMilestones");
   const btnKanban = document.getElementById("studySubtabKanban");
   const paneMilestones = document.getElementById("studyTabMilestonesContent");
@@ -1445,14 +1445,14 @@ function updateClock() {
     const y = now.getFullYear();
     const m = String(now.getMonth() + 1).padStart(2, '0');
     const d = String(now.getDate()).padStart(2, '0');
-    
+
     // Live animated cryptographic micro-hash
     const hex = "0123456789ABCDEF";
     let hash = "";
     for (let i = 0; i < 4; i++) {
       hash += hex[Math.floor(Math.random() * 16)];
     }
-    
+
     clockEl.innerHTML = `<span class="crypto-date">${y}.${m}.${d}</span> <span class="crypto-sep">//</span> <span class="crypto-time">${timeStr}</span> <span class="crypto-hash">[HASH: 0x${hash}]</span>`;
   }
 }
@@ -1693,7 +1693,7 @@ function renderComposerAttachmentChip() {
   `;
 }
 
-window.removeComposerAttachment = function() {
+window.removeComposerAttachment = function () {
   currentComposerAttachment = null;
   if (ccAttachStrip) {
     ccAttachStrip.style.display = "none";
@@ -1718,7 +1718,7 @@ function scrollChatStreamToBottom() {
    briefing cards. Supports dynamic JSON with plain text fallback.
 ========================================================= */
 
-window.dispatchAuraAction = function(action) {
+window.dispatchAuraAction = function (action) {
   if (!action) return;
   const clean = action.replace(/→$/, "").trim();
   const msgInput = document.getElementById("messageInput");
@@ -1731,7 +1731,7 @@ window.dispatchAuraAction = function(action) {
   }
 };
 
-window.toggleBriefingViewMode = function(btn, mode) {
+window.toggleBriefingViewMode = function (btn, mode) {
   const container = btn.closest(".cc-ai-response-body");
   if (!container) return;
   const bentoView = container.querySelector(".aura-briefing-container");
@@ -1774,7 +1774,7 @@ function parseBriefingPayload(raw) {
         if (parsed.title && (parsed.summary || parsed.metrics || parsed.sections)) return parsed;
         if (parsed.data && typeof parsed.data === "object" && parsed.data.title) return parsed.data;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // 3. Markdown fenced code block with JSON: ```json { ... } ```
@@ -1785,7 +1785,7 @@ function parseBriefingPayload(raw) {
       if (parsed && typeof parsed === "object" && parsed.title) {
         return parsed;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // 4. Embedded JSON object matching { "title": ... }
@@ -1796,7 +1796,7 @@ function parseBriefingPayload(raw) {
       if (parsed && typeof parsed === "object" && parsed.title && (parsed.summary || parsed.metrics || parsed.sections)) {
         return parsed;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // 5. Structured Briefing Payload Text (e.g. EXECUTIVE SNAPSHOT + METRICS + THEMATIC SECTORS)
@@ -1841,7 +1841,7 @@ function parseBriefingPayload(raw) {
       if (fieldMatch) briefing.category = fieldMatch[1].trim();
 
       return briefing;
-    } catch (_) {}
+    } catch (_) { }
   }
 
   return null;
@@ -1925,13 +1925,13 @@ function renderAuraBriefingCard(data, rawTextFallback) {
     ? `<div class="aura-briefing-actions">
         <span class="aura-briefing-actions-label">Follow-up vectors:</span>
         ${data.actions.map(action => {
-          const cleanAct = cleanPillText(action);
-          return `
+      const cleanAct = cleanPillText(action);
+      return `
           <button type="button" class="aura-briefing-action-btn" data-action="${escapeHtml(cleanAct)}" onclick="window.dispatchAuraAction(this.getAttribute('data-action'))">
             ${escapeHtml(cleanAct)} →
           </button>
         `;
-        }).join("")}
+    }).join("")}
        </div>`
     : "";
 
@@ -2127,7 +2127,7 @@ async function dispatchCommand() {
   }
 }
 
-window.copyAiBubbleText = function(btn) {
+window.copyAiBubbleText = function (btn) {
   const container = btn.closest(".cc-msg");
   if (!container) return;
   const textEl = container.querySelector(".cc-ai-response-body");
@@ -2242,14 +2242,14 @@ function initCreationStudio() {
           </div>
           <ul class="creation-points-list">
             ${bulletPoints.map((pt, pIdx) => {
-              const glyph = String(pIdx + 1).padStart(2, '0');
-              return `
+      const glyph = String(pIdx + 1).padStart(2, '0');
+      return `
                 <li class="creation-point-item">
                   <span class="point-glyph">${glyph}</span>
                   <div style="flex:1;">${sanitizeCardMarkdown(pt)}</div>
                 </li>
               `;
-            }).join("")}
+    }).join("")}
           </ul>
         </div>
       </div>
@@ -2280,9 +2280,9 @@ function initCreationStudio() {
       if (isBulletList) {
         return `<ul style="margin:8px 0; padding-left:20px; line-height:1.65; color:var(--text-primary);">
           ${lines.map(l => {
-            const cleanLine = l.replace(/^[-*•►✦✧]\s+/, '').replace(/^\d+[\.\)]\s+/, '').trim();
-            return `<li>${sanitizeCardMarkdown(cleanLine)}</li>`;
-          }).join("")}
+          const cleanLine = l.replace(/^[-*•►✦✧]\s+/, '').replace(/^\d+[\.\)]\s+/, '').trim();
+          return `<li>${sanitizeCardMarkdown(cleanLine)}</li>`;
+        }).join("")}
         </ul>`;
       }
 
@@ -2871,7 +2871,7 @@ Make it look natural, professional, and visually engaging with clean points and 
 
   function renderCorporateSlideDeck(slides, topic) {
     if (!presOutputText || !slides || slides.length === 0) return;
-    
+
     if (activePresentationSlideIndex >= slides.length) {
       activePresentationSlideIndex = 0;
     }
@@ -2896,9 +2896,9 @@ Make it look natural, professional, and visually engaging with clean points and 
         </div>
         <div class="ppt-slides-grid" style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));">
           ${slides.map((s, idx) => {
-            const isCardExact = Boolean(s.exactImage || (presentationUploadedImage && presentationUploadedImage.dataUrl));
-            const sImg = s.exactImage || (presentationUploadedImage ? presentationUploadedImage.dataUrl : getContextualSlideImage(topic, s.title, idx));
-            return `
+        const isCardExact = Boolean(s.exactImage || (presentationUploadedImage && presentationUploadedImage.dataUrl));
+        const sImg = s.exactImage || (presentationUploadedImage ? presentationUploadedImage.dataUrl : getContextualSlideImage(topic, s.title, idx));
+        return `
               <div class="ppt-slide-card" style="aspect-ratio: 16/9; padding: 18px; cursor: pointer; border: 1px solid ${idx === activePresentationSlideIndex ? 'var(--accent-blue)' : 'var(--border-subtle)'};" onclick="window.selectCorporateSlide(${idx})">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                   <span class="slide-number-badge">SLIDE ${String(s.number).padStart(2, '0')}</span>
@@ -2916,7 +2916,7 @@ Make it look natural, professional, and visually engaging with clean points and 
                 </div>
               </div>
             `;
-          }).join("")}
+      }).join("")}
         </div>
       `;
     } else {
@@ -3031,7 +3031,7 @@ Make it look natural, professional, and visually engaging with clean points and 
     }
   }
 
-  window.selectCorporateSlide = function(idx) {
+  window.selectCorporateSlide = function (idx) {
     activePresentationSlideIndex = idx;
     isDeckGridView = false;
     const topic = (document.getElementById("presTopicInput") ? document.getElementById("presTopicInput").value.trim() : "") || "Project Aura Presentation";
@@ -3526,7 +3526,7 @@ function updateOptimisticVaultUploadStatus(tempId, status, fileData = null, erro
   }
 }
 
-window.retryVaultUpload = function(tempId) {
+window.retryVaultUpload = function (tempId) {
   const file = window.pendingVaultUploads.get(tempId);
   const card = document.getElementById(tempId);
   if (card) card.remove();
@@ -3545,7 +3545,7 @@ async function loadVaultFiles() {
         const data = await res.json();
         serverFiles = data.files || [];
       }
-    } catch (_) {}
+    } catch (_) { }
 
     const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
     const filesMap = new Map();
@@ -3627,7 +3627,7 @@ async function loadVaultFiles() {
   } catch (_) { }
 }
 
-window.askAboutFile = function(fileName) {
+window.askAboutFile = function (fileName) {
   switchView("command-center");
   if (messageInput) {
     messageInput.value = `Explain the core concepts and chapters of "${fileName}"`;
@@ -3636,7 +3636,7 @@ window.askAboutFile = function(fileName) {
   playTactileSound("click");
 };
 
-window.generateNotesFromFile = function(fileName) {
+window.generateNotesFromFile = function (fileName) {
   switchView("creation-lab");
   const writingInput = document.getElementById("writingTopicInput");
   if (writingInput) {
@@ -3646,7 +3646,7 @@ window.generateNotesFromFile = function(fileName) {
   playTactileSound("click");
 };
 
-window.generateQuizFromFile = function(fileName) {
+window.generateQuizFromFile = function (fileName) {
   switchView("quiz-engine");
   const topicInput = document.getElementById("quizTopicInput");
   if (topicInput) {
@@ -3656,7 +3656,7 @@ window.generateQuizFromFile = function(fileName) {
   playTactileSound("click");
 };
 
-window.openVaultDocumentReader = async function(fileId, fileName) {
+window.openVaultDocumentReader = async function (fileId, fileName) {
   if (!documentReaderModal) return;
 
   if (docReaderModalTitle) docReaderModalTitle.textContent = fileName || "Document Viewer";
@@ -3712,7 +3712,7 @@ window.openVaultDocumentReader = async function(fileId, fileName) {
     } else if (docContent) {
       if (docReaderModalBody) {
         docReaderModalBody.innerHTML = `
-          <div style="padding:18px; font-size:13.5px; line-height:1.7; color:var(--text-primary); white-space:pre-wrap; font-family:${['js','py','ts','json','html','css'].includes(ext) ? 'var(--font-mono)' : 'var(--font-sans)'};">
+          <div style="padding:18px; font-size:13.5px; line-height:1.7; color:var(--text-primary); white-space:pre-wrap; font-family:${['js', 'py', 'ts', 'json', 'html', 'css'].includes(ext) ? 'var(--font-mono)' : 'var(--font-sans)'};">
             ${escapeHtml(docContent)}
           </div>
         `;
@@ -3736,7 +3736,7 @@ window.openVaultDocumentReader = async function(fileId, fileName) {
   }
 };
 
-window.deleteVaultFile = async function(fileId) {
+window.deleteVaultFile = async function (fileId) {
   try {
     await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}`, { method: "DELETE" });
     const localFiles = JSON.parse(localStorage.getItem("aura_local_vault_files") || "[]");
@@ -3750,7 +3750,7 @@ window.deleteVaultFile = async function(fileId) {
 };
 
 
-window.renderVaultRelatedTopics = function(fileName, relatedTopics, relationInfo, summary, links) {
+window.renderVaultRelatedTopics = function (fileName, relatedTopics, relationInfo, summary, links) {
   const vaultRelatedList = document.getElementById("vaultRelatedList");
   const vaultRelatedBarTitle = document.getElementById("vaultRelatedBarTitle");
   if (!vaultRelatedList) return;
@@ -3786,13 +3786,13 @@ window.renderVaultRelatedTopics = function(fileName, relatedTopics, relationInfo
         </div>
         <div style="display:flex; flex-wrap:wrap; gap:6px;">
           ${topics.map(t => {
-            const cleanT = cleanPillText(t);
-            return `
+    const cleanT = cleanPillText(t);
+    return `
             <button class="youtube-quick-pill" onclick="askAboutTopic('${escapeHtml(cleanT).replace(/'/g, "\\'")}')" style="font-size:11px; padding:4px 10px;">
               ✦ ${escapeHtml(cleanT)}
             </button>
           `;
-          }).join("")}
+  }).join("")}
         </div>
       </div>
     ` : ''}
@@ -3847,7 +3847,7 @@ window.renderVaultRelatedTopics = function(fileName, relatedTopics, relationInfo
   playTactileSound("success");
 };
 
-window.analyzeVaultFile = async function(fileId, fileName) {
+window.analyzeVaultFile = async function (fileId, fileName) {
   if (!vaultRelatedList) return;
 
   vaultRelatedList.innerHTML = `
@@ -3926,7 +3926,7 @@ Synthesized by Project Aura 3.0 Knowledge Intelligence Engine.`;
   }
 };
 
-window.askAboutTopic = function(topic) {
+window.askAboutTopic = function (topic) {
   switchView("command-center");
   if (messageInput) {
     messageInput.value = `Explain the core concepts and applications of: ${topic}`;
@@ -3934,7 +3934,7 @@ window.askAboutTopic = function(topic) {
   }
 };
 
-window.deleteVaultFile = async function(fileId) {
+window.deleteVaultFile = async function (fileId) {
   try {
     await fetch(`${BACKEND_URL}/api/files/${encodeURIComponent(fileId)}`, { method: "DELETE" });
     playTactileSound("click");
@@ -4136,7 +4136,7 @@ function renderFilteredMemories() {
   }).join("");
 }
 
-window.triggerMemoryDeepResearch = async function(id, title, content) {
+window.triggerMemoryDeepResearch = async function (id, title, content) {
   const drawer = document.getElementById(`memDrawer_${id}`);
   if (!drawer) return;
   drawer.style.display = "block";
@@ -4174,7 +4174,7 @@ Provide:
   }
 };
 
-window.triggerMemoryActionPlan = async function(id, title, content) {
+window.triggerMemoryActionPlan = async function (id, title, content) {
   const drawer = document.getElementById(`memDrawer_${id}`);
   if (!drawer) return;
   drawer.style.display = "block";
@@ -4210,7 +4210,7 @@ Step 3: [Actionable Directive]`
   }
 };
 
-window.triggerMemoryRecallQuiz = async function(id, title, content) {
+window.triggerMemoryRecallQuiz = async function (id, title, content) {
   const drawer = document.getElementById(`memDrawer_${id}`);
   if (!drawer) return;
   drawer.style.display = "block";
@@ -4242,7 +4242,7 @@ Include which option is correct and brief explanation.`
   }
 };
 
-window.togglePinMemory = function(id) {
+window.togglePinMemory = function (id) {
   const idx = memoryState.pinnedIds.indexOf(id);
   if (idx !== -1) {
     memoryState.pinnedIds.splice(idx, 1);
@@ -4788,7 +4788,7 @@ function handleQuizVerifiedAnswer(isCorrect, keyAnswer) {
   }
 }
 
-window.handleQuizAnswer = function(chosenIdx) {
+window.handleQuizAnswer = function (chosenIdx) {
   if (quizState.answered) return;
   quizState.answered = true;
   const q = quizState.questions[quizState.currentIndex];
@@ -4875,7 +4875,7 @@ function showQuizScoreSummary() {
     const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
     localEvals.unshift(evaluationRecord);
     localStorage.setItem("aura_real_evaluations", JSON.stringify(localEvals));
-  } catch (_) {}
+  } catch (_) { }
 
   fetch(`${BACKEND_URL}/api/activity`, {
     method: "POST",
@@ -4885,7 +4885,7 @@ function showQuizScoreSummary() {
       message: `Completed Multi-Pattern Quiz on "${quizState.topic}": ${pct}%`,
       metadata: { userId: activeUid, topic: quizState.topic, score: quizState.score, total, percentage: pct }
     })
-  }).catch(() => {});
+  }).catch(() => { });
 }
 
 if (retakeQuizBtn) {
@@ -5554,7 +5554,7 @@ function initSemesterMockTest() {
           a4QuestionsSheetBody.innerHTML = html;
         }
 
-        window.togglePartBOption = function(choice) {
+        window.togglePartBOption = function (choice) {
           const btnA = document.getElementById("btnToggleOptA");
           const btnB = document.getElementById("btnToggleOptB");
           const boxA = document.getElementById("partBContainerA");
@@ -5669,7 +5669,7 @@ function initSemesterMockTest() {
         if (mockReportComments) mockReportComments.textContent = report.evaluationSummary || "34-Mark Blueprint Evaluation complete.";
 
         const breakdown = report.scoreBreakdown || { partA: { earned: 8, max: 10 }, partB: { earned: 6, max: 8 }, partC: { earned: 14, max: 16 } };
-        
+
         let breakdownHtml = `
           <div class="mock-scorecard-grid">
             <div class="scorecard-item-box">
@@ -5759,7 +5759,7 @@ async function loadStudentPerformance() {
       const grp = profile.group || localStorage.getItem("aura_school_group") || "Bio-Maths Track";
       perfStudentClassSub.textContent = `${String(std).replace("STD_", "")} · ${String(grp).replace(/_/g, " ")}`;
     }
-  } catch (_) {}
+  } catch (_) { }
 
   // Hook Demo Preview Toggle Button
   if (btnTogglePerfDemo && !btnTogglePerfDemo.dataset.bound) {
@@ -5791,7 +5791,7 @@ async function loadStudentPerformance() {
           const data = await res.json();
           if (data && Array.isArray(data.records)) records = data.records;
         }
-      } catch (_) {}
+      } catch (_) { }
 
       // Pull genuine local evaluations stored by student
       const localEvals = JSON.parse(localStorage.getItem("aura_real_evaluations") || "[]");
@@ -6167,14 +6167,14 @@ async function loadStudentPerformance() {
             </thead>
             <tbody>
               ${records.map(r => {
-                const p = parseFloat(String(r.percentage).replace("%", "")) || 0;
-                const isGood = p >= 75;
-                const isPass = p >= 50;
-                const badgeColor = isGood ? "#10b981" : (isPass ? "#38bdf8" : "#ef4444");
-                const badgeBg = isGood ? "rgba(16,185,129,0.12)" : (isPass ? "rgba(56,189,248,0.12)" : "rgba(239,68,68,0.12)");
-                const badgeBorder = isGood ? "rgba(16,185,129,0.3)" : (isPass ? "rgba(56,189,248,0.3)" : "rgba(239,68,68,0.3)");
+        const p = parseFloat(String(r.percentage).replace("%", "")) || 0;
+        const isGood = p >= 75;
+        const isPass = p >= 50;
+        const badgeColor = isGood ? "#10b981" : (isPass ? "#38bdf8" : "#ef4444");
+        const badgeBg = isGood ? "rgba(16,185,129,0.12)" : (isPass ? "rgba(56,189,248,0.12)" : "rgba(239,68,68,0.12)");
+        const badgeBorder = isGood ? "rgba(16,185,129,0.3)" : (isPass ? "rgba(56,189,248,0.3)" : "rgba(239,68,68,0.3)");
 
-                return `
+        return `
                   <tr style="border-bottom:1px solid var(--border-subtle); transition:background 0.15s ease;">
                     <td style="padding:12px 14px; font-weight:700; color:var(--text-primary);">${escapeHtml(r.subject || 'Assessment')}</td>
                     <td style="padding:12px 14px; color:var(--text-secondary); font-size:12px;">${escapeHtml(r.discipline || 'Topic Quiz')}</td>
@@ -6193,7 +6193,7 @@ async function loadStudentPerformance() {
                     </td>
                   </tr>
                 `;
-              }).join("")}
+      }).join("")}
             </tbody>
           </table>
         </div>
@@ -6256,7 +6256,7 @@ function renderWeeklyStrip(records) {
 }
 
 // Helper: One-click practice for any subject
-window.startPracticeForSubject = function(subjectName) {
+window.startPracticeForSubject = function (subjectName) {
   switchView("quiz-engine");
   setTimeout(() => {
     const topicInput = document.getElementById("quizTopicInput") || document.getElementById("quizTopic");
@@ -6415,8 +6415,8 @@ function openCuteRobotAssistant() {
   }
 
   if (robotTranscriptBox) {
-    robotTranscriptBox.textContent = robotLanguage === "ta-IN" 
-      ? "தமிழில் பேசுங்கள்... பேசி முடித்ததும் தானாக செயல்படும்!" 
+    robotTranscriptBox.textContent = robotLanguage === "ta-IN"
+      ? "தமிழில் பேசுங்கள்... பேசி முடித்ததும் தானாக செயல்படும்!"
       : "Listening in Tanglish, Tamil & English... Speak your command!";
     robotTranscriptBox.style.color = "var(--text-secondary)";
   }
@@ -6585,7 +6585,7 @@ function initCuteRobotVoice() {
       robotTranscriptBox.textContent = placeholder;
     }
     if (robotSpeechRec) {
-      try { robotSpeechRec.stop(); } catch (_) {}
+      try { robotSpeechRec.stop(); } catch (_) { }
     }
     playTactileSound("click");
   }
@@ -6961,8 +6961,8 @@ class LiveThemeCanvasEngine {
       // Subtle Ambient Particles for active theme
       const glowColor = (this.currentTheme === "rose-olive" || this.currentTheme === "rose-olive-light") ? "#c9a0a0"
         : (this.currentTheme === "lavender-beige" || this.currentTheme === "lavender-beige-light") ? "#a89bbe"
-        : (this.currentTheme === "sage-cream" || this.currentTheme === "sage-cream-dark") ? "#a3b18a"
-        : "#c9a0a0";
+          : (this.currentTheme === "sage-cream" || this.currentTheme === "sage-cream-dark") ? "#a3b18a"
+            : "#c9a0a0";
       this.particles.forEach(p => {
         p.x += p.speedX;
         p.y += p.speedY;
@@ -7423,7 +7423,7 @@ function initEngineeringHub() {
   }
 
   // Print Notes
-  
+
   const btnDownloadNotesPdf = document.getElementById("btnDownloadNotesPdf");
   if (btnDownloadNotesPdf) {
     btnDownloadNotesPdf.addEventListener("click", () => {
@@ -7465,7 +7465,7 @@ function initEngineeringHub() {
   }
 
   // YouTube Video Recommendations (Globally Accessible Engine)
-  window.loadYouTubeLectures = async function(subjectOverride) {
+  window.loadYouTubeLectures = async function (subjectOverride) {
     const engVideosListGrid = document.getElementById("engVideosListGrid");
     const engVideoLangSelect = document.getElementById("engVideoLangSelect");
     const engVideoLangTag = document.getElementById("engVideoLangTag");
@@ -7474,7 +7474,7 @@ function initEngineeringHub() {
     const lang = (engVideoLangSelect && engVideoLangSelect.value) ? engVideoLangSelect.value : "Tamil";
     if (engVideoLangTag) engVideoLangTag.textContent = `Language: ${lang}`;
 
-    const currentSubj = subjectOverride || 
+    const currentSubj = subjectOverride ||
       (typeof collegeAndSchoolState !== "undefined" && collegeAndSchoolState.activeSubject) ||
       (typeof engineeringHubState !== "undefined" && engineeringHubState.activeSubject) ||
       "Data Structures & Algorithms";
@@ -7708,7 +7708,7 @@ function formatMarkdownResponse(text) {
   return safe;
 }
 
-window.copyAuraCode = function(codeId, btn) {
+window.copyAuraCode = function (codeId, btn) {
   const el = document.getElementById(codeId);
   if (!el) return;
   const rawText = el.innerText;
@@ -7739,7 +7739,7 @@ function initProjectAuraVisual() {
   if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) { video.play().catch(() => {}); }
+        if (entry.isIntersecting) { video.play().catch(() => { }); }
         else { video.pause(); }
       });
     }, { threshold: 0.15 });
@@ -7771,17 +7771,17 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 // PROJECT AURA 3.0 — AURA_MODULE_CARD_NAV_FIX
 document.addEventListener("click", function (event) {
-    const card = event.target.closest(".cc-mod-card[data-view]");
-    if (!card) return;
+  const card = event.target.closest(".cc-mod-card[data-view]");
+  if (!card) return;
 
-    const viewKey = card.getAttribute("data-view");
-    const targetView = document.getElementById("view-" + viewKey);
+  const viewKey = card.getAttribute("data-view");
+  const targetView = document.getElementById("view-" + viewKey);
 
-    if (targetView && typeof switchView === "function") {
-        switchView(viewKey);
-    } else {
-        console.error("[PROJECT AURA] View target missing:", viewKey);
-    }
+  if (targetView && typeof switchView === "function") {
+    switchView(viewKey);
+  } else {
+    console.error("[PROJECT AURA] View target missing:", viewKey);
+  }
 });
 
 
@@ -7840,10 +7840,10 @@ function speakAuraVoice(text) {
   try {
     // Mute microphone while speaking so no echo feedback loops occur
     if (auraVoiceRecognition && isAuraVoiceActive) {
-      try { auraVoiceRecognition.stop(); } catch (_) {}
+      try { auraVoiceRecognition.stop(); } catch (_) { }
     }
     if (robotSpeechRec) {
-      try { robotSpeechRec.stop(); } catch (_) {}
+      try { robotSpeechRec.stop(); } catch (_) { }
     }
 
     window.speechSynthesis.cancel();
@@ -7875,14 +7875,14 @@ function speakAuraVoice(text) {
       if (indianVoice) {
         chosen = indianVoice;
       } else if (state.voiceGender === "female") {
-        chosen = voices.find(v => v.lang.startsWith("en") && 
-          (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Female") || v.name.includes("Google US English"))) 
-          || voices.find(v => v.lang.startsWith("en")) 
+        chosen = voices.find(v => v.lang.startsWith("en") &&
+          (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Female") || v.name.includes("Google US English")))
+          || voices.find(v => v.lang.startsWith("en"))
           || voices[0];
       } else {
-        chosen = voices.find(v => v.lang.startsWith("en") && 
-          (v.name.includes("David") || v.name.includes("Daniel") || v.name.includes("Guy") || v.name.includes("George") || v.name.includes("Male") || v.name.includes("Google UK English Male"))) 
-          || voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("zira") && !v.name.toLowerCase().includes("samantha")) 
+        chosen = voices.find(v => v.lang.startsWith("en") &&
+          (v.name.includes("David") || v.name.includes("Daniel") || v.name.includes("Guy") || v.name.includes("George") || v.name.includes("Male") || v.name.includes("Google UK English Male")))
+          || voices.find(v => v.lang.startsWith("en") && !v.name.toLowerCase().includes("female") && !v.name.toLowerCase().includes("zira") && !v.name.toLowerCase().includes("samantha"))
           || voices[0];
       }
     }
@@ -7893,7 +7893,7 @@ function speakAuraVoice(text) {
       // Re-enable listening in cute robot modal if still open
       const modal = document.getElementById("cuteRobotModal");
       if (modal && modal.classList.contains("active") && robotSpeechRec) {
-        try { robotSpeechRec.start(); } catch (_) {}
+        try { robotSpeechRec.start(); } catch (_) { }
       }
     };
 
@@ -7963,7 +7963,7 @@ function initGlobalVoiceAssistant() {
     if (voiceSilenceTimer) clearTimeout(voiceSilenceTimer);
     voiceSilenceTimer = setTimeout(() => {
       if (isAuraVoiceActive && accumulatedSpeech) {
-        try { auraVoiceRecognition.stop(); } catch (_) {}
+        try { auraVoiceRecognition.stop(); } catch (_) { }
       }
     }, 850);
   };
@@ -7975,7 +7975,7 @@ function initGlobalVoiceAssistant() {
       } else {
         try {
           auraVoiceRecognition.start();
-        } catch (_) {}
+        } catch (_) { }
       }
     });
   }
@@ -7997,8 +7997,8 @@ function executeAuraVoiceCommand(rawTranscript) {
 
   // 0. Conversational Interaction: Greetings & Assistant Capabilities
   if (cmd === "hi" || cmd === "hello" || cmd.startsWith("hello") || cmd.startsWith("hi aura") ||
-      cmd.includes("vanakkam") || cmd.includes("வணக்கம்") || cmd.includes("namaste") || cmd.includes("नमस्ते") ||
-      cmd.includes("who are you") || cmd.includes("what can you do") || cmd.includes("epdi iruka") || cmd.includes("kaise ho")) {
+    cmd.includes("vanakkam") || cmd.includes("வணக்கம்") || cmd.includes("namaste") || cmd.includes("नमस्ते") ||
+    cmd.includes("who are you") || cmd.includes("what can you do") || cmd.includes("epdi iruka") || cmd.includes("kaise ho")) {
     let greetingText = "";
     if (isTamilScript) {
       greetingText = "வணக்கம்! நான் உங்கள் ஆரா AI குரல் உதவியாளர். கல்லூரி, பள்ளி பாடங்கள், மாதிரி தேர்வு, அல்லது உங்கள் சந்தேகங்களை தீர்க்க நான் தயார்!";
@@ -8026,10 +8026,10 @@ function executeAuraVoiceCommand(rawTranscript) {
   }
 
   // 2. Recommended YouTube Videos Directive
-  if (cmd.includes("recommended video") || cmd.includes("video varala") || cmd.includes("videos varala") || 
-      cmd.includes("videos kaattu") || cmd.includes("video kaattu") || cmd.includes("lecture video") || 
-      cmd.includes("video open") || cmd.includes("வீடியோ") || cmd.includes("காணொளி") || 
-      cmd.includes("video play") || cmd.includes("videos podu") || cmd.includes("वीडियो")) {
+  if (cmd.includes("recommended video") || cmd.includes("video varala") || cmd.includes("videos varala") ||
+    cmd.includes("videos kaattu") || cmd.includes("video kaattu") || cmd.includes("lecture video") ||
+    cmd.includes("video open") || cmd.includes("வீடியோ") || cmd.includes("காணொளி") ||
+    cmd.includes("video play") || cmd.includes("videos podu") || cmd.includes("वीडियो")) {
     switchView("engineering-hub");
     if (typeof window.loadYouTubeLectures === "function") {
       window.loadYouTubeLectures();
@@ -8072,35 +8072,35 @@ function executeAuraVoiceCommand(rawTranscript) {
   }
 
   // 5. Study & Task Planner / Study Intel / Milestones
-  if (cmd.includes("study planner") || cmd.includes("task planner") || cmd.includes("study intel") || 
-      cmd.includes("planner") || cmd.includes("task") || cmd.includes("milestone") || cmd.includes("schedule") || 
-      cmd.includes("timetable") || cmd.includes("படிப்பு திட்டம்") || cmd.includes("திட்டம்") || cmd.includes("टाइमटेबल") || cmd.includes("प्लानर")) {
+  if (cmd.includes("study planner") || cmd.includes("task planner") || cmd.includes("study intel") ||
+    cmd.includes("planner") || cmd.includes("task") || cmd.includes("milestone") || cmd.includes("schedule") ||
+    cmd.includes("timetable") || cmd.includes("படிப்பு திட்டம்") || cmd.includes("திட்டம்") || cmd.includes("टाइमटेबल") || cmd.includes("प्लानर")) {
     switchView("study-intel");
     speakAuraVoice(isTamilScript ? "படிப்பு மற்றும் பணி திட்டம் திறக்கப்படுகிறது." : (isHindiScript ? "स्टडी प्लानर और टास्क शेड्यूल खोल दिया गया है।" : "Study and Task Planner open panniten. Ungaloda tasks ready!"));
     return;
   }
 
   // 6. Student Performance / Marks / Grades / Analytics
-  if (cmd.includes("performance") || cmd.includes("mark") || cmd.includes("score") || 
-      cmd.includes("grade") || cmd.includes("analytics") || cmd.includes("focus area") || 
-      cmd.includes("மதிப்பெண்") || cmd.includes("செயல்திறன்") || cmd.includes("மார்க்") || cmd.includes("मार्क्स") || cmd.includes("रिजल्ट")) {
+  if (cmd.includes("performance") || cmd.includes("mark") || cmd.includes("score") ||
+    cmd.includes("grade") || cmd.includes("analytics") || cmd.includes("focus area") ||
+    cmd.includes("மதிப்பெண்") || cmd.includes("செயல்திறன்") || cmd.includes("மார்க்") || cmd.includes("मार्क्स") || cmd.includes("रिजल्ट")) {
     switchView("student-performance");
     speakAuraVoice(isTamilScript ? "மாணவர் செயல்திறன் மற்றும் மதிப்பெண்கள் பகுதி திறக்கப்படுகிறது." : (isHindiScript ? "छात्र प्रदर्शन और अंक विश्लेषण खोला गया है।" : "Student Performance analytics open pandren. Ungaloda marks and focus areas check pannikonga!"));
     return;
   }
 
   // 7. Knowledge Vault / Notes / Documents
-  if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("document") || 
-      cmd.includes("notes") || cmd.includes("குறிப்பு") || cmd.includes("ஆவணம்") || cmd.includes("नोट्स")) {
+  if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("document") ||
+    cmd.includes("notes") || cmd.includes("குறிப்பு") || cmd.includes("ஆவணம்") || cmd.includes("नोट्स")) {
     switchView("knowledge-vault");
     speakAuraVoice(isTamilScript ? "அறிவு பெட்டகம் மற்றும் குறிப்புகள் திறக்கப்படுகிறது." : (isHindiScript ? "नॉलेज वॉल्ट और नोट्स खोल दिया गया है।" : "Knowledge Vault open panniten. Stored study notes ready!"));
     return;
   }
 
   // 8. Creation Studio / Deep Research / Presentation
-  if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("presentation") || 
-      cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("research") || 
-      cmd.includes("code") || cmd.includes("வடிவமைப்பு") || cmd.includes("விளக்கக்காட்சி") || cmd.includes("रिसर्च")) {
+  if (cmd.includes("creation") || cmd.includes("studio") || cmd.includes("presentation") ||
+    cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("research") ||
+    cmd.includes("code") || cmd.includes("வடிவமைப்பு") || cmd.includes("விளக்கக்காட்சி") || cmd.includes("रिसर्च")) {
     switchView("creation-lab");
     if (cmd.includes("presentation") || cmd.includes("slide") || cmd.includes("pptx") || cmd.includes("விளக்கக்காட்சி")) {
       const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
@@ -8118,8 +8118,8 @@ function executeAuraVoiceCommand(rawTranscript) {
   }
 
   // 10. Profile Details / "Who Am I"
-  if (cmd.includes("who am i") || cmd.includes("naan yaaru") || cmd.includes("my profile") || 
-      cmd.includes("my details") || cmd.includes("நான் யார்") || cmd.includes("என் விவரம்") || cmd.includes("मैं कौन हूँ")) {
+  if (cmd.includes("who am i") || cmd.includes("naan yaaru") || cmd.includes("my profile") ||
+    cmd.includes("my details") || cmd.includes("நான் யார்") || cmd.includes("என் விவரம்") || cmd.includes("मैं कौन हूँ")) {
     const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
     const name = profile.name || "Student";
     const std = profile.standard || "College & School Scholar";
@@ -8136,10 +8136,10 @@ function executeAuraVoiceCommand(rawTranscript) {
   // 12. System Utilities: Fullscreen, Scroll, Theme, Print
   if (cmd.includes("fullscreen") || cmd.includes("full screen") || cmd.includes("screen perusu")) {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
+      document.documentElement.requestFullscreen().catch(() => { });
       speakAuraVoice("Fullscreen activated.");
     } else {
-      document.exitFullscreen().catch(() => {});
+      document.exitFullscreen().catch(() => { });
       speakAuraVoice("Fullscreen closed.");
     }
     return;
@@ -8182,18 +8182,18 @@ function executeAuraVoiceCommand(rawTranscript) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt: `Give a clear, 1-2 sentence spoken reply to this student question: "${cleanQ}". Answer naturally in ${isTamilScript ? "Tamil or Tanglish" : (isHindiScript ? "Hindi" : "English")}.` })
   })
-  .then(res => res.json())
-  .then(data => {
-    const spokenReply = (data && data.response) ? data.response.replace(/[*#_`~>\[\]]/g, "").slice(0, 220) : "";
-    if (spokenReply) {
-      speakAuraVoice(spokenReply);
-    } else {
-      speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் தயாராகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का समाधान तैयार है।` : `Command Center-la "${cleanQ}" solve pandren!`));
-    }
-  })
-  .catch(() => {
-    speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் பெறப்படுகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का उत्तर तैयार किया जा रहा है।` : `Command Center-la "${cleanQ}" solve pandren!`));
-  });
+    .then(res => res.json())
+    .then(data => {
+      const spokenReply = (data && data.response) ? data.response.replace(/[*#_`~>\[\]]/g, "").slice(0, 220) : "";
+      if (spokenReply) {
+        speakAuraVoice(spokenReply);
+      } else {
+        speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் தயாராகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का समाधान तैयार है।` : `Command Center-la "${cleanQ}" solve pandren!`));
+      }
+    })
+    .catch(() => {
+      speakAuraVoice(isTamilScript ? `கட்டளை மையத்தில் "${cleanQ}" பற்றிய பதில் பெறப்படுகிறது.` : (isHindiScript ? `कमांड सेंटर में "${cleanQ}" का उत्तर तैयार किया जा रहा है।` : `Command Center-la "${cleanQ}" solve pandren!`));
+    });
 }
 
 // ── CREATION STUDIO: DEEP RESEARCH TAB CONTROLLER ──
@@ -8313,7 +8313,7 @@ function initKnowledgeVaultTopicIngest() {
 }
 
 // ── STUDY INTEL: TAP-TO-EXPLAIN ACCORDIONS & KANBAN ADDITION ──
-window.explainStudyTopic = async function(topicText, targetBoxId) {
+window.explainStudyTopic = async function (topicText, targetBoxId) {
   const targetBox = document.getElementById(targetBoxId);
   if (!targetBox) return;
 
@@ -8348,7 +8348,7 @@ Structure:
   }
 };
 
-window.addMilestoneToTasks = function(milestoneText) {
+window.addMilestoneToTasks = function (milestoneText) {
   const newTask = {
     id: "task_" + Date.now(),
     title: milestoneText,
@@ -8768,23 +8768,23 @@ const AURA_SCHOOL_CURRICULUM = {
       ],
       CBSE: [
         {
-        "id": "CBSE_TAM_10",
-        "name": "தமிழ் (CBSE Tamil Course - Code 006)",
-        "icon": "📜",
-        "weight": "Language Core · 80 Theory + 20 Internal",
-        "unitCount": 8,
-        "chapters": [
-                "இயல் 1: அமுதூற்று (அன்னை மொழியே, தமிழ்ச்சொல் வளம், இரட்டுற மொழிதல்)",
-                "இயல் 2: உயிரின் ஓசை (காற்றே வா, முல்லைப்பாட்டு, புயலிலே ஒரு தோணி)",
-                "இயல் 3: கூட்டாஞ்சோறு (விருந்தோம்பல், காசி காண்டம், தொகைநிலைத் தொடர்கள்)",
-                "இயல் 4: நான்காம் தமிழ் (செயற்கை நுண்ணறிவு, பரிபாடல், தொகாநிலைத் தொடர்கள்)",
-                "இயல் 5: மணற்கேணி (நீதி வெண்பா, திருவிளையாடற் புராணம், வினா-விடை வகைகள்)",
-                "இயல் 6: கம்பராமாயணம், பாய்ச்சல், அகப்பொருள் இலக்கணம்",
-                "இயல் 7: விதைநெல் (ஏர் புதிதா, மெய்க்கீர்த்தி, சிலப்பதிகாரம், புறப்பொருள்)",
-                "இயல் 8: படைப்பாற்றல் (கடிதம் வரைதல், கட்டுரை, மொழிபெயர்ப்புப் பயிற்சி)"
-        ],
-        "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
-},
+          "id": "CBSE_TAM_10",
+          "name": "தமிழ் (CBSE Tamil Course - Code 006)",
+          "icon": "📜",
+          "weight": "Language Core · 80 Theory + 20 Internal",
+          "unitCount": 8,
+          "chapters": [
+            "இயல் 1: அமுதூற்று (அன்னை மொழியே, தமிழ்ச்சொல் வளம், இரட்டுற மொழிதல்)",
+            "இயல் 2: உயிரின் ஓசை (காற்றே வா, முல்லைப்பாட்டு, புயலிலே ஒரு தோணி)",
+            "இயல் 3: கூட்டாஞ்சோறு (விருந்தோம்பல், காசி காண்டம், தொகைநிலைத் தொடர்கள்)",
+            "இயல் 4: நான்காம் தமிழ் (செயற்கை நுண்ணறிவு, பரிபாடல், தொகாநிலைத் தொடர்கள்)",
+            "இயல் 5: மணற்கேணி (நீதி வெண்பா, திருவிளையாடற் புராணம், வினா-விடை வகைகள்)",
+            "இயல் 6: கம்பராமாயணம், பாய்ச்சல், அகப்பொருள் இலக்கணம்",
+            "இயல் 7: விதைநெல் (ஏர் புதிதா, மெய்க்கீர்த்தி, சிலப்பதிகாரம், புறப்பொருள்)",
+            "இயல் 8: படைப்பாற்றல் (கடிதம் வரைதல், கட்டுரை, மொழிபெயர்ப்புப் பயிற்சி)"
+          ],
+          "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+        },
         {
           id: "CBSE_ENG_10",
           name: "English Language & Literature (Code 184)",
@@ -8910,890 +8910,890 @@ const AURA_SCHOOL_CURRICULUM = {
     title: "11th Standard Higher Secondary / Senior Secondary",
     boards: {
       TN_STATE: {
-      BIO_MATHS: [
-        {
-          id: "LANG_PART1_11_BM",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core & Sangam Lit)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: [
-            "இயல் 1: மொழியின் சிறப்பு (யுகத்தின் பாடல், பேச்சுமொழியும் எழுத்துமொழியும்)",
-            "இயல் 2: இயற்கை மற்றும் சூழலியல் (ஏதிலிக்குருவிகள், திருமலை முருகன் பள்ளு)",
-            "இயல் 3: மனித மாண்புகள் (காவடிச்சிந்து, குறுந்தொகை, புறநானூறு)",
-            "இயல் 4: கல்வி மற்றும் சிந்தனை (கல்வியில் பெரியவர் காமராசர், நற்றிணை)",
-            "இயல் 5: நாகரிகம் மற்றும் தொழில் (ஆனந்தரங்கர் நாட்குறிப்பு, சீறாப்புராணம்)",
-            "இயல் 6: கலை மற்றும் இலக்கியம் (குற்றாலக் குறவஞ்சி, திருக்குறள்)",
-            "இயல் 7: அறமும் அரசியலும் (புரட்சிக்கவி, வில்லிபாரதம்)",
-            "இயல் 8: அறிவியலும் நுட்பமும் (செவ்வி, மெய்ப்பாட்டியல் யாப்பிலக்கணம்)"
-          ],
-          blueprint: "90 Theory + 10 Internal (செய்யுள் 30M, உரைநடை 25M, இலக்கணம் 25M, மொழித்திறன் 10M)"
-        },
-        {
-          id: "LANG_PART2_11_BM",
-          name: "Part-2: English Core & Communicative",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: [
-            "Unit 1: The Portrait of a Lady (Khushwant Singh) / Once Upon a Time (Gabriel Okara)",
-            "Unit 2: A Nice Cup of Tea (George Orwell) / Our Casuarina Tree (Toru Dutt)",
-            "Unit 3: Forgetting (Robert Lynd) / Lines Written in Early Spring (William Wordsworth)",
-            "Unit 4: Tight Corners (E.V. Lucas) / Macavity - The Mystery Cat (T.S. Eliot)",
-            "Unit 5: The Convocation Address (Dr. Arignar Annadurai) / Everest is Not The Only Peak",
-            "Unit 6: The Accidental Tourist (Bill Bryson) / The Hollow Crown (William Shakespeare)",
-            "Writing & Grammar: Reported Speech, Prepositions, Note-Making, Bio-Sketch, Job Application"
-          ],
-          blueprint: "90 Theory + 10 Internal (Reading & Vocab 20M, Grammar 20M, Literature 30M, Composition 20M)"
-        },
-        {
-          id: "MATHS_11_BM",
-          name: "Mathematics (Calculus & Analytical Geometry)",
-          icon: "📐",
-          weight: "Core Mathematics · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Sets, Relations & Functions", "Basic Algebra", "Trigonometry",
-            "Combinatorics & Mathematical Induction", "Binomial Theorem & Sequences",
-            "Two Dimensional Analytical Geometry", "Matrices & Determinants",
-            "Vector Algebra", "Differential Calculus: Limits & Continuity",
-            "Differential Calculus: Differentiability", "Integral Calculus",
-            "Introduction to Probability"
-          ],
-          blueprint: "90 Theory + 10 Internal (Calculus 35M, Algebra 25M, Geometry 15M, Vectors/Trig 15M)"
-        },
-        {
-          id: "PHYSICS_11_BM",
-          name: "Physics (Mechanics, Thermal & Waves)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 11,
-          chapters: [
-            "Measurement & Vectors", "Kinematics", "Laws of Motion (Newton, Friction)",
-            "Work, Energy and Power", "Rotational Dynamics & Moment of Inertia",
-            "Gravitation (Kepler's laws, Escape speed)", "Properties of Matter (Elasticity, Bernoulli)",
-            "Thermodynamics (Carnot engine)", "Kinetic Theory of Gases",
-            "Oscillations (Simple Harmonic Motion)", "Waves (Doppler effect, Standing waves)"
-          ],
-          blueprint: "70 Theory + 30 Practical (Mechanics 30M, Thermal 18M, Waves/Properties 22M)"
-        },
-        {
-          id: "CHEMISTRY_11_BM",
-          name: "Chemistry (Physical, Inorganic & Organic)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: [
-            "Mole Concept & Calculations", "Quantum Mechanical Model of Atom",
-            "Periodic Classification", "Chemical Bonding & Hybridization",
-            "Gaseous State", "Thermodynamics", "Chemical Equilibrium",
-            "Solutions", "Fundamentals of Organic Chemistry", "Hydrocarbons",
-            "Environmental Chemistry"
-          ],
-          blueprint: "70 Theory + 30 Practical (Physical 25M, Inorganic 20M, Organic 25M)"
-        },
-        {
-          id: "BIOLOGY_11_BM",
-          name: "Biology (Botany & Zoology)",
-          icon: "🌿",
-          weight: "Biological Sciences · 70 Theory + 30 Lab",
-          unitCount: 16,
-          chapters: [
-            "Botany: Living World, Plant Kingdom, Morphology & Taxonomy",
-            "Botany: Cell Biology, Biomolecules, Plant Physiology (Photosynthesis, Respiration)",
-            "Zoology: Animal Diversity & Tissues, Digestion & Respiration",
-            "Zoology: Body Fluids & Circulation, Excretion, Locomotion, Neural & Endocrine"
-          ],
-          blueprint: "70 Theory + 30 Practical (Botany 35M, Zoology 35M)"
-        }
-      ],
-      COMP_SCI: [
-        {
-          id: "LANG_PART1_11_CS",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: [
-            "இயல் 1: யுகத்தின் பாடல் / பேச்சுமொழி", "இயல் 2: திருமலை முருகன் பள்ளு",
-            "இயல் 3: புறநானூறு / காவடிச்சிந்து", "இயல் 4: நற்றிணை / காமராசர் கல்வி",
-            "இயல் 5: சீறாப்புராணம் / ஆனந்தரங்கர்", "இயல் 6: குற்றாலக் குறவஞ்சி / திருக்குறள்",
-            "இயல் 7: புரட்சிக்கவி / வில்லிபாரதம்", "இயல் 8: யாப்பிலக்கணம் / மெய்ப்பாட்டியல்"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_11_CS",
-          name: "Part-2: English Core & Communicative",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: [
-            "Unit 1: The Portrait of a Lady / Once Upon a Time",
-            "Unit 2: A Nice Cup of Tea / Our Casuarina Tree",
-            "Unit 3: Forgetting / Lines in Early Spring",
-            "Unit 4: Tight Corners / Macavity the Mystery Cat",
-            "Unit 5: The Convocation Address / Everest is Not The Only Peak",
-            "Unit 6: The Accidental Tourist / The Hollow Crown"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "MATHS_11_CS",
-          name: "Mathematics (Calculus & Vectors)",
-          icon: "📐",
-          weight: "Core Mathematics · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Sets, Relations & Functions", "Trigonometry", "Matrices & Determinants",
-            "Combinatorics", "Analytical Geometry", "Differential Calculus",
-            "Integral Calculus", "Probability Theory"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "PHYSICS_11_CS",
-          name: "Physics (Core Mechanics & Waves)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 11,
-          chapters: [
-            "Measurement & Vectors", "Kinematics", "Laws of Motion", "Work & Energy",
-            "Rotational Dynamics", "Gravitation", "Properties of Matter", "Thermodynamics",
-            "Oscillations & Waves"
-          ],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CHEMISTRY_11_CS",
-          name: "Chemistry (Physical, Inorganic & Organic)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: [
-            "Mole Concept", "Quantum Atom", "Periodic Table", "Chemical Bonding",
-            "Thermodynamics", "Chemical Equilibrium", "Organic Basics & Hydrocarbons"
-          ],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CS_11",
-          name: "Computer Science (Python & Computer Organization)",
-          icon: "💻",
-          weight: "Coding Core · 70 Theory + 30 Lab",
-          unitCount: 10,
-          chapters: [
-            "Introduction to Computers & Number Systems (Binary, Hex, 2's Complement)",
-            "Computer Organization (Processor, Memory Hierarchy)",
-            "Theoretical Operating System Concepts",
-            "Control Structures in Python (if-else, while, for loops)",
-            "Python Functions & Recursion",
-            "Strings and String Manipulations",
-            "Lists, Tuples, Sets and Dictionaries in Python",
-            "Object-Oriented Programming in Python (Classes, Objects, Methods)"
-          ],
-          blueprint: "70 Theory + 30 Practical (Python Coding 40M, Hardware/OS 20M, Theory 10M)"
-        }
-      ],
-      PURE_SCI: [
-        {
-          id: "LANG_PART1_11_PS",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_11_PS",
-          name: "Part-2: English Core & Communicative",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "PHYSICS_11_PS",
-          name: "Physics (Mechanics, Thermal & Waves)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 11,
-          chapters: ["Measurement", "Kinematics", "Laws of Motion", "Work & Energy", "Rigid Body Dynamics", "Gravitation", "Thermodynamics", "Waves"],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CHEMISTRY_11_PS",
-          name: "Chemistry (Physical, Inorganic & Organic)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: ["Atomic Structure", "Periodic Trends", "Bonding Models", "Equilibrium", "Solutions", "Organic Fundamentals", "Environmental Chemistry"],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "BOTANY_11_PS",
-          name: "Botany (Pure Plant Science)",
-          icon: "🌱",
-          weight: "Pure Botanical Science · 35 Theory + 15 Lab",
-          unitCount: 8,
-          chapters: ["Living World & Diversity", "Plant Morphology & Taxonomy", "Cell Biology & Division", "Biomolecules & Enzymes", "Plant Physiology: Photosynthesis, Respiration & Hormones"],
-          blueprint: "35 Theory + 15 Practical"
-        },
-        {
-          id: "ZOOLOGY_11_PS",
-          name: "Zoology (Pure Animal Science)",
-          icon: "🐾",
-          weight: "Pure Zoological Science · 35 Theory + 15 Lab",
-          unitCount: 8,
-          chapters: ["Animal Diversity & Tissues", "Digestive & Excretory Systems", "Circulation & Respiration", "Locomotion & Muscular System", "Neural Control & Endocrine System"],
-          blueprint: "35 Theory + 15 Practical"
-        }
-      ],
-      COMMERCE: [
-        {
-          id: "LANG_PART1_11_COM",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_11_COM",
-          name: "Part-2: English Core & Communicative",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "ACC_11",
-          name: "Accountancy (Double Entry Principles)",
-          icon: "📊",
-          weight: "Commerce Core · 90 Theory + 10 Internal",
-          unitCount: 14,
-          chapters: ["Introduction to Accounting", "Journal & Ledger Posting", "Subsidiary Books & Cash Book", "Bank Reconciliation Statement (BRS)", "Trial Balance & Rectification of Errors", "Depreciation Accounting (SLM, WDV)", "Final Accounts of Sole Trader"],
-          blueprint: "90 Theory + 10 Internal (Final Accounts 25M, BRS 15M, Depreciation 15M)"
-        },
-        {
-          id: "COMM_11",
-          name: "Commerce & Business Studies",
-          icon: "💼",
-          weight: "Commerce Core · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: ["Forms of Business Organisation (Sole Trader, HUF, Partnership)", "Joint Stock Company (MoA & AoA)", "Co-operatives & Government Companies", "Sources of Business Finance (Equity, Debentures)", "MSMEs & Internal Trade", "International Trade (Export & Import)"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "ECO_11_COM",
-          name: "Economics (Microeconomics & TN Economy)",
-          icon: "📈",
-          weight: "Social & Economic · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: ["Consumer Behaviour (Utility & Indifference Curves)", "Production Analysis & Cost/Revenue", "Market Structure & Price Determination", "Distribution Theory", "Indian & Rural Economy", "Tamil Nadu Economic Performance"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "BM_11",
-          name: "Business Mathematics & Statistics",
-          icon: "📉",
-          weight: "Analytical Core · 90 Theory + 10 Internal",
-          unitCount: 10,
-          chapters: ["Matrices and Determinants", "Commercial Arithmetic (Annuities, Amortization)", "Differential Calculus in Business", "Integral Calculus (Surplus)", "Descriptive Statistics & Correlation Analysis"],
-          blueprint: "90 Theory + 10 Internal"
-        }
-      ],
-      ARTS: [
-        {
-          id: "LANG_PART1_11_ART",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_11_ART",
-          name: "Part-2: English Core & Communicative",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "HIST_11",
-          name: "History (Ancient, Medieval & Modern India)",
-          icon: "🏛️",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 15,
-          chapters: ["Indus Valley Civilisation & Vedic Culture", "Rise of Mahajanapadas & Mauryan Empire", "Gupta Empire & South Indian Dynasties (Cholas, Pandyas)", "Delhi Sultanate & Vijayanagar Empire", "Mughal Empire & Marathas", "Advent of Europeans & British Rule"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "POL_11",
-          name: "Political Science (Theory & Governance)",
-          icon: "⚖️",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: ["Introduction to Political Science", "The State & Essential Elements", "Basic Concepts: Sovereignty, Liberty, Equality, Justice", "Rights, Duties & Citizenship", "Organs of Government (Legislature, Executive, Judiciary)", "Constitution & Electoral Systems"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "ECO_11_ART",
-          name: "Economics (Micro & Macro Concepts)",
-          icon: "📈",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: ["Microeconomic Fundamentals", "Consumer Behaviour & Demand", "Price Determination in Markets", "Indian Economic History", "Tamil Nadu Industrial Clusters"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "GEO_11",
-          name: "Geography (Physical & Human Geography)",
-          icon: "🗺️",
-          weight: "Humanities · 70 Theory + 30 Practical",
-          unitCount: 10,
-          chapters: ["Geomorphology (Plate Tectonics, Landforms)", "Climatology (Atmosphere, Cyclones)", "Hydrosphere (Ocean Currents, Tides)", "Biosphere & Biomes of the World"],
-          blueprint: "70 Theory + 30 Practical"
-        }
-      ]
-    },
+        BIO_MATHS: [
+          {
+            id: "LANG_PART1_11_BM",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core & Sangam Lit)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: [
+              "இயல் 1: மொழியின் சிறப்பு (யுகத்தின் பாடல், பேச்சுமொழியும் எழுத்துமொழியும்)",
+              "இயல் 2: இயற்கை மற்றும் சூழலியல் (ஏதிலிக்குருவிகள், திருமலை முருகன் பள்ளு)",
+              "இயல் 3: மனித மாண்புகள் (காவடிச்சிந்து, குறுந்தொகை, புறநானூறு)",
+              "இயல் 4: கல்வி மற்றும் சிந்தனை (கல்வியில் பெரியவர் காமராசர், நற்றிணை)",
+              "இயல் 5: நாகரிகம் மற்றும் தொழில் (ஆனந்தரங்கர் நாட்குறிப்பு, சீறாப்புராணம்)",
+              "இயல் 6: கலை மற்றும் இலக்கியம் (குற்றாலக் குறவஞ்சி, திருக்குறள்)",
+              "இயல் 7: அறமும் அரசியலும் (புரட்சிக்கவி, வில்லிபாரதம்)",
+              "இயல் 8: அறிவியலும் நுட்பமும் (செவ்வி, மெய்ப்பாட்டியல் யாப்பிலக்கணம்)"
+            ],
+            blueprint: "90 Theory + 10 Internal (செய்யுள் 30M, உரைநடை 25M, இலக்கணம் 25M, மொழித்திறன் 10M)"
+          },
+          {
+            id: "LANG_PART2_11_BM",
+            name: "Part-2: English Core & Communicative",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: [
+              "Unit 1: The Portrait of a Lady (Khushwant Singh) / Once Upon a Time (Gabriel Okara)",
+              "Unit 2: A Nice Cup of Tea (George Orwell) / Our Casuarina Tree (Toru Dutt)",
+              "Unit 3: Forgetting (Robert Lynd) / Lines Written in Early Spring (William Wordsworth)",
+              "Unit 4: Tight Corners (E.V. Lucas) / Macavity - The Mystery Cat (T.S. Eliot)",
+              "Unit 5: The Convocation Address (Dr. Arignar Annadurai) / Everest is Not The Only Peak",
+              "Unit 6: The Accidental Tourist (Bill Bryson) / The Hollow Crown (William Shakespeare)",
+              "Writing & Grammar: Reported Speech, Prepositions, Note-Making, Bio-Sketch, Job Application"
+            ],
+            blueprint: "90 Theory + 10 Internal (Reading & Vocab 20M, Grammar 20M, Literature 30M, Composition 20M)"
+          },
+          {
+            id: "MATHS_11_BM",
+            name: "Mathematics (Calculus & Analytical Geometry)",
+            icon: "📐",
+            weight: "Core Mathematics · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Sets, Relations & Functions", "Basic Algebra", "Trigonometry",
+              "Combinatorics & Mathematical Induction", "Binomial Theorem & Sequences",
+              "Two Dimensional Analytical Geometry", "Matrices & Determinants",
+              "Vector Algebra", "Differential Calculus: Limits & Continuity",
+              "Differential Calculus: Differentiability", "Integral Calculus",
+              "Introduction to Probability"
+            ],
+            blueprint: "90 Theory + 10 Internal (Calculus 35M, Algebra 25M, Geometry 15M, Vectors/Trig 15M)"
+          },
+          {
+            id: "PHYSICS_11_BM",
+            name: "Physics (Mechanics, Thermal & Waves)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 11,
+            chapters: [
+              "Measurement & Vectors", "Kinematics", "Laws of Motion (Newton, Friction)",
+              "Work, Energy and Power", "Rotational Dynamics & Moment of Inertia",
+              "Gravitation (Kepler's laws, Escape speed)", "Properties of Matter (Elasticity, Bernoulli)",
+              "Thermodynamics (Carnot engine)", "Kinetic Theory of Gases",
+              "Oscillations (Simple Harmonic Motion)", "Waves (Doppler effect, Standing waves)"
+            ],
+            blueprint: "70 Theory + 30 Practical (Mechanics 30M, Thermal 18M, Waves/Properties 22M)"
+          },
+          {
+            id: "CHEMISTRY_11_BM",
+            name: "Chemistry (Physical, Inorganic & Organic)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: [
+              "Mole Concept & Calculations", "Quantum Mechanical Model of Atom",
+              "Periodic Classification", "Chemical Bonding & Hybridization",
+              "Gaseous State", "Thermodynamics", "Chemical Equilibrium",
+              "Solutions", "Fundamentals of Organic Chemistry", "Hydrocarbons",
+              "Environmental Chemistry"
+            ],
+            blueprint: "70 Theory + 30 Practical (Physical 25M, Inorganic 20M, Organic 25M)"
+          },
+          {
+            id: "BIOLOGY_11_BM",
+            name: "Biology (Botany & Zoology)",
+            icon: "🌿",
+            weight: "Biological Sciences · 70 Theory + 30 Lab",
+            unitCount: 16,
+            chapters: [
+              "Botany: Living World, Plant Kingdom, Morphology & Taxonomy",
+              "Botany: Cell Biology, Biomolecules, Plant Physiology (Photosynthesis, Respiration)",
+              "Zoology: Animal Diversity & Tissues, Digestion & Respiration",
+              "Zoology: Body Fluids & Circulation, Excretion, Locomotion, Neural & Endocrine"
+            ],
+            blueprint: "70 Theory + 30 Practical (Botany 35M, Zoology 35M)"
+          }
+        ],
+        COMP_SCI: [
+          {
+            id: "LANG_PART1_11_CS",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: [
+              "இயல் 1: யுகத்தின் பாடல் / பேச்சுமொழி", "இயல் 2: திருமலை முருகன் பள்ளு",
+              "இயல் 3: புறநானூறு / காவடிச்சிந்து", "இயல் 4: நற்றிணை / காமராசர் கல்வி",
+              "இயல் 5: சீறாப்புராணம் / ஆனந்தரங்கர்", "இயல் 6: குற்றாலக் குறவஞ்சி / திருக்குறள்",
+              "இயல் 7: புரட்சிக்கவி / வில்லிபாரதம்", "இயல் 8: யாப்பிலக்கணம் / மெய்ப்பாட்டியல்"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_11_CS",
+            name: "Part-2: English Core & Communicative",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: [
+              "Unit 1: The Portrait of a Lady / Once Upon a Time",
+              "Unit 2: A Nice Cup of Tea / Our Casuarina Tree",
+              "Unit 3: Forgetting / Lines in Early Spring",
+              "Unit 4: Tight Corners / Macavity the Mystery Cat",
+              "Unit 5: The Convocation Address / Everest is Not The Only Peak",
+              "Unit 6: The Accidental Tourist / The Hollow Crown"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "MATHS_11_CS",
+            name: "Mathematics (Calculus & Vectors)",
+            icon: "📐",
+            weight: "Core Mathematics · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Sets, Relations & Functions", "Trigonometry", "Matrices & Determinants",
+              "Combinatorics", "Analytical Geometry", "Differential Calculus",
+              "Integral Calculus", "Probability Theory"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "PHYSICS_11_CS",
+            name: "Physics (Core Mechanics & Waves)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 11,
+            chapters: [
+              "Measurement & Vectors", "Kinematics", "Laws of Motion", "Work & Energy",
+              "Rotational Dynamics", "Gravitation", "Properties of Matter", "Thermodynamics",
+              "Oscillations & Waves"
+            ],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CHEMISTRY_11_CS",
+            name: "Chemistry (Physical, Inorganic & Organic)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: [
+              "Mole Concept", "Quantum Atom", "Periodic Table", "Chemical Bonding",
+              "Thermodynamics", "Chemical Equilibrium", "Organic Basics & Hydrocarbons"
+            ],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CS_11",
+            name: "Computer Science (Python & Computer Organization)",
+            icon: "💻",
+            weight: "Coding Core · 70 Theory + 30 Lab",
+            unitCount: 10,
+            chapters: [
+              "Introduction to Computers & Number Systems (Binary, Hex, 2's Complement)",
+              "Computer Organization (Processor, Memory Hierarchy)",
+              "Theoretical Operating System Concepts",
+              "Control Structures in Python (if-else, while, for loops)",
+              "Python Functions & Recursion",
+              "Strings and String Manipulations",
+              "Lists, Tuples, Sets and Dictionaries in Python",
+              "Object-Oriented Programming in Python (Classes, Objects, Methods)"
+            ],
+            blueprint: "70 Theory + 30 Practical (Python Coding 40M, Hardware/OS 20M, Theory 10M)"
+          }
+        ],
+        PURE_SCI: [
+          {
+            id: "LANG_PART1_11_PS",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_11_PS",
+            name: "Part-2: English Core & Communicative",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "PHYSICS_11_PS",
+            name: "Physics (Mechanics, Thermal & Waves)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 11,
+            chapters: ["Measurement", "Kinematics", "Laws of Motion", "Work & Energy", "Rigid Body Dynamics", "Gravitation", "Thermodynamics", "Waves"],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CHEMISTRY_11_PS",
+            name: "Chemistry (Physical, Inorganic & Organic)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: ["Atomic Structure", "Periodic Trends", "Bonding Models", "Equilibrium", "Solutions", "Organic Fundamentals", "Environmental Chemistry"],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "BOTANY_11_PS",
+            name: "Botany (Pure Plant Science)",
+            icon: "🌱",
+            weight: "Pure Botanical Science · 35 Theory + 15 Lab",
+            unitCount: 8,
+            chapters: ["Living World & Diversity", "Plant Morphology & Taxonomy", "Cell Biology & Division", "Biomolecules & Enzymes", "Plant Physiology: Photosynthesis, Respiration & Hormones"],
+            blueprint: "35 Theory + 15 Practical"
+          },
+          {
+            id: "ZOOLOGY_11_PS",
+            name: "Zoology (Pure Animal Science)",
+            icon: "🐾",
+            weight: "Pure Zoological Science · 35 Theory + 15 Lab",
+            unitCount: 8,
+            chapters: ["Animal Diversity & Tissues", "Digestive & Excretory Systems", "Circulation & Respiration", "Locomotion & Muscular System", "Neural Control & Endocrine System"],
+            blueprint: "35 Theory + 15 Practical"
+          }
+        ],
+        COMMERCE: [
+          {
+            id: "LANG_PART1_11_COM",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_11_COM",
+            name: "Part-2: English Core & Communicative",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "ACC_11",
+            name: "Accountancy (Double Entry Principles)",
+            icon: "📊",
+            weight: "Commerce Core · 90 Theory + 10 Internal",
+            unitCount: 14,
+            chapters: ["Introduction to Accounting", "Journal & Ledger Posting", "Subsidiary Books & Cash Book", "Bank Reconciliation Statement (BRS)", "Trial Balance & Rectification of Errors", "Depreciation Accounting (SLM, WDV)", "Final Accounts of Sole Trader"],
+            blueprint: "90 Theory + 10 Internal (Final Accounts 25M, BRS 15M, Depreciation 15M)"
+          },
+          {
+            id: "COMM_11",
+            name: "Commerce & Business Studies",
+            icon: "💼",
+            weight: "Commerce Core · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: ["Forms of Business Organisation (Sole Trader, HUF, Partnership)", "Joint Stock Company (MoA & AoA)", "Co-operatives & Government Companies", "Sources of Business Finance (Equity, Debentures)", "MSMEs & Internal Trade", "International Trade (Export & Import)"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "ECO_11_COM",
+            name: "Economics (Microeconomics & TN Economy)",
+            icon: "📈",
+            weight: "Social & Economic · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: ["Consumer Behaviour (Utility & Indifference Curves)", "Production Analysis & Cost/Revenue", "Market Structure & Price Determination", "Distribution Theory", "Indian & Rural Economy", "Tamil Nadu Economic Performance"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "BM_11",
+            name: "Business Mathematics & Statistics",
+            icon: "📉",
+            weight: "Analytical Core · 90 Theory + 10 Internal",
+            unitCount: 10,
+            chapters: ["Matrices and Determinants", "Commercial Arithmetic (Annuities, Amortization)", "Differential Calculus in Business", "Integral Calculus (Surplus)", "Descriptive Statistics & Correlation Analysis"],
+            blueprint: "90 Theory + 10 Internal"
+          }
+        ],
+        ARTS: [
+          {
+            id: "LANG_PART1_11_ART",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: யுகத்தின் பாடல்", "இயல் 2: திருமலை முருகன் பள்ளு", "இயல் 3: புறநானூறு", "இயல் 4: நற்றிணை", "இயல் 5: சீறாப்புராணம்", "இயல் 6: திருக்குறள்", "இயல் 7: புரட்சிக்கவி", "இயல் 8: யாப்பிலக்கணம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_11_ART",
+            name: "Part-2: English Core & Communicative",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: The Portrait of a Lady", "Unit 2: A Nice Cup of Tea", "Unit 3: Forgetting", "Unit 4: Tight Corners", "Unit 5: Convocation Address", "Unit 6: Accidental Tourist"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "HIST_11",
+            name: "History (Ancient, Medieval & Modern India)",
+            icon: "🏛️",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 15,
+            chapters: ["Indus Valley Civilisation & Vedic Culture", "Rise of Mahajanapadas & Mauryan Empire", "Gupta Empire & South Indian Dynasties (Cholas, Pandyas)", "Delhi Sultanate & Vijayanagar Empire", "Mughal Empire & Marathas", "Advent of Europeans & British Rule"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "POL_11",
+            name: "Political Science (Theory & Governance)",
+            icon: "⚖️",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: ["Introduction to Political Science", "The State & Essential Elements", "Basic Concepts: Sovereignty, Liberty, Equality, Justice", "Rights, Duties & Citizenship", "Organs of Government (Legislature, Executive, Judiciary)", "Constitution & Electoral Systems"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "ECO_11_ART",
+            name: "Economics (Micro & Macro Concepts)",
+            icon: "📈",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: ["Microeconomic Fundamentals", "Consumer Behaviour & Demand", "Price Determination in Markets", "Indian Economic History", "Tamil Nadu Industrial Clusters"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "GEO_11",
+            name: "Geography (Physical & Human Geography)",
+            icon: "🗺️",
+            weight: "Humanities · 70 Theory + 30 Practical",
+            unitCount: 10,
+            chapters: ["Geomorphology (Plate Tectonics, Landforms)", "Climatology (Atmosphere, Cyclones)", "Hydrosphere (Ocean Currents, Tides)", "Biosphere & Biomes of the World"],
+            blueprint: "70 Theory + 30 Practical"
+          }
+        ]
+      },
       CBSE: {
         BIO_MATHS: [
           {
-                    "id": "CBSE_TAM_11",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
-                              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
-                              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
-                              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
-                              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
-                              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
+            "id": "CBSE_TAM_11",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
+              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
+              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
+              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
+              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
+              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
           },
           {
-                    "id": "CBSE_ENG_11",
-                    "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
-                              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
-                              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
-                              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
-                              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
-                              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
+            "id": "CBSE_ENG_11",
+            "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
+              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
+              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
+              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
+              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
+              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
           },
           {
-                    "id": "CBSE_MATH_11",
-                    "name": "Mathematics (Code 041 - NCERT Curriculum)",
-                    "icon": "📐",
-                    "weight": "STEM Core · 80 Theory + 20 Internal",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Ch 1: Sets (Venn Diagrams, Subsets, Operations)",
-                              "Ch 2: Relations & Functions (Domain, Range, Types)",
-                              "Ch 3: Trigonometric Functions (Identities, Graphs)",
-                              "Ch 4: Complex Numbers & Quadratic Equations",
-                              "Ch 5: Linear Inequalities (Algebraic & Graphical)",
-                              "Ch 6: Permutations and Combinations",
-                              "Ch 7: Binomial Theorem (General & Middle Terms)",
-                              "Ch 8: Sequences and Series (AP & GP Relations)",
-                              "Ch 9: Straight Lines (Slope, Intercept, Normal Form)",
-                              "Ch 10: Conic Sections (Circle, Parabola, Ellipse, Hyperbola)",
-                              "Ch 11: Introduction to 3D Geometry (Distance & Section)",
-                              "Ch 12: Limits and Derivatives (First Principle)",
-                              "Ch 13: Statistics (Mean Deviation, Variance, Std Deviation)",
-                              "Ch 14: Probability (Axiomatic Probability, Conditional)"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Sets/Functions 23M, Algebra 25M, Coordinate 12M, Calculus 8M, Stats 12M)"
+            "id": "CBSE_MATH_11",
+            "name": "Mathematics (Code 041 - NCERT Curriculum)",
+            "icon": "📐",
+            "weight": "STEM Core · 80 Theory + 20 Internal",
+            "unitCount": 14,
+            "chapters": [
+              "Ch 1: Sets (Venn Diagrams, Subsets, Operations)",
+              "Ch 2: Relations & Functions (Domain, Range, Types)",
+              "Ch 3: Trigonometric Functions (Identities, Graphs)",
+              "Ch 4: Complex Numbers & Quadratic Equations",
+              "Ch 5: Linear Inequalities (Algebraic & Graphical)",
+              "Ch 6: Permutations and Combinations",
+              "Ch 7: Binomial Theorem (General & Middle Terms)",
+              "Ch 8: Sequences and Series (AP & GP Relations)",
+              "Ch 9: Straight Lines (Slope, Intercept, Normal Form)",
+              "Ch 10: Conic Sections (Circle, Parabola, Ellipse, Hyperbola)",
+              "Ch 11: Introduction to 3D Geometry (Distance & Section)",
+              "Ch 12: Limits and Derivatives (First Principle)",
+              "Ch 13: Statistics (Mean Deviation, Variance, Std Deviation)",
+              "Ch 14: Probability (Axiomatic Probability, Conditional)"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Sets/Functions 23M, Algebra 25M, Coordinate 12M, Calculus 8M, Stats 12M)"
           },
           {
-                    "id": "CBSE_PHY_11",
-                    "name": "Physics (Code 042 - NCERT Core & Lab)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Units and Measurements (SI Units, Dimensional Analysis)",
-                              "Motion in a Straight Line (Kinematic Equations)",
-                              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
-                              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
-                              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
-                              "System of Particles and Rotational Motion (Moment of Inertia)",
-                              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
-                              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
-                              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
-                              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
-                              "Thermodynamics (First & Second Law, Heat Engines)",
-                              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
-                              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
-                              "Waves (Transverse, Longitudinal, Doppler Effect)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
+            "id": "CBSE_PHY_11",
+            "name": "Physics (Code 042 - NCERT Core & Lab)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 14,
+            "chapters": [
+              "Units and Measurements (SI Units, Dimensional Analysis)",
+              "Motion in a Straight Line (Kinematic Equations)",
+              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
+              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
+              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
+              "System of Particles and Rotational Motion (Moment of Inertia)",
+              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
+              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
+              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
+              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
+              "Thermodynamics (First & Second Law, Heat Engines)",
+              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
+              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
+              "Waves (Transverse, Longitudinal, Doppler Effect)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
           },
           {
-                    "id": "CBSE_CHEM_11",
-                    "name": "Chemistry (Code 043 - NCERT Core & Lab)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
-                              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
-                              "Ch 3: Classification of Elements & Periodicity in Properties",
-                              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
-                              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
-                              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
-                              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
-                              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
-                              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
+            "id": "CBSE_CHEM_11",
+            "name": "Chemistry (Code 043 - NCERT Core & Lab)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
+              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
+              "Ch 3: Classification of Elements & Periodicity in Properties",
+              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
+              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
+              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
+              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
+              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
+              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
           },
           {
-                    "id": "CBSE_BIO_11",
-                    "name": "Biology (Code 044 - NCERT Life Sciences)",
-                    "icon": "🧬",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 19,
-                    "chapters": [
-                              "Diversity in the Living World (Taxonomy, Biological Classification, Kingdoms)",
-                              "Structural Organisation in Animals and Plants (Morphology, Anatomy)",
-                              "Cell Structure and Function (Biomolecules, Cell Cycle, Mitosis, Meiosis)",
-                              "Plant Physiology (Photosynthesis in Higher Plants, Respiration in Plants)",
-                              "Human Physiology (Breathing & Gas Exchange, Body Fluids & Circulation)",
-                              "Human Physiology (Excretory Products, Locomotion, Neural Control, Chemical Coordination)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Cell 15M, Physiology 25M, Living World 12M, Organisation 18M)"
+            "id": "CBSE_BIO_11",
+            "name": "Biology (Code 044 - NCERT Life Sciences)",
+            "icon": "🧬",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 19,
+            "chapters": [
+              "Diversity in the Living World (Taxonomy, Biological Classification, Kingdoms)",
+              "Structural Organisation in Animals and Plants (Morphology, Anatomy)",
+              "Cell Structure and Function (Biomolecules, Cell Cycle, Mitosis, Meiosis)",
+              "Plant Physiology (Photosynthesis in Higher Plants, Respiration in Plants)",
+              "Human Physiology (Breathing & Gas Exchange, Body Fluids & Circulation)",
+              "Human Physiology (Excretory Products, Locomotion, Neural Control, Chemical Coordination)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Cell 15M, Physiology 25M, Living World 12M, Organisation 18M)"
           }
-],
+        ],
         COMP_SCI: [
           {
-                    "id": "CBSE_TAM_11",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
-                              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
-                              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
-                              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
-                              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
-                              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
+            "id": "CBSE_TAM_11",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
+              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
+              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
+              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
+              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
+              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
           },
           {
-                    "id": "CBSE_ENG_11",
-                    "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
-                              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
-                              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
-                              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
-                              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
-                              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
+            "id": "CBSE_ENG_11",
+            "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
+              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
+              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
+              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
+              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
+              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
           },
           {
-                    "id": "CBSE_MATH_11",
-                    "name": "Mathematics (Code 041 - NCERT Curriculum)",
-                    "icon": "📐",
-                    "weight": "STEM Core · 80 Theory + 20 Internal",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Ch 1: Sets (Venn Diagrams, Subsets, Operations)",
-                              "Ch 2: Relations & Functions (Domain, Range, Types)",
-                              "Ch 3: Trigonometric Functions (Identities, Graphs)",
-                              "Ch 4: Complex Numbers & Quadratic Equations",
-                              "Ch 5: Linear Inequalities (Algebraic & Graphical)",
-                              "Ch 6: Permutations and Combinations",
-                              "Ch 7: Binomial Theorem (General & Middle Terms)",
-                              "Ch 8: Sequences and Series (AP & GP Relations)",
-                              "Ch 9: Straight Lines (Slope, Intercept, Normal Form)",
-                              "Ch 10: Conic Sections (Circle, Parabola, Ellipse, Hyperbola)",
-                              "Ch 11: Introduction to 3D Geometry (Distance & Section)",
-                              "Ch 12: Limits and Derivatives (First Principle)",
-                              "Ch 13: Statistics (Mean Deviation, Variance, Std Deviation)",
-                              "Ch 14: Probability (Axiomatic Probability, Conditional)"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Sets/Functions 23M, Algebra 25M, Coordinate 12M, Calculus 8M, Stats 12M)"
+            "id": "CBSE_MATH_11",
+            "name": "Mathematics (Code 041 - NCERT Curriculum)",
+            "icon": "📐",
+            "weight": "STEM Core · 80 Theory + 20 Internal",
+            "unitCount": 14,
+            "chapters": [
+              "Ch 1: Sets (Venn Diagrams, Subsets, Operations)",
+              "Ch 2: Relations & Functions (Domain, Range, Types)",
+              "Ch 3: Trigonometric Functions (Identities, Graphs)",
+              "Ch 4: Complex Numbers & Quadratic Equations",
+              "Ch 5: Linear Inequalities (Algebraic & Graphical)",
+              "Ch 6: Permutations and Combinations",
+              "Ch 7: Binomial Theorem (General & Middle Terms)",
+              "Ch 8: Sequences and Series (AP & GP Relations)",
+              "Ch 9: Straight Lines (Slope, Intercept, Normal Form)",
+              "Ch 10: Conic Sections (Circle, Parabola, Ellipse, Hyperbola)",
+              "Ch 11: Introduction to 3D Geometry (Distance & Section)",
+              "Ch 12: Limits and Derivatives (First Principle)",
+              "Ch 13: Statistics (Mean Deviation, Variance, Std Deviation)",
+              "Ch 14: Probability (Axiomatic Probability, Conditional)"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Sets/Functions 23M, Algebra 25M, Coordinate 12M, Calculus 8M, Stats 12M)"
           },
           {
-                    "id": "CBSE_PHY_11",
-                    "name": "Physics (Code 042 - NCERT Core & Lab)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Units and Measurements (SI Units, Dimensional Analysis)",
-                              "Motion in a Straight Line (Kinematic Equations)",
-                              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
-                              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
-                              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
-                              "System of Particles and Rotational Motion (Moment of Inertia)",
-                              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
-                              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
-                              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
-                              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
-                              "Thermodynamics (First & Second Law, Heat Engines)",
-                              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
-                              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
-                              "Waves (Transverse, Longitudinal, Doppler Effect)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
+            "id": "CBSE_PHY_11",
+            "name": "Physics (Code 042 - NCERT Core & Lab)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 14,
+            "chapters": [
+              "Units and Measurements (SI Units, Dimensional Analysis)",
+              "Motion in a Straight Line (Kinematic Equations)",
+              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
+              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
+              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
+              "System of Particles and Rotational Motion (Moment of Inertia)",
+              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
+              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
+              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
+              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
+              "Thermodynamics (First & Second Law, Heat Engines)",
+              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
+              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
+              "Waves (Transverse, Longitudinal, Doppler Effect)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
           },
           {
-                    "id": "CBSE_CHEM_11",
-                    "name": "Chemistry (Code 043 - NCERT Core & Lab)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
-                              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
-                              "Ch 3: Classification of Elements & Periodicity in Properties",
-                              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
-                              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
-                              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
-                              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
-                              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
-                              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
+            "id": "CBSE_CHEM_11",
+            "name": "Chemistry (Code 043 - NCERT Core & Lab)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
+              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
+              "Ch 3: Classification of Elements & Periodicity in Properties",
+              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
+              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
+              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
+              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
+              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
+              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
           },
           {
-                    "id": "CBSE_CS_11",
-                    "name": "Computer Science (Code 083 - Python & Systems)",
-                    "icon": "💻",
-                    "weight": "CS Core · 70 Theory + 30 Practical",
-                    "unitCount": 3,
-                    "chapters": [
-                              "Unit 1: Computer Systems and Organisation (Hardware, Memory, Boolean Logic)",
-                              "Unit 2: Computational Thinking and Programming - 1 (Python Syntax, Control Flow, Strings, Lists, Tuples, Dictionaries)",
-                              "Unit 3: Society, Law and Ethics (Digital Footprint, Cyber Safety, IT Act)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Programming 45M, Systems 10M, Society/Ethics 15M)"
+            "id": "CBSE_CS_11",
+            "name": "Computer Science (Code 083 - Python & Systems)",
+            "icon": "💻",
+            "weight": "CS Core · 70 Theory + 30 Practical",
+            "unitCount": 3,
+            "chapters": [
+              "Unit 1: Computer Systems and Organisation (Hardware, Memory, Boolean Logic)",
+              "Unit 2: Computational Thinking and Programming - 1 (Python Syntax, Control Flow, Strings, Lists, Tuples, Dictionaries)",
+              "Unit 3: Society, Law and Ethics (Digital Footprint, Cyber Safety, IT Act)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Programming 45M, Systems 10M, Society/Ethics 15M)"
           }
-],
+        ],
         PURE_SCI: [
           {
-                    "id": "CBSE_TAM_11",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
-                              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
-                              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
-                              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
-                              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
-                              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
+            "id": "CBSE_TAM_11",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
+              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
+              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
+              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
+              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
+              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
           },
           {
-                    "id": "CBSE_ENG_11",
-                    "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
-                              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
-                              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
-                              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
-                              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
-                              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
+            "id": "CBSE_ENG_11",
+            "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
+              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
+              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
+              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
+              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
+              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
           },
           {
-                    "id": "CBSE_PHY_11",
-                    "name": "Physics (Code 042 - NCERT Core & Lab)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Units and Measurements (SI Units, Dimensional Analysis)",
-                              "Motion in a Straight Line (Kinematic Equations)",
-                              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
-                              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
-                              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
-                              "System of Particles and Rotational Motion (Moment of Inertia)",
-                              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
-                              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
-                              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
-                              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
-                              "Thermodynamics (First & Second Law, Heat Engines)",
-                              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
-                              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
-                              "Waves (Transverse, Longitudinal, Doppler Effect)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
+            "id": "CBSE_PHY_11",
+            "name": "Physics (Code 042 - NCERT Core & Lab)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 14,
+            "chapters": [
+              "Units and Measurements (SI Units, Dimensional Analysis)",
+              "Motion in a Straight Line (Kinematic Equations)",
+              "Motion in a Plane (Vectors, Projectile, Circular Motion)",
+              "Laws of Motion (Newton's Laws, Friction, Circular Dynamics)",
+              "Work, Energy and Power (Work-Energy Theorem, Collisions)",
+              "System of Particles and Rotational Motion (Moment of Inertia)",
+              "Gravitation (Kepler's Laws, Gravitational Potential, Satellites)",
+              "Mechanical Properties of Solids (Stress-Strain, Hooke's Law)",
+              "Mechanical Properties of Fluids (Pascal, Archimedes, Bernoulli)",
+              "Thermal Properties of Matter (Calorimetry, Heat Transfer)",
+              "Thermodynamics (First & Second Law, Heat Engines)",
+              "Kinetic Theory of Gases (Ideal Gas, Degrees of Freedom)",
+              "Oscillations (SHM, Simple Pendulum, Energy in SHM)",
+              "Waves (Transverse, Longitudinal, Doppler Effect)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Mechanics 30M, Bulk Properties 14M, Thermodynamics 12M, Waves 14M)"
           },
           {
-                    "id": "CBSE_CHEM_11",
-                    "name": "Chemistry (Code 043 - NCERT Core & Lab)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
-                              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
-                              "Ch 3: Classification of Elements & Periodicity in Properties",
-                              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
-                              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
-                              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
-                              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
-                              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
-                              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
+            "id": "CBSE_CHEM_11",
+            "name": "Chemistry (Code 043 - NCERT Core & Lab)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Ch 1: Some Basic Concepts of Chemistry (Mole Concept, Stoichiometry)",
+              "Ch 2: Structure of Atom (Bohr Model, Quantum Numbers, Orbitals)",
+              "Ch 3: Classification of Elements & Periodicity in Properties",
+              "Ch 4: Chemical Bonding and Molecular Structure (VSEPR, Hybridization, MO)",
+              "Ch 5: Chemical Thermodynamics (First & Second Laws, Enthalpy, Gibbs)",
+              "Ch 6: Equilibrium (Le Chatelier, pH, Buffer Solutions, Solubility)",
+              "Ch 7: Redox Reactions (Oxidation Numbers, Balancing)",
+              "Ch 8: Organic Chemistry — Basic Principles & Techniques (IUPAC, Mechanisms)",
+              "Ch 9: Hydrocarbons (Alkanes, Alkenes, Alkynes, Aromaticity)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 22M, Inorganic 20M, Organic 28M)"
           },
           {
-                    "id": "CBSE_BIO_11",
-                    "name": "Biology (Code 044 - NCERT Life Sciences)",
-                    "icon": "🧬",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 19,
-                    "chapters": [
-                              "Diversity in the Living World (Taxonomy, Biological Classification, Kingdoms)",
-                              "Structural Organisation in Animals and Plants (Morphology, Anatomy)",
-                              "Cell Structure and Function (Biomolecules, Cell Cycle, Mitosis, Meiosis)",
-                              "Plant Physiology (Photosynthesis in Higher Plants, Respiration in Plants)",
-                              "Human Physiology (Breathing & Gas Exchange, Body Fluids & Circulation)",
-                              "Human Physiology (Excretory Products, Locomotion, Neural Control, Chemical Coordination)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Cell 15M, Physiology 25M, Living World 12M, Organisation 18M)"
+            "id": "CBSE_BIO_11",
+            "name": "Biology (Code 044 - NCERT Life Sciences)",
+            "icon": "🧬",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 19,
+            "chapters": [
+              "Diversity in the Living World (Taxonomy, Biological Classification, Kingdoms)",
+              "Structural Organisation in Animals and Plants (Morphology, Anatomy)",
+              "Cell Structure and Function (Biomolecules, Cell Cycle, Mitosis, Meiosis)",
+              "Plant Physiology (Photosynthesis in Higher Plants, Respiration in Plants)",
+              "Human Physiology (Breathing & Gas Exchange, Body Fluids & Circulation)",
+              "Human Physiology (Excretory Products, Locomotion, Neural Control, Chemical Coordination)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Cell 15M, Physiology 25M, Living World 12M, Organisation 18M)"
           }
-],
+        ],
         COMMERCE: [
           {
-                    "id": "CBSE_TAM_11",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
-                              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
-                              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
-                              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
-                              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
-                              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
+            "id": "CBSE_TAM_11",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
+              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
+              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
+              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
+              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
+              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
           },
           {
-                    "id": "CBSE_ENG_11",
-                    "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
-                              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
-                              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
-                              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
-                              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
-                              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
+            "id": "CBSE_ENG_11",
+            "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
+              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
+              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
+              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
+              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
+              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
           },
           {
-                    "id": "CBSE_ACC_11",
-                    "name": "Accountancy (Code 055 - Financial Accounting I)",
-                    "icon": "📊",
-                    "weight": "Commerce Core · 80 Theory + 20 Project",
-                    "unitCount": 12,
-                    "chapters": [
-                              "Theoretical Framework (Accounting Principles, Concepts, Standards, GST)",
-                              "Recording of Transactions (Accounting Equation, Rules of Debit & Credit, Journal)",
-                              "Ledger Posting & Trial Balance Preparation",
-                              "Bank Reconciliation Statement (BRS)",
-                              "Depreciation Accounting (Straight Line & Written Down Value Methods)",
-                              "Provisions, Reserves and Accounting for Bills of Exchange",
-                              "Rectification of Errors (One-Sided & Two-Sided Errors)",
-                              "Financial Statements of Sole Proprietorship (Trading, P&L, Balance Sheet)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Recording Process 44M, Financial Statements 24M, Theory 12M)"
+            "id": "CBSE_ACC_11",
+            "name": "Accountancy (Code 055 - Financial Accounting I)",
+            "icon": "📊",
+            "weight": "Commerce Core · 80 Theory + 20 Project",
+            "unitCount": 12,
+            "chapters": [
+              "Theoretical Framework (Accounting Principles, Concepts, Standards, GST)",
+              "Recording of Transactions (Accounting Equation, Rules of Debit & Credit, Journal)",
+              "Ledger Posting & Trial Balance Preparation",
+              "Bank Reconciliation Statement (BRS)",
+              "Depreciation Accounting (Straight Line & Written Down Value Methods)",
+              "Provisions, Reserves and Accounting for Bills of Exchange",
+              "Rectification of Errors (One-Sided & Two-Sided Errors)",
+              "Financial Statements of Sole Proprietorship (Trading, P&L, Balance Sheet)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Recording Process 44M, Financial Statements 24M, Theory 12M)"
           },
           {
-                    "id": "CBSE_BST_11",
-                    "name": "Business Studies (Code 054 - Principles & Trade)",
-                    "icon": "💼",
-                    "weight": "Commerce Core · 80 Theory + 20 Project",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Evolution and Fundamentals of Business (Commerce & Trade)",
-                              "Forms of Business Organisation (Sole Proprietorship, Partnership, Company)",
-                              "Public, Private and Global Enterprises",
-                              "Business Services (Banking, Insurance, Postal Services)",
-                              "Emerging Modes of Business (e-Business, Outsourcing)",
-                              "Social Responsibilities of Business and Business Ethics",
-                              "Sources of Business Finance (Equity, Retained Earnings, Debentures)",
-                              "Small Business and Entrepreneurship (MSMEs, Startup India)",
-                              "Internal Trade (Wholesalers, Retailers, GST Impact)",
-                              "International Business (Export & Import Procedures, WTO)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Foundations 40M, Finance & Trade 40M)"
+            "id": "CBSE_BST_11",
+            "name": "Business Studies (Code 054 - Principles & Trade)",
+            "icon": "💼",
+            "weight": "Commerce Core · 80 Theory + 20 Project",
+            "unitCount": 10,
+            "chapters": [
+              "Evolution and Fundamentals of Business (Commerce & Trade)",
+              "Forms of Business Organisation (Sole Proprietorship, Partnership, Company)",
+              "Public, Private and Global Enterprises",
+              "Business Services (Banking, Insurance, Postal Services)",
+              "Emerging Modes of Business (e-Business, Outsourcing)",
+              "Social Responsibilities of Business and Business Ethics",
+              "Sources of Business Finance (Equity, Retained Earnings, Debentures)",
+              "Small Business and Entrepreneurship (MSMEs, Startup India)",
+              "Internal Trade (Wholesalers, Retailers, GST Impact)",
+              "International Business (Export & Import Procedures, WTO)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Foundations 40M, Finance & Trade 40M)"
           },
           {
-                    "id": "CBSE_ECO_11",
-                    "name": "Economics (Code 030 - Stats & Microeconomics)",
-                    "icon": "📈",
-                    "weight": "Social Sciences · 80 Theory + 20 Project",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Part A: Statistics for Economics (Collection, Organisation, Tabulation)",
-                              "Part A: Measures of Central Tendency (Mean, Median, Mode)",
-                              "Part A: Correlation and Index Numbers",
-                              "Part B: Introduction to Microeconomics (PPC, Opportunity Cost)",
-                              "Part B: Consumer's Equilibrium & Demand (Utility & Indifference Curves)",
-                              "Part B: Producer Behaviour & Supply (Production Function, Cost, Revenue)",
-                              "Part B: Forms of Market and Price Determination under Perfect Competition"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Statistics 40M, Microeconomics 40M)"
+            "id": "CBSE_ECO_11",
+            "name": "Economics (Code 030 - Stats & Microeconomics)",
+            "icon": "📈",
+            "weight": "Social Sciences · 80 Theory + 20 Project",
+            "unitCount": 10,
+            "chapters": [
+              "Part A: Statistics for Economics (Collection, Organisation, Tabulation)",
+              "Part A: Measures of Central Tendency (Mean, Median, Mode)",
+              "Part A: Correlation and Index Numbers",
+              "Part B: Introduction to Microeconomics (PPC, Opportunity Cost)",
+              "Part B: Consumer's Equilibrium & Demand (Utility & Indifference Curves)",
+              "Part B: Producer Behaviour & Supply (Production Function, Cost, Revenue)",
+              "Part B: Forms of Market and Price Determination under Perfect Competition"
+            ],
+            "blueprint": "80 Theory + 20 Project (Statistics 40M, Microeconomics 40M)"
           },
           {
-                    "id": "CBSE_APPMATH_11",
-                    "name": "Applied Mathematics (Code 241 - Commercial Math)",
-                    "icon": "📉",
-                    "weight": "Applied STEM · 80 Theory + 20 Internal",
-                    "unitCount": 8,
-                    "chapters": [
-                              "Numbers, Quantification and Numerical Applications",
-                              "Algebra (Sets, Relations, Complex Numbers, Sequences)",
-                              "Mathematical and Logical Reasoning",
-                              "Calculus (Limits, Continuity, Differentiation in Business)",
-                              "Probability Distributions & Descriptive Statistics",
-                              "Financial Mathematics (Interest, Annuities, Taxation)",
-                              "Coordinate Geometry & Linear Programming"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal"
+            "id": "CBSE_APPMATH_11",
+            "name": "Applied Mathematics (Code 241 - Commercial Math)",
+            "icon": "📉",
+            "weight": "Applied STEM · 80 Theory + 20 Internal",
+            "unitCount": 8,
+            "chapters": [
+              "Numbers, Quantification and Numerical Applications",
+              "Algebra (Sets, Relations, Complex Numbers, Sequences)",
+              "Mathematical and Logical Reasoning",
+              "Calculus (Limits, Continuity, Differentiation in Business)",
+              "Probability Distributions & Descriptive Statistics",
+              "Financial Mathematics (Interest, Annuities, Taxation)",
+              "Coordinate Geometry & Linear Programming"
+            ],
+            "blueprint": "80 Theory + 20 Internal"
           }
-],
+        ],
         ARTS: [
           {
-                    "id": "CBSE_TAM_11",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
-                              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
-                              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
-                              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
-                              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
-                              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
+            "id": "CBSE_TAM_11",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: நற்றிணை, குறுந்தொகை & சங்க இலக்கியக் கவிதைகள்",
+              "Unit 2: புறநானூறு & தமிழ் மரபு வரலாறு",
+              "Unit 3: உரைநடை உலகம் — மொழியும் பண்பாடும்",
+              "Unit 4: சிறுகதைத் திரட்டு — நவீன தமிழ் இலக்கியம்",
+              "Unit 5: அணி இலக்கணம், யாப்பு & மொழித்திறன்",
+              "Unit 6: பொதுக் கட்டுரை, அலுவலகக் கடிதம் & மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, கட்டுரை 15M)"
           },
           {
-                    "id": "CBSE_ENG_11",
-                    "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
-                              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
-                              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
-                              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
-                              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
-                              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
+            "id": "CBSE_ENG_11",
+            "name": "English Core (Code 301 - NCERT Hornbill & Snapshots)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Hornbill Prose: The Portrait of a Lady, We're Not Afraid to Die, Discovering Tut",
+              "Hornbill Poetry: A Photograph, The Laburnum Top, The Voice of the Rain, Childhood",
+              "Snapshots Supplementary: The Summer of the Beautiful White Horse, The Address, Birth",
+              "Advanced Reading: Unseen Discursive & Case-Based Factual Passages",
+              "Creative Writing Skills: Classified Advertisements, Posters, Speech & Debate",
+              "Grammar: Determiners, Tenses, Re-ordering of Sentences"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 26M, Writing & Grammar 23M, Literature 31M)"
           },
           {
-                    "id": "CBSE_HIST_11",
-                    "name": "History (Code 027 - Themes in World History)",
-                    "icon": "🏛️",
-                    "weight": "Humanities · 80 Theory + 20 Project",
-                    "unitCount": 7,
-                    "chapters": [
-                              "Theme 1: Writing and City Life (Mesopotamia Civilisation)",
-                              "Theme 2: An Empire Across Three Continents (Roman Empire)",
-                              "Theme 3: Nomadic Empires (Mongols, Genghis Khan)",
-                              "Theme 4: The Three Orders (Feudal Society, Church, Nobility, Peasantry)",
-                              "Theme 5: Changing Cultural Traditions (Renaissance, Humanism)",
-                              "Theme 6: Displacing Indigenous Peoples (North America, Australia)",
-                              "Theme 7: Paths to Modernisation (Japan and China)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project"
+            "id": "CBSE_HIST_11",
+            "name": "History (Code 027 - Themes in World History)",
+            "icon": "🏛️",
+            "weight": "Humanities · 80 Theory + 20 Project",
+            "unitCount": 7,
+            "chapters": [
+              "Theme 1: Writing and City Life (Mesopotamia Civilisation)",
+              "Theme 2: An Empire Across Three Continents (Roman Empire)",
+              "Theme 3: Nomadic Empires (Mongols, Genghis Khan)",
+              "Theme 4: The Three Orders (Feudal Society, Church, Nobility, Peasantry)",
+              "Theme 5: Changing Cultural Traditions (Renaissance, Humanism)",
+              "Theme 6: Displacing Indigenous Peoples (North America, Australia)",
+              "Theme 7: Paths to Modernisation (Japan and China)"
+            ],
+            "blueprint": "80 Theory + 20 Project"
           },
           {
-                    "id": "CBSE_POL_11",
-                    "name": "Political Science (Code 028 - Constitution & Theory)",
-                    "icon": "⚖️",
-                    "weight": "Humanities · 80 Theory + 20 Project",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Part A: Constitution: Why and How? Rights in Indian Constitution",
-                              "Part A: Election and Representation, Legislature, Executive, Judiciary",
-                              "Part A: Federalism, Local Governments, Constitution as a Living Document",
-                              "Part B: Political Theory: An Introduction, Freedom, Equality, Social Justice",
-                              "Part B: Rights, Citizenship, Nationalism, Secularism, Peace, Development"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Indian Constitution 40M, Political Theory 40M)"
+            "id": "CBSE_POL_11",
+            "name": "Political Science (Code 028 - Constitution & Theory)",
+            "icon": "⚖️",
+            "weight": "Humanities · 80 Theory + 20 Project",
+            "unitCount": 10,
+            "chapters": [
+              "Part A: Constitution: Why and How? Rights in Indian Constitution",
+              "Part A: Election and Representation, Legislature, Executive, Judiciary",
+              "Part A: Federalism, Local Governments, Constitution as a Living Document",
+              "Part B: Political Theory: An Introduction, Freedom, Equality, Social Justice",
+              "Part B: Rights, Citizenship, Nationalism, Secularism, Peace, Development"
+            ],
+            "blueprint": "80 Theory + 20 Project (Indian Constitution 40M, Political Theory 40M)"
           },
           {
-                    "id": "CBSE_GEO_11",
-                    "name": "Geography (Code 029 - Physical & India Environment)",
-                    "icon": "🗺️",
-                    "weight": "Humanities · 70 Theory + 30 Practical",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Fundamentals of Physical Geography: Origin of Earth, Interior, Plate Tectonics",
-                              "Landforms: Weathering, Mass Movements, River, Glacier, Wind Formations",
-                              "Climate: Atmosphere, Solar Radiation, Heat Budget, Winds, Cyclones",
-                              "Water: Oceans, Floor Configuration, Waves, Tides, Currents",
-                              "Life on the Earth: Biosphere, Biomes, Ecology, Biodiversity",
-                              "India — Physical Environment: Physiography, Drainage, Climate, Soils, Natural Hazards"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (World Physical 35M, India 35M, Practical 30M)"
+            "id": "CBSE_GEO_11",
+            "name": "Geography (Code 029 - Physical & India Environment)",
+            "icon": "🗺️",
+            "weight": "Humanities · 70 Theory + 30 Practical",
+            "unitCount": 14,
+            "chapters": [
+              "Fundamentals of Physical Geography: Origin of Earth, Interior, Plate Tectonics",
+              "Landforms: Weathering, Mass Movements, River, Glacier, Wind Formations",
+              "Climate: Atmosphere, Solar Radiation, Heat Budget, Winds, Cyclones",
+              "Water: Oceans, Floor Configuration, Waves, Tides, Currents",
+              "Life on the Earth: Biosphere, Biomes, Ecology, Biodiversity",
+              "India — Physical Environment: Physiography, Drainage, Climate, Soils, Natural Hazards"
+            ],
+            "blueprint": "70 Theory + 30 Practical (World Physical 35M, India 35M, Practical 30M)"
           },
           {
-                    "id": "CBSE_ECO_11",
-                    "name": "Economics (Code 030 - Stats & Microeconomics)",
-                    "icon": "📈",
-                    "weight": "Social Sciences · 80 Theory + 20 Project",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Part A: Statistics for Economics (Collection, Organisation, Tabulation)",
-                              "Part A: Measures of Central Tendency (Mean, Median, Mode)",
-                              "Part A: Correlation and Index Numbers",
-                              "Part B: Introduction to Microeconomics (PPC, Opportunity Cost)",
-                              "Part B: Consumer's Equilibrium & Demand (Utility & Indifference Curves)",
-                              "Part B: Producer Behaviour & Supply (Production Function, Cost, Revenue)",
-                              "Part B: Forms of Market and Price Determination under Perfect Competition"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Statistics 40M, Microeconomics 40M)"
+            "id": "CBSE_ECO_11",
+            "name": "Economics (Code 030 - Stats & Microeconomics)",
+            "icon": "📈",
+            "weight": "Social Sciences · 80 Theory + 20 Project",
+            "unitCount": 10,
+            "chapters": [
+              "Part A: Statistics for Economics (Collection, Organisation, Tabulation)",
+              "Part A: Measures of Central Tendency (Mean, Median, Mode)",
+              "Part A: Correlation and Index Numbers",
+              "Part B: Introduction to Microeconomics (PPC, Opportunity Cost)",
+              "Part B: Consumer's Equilibrium & Demand (Utility & Indifference Curves)",
+              "Part B: Producer Behaviour & Supply (Production Function, Cost, Revenue)",
+              "Part B: Forms of Market and Price Determination under Perfect Competition"
+            ],
+            "blueprint": "80 Theory + 20 Project (Statistics 40M, Microeconomics 40M)"
           }
-]
+        ]
       }
     },
     get groups() {
@@ -9805,980 +9805,980 @@ const AURA_SCHOOL_CURRICULUM = {
     title: "12th Standard Higher Secondary Board Exam (Centum Track)",
     boards: {
       TN_STATE: {
-      BIO_MATHS: [
-        {
-          id: "LANG_PART1_12_BM",
-          name: "Part-1: பொதுத்தமிழ் (Higher Secondary Board Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: [
-            "இயல் 1: உயிரினும் ஓம்பப்படும் (இளந்தமிழே, தன்னேர் இலாத தமிழ்)",
-            "இயல் 2: பெய்யெனப் பெய்யும் மழை (பிறகொரு நாள் கோடை, நெடுநல்வாடை)",
-            "இயல் 3: சுற்றத்தார் கண்ணே உள (கம்பராமாயணம், திருக்குறள்)",
-            "இயல் 4: செல்வம் என்பது சிந்தனையின் நிறைவு (பண்டைக்காலத்துக் கல்வி)",
-            "இயல் 5: நாடென்ப நாடா வளத்தன (தெய்வமணிமாலை, தேவாரம், அகநானூறு)",
-            "இயல் 6: சிறுகதை மற்றும் நாடகம் (சிலப்பதிகாரம், மெய்ப்பாட்டியல்)",
-            "இயல் 7: நாடு சமூகம் அரசு (புறநானூறு, அதிசய மலர்)",
-            "இயல் 8: எல்லையற்ற உலகம் (கோடை மழை, இரட்சணிய யாத்திரிகம்)"
-          ],
-          blueprint: "90 Theory + 10 Internal (செய்யுள் 30M, உரைநடை 25M, இலக்கணம் 25M, மொழித்திறன் 10M)"
-        },
-        {
-          id: "LANG_PART2_12_BM",
-          name: "Part-2: General English Core (Board Centum Track)",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: [
-            "Unit 1: Two Gentlemen of Verona (A.J. Cronin) / The Castle (Edwin Muir)",
-            "Unit 2: A Nice Cup of Tea / Our Casuarina Tree (Toru Dutt)",
-            "Unit 3: In Celebration of Being Alive (Dr. Christiaan Barnard) / All the World's a Stage",
-            "Unit 4: The Summit (Edmund Hillary) / Ulysses (Alfred Tennyson)",
-            "Unit 5: The Chair (Ki. Rajanarayanan) / A Father to his Son (Carl Sandburg)",
-            "Unit 6: On the Rule of the Road (A.G. Gardiner) / Incident of the French Camp",
-            "Grammar & Composition: Error Spotting, Direct/Indirect Speech, Letter Writing, Summary Writing, Slogan Writing"
-          ],
-          blueprint: "90 Theory + 10 Internal (Prose 20M, Poetry 20M, Grammar 25M, Writing 25M)"
-        },
-        {
-          id: "MATHS_12_BM",
-          name: "Mathematics (Board Exam High-Yield)",
-          icon: "📐",
-          weight: "High Priority Board · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Ch 1: Applications of Matrices & Determinants (Rank, Cramer's rule)",
-            "Ch 2: Complex Numbers (Argand plane, De Moivre's theorem)",
-            "Ch 3: Theory of Equations (Vieta's formulas, Descartes rule)",
-            "Ch 4: Inverse Trigonometric Functions (Principal value branches)",
-            "Ch 5: 2D Analytical Geometry II (Parabola, Ellipse, Hyperbola)",
-            "Ch 6: Vector Algebra (Scalar & vector triple product, Line/Plane)",
-            "Ch 7: Differential Calculus Applications (Tangents, Maxima/Minima)",
-            "Ch 8: Differentials and Partial Derivatives (Euler's theorem)",
-            "Ch 9: Integral Calculus (Definite integrals, Reduction formulas, Areas)",
-            "Ch 10: Ordinary Differential Equations (Linear ODE, Variable separable)",
-            "Ch 11: Probability Distributions (Binomial, Normal distributions)",
-            "Ch 12: Discrete Mathematics (Binary operations, Truth tables)"
-          ],
-          blueprint: "90 Theory + 10 Internal (Calculus 40M, Matrices/Vectors 25M, Geometry 15M, Stats 10M)"
-        },
-        {
-          id: "PHYSICS_12_BM",
-          name: "Physics (Core Board Derivations)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 10,
-          chapters: [
-            "Unit 1: Electrostatics (Gauss law, Dipole, Van de Graaff)",
-            "Unit 2: Current Electricity (Kirchhoff rules, Wheatstone, Potentiometer)",
-            "Unit 3: Magnetism & Biot-Savart Law (Cyclotron, Ampere law)",
-            "Unit 4: Electromagnetic Induction & AC (AC generator, LCR series)",
-            "Unit 5: Electromagnetic Waves (Maxwell equations)",
-            "Unit 6: Optics (Lens Maker formula, Prism, Young's double slit)",
-            "Unit 7: Dual Nature of Radiation & Matter (Photoelectric effect)",
-            "Unit 8: Atomic & Nuclear Physics (Bohr model, Radioactive decay)",
-            "Unit 9: Semiconductor Electronics (Rectifiers, Transistor, Logic gates)",
-            "Unit 10: Communication Systems (Modulation, Propagation)"
-          ],
-          blueprint: "70 Theory + 30 Practical (Electromagnetism 28M, Optics 14M, Modern Physics 18M, Electronics 10M)"
-        },
-        {
-          id: "CHEMISTRY_12_BM",
-          name: "Chemistry (Equations & Named Reactions)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: [
-            "Metallurgy (Ellingham diagram, Refining)",
-            "p-Block Elements I & II (Boron, Nitrogen, Halogens)",
-            "d- and f-Block Elements (Lanthanoid contraction)",
-            "Coordination Chemistry (Werner, IUPAC, VBT, CFT)",
-            "Solid State (Unit cells, Defects, Bragg's law)",
-            "Chemical Kinetics (Rate law, Arrhenius equation)",
-            "Ionic Equilibrium (Ostwald dilution, pH, Buffer solutions)",
-            "Electrochemistry (Nernst equation, Electrochemical cells)",
-            "Surface Chemistry (Adsorption isotherms, Catalysis)",
-            "Haloalkanes & Haloarenes (SN1 & SN2 mechanisms)",
-            "Hydroxy Compounds & Ethers (Lucas test, Kolbe reaction)",
-            "Carbonyl Compounds (Aldol condensation, Cannizzaro)",
-            "Organic Nitrogen Compounds (Amines, Sandmeyer reaction)",
-            "Biomolecules (Carbohydrates, Amino acids, DNA/RNA)",
-            "Chemistry in Everyday Life (Drugs, Polymers)"
-          ],
-          blueprint: "70 Theory + 30 Practical (Inorganic 20M, Physical 25M, Organic 25M)"
-        },
-        {
-          id: "BIOLOGY_12_BM",
-          name: "Biology (Botany & Zoology)",
-          icon: "🌿",
-          weight: "Biological Sciences · 70 Theory + 30 Lab",
-          unitCount: 16,
-          chapters: [
-            "Botany: Reproduction in Plants (Microsporogenesis, Megasporogenesis)",
-            "Botany: Classical Genetics & Chromosomal Inheritance",
-            "Botany: Biotechnology Principles & Processes (rDNA, Vectors)",
-            "Botany: Plant Tissue Culture & Economic Botany",
-            "Zoology: Human Reproduction & Reproductive Health (IVF, Contraception)",
-            "Zoology: Molecular Genetics (DNA replication, Genetic Code, Lac Operon)",
-            "Zoology: Human Health & Disease (Immunity, Antibody H2L2 structure)",
-            "Zoology: Biodiversity, Conservation & Environmental Ecology"
-          ],
-          blueprint: "70 Theory + 30 Practical (Botany 35M, Zoology 35M)"
-        }
-      ],
-      COMP_SCI: [
-        {
-          id: "LANG_PART1_12_CS",
-          name: "Part-1: பொதுத்தமிழ் (Higher Secondary Board Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: [
-            "இயல் 1: உயிரினும் ஓம்பப்படும் (இளந்தமிழே)", "இயல் 2: நெடுநல்வாடை",
-            "இயல் 3: கம்பராமாயணம் / திருக்குறள்", "இயல் 4: பண்டைக்காலத்துக் கல்வி",
-            "இயல் 5: தெய்வமணிமாலை / தேவாரம்", "இயல் 6: சிலப்பதிகாரம் / மெய்ப்பாட்டியல்",
-            "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_12_CS",
-          name: "Part-2: General English Core (Board Centum Track)",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: [
-            "Unit 1: Two Gentlemen of Verona / The Castle",
-            "Unit 2: A Nice Cup of Tea / Our Casuarina Tree",
-            "Unit 3: In Celebration of Being Alive / All the World's a Stage",
-            "Unit 4: The Summit / Ulysses",
-            "Unit 5: The Chair / A Father to his Son",
-            "Unit 6: On the Rule of the Road / French Camp"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "MATHS_12_CS",
-          name: "Mathematics (Board Centum Track)",
-          icon: "📐",
-          weight: "High Priority Board · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Matrices & Determinants", "Complex Numbers", "Theory of Equations",
-            "2D Analytical Geometry II", "Vector Algebra", "Differential Calculus",
-            "Integral Calculus", "Differential Equations", "Probability Distributions",
-            "Discrete Mathematics"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "PHYSICS_12_CS",
-          name: "Physics (Core Board Derivations)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 10,
-          chapters: [
-            "Electrostatics", "Current Electricity", "Magnetism & EMI",
-            "Alternating Current", "Optics (Ray & Wave)", "Dual Nature",
-            "Atomic & Nuclear Physics", "Semiconductors & Logic Gates"
-          ],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CHEMISTRY_12_CS",
-          name: "Chemistry (Equations & Named Reactions)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: [
-            "Metallurgy", "p-Block & d-Block Elements", "Coordination Chemistry",
-            "Solid State", "Chemical Kinetics", "Electrochemistry",
-            "Carbonyl Compounds (Aldol, Cannizzaro)", "Biomolecules"
-          ],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CS_12",
-          name: "Computer Science (Python, OOP & SQL)",
-          icon: "💻",
-          weight: "Practical 100 Track · 70 Theory + 30 Lab",
-          unitCount: 12,
-          chapters: [
-            "Functions & Scoping (LEGB Rule: Local, Enclosing, Global, Built-in)",
-            "Data Abstraction & Encapsulation",
-            "Algorithmic Strategies (Bubble, Insertion, Selection, Big-O Complexity)",
-            "Python Control Structures, Strings & List Methods",
-            "Tuples, Sets and Dictionaries in Python",
-            "Object-Oriented Programming (Classes, Objects, Constructors)",
-            "Database Concepts (Relational Model, Primary & Foreign Keys)",
-            "Structured Query Language (DDL, DML, DCL, TCL, GROUP BY, JOIN)",
-            "Python and CSV Files (csv.reader, csv.writer)",
-            "Python SQLite Integration (sqlite3 cursor, fetchall)",
-            "Data Visualization using Pyplot (Line, Bar, Pie Charts via Matplotlib)"
-          ],
-          blueprint: "70 Theory + 30 Practical (Python Coding 35M, SQL 20M, Concepts 15M)"
-        }
-      ],
-      PURE_SCI: [
-        {
-          id: "LANG_PART1_12_PS",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_12_PS",
-          name: "Part-2: General English Core",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "PHYSICS_12_PS",
-          name: "Physics (Core Derivations)",
-          icon: "⚡",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 10,
-          chapters: ["Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Optics", "Dual Nature", "Nuclear Physics", "Semiconductors"],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "CHEMISTRY_12_PS",
-          name: "Chemistry (Equations & Named Reactions)",
-          icon: "🧪",
-          weight: "Core Science · 70 Theory + 30 Lab",
-          unitCount: 15,
-          chapters: ["Inorganic Coordination Chemistry", "Solid State", "Chemical Kinetics & Electrochemistry", "Organic Carbonyl Reactions", "Biomolecules (Amino Acids & DNA)"],
-          blueprint: "70 Theory + 30 Practical"
-        },
-        {
-          id: "BOTANY_12_PS",
-          name: "Botany (Pure Plant Sciences)",
-          icon: "🌱",
-          weight: "Pure Botanical Science · 35 Theory + 15 Lab",
-          unitCount: 10,
-          chapters: ["Asexual & Sexual Reproduction in Plants", "Classical Genetics & Chromosomal Linkage", "Biotechnology Principles & Vectors (pBR322, Ti plasmid)", "Plant Tissue Culture (Totipotency, Micropropagation)", "Ecology & Environmental Succession", "Economic Botany (Medicinal Plants of Tamil Nadu)"],
-          blueprint: "35 Theory + 15 Practical"
-        },
-        {
-          id: "ZOOLOGY_12_PS",
-          name: "Zoology (Pure Animal Sciences)",
-          icon: "🐾",
-          weight: "Pure Zoological Science · 35 Theory + 15 Lab",
-          unitCount: 10,
-          chapters: ["Human Reproduction & Contraceptive Technology (IVF, ART)", "Pedigree Analysis & Sex-Linked Inheritance", "Molecular Genetics (DNA Replication, Lac Operon)", "Human Health, Disease & Immunology (Antibody H2L2 Structure)", "Microbes in Human Welfare & Applied Biotechnology", "Biodiversity & Conservation Biology"],
-          blueprint: "35 Theory + 15 Practical"
-        }
-      ],
-      COMMERCE: [
-        {
-          id: "LANG_PART1_12_COM",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_12_COM",
-          name: "Part-2: General English Core",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "ACC_12",
-          name: "Accountancy (Partnership & Company Accounts)",
-          icon: "📊",
-          weight: "Commerce Core · 90 Theory + 10 Internal",
-          unitCount: 10,
-          chapters: [
-            "Ch 1: Accounts from Incomplete Records (Single Entry)",
-            "Ch 2: Accounts of Not-for-Profit Organisation",
-            "Ch 3: Accounts of Partnership Firms - Fundamentals",
-            "Ch 4: Goodwill in Partnership (Super Profit, Capitalization)",
-            "Ch 5: Admission of a Partner (Revaluation Account)",
-            "Ch 6: Retirement & Death of a Partner",
-            "Ch 7: Company Accounts (Issue of Shares, Forfeiture)",
-            "Ch 8: Financial Statement Analysis",
-            "Ch 9: Ratio Analysis (Liquidity, Solvency, Turnover, Profitability)",
-            "Ch 10: Computerised Accounting System (Tally)"
-          ],
-          blueprint: "90 Theory + 10 Internal (Partnership 35M, Company Shares 20M, Financial Statements 20M)"
-        },
-        {
-          id: "COMM_12",
-          name: "Commerce & Business Management",
-          icon: "💼",
-          weight: "Commerce Core · 90 Theory + 10 Internal",
-          unitCount: 10,
-          chapters: [
-            "Ch 1: Principles of Scientific Management (Taylor & Fayol's 14)",
-            "Ch 2: Functions of Management (Planning, Organizing, Staffing)",
-            "Ch 3: Management by Objectives (MBO) and Exception (MBE)",
-            "Ch 4: Financial Markets (Capital & Money Markets)",
-            "Ch 5: Capital Market & Stock Exchange (BSE, NSE, SEBI)",
-            "Ch 6: Consumer Protection (3-Tier Redressal Forums)",
-            "Ch 7: Business Environment (LPG Policies)",
-            "Ch 8: Elements of Marketing & Marketing Mix (4Ps, Digital)",
-            "Ch 9: Human Resource Management (Recruitment, Selection)",
-            "Ch 10: Entrepreneurship Development (Startup India)"
-          ],
-          blueprint: "90 Theory + 10 Internal (Management 30M, Finance & SEBI 25M, Consumer/Marketing 25M)"
-        },
-        {
-          id: "ECO_12_COM",
-          name: "Economics (Macroeconomics & Fiscal Policy)",
-          icon: "📈",
-          weight: "Social & Economic · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Introduction to Macroeconomics & National Income (GDP, GNP)",
-            "Theories of Employment and Income (Say's Law, Keynesian)",
-            "Consumption and Investment Functions (Multiplier & Accelerator)",
-            "Monetary Economics (Money Supply, Inflation, RBI Functions)",
-            "Banking (Commercial Banks, NBFCs, Digital Banking)",
-            "International Economics (Balance of Payments, WTO, IMF)",
-            "Fiscal Economics (Public Revenue, GST, Budget, Fiscal Deficit)",
-            "Environmental Economics & Economic Planning in India"
-          ],
-          blueprint: "90 Theory + 10 Internal (National Income 20M, Keynesian 20M, Money & Banking 20M, Fiscal 20M)"
-        },
-        {
-          id: "BM_12",
-          name: "Business Mathematics & Statistics",
-          icon: "📉",
-          weight: "Analytical Core · 90 Theory + 10 Internal",
-          unitCount: 10,
-          chapters: [
-            "Applications of Matrices and Determinants in Commerce",
-            "Integral Calculus (Consumer Surplus, Producer Surplus)",
-            "Differential Equations in Economic Dynamics",
-            "Interpolation and Extrapolation (Newton, Lagrange)",
-            "Probability Distributions & Sampling Theory",
-            "Statistical Quality Control & Operations Research (Transportation Problem)"
-          ],
-          blueprint: "90 Theory + 10 Internal (Calculus 30M, Matrices 20M, Statistics & OR 30M)"
-        }
-      ],
-      ARTS: [
-        {
-          id: "LANG_PART1_12_ART",
-          name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
-          icon: "📜",
-          weight: "Part-1 Language · 90 Theory + 10 Internal",
-          unitCount: 8,
-          chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "LANG_PART2_12_ART",
-          name: "Part-2: General English Core",
-          icon: "📖",
-          weight: "Part-2 Core · 90 Theory + 10 Internal",
-          unitCount: 6,
-          chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "HIST_12",
-          name: "History (Modern India & World History)",
-          icon: "🏛️",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 15,
-          chapters: [
-            "Rise of Nationalism in India", "From Trade to Territory & 1857 Revolt",
-            "Indian National Movement (Moderates, Extremists, Gandhian Era)",
-            "Role of Tamil Nadu in Indian National Movement",
-            "Social Transformation in Tamil Nadu (Justice Party, Self-Respect Movement)",
-            "World Wars I & II, League of Nations & United Nations Organization",
-            "Cold War Era & Decolonization Movements"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "POL_12",
-          name: "Political Science (Indian Constitution & International Relations)",
-          icon: "⚖️",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Constitution of India: Preamble, Fundamental Rights & DPSP",
-            "Union Executive (President, Prime Minister, Cabinet)",
-            "Union Parliament (Lok Sabha, Rajya Sabha, Law Making)",
-            "Judiciary in India (Supreme Court, Judicial Review)",
-            "Federalism in India & Centre-State Relations",
-            "Local Governments (Panchayati Raj 73rd & 74th Amendments)",
-            "India's Foreign Policy & Global Organizations (UN, BRICS, G20)"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "ECO_12_ART",
-          name: "Economics (Macroeconomics & Development)",
-          icon: "📈",
-          weight: "Humanities · 90 Theory + 10 Internal",
-          unitCount: 12,
-          chapters: [
-            "Macroeconomic Foundations & National Income",
-            "Theories of Output and Employment",
-            "Money, Banking and Inflation Control",
-            "Fiscal Economics, GST and Public Debt",
-            "International Trade, Tariffs and Foreign Exchange",
-            "Economic Planning and NITI Aayog"
-          ],
-          blueprint: "90 Theory + 10 Internal"
-        },
-        {
-          id: "GEO_12",
-          name: "Geography (Human & Economic Geography)",
-          icon: "🗺️",
-          weight: "Humanities · 70 Theory + 30 Practical",
-          unitCount: 10,
-          chapters: [
-            "Human Geography: Population Distribution & Migration",
-            "Human Settlements: Rural and Urban Patterns",
-            "Primary, Secondary, Tertiary & Quaternary Economic Activities",
-            "Global Transport, Communication and International Trade",
-            "Geographic Information Systems (GIS), Remote Sensing & GPS"
-          ],
-          blueprint: "70 Theory + 30 Practical"
-        }
-      ]
-    },
+        BIO_MATHS: [
+          {
+            id: "LANG_PART1_12_BM",
+            name: "Part-1: பொதுத்தமிழ் (Higher Secondary Board Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: [
+              "இயல் 1: உயிரினும் ஓம்பப்படும் (இளந்தமிழே, தன்னேர் இலாத தமிழ்)",
+              "இயல் 2: பெய்யெனப் பெய்யும் மழை (பிறகொரு நாள் கோடை, நெடுநல்வாடை)",
+              "இயல் 3: சுற்றத்தார் கண்ணே உள (கம்பராமாயணம், திருக்குறள்)",
+              "இயல் 4: செல்வம் என்பது சிந்தனையின் நிறைவு (பண்டைக்காலத்துக் கல்வி)",
+              "இயல் 5: நாடென்ப நாடா வளத்தன (தெய்வமணிமாலை, தேவாரம், அகநானூறு)",
+              "இயல் 6: சிறுகதை மற்றும் நாடகம் (சிலப்பதிகாரம், மெய்ப்பாட்டியல்)",
+              "இயல் 7: நாடு சமூகம் அரசு (புறநானூறு, அதிசய மலர்)",
+              "இயல் 8: எல்லையற்ற உலகம் (கோடை மழை, இரட்சணிய யாத்திரிகம்)"
+            ],
+            blueprint: "90 Theory + 10 Internal (செய்யுள் 30M, உரைநடை 25M, இலக்கணம் 25M, மொழித்திறன் 10M)"
+          },
+          {
+            id: "LANG_PART2_12_BM",
+            name: "Part-2: General English Core (Board Centum Track)",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: [
+              "Unit 1: Two Gentlemen of Verona (A.J. Cronin) / The Castle (Edwin Muir)",
+              "Unit 2: A Nice Cup of Tea / Our Casuarina Tree (Toru Dutt)",
+              "Unit 3: In Celebration of Being Alive (Dr. Christiaan Barnard) / All the World's a Stage",
+              "Unit 4: The Summit (Edmund Hillary) / Ulysses (Alfred Tennyson)",
+              "Unit 5: The Chair (Ki. Rajanarayanan) / A Father to his Son (Carl Sandburg)",
+              "Unit 6: On the Rule of the Road (A.G. Gardiner) / Incident of the French Camp",
+              "Grammar & Composition: Error Spotting, Direct/Indirect Speech, Letter Writing, Summary Writing, Slogan Writing"
+            ],
+            blueprint: "90 Theory + 10 Internal (Prose 20M, Poetry 20M, Grammar 25M, Writing 25M)"
+          },
+          {
+            id: "MATHS_12_BM",
+            name: "Mathematics (Board Exam High-Yield)",
+            icon: "📐",
+            weight: "High Priority Board · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Ch 1: Applications of Matrices & Determinants (Rank, Cramer's rule)",
+              "Ch 2: Complex Numbers (Argand plane, De Moivre's theorem)",
+              "Ch 3: Theory of Equations (Vieta's formulas, Descartes rule)",
+              "Ch 4: Inverse Trigonometric Functions (Principal value branches)",
+              "Ch 5: 2D Analytical Geometry II (Parabola, Ellipse, Hyperbola)",
+              "Ch 6: Vector Algebra (Scalar & vector triple product, Line/Plane)",
+              "Ch 7: Differential Calculus Applications (Tangents, Maxima/Minima)",
+              "Ch 8: Differentials and Partial Derivatives (Euler's theorem)",
+              "Ch 9: Integral Calculus (Definite integrals, Reduction formulas, Areas)",
+              "Ch 10: Ordinary Differential Equations (Linear ODE, Variable separable)",
+              "Ch 11: Probability Distributions (Binomial, Normal distributions)",
+              "Ch 12: Discrete Mathematics (Binary operations, Truth tables)"
+            ],
+            blueprint: "90 Theory + 10 Internal (Calculus 40M, Matrices/Vectors 25M, Geometry 15M, Stats 10M)"
+          },
+          {
+            id: "PHYSICS_12_BM",
+            name: "Physics (Core Board Derivations)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 10,
+            chapters: [
+              "Unit 1: Electrostatics (Gauss law, Dipole, Van de Graaff)",
+              "Unit 2: Current Electricity (Kirchhoff rules, Wheatstone, Potentiometer)",
+              "Unit 3: Magnetism & Biot-Savart Law (Cyclotron, Ampere law)",
+              "Unit 4: Electromagnetic Induction & AC (AC generator, LCR series)",
+              "Unit 5: Electromagnetic Waves (Maxwell equations)",
+              "Unit 6: Optics (Lens Maker formula, Prism, Young's double slit)",
+              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric effect)",
+              "Unit 8: Atomic & Nuclear Physics (Bohr model, Radioactive decay)",
+              "Unit 9: Semiconductor Electronics (Rectifiers, Transistor, Logic gates)",
+              "Unit 10: Communication Systems (Modulation, Propagation)"
+            ],
+            blueprint: "70 Theory + 30 Practical (Electromagnetism 28M, Optics 14M, Modern Physics 18M, Electronics 10M)"
+          },
+          {
+            id: "CHEMISTRY_12_BM",
+            name: "Chemistry (Equations & Named Reactions)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: [
+              "Metallurgy (Ellingham diagram, Refining)",
+              "p-Block Elements I & II (Boron, Nitrogen, Halogens)",
+              "d- and f-Block Elements (Lanthanoid contraction)",
+              "Coordination Chemistry (Werner, IUPAC, VBT, CFT)",
+              "Solid State (Unit cells, Defects, Bragg's law)",
+              "Chemical Kinetics (Rate law, Arrhenius equation)",
+              "Ionic Equilibrium (Ostwald dilution, pH, Buffer solutions)",
+              "Electrochemistry (Nernst equation, Electrochemical cells)",
+              "Surface Chemistry (Adsorption isotherms, Catalysis)",
+              "Haloalkanes & Haloarenes (SN1 & SN2 mechanisms)",
+              "Hydroxy Compounds & Ethers (Lucas test, Kolbe reaction)",
+              "Carbonyl Compounds (Aldol condensation, Cannizzaro)",
+              "Organic Nitrogen Compounds (Amines, Sandmeyer reaction)",
+              "Biomolecules (Carbohydrates, Amino acids, DNA/RNA)",
+              "Chemistry in Everyday Life (Drugs, Polymers)"
+            ],
+            blueprint: "70 Theory + 30 Practical (Inorganic 20M, Physical 25M, Organic 25M)"
+          },
+          {
+            id: "BIOLOGY_12_BM",
+            name: "Biology (Botany & Zoology)",
+            icon: "🌿",
+            weight: "Biological Sciences · 70 Theory + 30 Lab",
+            unitCount: 16,
+            chapters: [
+              "Botany: Reproduction in Plants (Microsporogenesis, Megasporogenesis)",
+              "Botany: Classical Genetics & Chromosomal Inheritance",
+              "Botany: Biotechnology Principles & Processes (rDNA, Vectors)",
+              "Botany: Plant Tissue Culture & Economic Botany",
+              "Zoology: Human Reproduction & Reproductive Health (IVF, Contraception)",
+              "Zoology: Molecular Genetics (DNA replication, Genetic Code, Lac Operon)",
+              "Zoology: Human Health & Disease (Immunity, Antibody H2L2 structure)",
+              "Zoology: Biodiversity, Conservation & Environmental Ecology"
+            ],
+            blueprint: "70 Theory + 30 Practical (Botany 35M, Zoology 35M)"
+          }
+        ],
+        COMP_SCI: [
+          {
+            id: "LANG_PART1_12_CS",
+            name: "Part-1: பொதுத்தமிழ் (Higher Secondary Board Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: [
+              "இயல் 1: உயிரினும் ஓம்பப்படும் (இளந்தமிழே)", "இயல் 2: நெடுநல்வாடை",
+              "இயல் 3: கம்பராமாயணம் / திருக்குறள்", "இயல் 4: பண்டைக்காலத்துக் கல்வி",
+              "இயல் 5: தெய்வமணிமாலை / தேவாரம்", "இயல் 6: சிலப்பதிகாரம் / மெய்ப்பாட்டியல்",
+              "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_12_CS",
+            name: "Part-2: General English Core (Board Centum Track)",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: [
+              "Unit 1: Two Gentlemen of Verona / The Castle",
+              "Unit 2: A Nice Cup of Tea / Our Casuarina Tree",
+              "Unit 3: In Celebration of Being Alive / All the World's a Stage",
+              "Unit 4: The Summit / Ulysses",
+              "Unit 5: The Chair / A Father to his Son",
+              "Unit 6: On the Rule of the Road / French Camp"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "MATHS_12_CS",
+            name: "Mathematics (Board Centum Track)",
+            icon: "📐",
+            weight: "High Priority Board · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Matrices & Determinants", "Complex Numbers", "Theory of Equations",
+              "2D Analytical Geometry II", "Vector Algebra", "Differential Calculus",
+              "Integral Calculus", "Differential Equations", "Probability Distributions",
+              "Discrete Mathematics"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "PHYSICS_12_CS",
+            name: "Physics (Core Board Derivations)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 10,
+            chapters: [
+              "Electrostatics", "Current Electricity", "Magnetism & EMI",
+              "Alternating Current", "Optics (Ray & Wave)", "Dual Nature",
+              "Atomic & Nuclear Physics", "Semiconductors & Logic Gates"
+            ],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CHEMISTRY_12_CS",
+            name: "Chemistry (Equations & Named Reactions)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: [
+              "Metallurgy", "p-Block & d-Block Elements", "Coordination Chemistry",
+              "Solid State", "Chemical Kinetics", "Electrochemistry",
+              "Carbonyl Compounds (Aldol, Cannizzaro)", "Biomolecules"
+            ],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CS_12",
+            name: "Computer Science (Python, OOP & SQL)",
+            icon: "💻",
+            weight: "Practical 100 Track · 70 Theory + 30 Lab",
+            unitCount: 12,
+            chapters: [
+              "Functions & Scoping (LEGB Rule: Local, Enclosing, Global, Built-in)",
+              "Data Abstraction & Encapsulation",
+              "Algorithmic Strategies (Bubble, Insertion, Selection, Big-O Complexity)",
+              "Python Control Structures, Strings & List Methods",
+              "Tuples, Sets and Dictionaries in Python",
+              "Object-Oriented Programming (Classes, Objects, Constructors)",
+              "Database Concepts (Relational Model, Primary & Foreign Keys)",
+              "Structured Query Language (DDL, DML, DCL, TCL, GROUP BY, JOIN)",
+              "Python and CSV Files (csv.reader, csv.writer)",
+              "Python SQLite Integration (sqlite3 cursor, fetchall)",
+              "Data Visualization using Pyplot (Line, Bar, Pie Charts via Matplotlib)"
+            ],
+            blueprint: "70 Theory + 30 Practical (Python Coding 35M, SQL 20M, Concepts 15M)"
+          }
+        ],
+        PURE_SCI: [
+          {
+            id: "LANG_PART1_12_PS",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_12_PS",
+            name: "Part-2: General English Core",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "PHYSICS_12_PS",
+            name: "Physics (Core Derivations)",
+            icon: "⚡",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 10,
+            chapters: ["Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Optics", "Dual Nature", "Nuclear Physics", "Semiconductors"],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "CHEMISTRY_12_PS",
+            name: "Chemistry (Equations & Named Reactions)",
+            icon: "🧪",
+            weight: "Core Science · 70 Theory + 30 Lab",
+            unitCount: 15,
+            chapters: ["Inorganic Coordination Chemistry", "Solid State", "Chemical Kinetics & Electrochemistry", "Organic Carbonyl Reactions", "Biomolecules (Amino Acids & DNA)"],
+            blueprint: "70 Theory + 30 Practical"
+          },
+          {
+            id: "BOTANY_12_PS",
+            name: "Botany (Pure Plant Sciences)",
+            icon: "🌱",
+            weight: "Pure Botanical Science · 35 Theory + 15 Lab",
+            unitCount: 10,
+            chapters: ["Asexual & Sexual Reproduction in Plants", "Classical Genetics & Chromosomal Linkage", "Biotechnology Principles & Vectors (pBR322, Ti plasmid)", "Plant Tissue Culture (Totipotency, Micropropagation)", "Ecology & Environmental Succession", "Economic Botany (Medicinal Plants of Tamil Nadu)"],
+            blueprint: "35 Theory + 15 Practical"
+          },
+          {
+            id: "ZOOLOGY_12_PS",
+            name: "Zoology (Pure Animal Sciences)",
+            icon: "🐾",
+            weight: "Pure Zoological Science · 35 Theory + 15 Lab",
+            unitCount: 10,
+            chapters: ["Human Reproduction & Contraceptive Technology (IVF, ART)", "Pedigree Analysis & Sex-Linked Inheritance", "Molecular Genetics (DNA Replication, Lac Operon)", "Human Health, Disease & Immunology (Antibody H2L2 Structure)", "Microbes in Human Welfare & Applied Biotechnology", "Biodiversity & Conservation Biology"],
+            blueprint: "35 Theory + 15 Practical"
+          }
+        ],
+        COMMERCE: [
+          {
+            id: "LANG_PART1_12_COM",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_12_COM",
+            name: "Part-2: General English Core",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "ACC_12",
+            name: "Accountancy (Partnership & Company Accounts)",
+            icon: "📊",
+            weight: "Commerce Core · 90 Theory + 10 Internal",
+            unitCount: 10,
+            chapters: [
+              "Ch 1: Accounts from Incomplete Records (Single Entry)",
+              "Ch 2: Accounts of Not-for-Profit Organisation",
+              "Ch 3: Accounts of Partnership Firms - Fundamentals",
+              "Ch 4: Goodwill in Partnership (Super Profit, Capitalization)",
+              "Ch 5: Admission of a Partner (Revaluation Account)",
+              "Ch 6: Retirement & Death of a Partner",
+              "Ch 7: Company Accounts (Issue of Shares, Forfeiture)",
+              "Ch 8: Financial Statement Analysis",
+              "Ch 9: Ratio Analysis (Liquidity, Solvency, Turnover, Profitability)",
+              "Ch 10: Computerised Accounting System (Tally)"
+            ],
+            blueprint: "90 Theory + 10 Internal (Partnership 35M, Company Shares 20M, Financial Statements 20M)"
+          },
+          {
+            id: "COMM_12",
+            name: "Commerce & Business Management",
+            icon: "💼",
+            weight: "Commerce Core · 90 Theory + 10 Internal",
+            unitCount: 10,
+            chapters: [
+              "Ch 1: Principles of Scientific Management (Taylor & Fayol's 14)",
+              "Ch 2: Functions of Management (Planning, Organizing, Staffing)",
+              "Ch 3: Management by Objectives (MBO) and Exception (MBE)",
+              "Ch 4: Financial Markets (Capital & Money Markets)",
+              "Ch 5: Capital Market & Stock Exchange (BSE, NSE, SEBI)",
+              "Ch 6: Consumer Protection (3-Tier Redressal Forums)",
+              "Ch 7: Business Environment (LPG Policies)",
+              "Ch 8: Elements of Marketing & Marketing Mix (4Ps, Digital)",
+              "Ch 9: Human Resource Management (Recruitment, Selection)",
+              "Ch 10: Entrepreneurship Development (Startup India)"
+            ],
+            blueprint: "90 Theory + 10 Internal (Management 30M, Finance & SEBI 25M, Consumer/Marketing 25M)"
+          },
+          {
+            id: "ECO_12_COM",
+            name: "Economics (Macroeconomics & Fiscal Policy)",
+            icon: "📈",
+            weight: "Social & Economic · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Introduction to Macroeconomics & National Income (GDP, GNP)",
+              "Theories of Employment and Income (Say's Law, Keynesian)",
+              "Consumption and Investment Functions (Multiplier & Accelerator)",
+              "Monetary Economics (Money Supply, Inflation, RBI Functions)",
+              "Banking (Commercial Banks, NBFCs, Digital Banking)",
+              "International Economics (Balance of Payments, WTO, IMF)",
+              "Fiscal Economics (Public Revenue, GST, Budget, Fiscal Deficit)",
+              "Environmental Economics & Economic Planning in India"
+            ],
+            blueprint: "90 Theory + 10 Internal (National Income 20M, Keynesian 20M, Money & Banking 20M, Fiscal 20M)"
+          },
+          {
+            id: "BM_12",
+            name: "Business Mathematics & Statistics",
+            icon: "📉",
+            weight: "Analytical Core · 90 Theory + 10 Internal",
+            unitCount: 10,
+            chapters: [
+              "Applications of Matrices and Determinants in Commerce",
+              "Integral Calculus (Consumer Surplus, Producer Surplus)",
+              "Differential Equations in Economic Dynamics",
+              "Interpolation and Extrapolation (Newton, Lagrange)",
+              "Probability Distributions & Sampling Theory",
+              "Statistical Quality Control & Operations Research (Transportation Problem)"
+            ],
+            blueprint: "90 Theory + 10 Internal (Calculus 30M, Matrices 20M, Statistics & OR 30M)"
+          }
+        ],
+        ARTS: [
+          {
+            id: "LANG_PART1_12_ART",
+            name: "Part-1: பொதுத்தமிழ் (Tamil Core)",
+            icon: "📜",
+            weight: "Part-1 Language · 90 Theory + 10 Internal",
+            unitCount: 8,
+            chapters: ["இயல் 1: இளந்தமிழே", "இயல் 2: நெடுநல்வாடை", "இயல் 3: கம்பராமாயணம்", "இயல் 4: பண்டைக்காலத்துக் கல்வி", "இயல் 5: தெய்வமணிமாலை", "இயல் 6: சிலப்பதிகாரம்", "இயல் 7: புறநானூறு", "இயல் 8: இரட்சணிய யாத்திரிகம்"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "LANG_PART2_12_ART",
+            name: "Part-2: General English Core",
+            icon: "📖",
+            weight: "Part-2 Core · 90 Theory + 10 Internal",
+            unitCount: 6,
+            chapters: ["Unit 1: Two Gentlemen of Verona", "Unit 2: A Nice Cup of Tea", "Unit 3: In Celebration of Being Alive", "Unit 4: The Summit", "Unit 5: The Chair", "Unit 6: On the Rule of the Road"],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "HIST_12",
+            name: "History (Modern India & World History)",
+            icon: "🏛️",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 15,
+            chapters: [
+              "Rise of Nationalism in India", "From Trade to Territory & 1857 Revolt",
+              "Indian National Movement (Moderates, Extremists, Gandhian Era)",
+              "Role of Tamil Nadu in Indian National Movement",
+              "Social Transformation in Tamil Nadu (Justice Party, Self-Respect Movement)",
+              "World Wars I & II, League of Nations & United Nations Organization",
+              "Cold War Era & Decolonization Movements"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "POL_12",
+            name: "Political Science (Indian Constitution & International Relations)",
+            icon: "⚖️",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Constitution of India: Preamble, Fundamental Rights & DPSP",
+              "Union Executive (President, Prime Minister, Cabinet)",
+              "Union Parliament (Lok Sabha, Rajya Sabha, Law Making)",
+              "Judiciary in India (Supreme Court, Judicial Review)",
+              "Federalism in India & Centre-State Relations",
+              "Local Governments (Panchayati Raj 73rd & 74th Amendments)",
+              "India's Foreign Policy & Global Organizations (UN, BRICS, G20)"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "ECO_12_ART",
+            name: "Economics (Macroeconomics & Development)",
+            icon: "📈",
+            weight: "Humanities · 90 Theory + 10 Internal",
+            unitCount: 12,
+            chapters: [
+              "Macroeconomic Foundations & National Income",
+              "Theories of Output and Employment",
+              "Money, Banking and Inflation Control",
+              "Fiscal Economics, GST and Public Debt",
+              "International Trade, Tariffs and Foreign Exchange",
+              "Economic Planning and NITI Aayog"
+            ],
+            blueprint: "90 Theory + 10 Internal"
+          },
+          {
+            id: "GEO_12",
+            name: "Geography (Human & Economic Geography)",
+            icon: "🗺️",
+            weight: "Humanities · 70 Theory + 30 Practical",
+            unitCount: 10,
+            chapters: [
+              "Human Geography: Population Distribution & Migration",
+              "Human Settlements: Rural and Urban Patterns",
+              "Primary, Secondary, Tertiary & Quaternary Economic Activities",
+              "Global Transport, Communication and International Trade",
+              "Geographic Information Systems (GIS), Remote Sensing & GPS"
+            ],
+            blueprint: "70 Theory + 30 Practical"
+          }
+        ]
+      },
       CBSE: {
         BIO_MATHS: [
           {
-                    "id": "CBSE_TAM_12",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
-                              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
-                              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
-                              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
-                              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
-                              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+            "id": "CBSE_TAM_12",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
+              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
+              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
+              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
+              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
+              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
           },
           {
-                    "id": "CBSE_ENG_12",
-                    "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
-                              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
-                              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
-                              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
-                              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
-                              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
+            "id": "CBSE_ENG_12",
+            "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
+              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
+              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
+              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
+              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
+              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
           },
           {
-                    "id": "CBSE_MATH_12",
-                    "name": "Mathematics (Code 041 - NCERT Calculus & Vectors)",
-                    "icon": "📐",
-                    "weight": "STEM Core · 80 Theory + 20 Internal",
-                    "unitCount": 13,
-                    "chapters": [
-                              "Ch 1: Relations and Functions (Equivalence, Invertible Functions)",
-                              "Ch 2: Inverse Trigonometric Functions (Principal Values, Properties)",
-                              "Ch 3: Matrices (Operations, Symmetric/Skew-Symmetric, Inverse)",
-                              "Ch 4: Determinants (Minors, Cofactors, Adjoint, System of Equations)",
-                              "Ch 5: Continuity and Differentiability (Chain Rule, Logarithmic, Parametric)",
-                              "Ch 6: Applications of Derivatives (Rate of Change, Increasing/Decreasing, Maxima/Minima)",
-                              "Ch 7: Integrals (Indefinite & Definite Integrals, Substitution, By Parts)",
-                              "Ch 8: Applications of Integrals (Area under Curves, Circles, Parabolas)",
-                              "Ch 9: Differential Equations (Order & Degree, Variable Separable, Linear DE)",
-                              "Ch 10: Vector Algebra (Dot & Cross Product, Projection)",
-                              "Ch 11: Three-Dimensional Geometry (Direction Cosines, Lines & Planes in Space)",
-                              "Ch 12: Linear Programming (Mathematical Formulation, Graphical Method)",
-                              "Ch 13: Probability (Conditional Probability, Bayes' Theorem, Random Variables)"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Relations/Trig 8M, Algebra 10M, Calculus 35M, Vectors/3D 14M, LP 5M, Prob 8M)"
+            "id": "CBSE_MATH_12",
+            "name": "Mathematics (Code 041 - NCERT Calculus & Vectors)",
+            "icon": "📐",
+            "weight": "STEM Core · 80 Theory + 20 Internal",
+            "unitCount": 13,
+            "chapters": [
+              "Ch 1: Relations and Functions (Equivalence, Invertible Functions)",
+              "Ch 2: Inverse Trigonometric Functions (Principal Values, Properties)",
+              "Ch 3: Matrices (Operations, Symmetric/Skew-Symmetric, Inverse)",
+              "Ch 4: Determinants (Minors, Cofactors, Adjoint, System of Equations)",
+              "Ch 5: Continuity and Differentiability (Chain Rule, Logarithmic, Parametric)",
+              "Ch 6: Applications of Derivatives (Rate of Change, Increasing/Decreasing, Maxima/Minima)",
+              "Ch 7: Integrals (Indefinite & Definite Integrals, Substitution, By Parts)",
+              "Ch 8: Applications of Integrals (Area under Curves, Circles, Parabolas)",
+              "Ch 9: Differential Equations (Order & Degree, Variable Separable, Linear DE)",
+              "Ch 10: Vector Algebra (Dot & Cross Product, Projection)",
+              "Ch 11: Three-Dimensional Geometry (Direction Cosines, Lines & Planes in Space)",
+              "Ch 12: Linear Programming (Mathematical Formulation, Graphical Method)",
+              "Ch 13: Probability (Conditional Probability, Bayes' Theorem, Random Variables)"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Relations/Trig 8M, Algebra 10M, Calculus 35M, Vectors/3D 14M, LP 5M, Prob 8M)"
           },
           {
-                    "id": "CBSE_PHY_12",
-                    "name": "Physics (Code 042 - NCERT Board Blueprint)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
-                              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
-                              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
-                              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
-                              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
-                              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
-                              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
-                              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
-                              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
+            "id": "CBSE_PHY_12",
+            "name": "Physics (Code 042 - NCERT Board Blueprint)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
+              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
+              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
+              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
+              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
+              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
+              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
+              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
+              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
           },
           {
-                    "id": "CBSE_CHEM_12",
-                    "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
-                              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
-                              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
-                              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
-                              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
-                              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
-                              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
-                              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
-                              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
-                              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
+            "id": "CBSE_CHEM_12",
+            "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 10,
+            "chapters": [
+              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
+              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
+              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
+              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
+              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
+              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
+              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
+              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
+              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
+              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
           },
           {
-                    "id": "CBSE_BIO_12",
-                    "name": "Biology (Code 044 - NCERT Life Sciences)",
-                    "icon": "🧬",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 5,
-                    "chapters": [
-                              "Unit 6: Reproduction (Flowering Plants, Human Reproduction, Reproductive Health)",
-                              "Unit 7: Genetics and Evolution (Mendelian Inheritance, DNA Replication, Transcription, Translation, Evolution)",
-                              "Unit 8: Biology in Human Welfare (Human Health and Diseases, Microbes in Human Welfare)",
-                              "Unit 9: Biotechnology (Biotechnology Principles & Processes, Applications in Medicine & Agriculture)",
-                              "Unit 10: Ecology and Environment (Organisms & Populations, Ecosystem, Biodiversity & Conservation)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Reproduction 16M, Genetics 20M, Welfare 12M, Biotech 12M, Ecology 10M)"
+            "id": "CBSE_BIO_12",
+            "name": "Biology (Code 044 - NCERT Life Sciences)",
+            "icon": "🧬",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 5,
+            "chapters": [
+              "Unit 6: Reproduction (Flowering Plants, Human Reproduction, Reproductive Health)",
+              "Unit 7: Genetics and Evolution (Mendelian Inheritance, DNA Replication, Transcription, Translation, Evolution)",
+              "Unit 8: Biology in Human Welfare (Human Health and Diseases, Microbes in Human Welfare)",
+              "Unit 9: Biotechnology (Biotechnology Principles & Processes, Applications in Medicine & Agriculture)",
+              "Unit 10: Ecology and Environment (Organisms & Populations, Ecosystem, Biodiversity & Conservation)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Reproduction 16M, Genetics 20M, Welfare 12M, Biotech 12M, Ecology 10M)"
           }
-],
+        ],
         COMP_SCI: [
           {
-                    "id": "CBSE_TAM_12",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
-                              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
-                              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
-                              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
-                              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
-                              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+            "id": "CBSE_TAM_12",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
+              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
+              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
+              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
+              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
+              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
           },
           {
-                    "id": "CBSE_ENG_12",
-                    "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
-                              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
-                              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
-                              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
-                              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
-                              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
+            "id": "CBSE_ENG_12",
+            "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
+              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
+              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
+              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
+              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
+              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
           },
           {
-                    "id": "CBSE_MATH_12",
-                    "name": "Mathematics (Code 041 - NCERT Calculus & Vectors)",
-                    "icon": "📐",
-                    "weight": "STEM Core · 80 Theory + 20 Internal",
-                    "unitCount": 13,
-                    "chapters": [
-                              "Ch 1: Relations and Functions (Equivalence, Invertible Functions)",
-                              "Ch 2: Inverse Trigonometric Functions (Principal Values, Properties)",
-                              "Ch 3: Matrices (Operations, Symmetric/Skew-Symmetric, Inverse)",
-                              "Ch 4: Determinants (Minors, Cofactors, Adjoint, System of Equations)",
-                              "Ch 5: Continuity and Differentiability (Chain Rule, Logarithmic, Parametric)",
-                              "Ch 6: Applications of Derivatives (Rate of Change, Increasing/Decreasing, Maxima/Minima)",
-                              "Ch 7: Integrals (Indefinite & Definite Integrals, Substitution, By Parts)",
-                              "Ch 8: Applications of Integrals (Area under Curves, Circles, Parabolas)",
-                              "Ch 9: Differential Equations (Order & Degree, Variable Separable, Linear DE)",
-                              "Ch 10: Vector Algebra (Dot & Cross Product, Projection)",
-                              "Ch 11: Three-Dimensional Geometry (Direction Cosines, Lines & Planes in Space)",
-                              "Ch 12: Linear Programming (Mathematical Formulation, Graphical Method)",
-                              "Ch 13: Probability (Conditional Probability, Bayes' Theorem, Random Variables)"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Relations/Trig 8M, Algebra 10M, Calculus 35M, Vectors/3D 14M, LP 5M, Prob 8M)"
+            "id": "CBSE_MATH_12",
+            "name": "Mathematics (Code 041 - NCERT Calculus & Vectors)",
+            "icon": "📐",
+            "weight": "STEM Core · 80 Theory + 20 Internal",
+            "unitCount": 13,
+            "chapters": [
+              "Ch 1: Relations and Functions (Equivalence, Invertible Functions)",
+              "Ch 2: Inverse Trigonometric Functions (Principal Values, Properties)",
+              "Ch 3: Matrices (Operations, Symmetric/Skew-Symmetric, Inverse)",
+              "Ch 4: Determinants (Minors, Cofactors, Adjoint, System of Equations)",
+              "Ch 5: Continuity and Differentiability (Chain Rule, Logarithmic, Parametric)",
+              "Ch 6: Applications of Derivatives (Rate of Change, Increasing/Decreasing, Maxima/Minima)",
+              "Ch 7: Integrals (Indefinite & Definite Integrals, Substitution, By Parts)",
+              "Ch 8: Applications of Integrals (Area under Curves, Circles, Parabolas)",
+              "Ch 9: Differential Equations (Order & Degree, Variable Separable, Linear DE)",
+              "Ch 10: Vector Algebra (Dot & Cross Product, Projection)",
+              "Ch 11: Three-Dimensional Geometry (Direction Cosines, Lines & Planes in Space)",
+              "Ch 12: Linear Programming (Mathematical Formulation, Graphical Method)",
+              "Ch 13: Probability (Conditional Probability, Bayes' Theorem, Random Variables)"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Relations/Trig 8M, Algebra 10M, Calculus 35M, Vectors/3D 14M, LP 5M, Prob 8M)"
           },
           {
-                    "id": "CBSE_PHY_12",
-                    "name": "Physics (Code 042 - NCERT Board Blueprint)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
-                              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
-                              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
-                              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
-                              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
-                              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
-                              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
-                              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
-                              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
+            "id": "CBSE_PHY_12",
+            "name": "Physics (Code 042 - NCERT Board Blueprint)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
+              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
+              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
+              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
+              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
+              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
+              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
+              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
+              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
           },
           {
-                    "id": "CBSE_CHEM_12",
-                    "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
-                              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
-                              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
-                              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
-                              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
-                              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
-                              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
-                              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
-                              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
-                              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
+            "id": "CBSE_CHEM_12",
+            "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 10,
+            "chapters": [
+              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
+              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
+              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
+              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
+              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
+              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
+              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
+              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
+              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
+              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
           },
           {
-                    "id": "CBSE_CS_12",
-                    "name": "Computer Science (Code 083 - Python & SQL)",
-                    "icon": "💻",
-                    "weight": "CS Core · 70 Theory + 30 Practical",
-                    "unitCount": 3,
-                    "chapters": [
-                              "Unit 1: Computational Thinking and Programming - 2 (Python Functions, File Handling: Text, Binary, CSV, Data Structures: Stacks)",
-                              "Unit 2: Computer Networks (Transmission Media, Topologies, TCP/IP, DNS, Cyber Safety & Web Services)",
-                              "Unit 3: Database Management (Relational Model, SQL DDL & DML, Joins, Python-SQL Connectivity)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Python 40M, Networks 10M, DBMS 20M)"
+            "id": "CBSE_CS_12",
+            "name": "Computer Science (Code 083 - Python & SQL)",
+            "icon": "💻",
+            "weight": "CS Core · 70 Theory + 30 Practical",
+            "unitCount": 3,
+            "chapters": [
+              "Unit 1: Computational Thinking and Programming - 2 (Python Functions, File Handling: Text, Binary, CSV, Data Structures: Stacks)",
+              "Unit 2: Computer Networks (Transmission Media, Topologies, TCP/IP, DNS, Cyber Safety & Web Services)",
+              "Unit 3: Database Management (Relational Model, SQL DDL & DML, Joins, Python-SQL Connectivity)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Python 40M, Networks 10M, DBMS 20M)"
           }
-],
+        ],
         PURE_SCI: [
           {
-                    "id": "CBSE_TAM_12",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
-                              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
-                              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
-                              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
-                              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
-                              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+            "id": "CBSE_TAM_12",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
+              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
+              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
+              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
+              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
+              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
           },
           {
-                    "id": "CBSE_ENG_12",
-                    "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
-                              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
-                              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
-                              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
-                              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
-                              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
+            "id": "CBSE_ENG_12",
+            "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
+              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
+              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
+              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
+              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
+              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
           },
           {
-                    "id": "CBSE_PHY_12",
-                    "name": "Physics (Code 042 - NCERT Board Blueprint)",
-                    "icon": "⚡",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 9,
-                    "chapters": [
-                              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
-                              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
-                              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
-                              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
-                              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
-                              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
-                              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
-                              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
-                              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
+            "id": "CBSE_PHY_12",
+            "name": "Physics (Code 042 - NCERT Board Blueprint)",
+            "icon": "⚡",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 9,
+            "chapters": [
+              "Unit 1: Electrostatics (Gauss's Law, Dipole, Potential, Capacitors)",
+              "Unit 2: Current Electricity (Kirchhoff's Rules, Wheatstone, Potentiometer)",
+              "Unit 3: Magnetic Effects of Current & Magnetism (Biot-Savart, Ampere, Cyclotron)",
+              "Unit 4: Electromagnetic Induction & AC (Faraday's Law, Lenz's Law, LCR Series, Transformers)",
+              "Unit 5: Electromagnetic Waves (Displacement Current, Spectrum)",
+              "Unit 6: Optics (Ray Optics: Lens Maker, Prism; Wave Optics: Young's Double Slit, Diffraction)",
+              "Unit 7: Dual Nature of Radiation & Matter (Photoelectric Effect, de Broglie)",
+              "Unit 8: Atoms & Nuclei (Bohr Model, Mass Defect, Fission & Fusion)",
+              "Unit 9: Electronic Devices (Semiconductor Diodes, Rectifiers, Logic Gates)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Electrostatics/Current 16M, Magnetism/AC 17M, Optics 18M, Modern Physics 12M, Electronics 7M)"
           },
           {
-                    "id": "CBSE_CHEM_12",
-                    "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
-                    "icon": "🧪",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
-                              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
-                              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
-                              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
-                              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
-                              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
-                              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
-                              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
-                              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
-                              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
+            "id": "CBSE_CHEM_12",
+            "name": "Chemistry (Code 043 - NCERT Board Blueprint)",
+            "icon": "🧪",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 10,
+            "chapters": [
+              "Ch 1: Solutions (Raoult's Law, Colligative Properties, Van 't Hoff)",
+              "Ch 2: Electrochemistry (Nernst Equation, Kohlrausch Law, Fuel Cells)",
+              "Ch 3: Chemical Kinetics (Rate Law, Arrhenius Equation, First Order)",
+              "Ch 4: d- and f-Block Elements (Transition Metals, Lanthanoids)",
+              "Ch 5: Coordination Compounds (Werner, IUPAC, VBT, CFT, Isomerism)",
+              "Ch 6: Haloalkanes and Haloarenes (SN1 & SN2 Mechanisms)",
+              "Ch 7: Alcohols, Phenols and Ethers (Hydroboration, Kolbe, Reimer-Tiemann, Williamson)",
+              "Ch 8: Aldehydes, Ketones and Carboxylic Acids (Aldol Condensation, Cannizzaro)",
+              "Ch 9: Amines (Diazonium Salts, Gabriel Phthalimide, Hoffmann Bromamide)",
+              "Ch 10: Biomolecules (Carbohydrates, Amino Acids, Proteins, DNA/RNA)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Physical 23M, Inorganic 14M, Organic 33M)"
           },
           {
-                    "id": "CBSE_BIO_12",
-                    "name": "Biology (Code 044 - NCERT Life Sciences)",
-                    "icon": "🧬",
-                    "weight": "Core Science · 70 Theory + 30 Practical",
-                    "unitCount": 5,
-                    "chapters": [
-                              "Unit 6: Reproduction (Flowering Plants, Human Reproduction, Reproductive Health)",
-                              "Unit 7: Genetics and Evolution (Mendelian Inheritance, DNA Replication, Transcription, Translation, Evolution)",
-                              "Unit 8: Biology in Human Welfare (Human Health and Diseases, Microbes in Human Welfare)",
-                              "Unit 9: Biotechnology (Biotechnology Principles & Processes, Applications in Medicine & Agriculture)",
-                              "Unit 10: Ecology and Environment (Organisms & Populations, Ecosystem, Biodiversity & Conservation)"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (Reproduction 16M, Genetics 20M, Welfare 12M, Biotech 12M, Ecology 10M)"
+            "id": "CBSE_BIO_12",
+            "name": "Biology (Code 044 - NCERT Life Sciences)",
+            "icon": "🧬",
+            "weight": "Core Science · 70 Theory + 30 Practical",
+            "unitCount": 5,
+            "chapters": [
+              "Unit 6: Reproduction (Flowering Plants, Human Reproduction, Reproductive Health)",
+              "Unit 7: Genetics and Evolution (Mendelian Inheritance, DNA Replication, Transcription, Translation, Evolution)",
+              "Unit 8: Biology in Human Welfare (Human Health and Diseases, Microbes in Human Welfare)",
+              "Unit 9: Biotechnology (Biotechnology Principles & Processes, Applications in Medicine & Agriculture)",
+              "Unit 10: Ecology and Environment (Organisms & Populations, Ecosystem, Biodiversity & Conservation)"
+            ],
+            "blueprint": "70 Theory + 30 Practical (Reproduction 16M, Genetics 20M, Welfare 12M, Biotech 12M, Ecology 10M)"
           }
-],
+        ],
         COMMERCE: [
           {
-                    "id": "CBSE_TAM_12",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
-                              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
-                              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
-                              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
-                              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
-                              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+            "id": "CBSE_TAM_12",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
+              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
+              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
+              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
+              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
+              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
           },
           {
-                    "id": "CBSE_ENG_12",
-                    "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
-                              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
-                              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
-                              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
-                              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
-                              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
+            "id": "CBSE_ENG_12",
+            "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
+              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
+              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
+              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
+              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
+              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
           },
           {
-                    "id": "CBSE_ACC_12",
-                    "name": "Accountancy (Code 055 - Partnership & Companies)",
-                    "icon": "📊",
-                    "weight": "Commerce Core · 80 Theory + 20 Project",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Part A: Accounting for Partnership Firms (Fundamentals, Goodwill Valuation, Admission)",
-                              "Part A: Retirement and Death of a Partner, Dissolution of Partnership Firm",
-                              "Part A: Accounting for Companies (Issue of Shares, Forfeiture, Reissue, Debentures)",
-                              "Part B: Analysis of Financial Statements (Comparative Statements, Common Size)",
-                              "Part B: Accounting Ratios (Liquidity, Solvency, Turnover, Profitability)",
-                              "Part B: Cash Flow Statement (AS-3 Direct & Indirect Activities)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Partnership 36M, Companies 24M, Financial Analysis 20M)"
+            "id": "CBSE_ACC_12",
+            "name": "Accountancy (Code 055 - Partnership & Companies)",
+            "icon": "📊",
+            "weight": "Commerce Core · 80 Theory + 20 Project",
+            "unitCount": 6,
+            "chapters": [
+              "Part A: Accounting for Partnership Firms (Fundamentals, Goodwill Valuation, Admission)",
+              "Part A: Retirement and Death of a Partner, Dissolution of Partnership Firm",
+              "Part A: Accounting for Companies (Issue of Shares, Forfeiture, Reissue, Debentures)",
+              "Part B: Analysis of Financial Statements (Comparative Statements, Common Size)",
+              "Part B: Accounting Ratios (Liquidity, Solvency, Turnover, Profitability)",
+              "Part B: Cash Flow Statement (AS-3 Direct & Indirect Activities)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Partnership 36M, Companies 24M, Financial Analysis 20M)"
           },
           {
-                    "id": "CBSE_BST_12",
-                    "name": "Business Studies (Code 054 - Principles & Marketing)",
-                    "icon": "💼",
-                    "weight": "Commerce Core · 80 Theory + 20 Project",
-                    "unitCount": 12,
-                    "chapters": [
-                              "Principles of Management (Taylor's Scientific Management, Fayol's 14 Principles)",
-                              "Business Environment (LPG Policies, Demonetisation Impact)",
-                              "Functions of Management: Planning, Organising, Staffing, Directing, Controlling",
-                              "Business Finance: Financial Management, Capital Structure, Working Capital",
-                              "Financial Markets: Money Market, Capital Market, Stock Exchanges (NSE, BSE, SEBI)",
-                              "Marketing Management (Marketing Mix 4Ps, Channels of Distribution, Advertising)",
-                              "Consumer Protection Act 2019 (Three-Tier Redressal Agencies)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Principles 50M, Finance & Marketing 30M)"
+            "id": "CBSE_BST_12",
+            "name": "Business Studies (Code 054 - Principles & Marketing)",
+            "icon": "💼",
+            "weight": "Commerce Core · 80 Theory + 20 Project",
+            "unitCount": 12,
+            "chapters": [
+              "Principles of Management (Taylor's Scientific Management, Fayol's 14 Principles)",
+              "Business Environment (LPG Policies, Demonetisation Impact)",
+              "Functions of Management: Planning, Organising, Staffing, Directing, Controlling",
+              "Business Finance: Financial Management, Capital Structure, Working Capital",
+              "Financial Markets: Money Market, Capital Market, Stock Exchanges (NSE, BSE, SEBI)",
+              "Marketing Management (Marketing Mix 4Ps, Channels of Distribution, Advertising)",
+              "Consumer Protection Act 2019 (Three-Tier Redressal Agencies)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Principles 50M, Finance & Marketing 30M)"
           },
           {
-                    "id": "CBSE_ECO_12",
-                    "name": "Economics (Code 030 - Macro & Indian Economy)",
-                    "icon": "📈",
-                    "weight": "Social Sciences · 80 Theory + 20 Project",
-                    "unitCount": 8,
-                    "chapters": [
-                              "Part A: National Income and Related Aggregates (GDP, GNP, Measurement)",
-                              "Part A: Money and Banking (Money Creation, Functions of Central Bank/RBI)",
-                              "Part A: Determination of Income and Employment (Keynesian Multiplier, AD & AS)",
-                              "Part A: Government Budget and the Economy (Revenue, Deficits, Fiscal Policy)",
-                              "Part A: Balance of Payments and Foreign Exchange Rate",
-                              "Part B: Indian Economic Development (1947-1990 & Economic Reforms since 1991)",
-                              "Part B: Current Challenges: Human Capital, Rural Development, Employment, Environment",
-                              "Part B: Development Experience of India: A Comparison with Neighbours (China, Pakistan)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Macroeconomics 40M, Indian Economy 40M)"
+            "id": "CBSE_ECO_12",
+            "name": "Economics (Code 030 - Macro & Indian Economy)",
+            "icon": "📈",
+            "weight": "Social Sciences · 80 Theory + 20 Project",
+            "unitCount": 8,
+            "chapters": [
+              "Part A: National Income and Related Aggregates (GDP, GNP, Measurement)",
+              "Part A: Money and Banking (Money Creation, Functions of Central Bank/RBI)",
+              "Part A: Determination of Income and Employment (Keynesian Multiplier, AD & AS)",
+              "Part A: Government Budget and the Economy (Revenue, Deficits, Fiscal Policy)",
+              "Part A: Balance of Payments and Foreign Exchange Rate",
+              "Part B: Indian Economic Development (1947-1990 & Economic Reforms since 1991)",
+              "Part B: Current Challenges: Human Capital, Rural Development, Employment, Environment",
+              "Part B: Development Experience of India: A Comparison with Neighbours (China, Pakistan)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Macroeconomics 40M, Indian Economy 40M)"
           },
           {
-                    "id": "CBSE_APPMATH_12",
-                    "name": "Applied Mathematics (Code 241 - Financial Calculus)",
-                    "icon": "📉",
-                    "weight": "Applied STEM · 80 Theory + 20 Internal",
-                    "unitCount": 8,
-                    "chapters": [
-                              "Numbers, Quantification and Numerical Applications (Modulo Arithmetic)",
-                              "Algebra (Matrices, Determinants in Business)",
-                              "Calculus (Application of Derivatives in Marginal Analysis, Integration)",
-                              "Probability Distributions (Binomial, Poisson, Normal)",
-                              "Inferential Statistics (t-Test, Hypothesis Testing)",
-                              "Index Numbers and Time Series Analysis",
-                              "Financial Mathematics (Perpetuity, Sinking Funds, EMI, Depreciation)",
-                              "Linear Programming (Formulation & Feasible Region)"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal"
+            "id": "CBSE_APPMATH_12",
+            "name": "Applied Mathematics (Code 241 - Financial Calculus)",
+            "icon": "📉",
+            "weight": "Applied STEM · 80 Theory + 20 Internal",
+            "unitCount": 8,
+            "chapters": [
+              "Numbers, Quantification and Numerical Applications (Modulo Arithmetic)",
+              "Algebra (Matrices, Determinants in Business)",
+              "Calculus (Application of Derivatives in Marginal Analysis, Integration)",
+              "Probability Distributions (Binomial, Poisson, Normal)",
+              "Inferential Statistics (t-Test, Hypothesis Testing)",
+              "Index Numbers and Time Series Analysis",
+              "Financial Mathematics (Perpetuity, Sinking Funds, EMI, Depreciation)",
+              "Linear Programming (Formulation & Feasible Region)"
+            ],
+            "blueprint": "80 Theory + 20 Internal"
           }
-],
+        ],
         ARTS: [
           {
-                    "id": "CBSE_TAM_12",
-                    "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
-                    "icon": "📜",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
-                              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
-                              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
-                              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
-                              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
-                              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
+            "id": "CBSE_TAM_12",
+            "name": "தமிழ் (CBSE Senior Secondary Tamil - Code 106)",
+            "icon": "📜",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Unit 1: செய்யுள் — சிலப்பதிகாரம் (வழக்குரை காதை) & கம்பராமாயணம் (கும்பகருணன் வதைப்படலம்)",
+              "Unit 2: நீதி இலக்கியம் — திருக்குறள் (அறத்துப்பால் & பொருட்பால் அதிகாரங்கள்)",
+              "Unit 3: உரைநடை — தமிழ் இலக்கிய வரலாறு & அறிவியல் தமிழ் வளர்ச்சி",
+              "Unit 4: துணைப்பாடம் — புதினங்கள், வரலாற்றுச் சிறுகதைகள் & பாத்திரப் படைப்பு",
+              "Unit 5: இலக்கணம் — எழுத்து, சொல், தொடரமைப்பு, அணி இலக்கணம் (உவமை, உருவகம், வேற்றுமை)",
+              "Unit 6: படைப்பாற்றல் — இதழியல் கலை, பொதுக்கட்டுரை & ஆங்கில-தமிழ் மொழிபெயர்ப்பு"
+            ],
+            "blueprint": "80 Theory + 20 Internal (செய்யுள் 25M, உரைநடை 25M, இலக்கணம் 15M, படைப்பாற்றல் 15M)"
           },
           {
-                    "id": "CBSE_ENG_12",
-                    "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
-                    "icon": "📖",
-                    "weight": "Language Core · 80 Theory + 20 Internal",
-                    "unitCount": 6,
-                    "chapters": [
-                              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
-                              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
-                              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
-                              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
-                              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
-                              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
-                    ],
-                    "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
+            "id": "CBSE_ENG_12",
+            "name": "English Core (Code 301 - NCERT Flamingo & Vistas)",
+            "icon": "📖",
+            "weight": "Language Core · 80 Theory + 20 Internal",
+            "unitCount": 6,
+            "chapters": [
+              "Flamingo Prose: The Last Lesson, Lost Spring, Deep Water, The Rattrap, Indigo, Poets and Pancakes",
+              "Flamingo Poetry: My Mother at Sixty-Six, Keeping Quiet, A Thing of Beauty, A Roadside Stand, Aunt Jennifer's Tigers",
+              "Vistas Supplementary: The Third Level, The Tiger King, Journey to the End of the Earth, The Enemy, On the Face of It",
+              "Advanced Reading Skills: Unseen Case-Based Factual & Conceptual Passages",
+              "Creative Writing Skills: Notices, Formal/Informal Invitations & Replies",
+              "Letters & Articles: Letters to the Editor, Job Application with Bio-data, Article & Report Writing"
+            ],
+            "blueprint": "80 Theory + 20 Internal (Reading 22M, Writing 18M, Literature 40M)"
           },
           {
-                    "id": "CBSE_HIST_12",
-                    "name": "History (Code 027 - Themes in Indian History)",
-                    "icon": "🏛️",
-                    "weight": "Humanities · 80 Theory + 20 Project",
-                    "unitCount": 12,
-                    "chapters": [
-                              "Part I: Bricks, Beads and Bones (The Harappan Civilisation)",
-                              "Part I: Kings, Farmers and Towns (Early States & Economies 600 BCE - 600 CE)",
-                              "Part I: Kinship, Caste and Class (Early Societies & Mahabharata)",
-                              "Part I: Thinkers, Beliefs and Buildings (Cultural Developments, Sanchi Stupa)",
-                              "Part II: Through the Eyes of Travellers (Al-Biruni, Ibn Battuta, Bernier)",
-                              "Part II: Bhakti-Sufi Traditions (Religious Beliefs, Kabir, Mirabai)",
-                              "Part II: An Imperial Capital: Vijayanagara (Hampi Architecture, Administration)",
-                              "Part II: Peasants, Zamindars and the State (Agrarian Society, Ain-i-Akbari)",
-                              "Part III: Colonialism and the Countryside (Permanent Settlement, Santhals)",
-                              "Part III: Rebels and the Raj (1857 Revolt & Its Representations)",
-                              "Part III: Mahatma Gandhi and the Nationalist Movement (Civil Disobedience, Quit India)",
-                              "Part III: Framing the Constitution (Constituent Assembly Debates)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Part I 25M, Part II 25M, Part III 25M, Map 5M)"
+            "id": "CBSE_HIST_12",
+            "name": "History (Code 027 - Themes in Indian History)",
+            "icon": "🏛️",
+            "weight": "Humanities · 80 Theory + 20 Project",
+            "unitCount": 12,
+            "chapters": [
+              "Part I: Bricks, Beads and Bones (The Harappan Civilisation)",
+              "Part I: Kings, Farmers and Towns (Early States & Economies 600 BCE - 600 CE)",
+              "Part I: Kinship, Caste and Class (Early Societies & Mahabharata)",
+              "Part I: Thinkers, Beliefs and Buildings (Cultural Developments, Sanchi Stupa)",
+              "Part II: Through the Eyes of Travellers (Al-Biruni, Ibn Battuta, Bernier)",
+              "Part II: Bhakti-Sufi Traditions (Religious Beliefs, Kabir, Mirabai)",
+              "Part II: An Imperial Capital: Vijayanagara (Hampi Architecture, Administration)",
+              "Part II: Peasants, Zamindars and the State (Agrarian Society, Ain-i-Akbari)",
+              "Part III: Colonialism and the Countryside (Permanent Settlement, Santhals)",
+              "Part III: Rebels and the Raj (1857 Revolt & Its Representations)",
+              "Part III: Mahatma Gandhi and the Nationalist Movement (Civil Disobedience, Quit India)",
+              "Part III: Framing the Constitution (Constituent Assembly Debates)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Part I 25M, Part II 25M, Part III 25M, Map 5M)"
           },
           {
-                    "id": "CBSE_POL_12",
-                    "name": "Political Science (Code 028 - Global & Indian Politics)",
-                    "icon": "⚖️",
-                    "weight": "Humanities · 80 Theory + 20 Project",
-                    "unitCount": 14,
-                    "chapters": [
-                              "Part A: The End of Bipolarity (Disintegration of Soviet Union, Shock Therapy)",
-                              "Part A: Contemporary Centres of Power (European Union, ASEAN, China, BRICS)",
-                              "Part A: Contemporary South Asia (India-Pakistan, Bangladesh, SAARC)",
-                              "Part A: International Organisations (UN Reform, Security Council, IMF, WTO)",
-                              "Part A: Security in the Contemporary World (Traditional & Non-Traditional)",
-                              "Part A: Environment and Natural Resources & Globalisation",
-                              "Part B: Challenges of Nation-Building (Partition, Integration of Princely States)",
-                              "Part B: Era of One-Party Dominance & Politics of Planned Development (NITI Aayog)",
-                              "Part B: India's External Relations (Nehru Foreign Policy, Wars with China & Pak)",
-                              "Part B: Challenges to and Restoration of the Congress System & Crisis of Democratic Order",
-                              "Part B: Regional Aspirations & Recent Developments in Indian Politics (Coalition Era)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (World Politics 40M, Politics in India 40M)"
+            "id": "CBSE_POL_12",
+            "name": "Political Science (Code 028 - Global & Indian Politics)",
+            "icon": "⚖️",
+            "weight": "Humanities · 80 Theory + 20 Project",
+            "unitCount": 14,
+            "chapters": [
+              "Part A: The End of Bipolarity (Disintegration of Soviet Union, Shock Therapy)",
+              "Part A: Contemporary Centres of Power (European Union, ASEAN, China, BRICS)",
+              "Part A: Contemporary South Asia (India-Pakistan, Bangladesh, SAARC)",
+              "Part A: International Organisations (UN Reform, Security Council, IMF, WTO)",
+              "Part A: Security in the Contemporary World (Traditional & Non-Traditional)",
+              "Part A: Environment and Natural Resources & Globalisation",
+              "Part B: Challenges of Nation-Building (Partition, Integration of Princely States)",
+              "Part B: Era of One-Party Dominance & Politics of Planned Development (NITI Aayog)",
+              "Part B: India's External Relations (Nehru Foreign Policy, Wars with China & Pak)",
+              "Part B: Challenges to and Restoration of the Congress System & Crisis of Democratic Order",
+              "Part B: Regional Aspirations & Recent Developments in Indian Politics (Coalition Era)"
+            ],
+            "blueprint": "80 Theory + 20 Project (World Politics 40M, Politics in India 40M)"
           },
           {
-                    "id": "CBSE_GEO_12",
-                    "name": "Geography (Code 029 - Human & Economic Geography)",
-                    "icon": "🗺️",
-                    "weight": "Humanities · 70 Theory + 30 Practical",
-                    "unitCount": 10,
-                    "chapters": [
-                              "Human Geography: Nature and Scope (Determinism, Possibilism)",
-                              "The World Population: Distribution, Density, Growth, Demographic Transition",
-                              "Human Development: Concept, Indicators, HDI",
-                              "Primary, Secondary, Tertiary and Quaternary Activities",
-                              "Transport, Communication and International Trade",
-                              "India: Population, Migration, Human Settlements, Water Resources, Mineral & Energy",
-                              "India: Planning and Sustainable Development, Transport, International Trade"
-                    ],
-                    "blueprint": "70 Theory + 30 Practical (World 30M, India 30M, Maps 10M, Practical 30M)"
+            "id": "CBSE_GEO_12",
+            "name": "Geography (Code 029 - Human & Economic Geography)",
+            "icon": "🗺️",
+            "weight": "Humanities · 70 Theory + 30 Practical",
+            "unitCount": 10,
+            "chapters": [
+              "Human Geography: Nature and Scope (Determinism, Possibilism)",
+              "The World Population: Distribution, Density, Growth, Demographic Transition",
+              "Human Development: Concept, Indicators, HDI",
+              "Primary, Secondary, Tertiary and Quaternary Activities",
+              "Transport, Communication and International Trade",
+              "India: Population, Migration, Human Settlements, Water Resources, Mineral & Energy",
+              "India: Planning and Sustainable Development, Transport, International Trade"
+            ],
+            "blueprint": "70 Theory + 30 Practical (World 30M, India 30M, Maps 10M, Practical 30M)"
           },
           {
-                    "id": "CBSE_ECO_12",
-                    "name": "Economics (Code 030 - Macro & Indian Economy)",
-                    "icon": "📈",
-                    "weight": "Social Sciences · 80 Theory + 20 Project",
-                    "unitCount": 8,
-                    "chapters": [
-                              "Part A: National Income and Related Aggregates (GDP, GNP, Measurement)",
-                              "Part A: Money and Banking (Money Creation, Functions of Central Bank/RBI)",
-                              "Part A: Determination of Income and Employment (Keynesian Multiplier, AD & AS)",
-                              "Part A: Government Budget and the Economy (Revenue, Deficits, Fiscal Policy)",
-                              "Part A: Balance of Payments and Foreign Exchange Rate",
-                              "Part B: Indian Economic Development (1947-1990 & Economic Reforms since 1991)",
-                              "Part B: Current Challenges: Human Capital, Rural Development, Employment, Environment",
-                              "Part B: Development Experience of India: A Comparison with Neighbours (China, Pakistan)"
-                    ],
-                    "blueprint": "80 Theory + 20 Project (Macroeconomics 40M, Indian Economy 40M)"
+            "id": "CBSE_ECO_12",
+            "name": "Economics (Code 030 - Macro & Indian Economy)",
+            "icon": "📈",
+            "weight": "Social Sciences · 80 Theory + 20 Project",
+            "unitCount": 8,
+            "chapters": [
+              "Part A: National Income and Related Aggregates (GDP, GNP, Measurement)",
+              "Part A: Money and Banking (Money Creation, Functions of Central Bank/RBI)",
+              "Part A: Determination of Income and Employment (Keynesian Multiplier, AD & AS)",
+              "Part A: Government Budget and the Economy (Revenue, Deficits, Fiscal Policy)",
+              "Part A: Balance of Payments and Foreign Exchange Rate",
+              "Part B: Indian Economic Development (1947-1990 & Economic Reforms since 1991)",
+              "Part B: Current Challenges: Human Capital, Rural Development, Employment, Environment",
+              "Part B: Development Experience of India: A Comparison with Neighbours (China, Pakistan)"
+            ],
+            "blueprint": "80 Theory + 20 Project (Macroeconomics 40M, Indian Economy 40M)"
           }
-]
+        ]
       }
     },
     get groups() {
@@ -11147,14 +11147,14 @@ async function renderAcademicYouTubeRecommendations() {
       </div>
       <div class="academic-topic-pills-row">
         ${topicsList.map(t => {
-          const cleanT = cleanPillText(t);
-          const isActive = t === selectedTopic || cleanT === cleanPillText(selectedTopic);
-          return `
+    const cleanT = cleanPillText(t);
+    const isActive = t === selectedTopic || cleanT === cleanPillText(selectedTopic);
+    return `
             <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(cleanT).replace(/'/g, "\\'")}')">
               ${escapeHtml(cleanT)}
             </button>
           `;
-        }).join('')}
+  }).join('')}
       </div>
     </div>
 
@@ -11162,11 +11162,11 @@ async function renderAcademicYouTubeRecommendations() {
     ${matchingVideos.length > 0 ? `
       <div class="academic-yt-grid">
         ${matchingVideos.map(v => {
-          const vId = v.videoId || v.id;
-          const isRealId = Boolean(vId && /^[a-zA-Z0-9_-]{11}$/.test(vId));
-          const thumb = isRealId ? (v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`) : (v.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400");
-          const watchUrl = isRealId ? `https://www.youtube.com/watch?v=${vId}` : activeSearchUrl;
-          return `
+    const vId = v.videoId || v.id;
+    const isRealId = Boolean(vId && /^[a-zA-Z0-9_-]{11}$/.test(vId));
+    const thumb = isRealId ? (v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`) : (v.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400");
+    const watchUrl = isRealId ? `https://www.youtube.com/watch?v=${vId}` : activeSearchUrl;
+    return `
             <div class="academic-yt-card">
               <div class="academic-yt-thumb-wrap" style="position:relative; cursor:pointer;" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\\'")}')">
                 <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400'" />
@@ -11194,7 +11194,7 @@ async function renderAcademicYouTubeRecommendations() {
               </div>
             </div>
           `;
-        }).join('')}
+  }).join('')}
       </div>
     ` : videoApiError ? `
       <div class="academic-yt-empty-state" style="padding:32px 20px; text-align:center; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.25); border-radius:14px; margin-top:14px;">
@@ -11241,7 +11241,7 @@ async function renderAcademicYouTubeRecommendations() {
 }
 
 // Topic switcher inside recommendations banner
-window.selectAcademicRecommendationTopic = function(topic) {
+window.selectAcademicRecommendationTopic = function (topic) {
   if (academicIntelligenceState.selectedSubject) {
     academicIntelligenceState.selectedSubject.currentTopic = topic;
     renderAcademicYouTubeRecommendations();
@@ -11297,7 +11297,7 @@ function initCollegeAndSchoolHub() {
   const sectionAcademicCollege = document.getElementById("sectionAcademicCollege");
   const sectionAcademicMaterial = document.getElementById("sectionAcademicMaterial");
 
-  window.selectAcademicCategory = function(cat) {
+  window.selectAcademicCategory = function (cat) {
     const catTN = document.getElementById("academicCatTNState");
     const catCB = document.getElementById("academicCatCBSE");
     const catCol = document.getElementById("academicCatCollege");
@@ -11420,7 +11420,7 @@ function initCollegeAndSchoolHub() {
     });
   });
 
-  
+
   // Setup 10th Standard Board Selector Sub-Tabs
   document.querySelectorAll("#schoolBoardChipsRow .school-board-pill").forEach(pill => {
     pill.addEventListener("click", () => {
@@ -11630,7 +11630,7 @@ function renderSchoolCurriculum() {
 }
 
 // Select School Subject, toggle active ring-2 highlight & update dynamic YouTube recommendations
-window.selectSchoolSubject = function(subjectName, topicOverride) {
+window.selectSchoolSubject = function (subjectName, topicOverride) {
   const std = academicIntelligenceState.activeSchoolStandard || "STD_12";
   const grp = academicIntelligenceState.activeSchoolGroup || "BIO_MATHS";
   const activeBoard = academicIntelligenceState.activeBoard || "TN_STATE";
@@ -11707,7 +11707,7 @@ window.selectSchoolSubject = function(subjectName, topicOverride) {
 };
 
 // Ask doubts specifically for a subject
-window.askSchoolSubjectDoubt = function(subjectName) {
+window.askSchoolSubjectDoubt = function (subjectName) {
   const cleanName = subjectName.split("(")[0].trim();
   academicIntelligenceState.activeSubject = cleanName;
 
@@ -12026,7 +12026,7 @@ Content includes governing formulas, diagrams, and numerical exercise problems.`
 }
 
 // Copy chat response helper
-window.copyChatBubbleText = function(btn) {
+window.copyChatBubbleText = function (btn) {
   const bubble = btn.closest(".grounded-msg-bubble");
   if (!bubble) return;
   const textEl = bubble.querySelector(".grounded-bubble-text");
@@ -12488,7 +12488,7 @@ function initAuthGateway() {
   if (portal) {
     portal.classList.add("authenticated");
     portal.style.display = "none";
-    try { portal.remove(); } catch (_) {}
+    try { portal.remove(); } catch (_) { }
   }
 
   // 2. Ensure mock session and tokens are seeded
@@ -12508,7 +12508,7 @@ function initAuthGateway() {
     if (!localStorage.getItem("aura_student_profile")) {
       localStorage.setItem("aura_student_profile", JSON.stringify(DEFAULT_AURA_USER));
     }
-  } catch (_) {}
+  } catch (_) { }
 
   // 3. Set default mock user details in UI headers
   const profile = JSON.parse(localStorage.getItem("aura_student_profile") || JSON.stringify(DEFAULT_AURA_USER));
@@ -12586,7 +12586,7 @@ function inspectAndHandleProfileMemory(queryText, aiResponse) {
     const method = localStorage.getItem("aura_school_method") || profile.preferredMethod || "Step-by-step formula derivation with textbook proofs & clear bilingual explanations";
     const name = profile.name || "Student";
     const standard = profile.standard || "12th Standard";
-    
+
     return `
       <div class="profile-recall-card" style="margin-top:14px; padding:14px 16px; background:var(--bg-surface-elevated); border:1px solid var(--accent-gold); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.15);">
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
@@ -12656,10 +12656,10 @@ function inspectAndHandleProfileMemory(queryText, aiResponse) {
   return "";
 }
 
-window.grantProfileStorePermission = function(encodedQuery) {
+window.grantProfileStorePermission = function (encodedQuery) {
   const text = decodeURIComponent(encodedQuery);
   let profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
-  
+
   const nameMatch = text.match(/(?:name is|called)s+([a-zA-Zs]{2,20})/i);
   if (nameMatch) profile.name = nameMatch[1].trim();
 
@@ -12700,16 +12700,16 @@ topbarLatencyTicker();
   /* ---------------------------------------------------------
      1. CINEMATIC STARTUP SEQUENCE (XBOX INSPIRED)
   --------------------------------------------------------- */
-  const introOverlay = document.getElementById("auraStartupCinematic") || 
-                       document.getElementById("intro-overlay") || 
-                       document.querySelector(".intro-screen");
-  const introCanvas = document.getElementById("auraIntroCanvas") || 
-                      document.getElementById("startupCanvas");
-  const introSkipBtn = document.getElementById("btnDirectSkipIntro") || 
-                       document.getElementById("btnStartupSkip") || 
-                       document.getElementById("auraIntroSkipBtn");
-  const introMuteBtn = document.getElementById("btnStartupMute") || 
-                       document.getElementById("auraIntroMuteBtn");
+  const introOverlay = document.getElementById("auraStartupCinematic") ||
+    document.getElementById("intro-overlay") ||
+    document.querySelector(".intro-screen");
+  const introCanvas = document.getElementById("auraIntroCanvas") ||
+    document.getElementById("startupCanvas");
+  const introSkipBtn = document.getElementById("btnDirectSkipIntro") ||
+    document.getElementById("btnStartupSkip") ||
+    document.getElementById("auraIntroSkipBtn");
+  const introMuteBtn = document.getElementById("btnStartupMute") ||
+    document.getElementById("auraIntroMuteBtn");
   const introProgress = document.getElementById("auraIntroProgress");
 
   let introAnimId = null;
@@ -12721,14 +12721,14 @@ topbarLatencyTicker();
     if (isIntroFinished) return;
     isIntroFinished = true;
     if (rememberSkip) {
-      try { localStorage.setItem("aura_skip_intro", "true"); } catch (_) {}
+      try { localStorage.setItem("aura_skip_intro", "true"); } catch (_) { }
     }
     if (introAnimId) {
       cancelAnimationFrame(introAnimId);
       introAnimId = null;
     }
     if (introAudioCtx) {
-      try { introAudioCtx.close(); } catch (_) {}
+      try { introAudioCtx.close(); } catch (_) { }
       introAudioCtx = null;
     }
 
@@ -12776,7 +12776,7 @@ topbarLatencyTicker();
       if (!AudioContext) return;
       introAudioCtx = new AudioContext();
       if (introAudioCtx.state === "suspended") {
-        introAudioCtx.resume().catch(() => {});
+        introAudioCtx.resume().catch(() => { });
       }
 
       // Calm ambient chord: Emaj9 (E3, B3, E4, G#4, D#5)
@@ -12898,7 +12898,7 @@ topbarLatencyTicker();
           isIntroMuted = !isIntroMuted;
           introMuteBtn.textContent = isIntroMuted ? "🔇 Unmute" : "🔊 Mute";
           if (introAudioCtx && isIntroMuted) {
-            try { introAudioCtx.suspend(); } catch (_) {}
+            try { introAudioCtx.suspend(); } catch (_) { }
           }
         });
       }
@@ -12932,18 +12932,43 @@ topbarLatencyTicker();
   const jarvisResponseText = document.getElementById("jarvisResponseText");
   const jarvisLangBadge = document.getElementById("jarvisLangBadge");
   const jarvisHologramDisc = document.getElementById("jarvisHologramDisc");
+  const jarvisStateBadge = document.getElementById("jarvisStateBadge");
+  const jarvisContinuousToggleBtn = document.getElementById("jarvisContinuousToggleBtn");
+  const jarvisConfirmBanner = document.getElementById("jarvisConfirmBanner");
+  const jarvisConfirmTitle = document.getElementById("jarvisConfirmTitle");
+  const jarvisConfirmText = document.getElementById("jarvisConfirmText");
+  const jarvisBtnConfirmAction = document.getElementById("jarvisBtnConfirmAction");
+  const jarvisBtnCancelAction = document.getElementById("jarvisBtnCancelAction");
 
   let jarvisSpeechRec = null;
   let isJarvisListening = false;
   let isJarvisMuted = false;
+  let isContinuousListeningMode = true;
+  let pendingConfirmAction = null;
   let lastSpokenTelemetry = "";
   let jarvisSilenceTimer = null;
-  let currentVoiceLang = "en-IN"; // Supports English, Tamil (ta-IN), Tanglish
+  let currentVoiceLang = "en-IN"; // "en-IN" (Auto/Tanglish), "ta-IN" (Tamil), "en-US"
 
   function setJarvisVisualState(state, label) {
     if (jarvisStatusLine) jarvisStatusLine.textContent = label;
     if (jarvisHologramDisc) {
       jarvisHologramDisc.className = "jarvis-hologram-disc " + state;
+    }
+
+    if (jarvisStateBadge) {
+      jarvisStateBadge.className = "jarvis-state-badge badge-" + state;
+      const stateLabels = {
+        listening: "🎙️ LISTENING",
+        processing: "⚡ PROCESSING",
+        confirming: "⚠️ CONFIRM REQ",
+        executing: "⚙️ EXECUTING",
+        completed: "✅ COMPLETED",
+        failed: "❌ FAILED",
+        error: "❌ ERROR",
+        speaking: "🔊 SPEAKING",
+        idle: "READY"
+      };
+      jarvisStateBadge.textContent = stateLabels[state] || "READY";
     }
 
     // Sync floating Holographic Voice & Audio Waveform HUD
@@ -12965,10 +12990,16 @@ topbarLatencyTicker();
     if (text === lastSpokenTelemetry) return; // Prevent repeated double speaking
     lastSpokenTelemetry = text;
 
-    window.speechSynthesis.cancel();
+    try {
+      window.speechSynthesis.cancel();
+    } catch (_) { }
+
     const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1.05;
-    utter.pitch = 0.98;
+    utter.rate = 1.02;
+    utter.pitch = 1.0;
+
+    // Retain global reference on window to prevent Chrome garbage-collection speech cutoff
+    window.__auraActiveUtterance = utter;
 
     // Pick crisp English or regional voice if available
     const voices = window.speechSynthesis.getVoices();
@@ -12985,9 +13016,15 @@ topbarLatencyTicker();
       setJarvisVisualState("speaking", "AURA Intelligence Speaking...");
     };
     utter.onend = () => {
-      setJarvisVisualState("idle", "Neural Core Standing By · Ready");
+      window.__auraActiveUtterance = null;
+      if (isJarvisListening) {
+        setJarvisVisualState("listening", "Listening for Directive or Question...");
+      } else {
+        setJarvisVisualState("idle", "Neural Core Standing By · Ready");
+      }
     };
     utter.onerror = () => {
+      window.__auraActiveUtterance = null;
       setJarvisVisualState("idle", "Neural Core Standing By");
     };
 
@@ -13153,7 +13190,7 @@ topbarLatencyTicker();
           activeMediaStream.getTracks().forEach(track => {
             track.stop();
           });
-        } catch (_) {}
+        } catch (_) { }
         activeMediaStream = null;
       }
       if (videoFeed) videoFeed.srcObject = null;
@@ -13436,7 +13473,7 @@ topbarLatencyTicker();
               btnCopy.textContent = "✓ Copied!";
               setTimeout(() => { btnCopy.textContent = orig; }, 2000);
             })
-            .catch(() => {});
+            .catch(() => { });
         }
       };
     }
@@ -13519,7 +13556,7 @@ topbarLatencyTicker();
     // Camera Stream Initialization & Permission Handling
     function startCameraStream() {
       if (activeMediaStream) {
-        try { activeMediaStream.getTracks().forEach(t => t.stop()); } catch (_) {}
+        try { activeMediaStream.getTracks().forEach(t => t.stop()); } catch (_) { }
         activeMediaStream = null;
       }
 
@@ -13608,7 +13645,7 @@ topbarLatencyTicker();
     window.openAuraVisionDirect();
   }
 
-  window.openAuraVisionDirect = function(prompt, lang) {
+  window.openAuraVisionDirect = function (prompt, lang) {
     const isTa = lang === "tamil" || (prompt && /[\u0B80-\u0BFF]/.test(prompt));
     requestSensitiveDevicePermission(
       "AURA Vision Camera Permission",
@@ -13622,51 +13659,174 @@ topbarLatencyTicker();
   window.openCameraApplication = openCameraApplication;
   window.openVisionLab = window.openAuraVisionDirect;
 
-  // Structured Command Router: executes application features and clarifies hardware limits
+  // ── CONFIRMATION BANNER & MODAL HELPERS ──
+  function showJarvisConfirmation(title, message, onConfirm, onCancel) {
+    if (jarvisConfirmBanner) {
+      if (jarvisConfirmTitle) jarvisConfirmTitle.textContent = title;
+      if (jarvisConfirmText) jarvisConfirmText.textContent = message;
+      jarvisConfirmBanner.style.display = "flex";
+      try {
+        jarvisConfirmBanner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } catch (_) { }
+    }
+    setJarvisVisualState("confirming", title);
+
+    if (jarvisBtnConfirmAction) {
+      jarvisBtnConfirmAction.onclick = () => {
+        hideJarvisConfirmation();
+        if (typeof onConfirm === "function") onConfirm();
+      };
+    }
+    if (jarvisBtnCancelAction) {
+      jarvisBtnCancelAction.onclick = () => {
+        hideJarvisConfirmation();
+        if (typeof onCancel === "function") onCancel();
+      };
+    }
+  }
+
+  function hideJarvisConfirmation() {
+    pendingConfirmAction = null;
+    if (jarvisConfirmBanner) {
+      jarvisConfirmBanner.style.display = "none";
+    }
+    if (jarvisBtnConfirmAction) jarvisBtnConfirmAction.onclick = null;
+    if (jarvisBtnCancelAction) jarvisBtnCancelAction.onclick = null;
+  }
+
+  // ── STRUCTURED J.A.R.V.I.S. WINDOWS COMMAND ROUTER ──
   async function routeJarvisCommand(rawTranscript) {
     const raw = (rawTranscript || "").trim();
     if (!raw) return;
 
-    setJarvisVisualState("processing", "Processing Neural Command...");
-    const cmd = raw.toLowerCase().replace(/[.,?!;:_]/g, " ").replace(/\s+/g, " ").trim();
+    const lower = raw.toLowerCase().replace(/[.,?!;:_]/g, " ").replace(/\s+/g, " ").trim();
+    const isTa = /[\u0B80-\u0BFF]/.test(raw) || /(?:pannu|pannattuma|thira|moodu|niruthu|vekku|thedu|kandupidi|kaattu|soller|machan|thambi|aam|illai|vendaam)/i.test(lower);
 
     if (jarvisResponseBox && jarvisResponseText) {
       jarvisResponseBox.style.display = "block";
       jarvisResponseText.textContent = `Directive: "${raw}"`;
     }
 
-    // 1. Navigation Directives
-    if (cmd.includes("academic hub") || cmd.includes("school") || cmd.includes("college") || cmd.includes("syllabus")) {
+    // 0. Pending Confirmation Resolution Flow
+    if (pendingConfirmAction) {
+      const isAffirmative = /^(?:yes|confirm|ok|okay|proceed|do it|aam|sari|pannu|confirm pannu|senjidunga)$/i.test(lower) ||
+        lower.includes("confirm") || lower.includes("yes") || lower.includes("aam") || lower.includes("sari") || lower.includes("pannu");
+      const isNegative = /^(?:no|cancel|stop|abort|don't|dont|vendaam|niruthu|illai|vendaam)$/i.test(lower) ||
+        lower.includes("cancel") || lower.includes("no") || lower.includes("vendaam") || lower.includes("niruthu") || lower.includes("illai");
+
+      if (isAffirmative) {
+        const actionToExec = pendingConfirmAction;
+        hideJarvisConfirmation();
+        executeConfirmedWindowsAction(actionToExec);
+        return;
+      } else if (isNegative) {
+        hideJarvisConfirmation();
+        setJarvisVisualState("idle", "Action Cancelled");
+        const cancelMsg = isTa ? "செயல்பாடு ரத்து செய்யப்பட்டது." : "Action cancelled by user.";
+        jarvisResponseText.textContent = cancelMsg;
+        speakJarvisResponse(cancelMsg);
+        return;
+      }
+    }
+
+    // 1. Cancellation & Emergency Stop Directive
+    if (/^(?:cancel|stop|abort|don't do that|dont do that|vendaam|niruthu)$/i.test(lower) ||
+      lower.includes("cancel pannu") || lower.includes("dont do that") || lower.includes("don't do that") || lower.includes("niruthu")) {
+      hideJarvisConfirmation();
+      try {
+        await fetch("/api/system/execute", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "cancel" })
+        });
+      } catch (_) { }
+      window.speechSynthesis?.cancel();
+      setJarvisVisualState("idle", "Standing By");
+      const cancelMsg = isTa ? "அனைத்து செயல்பாடுகளும் ரத்து செய்யப்பட்டன." : "All pending operations cancelled.";
+      jarvisResponseText.textContent = cancelMsg;
+      speakJarvisResponse(cancelMsg);
+      return;
+    }
+
+    setJarvisVisualState("processing", "Interpreting Directive...");
+
+    // 2. Ask backend System Interpret for Windows Native Actions
+    try {
+      const interpRes = await fetch("/api/system/interpret", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript: raw, language: currentVoiceLang })
+      });
+      const interpData = await interpRes.json();
+
+      if (interpData.success && interpData.action && interpData.action !== "conversational_query") {
+        // Windows Native Action matched!
+        if (interpData.requiresConfirmation) {
+          pendingConfirmAction = { action: interpData.action, args: interpData.args || {} };
+          const confirmTitle = isTa ? "உறுதிப்படுத்தல் தேவை" : "Confirmation Required";
+          const confirmText = interpData.confirmationPrompt || interpData.spokenReply || "Do you confirm this Windows operation?";
+          showJarvisConfirmation(
+            confirmTitle,
+            confirmText,
+            () => executeConfirmedWindowsAction(pendingConfirmAction),
+            () => {
+              hideJarvisConfirmation();
+              setJarvisVisualState("idle", "Standing By");
+              const cMsg = isTa ? "செயல்பாடு ரத்து செய்யப்பட்டது." : "Cancelled.";
+              jarvisResponseText.textContent = cMsg;
+              speakJarvisResponse(cMsg);
+            }
+          );
+          if (interpData.spokenReply) {
+            speakJarvisResponse(interpData.spokenReply);
+          }
+          return;
+        }
+
+        // Safe action -> execute on Windows immediately!
+        executeConfirmedWindowsAction({
+          action: interpData.action,
+          args: interpData.args || {},
+          initialSpeech: interpData.spokenReply
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn("[SYSTEM INTERPRET NOTE]", err.message);
+    }
+
+    // 3. In-App Project Aura Navigation & Capabilities Directives
+    if (lower.includes("academic hub") || lower.includes("school") || lower.includes("college") || lower.includes("syllabus")) {
       switchView("academic-hub-workspace");
-      const confirmation = "Navigating to Academic Hub. Curriculum, school standards, and doubt solver ready.";
+      const confirmation = isTa ? "கல்வி மையம் திறக்கப்படுகிறது." : "Navigating to Academic Hub. Curriculum, school standards, and doubt solver ready.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    if (cmd.includes("notes") || cmd.includes("open my notes") || cmd.includes("study notes")) {
+    if (lower.includes("notes") || lower.includes("open my notes") || lower.includes("study notes")) {
       switchView("knowledge-vault");
       if (typeof window.switchKnowledgeVaultSubTab === "function") {
         window.switchKnowledgeVaultSubTab("memory");
       }
-      const confirmation = "Opening your personal notes and saved study directives.";
+      const confirmation = isTa ? "உங்கள் குறிப்புகள் திறக்கப்படுகிறது." : "Opening your personal notes and saved study directives.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    if (cmd.includes("quiz") || cmd.includes("start a quiz") || cmd.includes("test")) {
+    if (lower.includes("quiz") || lower.includes("start a quiz") || lower.includes("test")) {
       switchView("quiz-engine");
-      const confirmation = "Launching Quiz Engine. Active recall challenge ready.";
+      const confirmation = isTa ? "வினாடி வினா தொகுதி திறக்கப்படுகிறது." : "Launching Quiz Engine. Active recall challenge ready.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    if (cmd.includes("presentation") || cmd.includes("slide") || cmd.includes("deck")) {
-      if (cmd.includes("download")) {
+    if (lower.includes("presentation") || lower.includes("slide") || lower.includes("deck")) {
+      if (lower.includes("download")) {
         triggerPresentationExport("pptx");
-        const confirmation = "Triggered PowerPoint presentation download.";
+        const confirmation = isTa ? "விளக்கக்காட்சி பதிவிறக்கம் தொடங்குகிறது." : "Triggered PowerPoint presentation download.";
         jarvisResponseText.textContent = confirmation;
         speakJarvisResponse(confirmation);
         return;
@@ -13674,131 +13834,147 @@ topbarLatencyTicker();
       switchView("creation-lab");
       const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
       if (presTab) presTab.click();
-      const confirmation = "Opening Executive Presentation Studio.";
+      const confirmation = isTa ? "வடிவமைப்பு மையம் திறக்கப்படுகிறது." : "Opening Executive Presentation Studio.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    if (cmd.includes("vault") || cmd.includes("knowledge") || cmd.includes("documents")) {
+    if (lower.includes("vault") || lower.includes("knowledge") || lower.includes("documents")) {
       switchView("knowledge-vault");
-      const confirmation = "Opening Topic Knowledge Vault.";
+      const confirmation = isTa ? "அறிவு பெட்டகம் திறக்கப்படுகிறது." : "Opening Topic Knowledge Vault.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-
-
-    if (cmd.includes("dark theme") || cmd.includes("theme")) {
+    if (lower.includes("dark theme") || lower.includes("theme")) {
       const themeBtn = document.getElementById("themeToggleBtn");
       if (themeBtn) themeBtn.click();
-      const confirmation = "Toggled visual theme mode.";
+      const confirmation = isTa ? "தீம் மாற்றப்பட்டது." : "Toggled visual theme mode.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    if (cmd.includes("stop speaking") || cmd.includes("mute") || cmd.includes("be quiet") || cmd.includes("silent")) {
+    if (lower.includes("stop speaking") || lower.includes("mute") || lower.includes("be quiet") || lower.includes("silent")) {
       window.speechSynthesis?.cancel();
       setJarvisVisualState("idle", "Speech Silenced");
       jarvisResponseText.textContent = "Audio speech cancelled.";
       return;
     }
 
-    if (cmd.includes("go back") || cmd.includes("home") || cmd.includes("command center")) {
+    if (lower.includes("go back") || lower.includes("home") || lower.includes("command center")) {
       switchView("command-center");
-      const confirmation = "Returned to Command Center.";
+      const confirmation = isTa ? "கட்டளை மையத்திற்கு திரும்பியது." : "Returned to Command Center.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;
     }
 
-    // AURA Vision & Sensitive Camera Permission Flow
+    // AURA Vision & In-App Camera Trigger
     const isVisionQuery =
-      cmd.includes("what is this") ||
-      cmd.includes("identify this") ||
-      cmd.includes("identify object") ||
-      cmd.includes("what is this component") ||
-      cmd.includes("how does this device work") ||
-      cmd.includes("read the text in this image") ||
-      cmd.includes("read text") ||
-      cmd.includes("explain this in tamil") ||
-      cmd.includes("aura vision") ||
-      cmd.includes("look at this") ||
-      cmd.includes("scan this") ||
-      cmd.includes("camera") ||
-      cmd.includes("webcam") ||
-      cmd.includes("photo");
+      lower.includes("what is this") ||
+      lower.includes("identify this") ||
+      lower.includes("identify object") ||
+      lower.includes("what is this component") ||
+      lower.includes("how does this device work") ||
+      lower.includes("read the text in this image") ||
+      lower.includes("read text") ||
+      lower.includes("explain this in tamil") ||
+      lower.includes("aura vision") ||
+      lower.includes("look at this") ||
+      lower.includes("scan this");
 
     if (isVisionQuery) {
-      const isTamilIntent = cmd.includes("tamil") || /[\u0B80-\u0BFF]/.test(raw);
-      const isDirectOpen = cmd.includes("open camera") || (cmd.includes("camera") && !cmd.includes("what") && !cmd.includes("identify"));
-
-      let confirmationPrompt = isTamilIntent
+      const isTamilIntent = lower.includes("tamil") || /[\u0B80-\u0BFF]/.test(raw);
+      const confPrompt = isTamilIntent
         ? "இதை அடையாளம் காண நான் கேமராவை திறக்கலாமா?"
-        : (isDirectOpen ? "Would you like me to open the camera now?" : "I can help identify it. May I open the camera?");
+        : "I can help identify it. May I open the camera?";
 
-      jarvisResponseText.textContent = confirmationPrompt;
-      speakJarvisResponse(confirmationPrompt);
+      jarvisResponseText.textContent = confPrompt;
+      speakJarvisResponse(confPrompt);
 
       requestSensitiveDevicePermission(
         "AURA Vision Camera Permission",
-        isTamilIntent
-          ? "இதை அடையாளம் காண நான் கேமராவை திறக்கலாமா? அணுகல் இந்த அமர்வுக்கு மட்டுமே மட்டுப்படுத்தப்படும்."
-          : `${confirmationPrompt} Access will be isolated to this local session.`,
+        confPrompt,
         () => openAuraVisionModal(raw, isTamilIntent ? "tamil" : "english")
       );
       return;
     }
 
-    if (cmd.includes("find") && (cmd.includes("physics") || cmd.includes("notes") || cmd.includes("document"))) {
-      switchView("knowledge-vault");
-      const memSearch = document.getElementById("memorySearchInput");
-      if (memSearch) {
-        memSearch.value = "physics";
-        memSearch.dispatchEvent(new Event("input"));
-      }
-      const confirmation = "Opening Knowledge Vault and locating your physics notes and formulas.";
-      jarvisResponseText.textContent = confirmation;
-      speakJarvisResponse(confirmation);
-      return;
-    }
-
-    if (cmd.includes("youtube") || cmd.includes("lecture") || (cmd.includes("video") && cmd.includes("chapter"))) {
-      switchView("academic-hub-workspace");
-      renderAcademicYouTubeRecommendations();
-      const confirmation = "Searching verified educational YouTube lectures for this chapter.";
-      jarvisResponseText.textContent = confirmation;
-      speakJarvisResponse(confirmation);
-      return;
-    }
-
-    // 2. Hardware / OS Control Limitations Explained Realistically
-    if (cmd.includes("shutdown") || cmd.includes("lock computer") || cmd.includes("turn off") || cmd.includes("bluetooth")) {
-      const limitationExplanation = "Browser security sandbox prevents arbitrary operating system power or raw hardware alteration without an installed, authenticated native desktop companion. I have full command over all Project Aura web systems.";
-      jarvisResponseText.textContent = limitationExplanation;
-      speakJarvisResponse(limitationExplanation);
-      return;
-    }
-
-    // 3. Fallback: Ask Backend AI Knowledge Engine
+    // 4. Conversational Student Query Fallback via /api/ask
     try {
-      const res = await fetch(`${BACKEND_URL}/ask`, {
+      setJarvisVisualState("processing", "Consulting Neural Knowledge Base...");
+      const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: raw })
+        body: JSON.stringify({
+          prompt: `Give a clear, 1-2 sentence spoken reply to this student question: "${raw}". Answer naturally in ${isTa ? "Tamil or Tanglish" : "English"}. Do not use raw asterisks or markdown symbols.`
+        })
       });
       const data = await res.json();
-      const answer = data.answer || data.response || "Directive processed.";
-      jarvisResponseText.textContent = answer;
-      speakJarvisResponse(answer);
+      const answer = data.response || data.answer || "Directive processed.";
+      const cleanAnswer = answer.replace(/[*#`_~>\[\]]/g, " ").replace(/\s+/g, " ").trim();
+      jarvisResponseText.textContent = cleanAnswer;
+      setJarvisVisualState("completed", "Response Ready");
+      speakJarvisResponse(cleanAnswer);
     } catch (err) {
       jarvisResponseText.textContent = "Telemetry error: " + err.message;
       setJarvisVisualState("error", "Network / AI Gateway Disconnected");
     }
   }
 
+  // ── HELPER: EXECUTE CONFIRMED WINDOWS ACTION & REPORT REAL OS RESULT ──
+  async function executeConfirmedWindowsAction(item) {
+    if (!item || !item.action) return;
+    const { action, args = {}, initialSpeech = "" } = item;
+
+    setJarvisVisualState("executing", "Executing on Windows System...");
+    if (initialSpeech) {
+      speakJarvisResponse(initialSpeech);
+    }
+
+    // If action is camera, also trigger in-app AURA Vision option if desired
+    if (action === "launch_app" && args.app === "camera") {
+      // In addition to native camera launcher, open modal if user is on page
+      if (typeof window.openAuraVisionDirect === "function") {
+        setTimeout(() => {
+          try { window.openAuraVisionDirect(); } catch (_) { }
+        }, 500);
+      }
+    }
+
+    try {
+      const res = await fetch("/api/system/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, args, confirmed: true })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setJarvisVisualState("completed", "Action Completed Successfully");
+        const successMsg = data.messageTa && /[\u0B80-\u0BFF]/.test(lastSpokenTelemetry)
+          ? data.messageTa
+          : (data.message || "Windows action executed successfully.");
+        if (jarvisResponseText) jarvisResponseText.textContent = successMsg;
+        speakJarvisResponse(successMsg);
+      } else {
+        setJarvisVisualState("failed", "Action Failed on Windows");
+        const errMsg = data.error || data.message || "Failed to execute action on Windows.";
+        if (jarvisResponseText) jarvisResponseText.textContent = errMsg;
+        speakJarvisResponse(errMsg);
+      }
+    } catch (netErr) {
+      setJarvisVisualState("failed", "Companion Server Unreachable");
+      const errReport = "Could not communicate with local Windows Companion service: " + netErr.message;
+      if (jarvisResponseText) jarvisResponseText.textContent = errReport;
+      speakJarvisResponse(errReport);
+    }
+  }
+
+  // ── CONTINUOUS LISTENING ENGINE & PERMISSION RESILIENCE ──
   function startJarvisListening() {
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
@@ -13808,7 +13984,7 @@ topbarLatencyTicker();
 
     try {
       if (jarvisSpeechRec) {
-        try { jarvisSpeechRec.stop(); } catch (_) {}
+        try { jarvisSpeechRec.stop(); } catch (_) { }
       }
       jarvisSpeechRec = new SpeechRec();
       jarvisSpeechRec.continuous = true;
@@ -13836,27 +14012,48 @@ topbarLatencyTicker();
           jarvisTranscriptText.textContent = `"${text}"`;
           jarvisTranscriptText.style.color = "var(--text-primary)";
 
-          // Execute automatically after student pauses for 900ms
+          // Execute directive after student pauses for 850ms
           if (jarvisSilenceTimer) clearTimeout(jarvisSilenceTimer);
           jarvisSilenceTimer = setTimeout(() => {
-            if (text.length > 2) {
+            if (text.length > 1) {
               routeJarvisCommand(text);
             }
-          }, 900);
+          }, 850);
         }
       };
 
       jarvisSpeechRec.onerror = (err) => {
         console.warn("[JARVIS SPEECH ERROR]", err.error);
-        if (err.error === "not-allowed") {
+        if (err.error === "not-allowed" || err.error === "permission-denied") {
           setJarvisVisualState("error", "Microphone Permission Denied");
-          if (jarvisTranscriptText) jarvisTranscriptText.textContent = "Please grant microphone permission in your browser address bar.";
+          if (jarvisTranscriptText) {
+            jarvisTranscriptText.textContent = "Please grant microphone permission in your browser address bar.";
+          }
+          speakJarvisResponse("Microphone permission was denied. Please allow microphone access in your browser.");
+        } else if (err.error === "no-speech") {
+          // No speech detected; if continuous listening, remain standing by
+          if (isContinuousListeningMode && isJarvisListening && voiceOverlay && voiceOverlay.style.display !== "none") {
+            setJarvisVisualState("listening", "Listening for Directive...");
+          }
         } else {
           setJarvisVisualState("idle", "Standing By");
         }
       };
 
       jarvisSpeechRec.onend = () => {
+        // Continuous Listening Auto-Restart:
+        // If continuous listening is enabled and modal is open, seamlessly restart recognition!
+        if (isContinuousListeningMode && voiceOverlay && voiceOverlay.style.display !== "none") {
+          setTimeout(() => {
+            if (isContinuousListeningMode && voiceOverlay && voiceOverlay.style.display !== "none") {
+              try {
+                jarvisSpeechRec.start();
+              } catch (_) { }
+            }
+          }, 250);
+          return;
+        }
+
         isJarvisListening = false;
         if (jarvisMicToggleBtn) jarvisMicToggleBtn.textContent = "🎙️ Start Listening";
         if (voiceOverlay && voiceOverlay.style.display !== "none") {
@@ -13873,7 +14070,7 @@ topbarLatencyTicker();
   function stopJarvisListening() {
     isJarvisListening = false;
     if (jarvisSpeechRec) {
-      try { jarvisSpeechRec.stop(); } catch (_) {}
+      try { jarvisSpeechRec.stop(); } catch (_) { }
     }
     if (jarvisMicToggleBtn) jarvisMicToggleBtn.textContent = "🎙️ Start Listening";
     setJarvisVisualState("idle", "Neural Core Standing By");
@@ -13895,6 +14092,7 @@ topbarLatencyTicker();
   }
 
   function closeJarvisOverlay() {
+    hideJarvisConfirmation();
     if (voiceOverlay) {
       voiceOverlay.style.display = "none";
       voiceOverlay.setAttribute("aria-hidden", "true");
@@ -13928,8 +14126,45 @@ topbarLatencyTicker();
   if (jarvisMuteToggleBtn) {
     jarvisMuteToggleBtn.addEventListener("click", () => {
       isJarvisMuted = !isJarvisMuted;
-      jarvisMuteToggleBtn.textContent = isIntroMuted ? "🔇" : "🔊";
+      jarvisMuteToggleBtn.textContent = isJarvisMuted ? "🔇" : "🔊";
       if (isJarvisMuted) window.speechSynthesis?.cancel();
+    });
+  }
+
+  // Language Selector Switcher (AUTO EN/TA ➔ தமிழ் ➔ English)
+  if (jarvisLangBadge) {
+    jarvisLangBadge.addEventListener("click", () => {
+      if (currentVoiceLang === "en-IN") {
+        currentVoiceLang = "ta-IN";
+        jarvisLangBadge.textContent = "தமிழ் (ta-IN)";
+        speakJarvisResponse("மொழி தமிழாக மாற்றப்பட்டது.");
+      } else if (currentVoiceLang === "ta-IN") {
+        currentVoiceLang = "en-US";
+        jarvisLangBadge.textContent = "English (US)";
+        speakJarvisResponse("Language switched to English.");
+      } else {
+        currentVoiceLang = "en-IN";
+        jarvisLangBadge.textContent = "AUTO (EN/TA)";
+        speakJarvisResponse("Auto English and Tamil mode enabled.");
+      }
+      if (isJarvisListening) {
+        stopJarvisListening();
+        setTimeout(startJarvisListening, 200);
+      }
+    });
+  }
+
+  // Continuous Listening Mode Switcher
+  if (jarvisContinuousToggleBtn) {
+    jarvisContinuousToggleBtn.addEventListener("click", () => {
+      isContinuousListeningMode = !isContinuousListeningMode;
+      if (isContinuousListeningMode) {
+        jarvisContinuousToggleBtn.classList.add("active");
+        jarvisContinuousToggleBtn.textContent = "🔁 Continuous";
+      } else {
+        jarvisContinuousToggleBtn.classList.remove("active");
+        jarvisContinuousToggleBtn.textContent = "🎯 Single";
+      }
     });
   }
 
@@ -13959,21 +14194,21 @@ topbarLatencyTicker();
   }
 
   // Window Global Helpers for Modular Holographic Grid Widgets
-  window.openAcademicHub = function() {
+  window.openAcademicHub = function () {
     if (typeof switchView === "function") switchView("academic-hub-workspace");
     if (typeof playTactileSound === "function") playTactileSound("click");
   };
-  window.openKnowledgeVault = function() {
+  window.openKnowledgeVault = function () {
     if (typeof switchView === "function") switchView("knowledge-vault");
     if (typeof playTactileSound === "function") playTactileSound("click");
   };
-  window.openDeckStudio = function() {
+  window.openDeckStudio = function () {
     if (typeof switchView === "function") switchView("creation-lab");
     const presTab = document.querySelector('.creation-tab-btn[data-tab="presentation"]');
     if (presTab) presTab.click();
     if (typeof playTactileSound === "function") playTactileSound("click");
   };
-  window.openNeuralVoiceCore = function() {
+  window.openNeuralVoiceCore = function () {
     openJarvisOverlay();
     if (typeof playTactileSound === "function") playTactileSound("click");
   };
@@ -14022,7 +14257,7 @@ topbarLatencyTicker();
     const mathFormula = document.getElementById("agMathFormula");
     const mathExplanation = document.getElementById("agMathExplanation");
 
-    window.openAntigravityBriefing = function() {
+    window.openAntigravityBriefing = function () {
       if (agModal) {
         agModal.style.display = "flex";
         setTimeout(() => agModal.classList.add("open"), 10);
@@ -14030,7 +14265,7 @@ topbarLatencyTicker();
       }
     };
 
-    window.closeAntigravityBriefing = function() {
+    window.closeAntigravityBriefing = function () {
       if (agModal) {
         agModal.classList.remove("open");
         setTimeout(() => {

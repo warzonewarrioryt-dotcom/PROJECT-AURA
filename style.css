@@ -14335,6 +14335,166 @@ body[data-theme="obsidian-pure"] {
   border-color: #EF4444;
 }
 
+/* J.A.R.V.I.S. Advanced State Badges & Continuous Mode Controls */
+.jarvis-mode-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jarvis-mode-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+.jarvis-mode-pill.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.jarvis-state-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.jarvis-state-badge.badge-listening {
+  background: rgba(197, 160, 89, 0.16);
+  color: #C5A059;
+  border: 1px solid rgba(197, 160, 89, 0.4);
+  animation: pulseBadge 1.2s infinite ease-in-out;
+}
+.jarvis-state-badge.badge-processing {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.jarvis-state-badge.badge-confirming {
+  background: rgba(245, 158, 11, 0.2);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  animation: pulseBadge 0.9s infinite alternate;
+}
+.jarvis-state-badge.badge-executing {
+  background: rgba(168, 85, 247, 0.2);
+  color: #C084FC;
+  border: 1px solid rgba(168, 85, 247, 0.5);
+}
+.jarvis-state-badge.badge-completed {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+.jarvis-state-badge.badge-failed {
+  background: rgba(239, 68, 68, 0.18);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+@keyframes pulseBadge {
+  0% { transform: scale(0.98); opacity: 0.8; }
+  100% { transform: scale(1.02); opacity: 1; }
+}
+
+/* Sensitive Windows Action Confirmation Banner */
+.jarvis-confirm-banner {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(239, 68, 68, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: jarvisFadeIn 0.2s ease-out;
+}
+.jarvis-confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.jarvis-confirm-icon {
+  font-size: 20px;
+  color: #F59E0B;
+}
+.jarvis-confirm-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #F59E0B;
+  letter-spacing: 0.05em;
+}
+.jarvis-confirm-text {
+  font-size: 13px;
+  color: #F1F5F9;
+  line-height: 1.5;
+}
+.jarvis-confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.jarvis-btn-confirm {
+  flex: 1;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  background: #10B981;
+  color: #07080B;
+  font-weight: 700;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.jarvis-btn-confirm:hover {
+  background: #059669;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+}
+.jarvis-btn-cancel {
+  flex: 1;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.jarvis-btn-cancel:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #EF4444;
+}
+
+.jarvis-hologram-disc.confirming {
+  border-color: #F59E0B;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+}
+.jarvis-hologram-disc.executing {
+  border-color: #C084FC;
+  box-shadow: 0 0 25px rgba(192, 132, 252, 0.5);
+}
+.jarvis-hologram-disc.completed {
+  border-color: #10B981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+}
+.jarvis-hologram-disc.failed {
+  border-color: #EF4444;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
 
 
 /* =========================================================
