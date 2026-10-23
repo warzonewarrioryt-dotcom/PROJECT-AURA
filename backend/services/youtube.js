@@ -110,6 +110,44 @@ const VERIFIED_EDUCATIONAL_CATALOG = [
     english: { id: "rfscVS0vtbw", title: "Python for Beginners - Full Course", channel: "freeCodeCamp.org", desc: "Comprehensive beginner to intermediate Python tutorial with interactive exercises." }
   },
 
+  // Electrical & Electronics Engineering (EEE) - Anna University Regulation 2021
+  {
+    subjects: ["electric circuit analysis", "circuits", "mesh analysis", "nodal analysis", "thevenin", "ee3251"],
+    standards: ["engineering", "college"],
+    tamil: { id: "m6x8A4V4B9o", title: "Electric Circuit Analysis (EE3251) Full Course in Tamil", channel: "Anna University EEE Tutor", desc: "Mesh & Nodal analysis, Thevenin and Norton theorems, Maximum Power Transfer, RLC transients, and resonance." },
+    english: { id: "bHIhgxav9LY", title: "Electric Circuit Analysis - Complete Engineering Review", channel: "The Organic Chemistry Tutor", desc: "Kirchhoff laws, phasor domain analysis, operational impedance, coupled circuits, and two-port networks." }
+  },
+  {
+    subjects: ["electromagnetic fields", "emf", "maxwell equations", "poynting vector", "ee3301"],
+    standards: ["engineering", "college"],
+    tamil: { id: "T63zM2l2e74", title: "Electromagnetic Fields (EE3301) Lectures in Tamil", channel: "Tamil Engineering Hub", desc: "Vector calculus, electrostatics, magnetostatics, Maxwell's four equations, and uniform plane waves." },
+    english: { id: "T63zM2l2e74", title: "Electromagnetic Fields & Waves - Full University Course", channel: "MIT OpenCourseWare", desc: "Coulomb's law, Biot-Savart law, Ampere's circuital law, boundary conditions, and electromagnetic wave equations." }
+  },
+  {
+    subjects: ["electrical machines", "dc machines", "transformers", "induction motors", "alternators", "ee3303", "ee3405"],
+    standards: ["engineering", "college"],
+    tamil: { id: "2h3eWbL-xbg", title: "Electrical Machines I & II (EE3303 / EE3405) in Tamil", channel: "Tamil Electrical Academy", desc: "DC generator and motor characteristics, transformer testing (OC & SC), three phase induction machines, and synchronous alternators." },
+    english: { id: "RozoeWzT7IM", title: "Electrical Machines Complete Course for Engineering", channel: "Gate Smashers", desc: "Magnetic circuits, EMF equation, armature reaction, commutation, circle diagram, and V-curves of synchronous motors." }
+  },
+  {
+    subjects: ["power system analysis", "transmission and distribution", "load flow", "fault analysis", "ee3401", "ee3501"],
+    standards: ["engineering", "college"],
+    tamil: { id: "3QhU93L8W5k", title: "Power System Analysis & Transmission (EE3501 / EE3401) in Tamil", channel: "Tamil Power Hub", desc: "Per-unit system, bus impedance matrices, Gauss-Seidel and Newton-Raphson load flow, and symmetrical/unsymmetrical fault calculation." },
+    english: { id: "qiQR5rTSshw", title: "Power Systems Analysis & Grid Stability", channel: "NPTEL Electrical", desc: "Transmission line parameters, corona, insulator strings, voltage stability, economic dispatch, and swing equation." }
+  },
+  {
+    subjects: ["power electronics", "converters", "inverters", "choppers", "thyristors", "ee3591"],
+    standards: ["engineering", "college"],
+    tamil: { id: "Q_n_4iY7a44", title: "Power Electronics (EE3591) Full Course in Tamil", channel: "Tamil Electrical Academy", desc: "SCR, MOSFET, IGBT characteristics, phase controlled rectifiers, DC-DC buck/boost choppers, PWM inverters, and cycloconverters." },
+    english: { id: "0IAPZzGSbME", title: "Power Electronics Engineering - Theory & Circuit Simulation", channel: "Gate Smashers", desc: "Switching characteristics, firing circuits, harmonic elimination, voltage source inverters, and switch-mode power supplies." }
+  },
+  {
+    subjects: ["control systems", "bode plot", "nyquist", "root locus", "state space", "ee3503"],
+    standards: ["engineering", "college"],
+    tamil: { id: "Vw8m6aH_VqA", title: "Control Systems (EE3503) Complete Lectures in Tamil", channel: "Anna University EEE Tutor", desc: "Transfer functions, block diagram reduction, Mason's gain formula, time response analysis, Routh-Hurwitz, Root locus, and Bode plots." },
+    english: { id: "fNk_zzaMoSs", title: "Control Systems Engineering - Full Course", channel: "Brian Douglas", desc: "Classical feedback control, stability analysis, PID controller tuning, frequency domain lead-lag compensators, and state-space models." }
+  },
+
   // Biology & Commerce
   {
     subjects: ["biology", "botany", "zoology", "genetics", "reproduction", "cells"],

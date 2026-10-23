@@ -104,6 +104,22 @@ export interface Department {
   totalSemesters: number;
   /** Governing regulation (e.g., "Anna University Regulation 2021") */
   regulation: string;
+  /** Affiliated or degree-granting institution category */
+  institutionType?: string;
+  /** Primary university granting accreditation / degree */
+  university?: string;
+  /** Available regulation variants and verification details */
+  regulations?: {
+    code: string;
+    name: string;
+    isVerified: boolean;
+    source: string;
+    version: string;
+  }[];
+  /** Specific curriculum version code */
+  curriculumVersion?: string;
+  /** Official syllabus repository or gazette link */
+  sourceUrl?: string;
   /** Program overview and career pathways */
   overview: string;
   /** Total cumulative degree credits */

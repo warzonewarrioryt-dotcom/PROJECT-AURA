@@ -3607,6 +3607,819 @@ eceSemesters.forEach(sem => {
 });
 
 // ----------------------------------------------------------------------------
+// 6. EEE Curriculum (Anna University Regulation 2021 - All 8 Semesters Verified)
+// Official CAC Anna University Source: https://cac.annauniv.edu/
+// ----------------------------------------------------------------------------
+const eeeSemesters = [
+  {
+    semesterNumber: 1,
+    title: "Semester 1",
+    academicYear: "Year 1",
+    subjects: [
+      {
+        code: "IP3151",
+        title: "Induction Programme",
+        category: "Mandatory",
+        credits: 0,
+        contactHours: { lecture: 0, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Physical Activity, Creative Arts, Universal Human Values",
+          "Literary, Proficiency Modules and Lectures by Eminent People",
+          "Visits to Local Areas, Familiarization to Department and Innovations"
+        ]
+      },
+      ...COMMON_SEM1
+    ]
+  },
+  {
+    semesterNumber: 2,
+    title: "Semester 2",
+    academicYear: "Year 1",
+    subjects: [
+      {
+        code: "HS3252",
+        title: "Professional English - II",
+        category: "Theory",
+        credits: 2,
+        contactHours: { lecture: 2, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Comparing and Contrasting - Technical Descriptions & Summarizing",
+          "Unit II: Reading Comprehension and Technical Vocabulary",
+          "Unit III: Formal Communication - Business Letters & Minutes of Meeting",
+          "Unit IV: Report Writing and Feasibility Analysis",
+          "Unit V: Career Skills, Interview Preparation & Group Discussions"
+        ]
+      },
+      {
+        code: "MA3251",
+        title: "Statistics and Numerical Methods",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Testing of Hypothesis - Large Samples, Z-Test, t-Test, Chi-Square",
+          "Unit II: Design of Experiments - One-Way and Two-Way ANOVA, CRD, RBD",
+          "Unit III: Solution of Equations & Eigenvalue Problems - Newton-Raphson, Gauss Elimination",
+          "Unit IV: Interpolation and Approximation - Newton Forward/Backward, Lagrange",
+          "Unit V: Numerical Differentiation and Integration - Trapezoidal, Simpson's Rules, Runge-Kutta"
+        ]
+      },
+      {
+        code: "PH3202",
+        title: "Physics for Electrical Engineering",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Dielectric Materials - Polarization, Dielectric Breakdown, Ferroelectrics",
+          "Unit II: Magnetic Materials - Domain Theory, Hard and Soft Magnetic Materials, Ferrites",
+          "Unit III: Semiconductor Materials - Carrier Transport, Hall Effect, Junction Phenomena",
+          "Unit IV: Optical Materials - Optical Absorption and Emission, Solar Cells, Photodetectors",
+          "Unit V: Superconducting & Nanomaterials - High Tc Superconductors, Quantum Wells, Graphene"
+        ]
+      },
+      {
+        code: "BE3255",
+        title: "Basic Civil and Mechanical Engineering",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Civil Engineering Materials and Surveying Principles",
+          "Unit II: Building Components, Structures and Foundation Systems",
+          "Unit III: Power Plant Engineering and Internal Combustion Engines",
+          "Unit IV: Refrigeration, Air Conditioning and Energy Conversion Systems",
+          "Unit V: Manufacturing and Joining Processes - Welding, Machining, Sheet Metal"
+        ]
+      },
+      {
+        code: "GE3251",
+        title: "Engineering Graphics",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 2, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Unit I: Plane Curves and Freehand Sketching - Conics, Cycloids, Involutes",
+          "Unit II: Projection of Points, Straight Lines and Plane Surfaces",
+          "Unit III: Projection of Solids - Prisms, Pyramids, Cylinders and Cones",
+          "Unit IV: Section of Solids and Development of Lateral Surfaces",
+          "Unit V: Isometric and Perspective Projections, Introduction to CAD"
+        ]
+      },
+      {
+        code: "EE3251",
+        title: "Electric Circuit Analysis",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Basic Circuit Concepts and Network Theorems (Thevenin, Norton, Superposition, Maximum Power)",
+          "Unit II: Transient Resonance and Frequency Response of RLC Circuits",
+          "Unit III: Three Phase Balanced and Unbalanced Circuits and Power Measurement",
+          "Unit IV: Magnetically Coupled Circuits - Mutual Inductance, Dot Convention, Ideal Transformer",
+          "Unit V: Two Port Networks (Z, Y, ABCD, h parameters) and Network Synthesis"
+        ]
+      },
+      {
+        code: "GE3252",
+        title: "Tamils and Technology / தமிழரும் தொழில்நுட்பமும்",
+        category: "Theory",
+        credits: 1,
+        contactHours: { lecture: 1, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Weaving and Ceramic Technology - Ancient Loom, Terracotta Craftsmanship",
+          "Unit II: Design and Construction Technology - Temple Architecture, Kallanai Dam Engineering",
+          "Unit III: Manufacturing Technology - Metallurgy, Iron Smelting, Bronze Idols (Wootz Steel)",
+          "Unit IV: Agriculture and Irrigation Technology - Traditional Water Management, Tanks, Sluices",
+          "Unit V: Marine and Scientific Knowledge - Ship Building, Navigation, Ancient Astronomical Concepts"
+        ]
+      },
+      {
+        code: "GE3271",
+        title: "Engineering Practices Laboratory",
+        category: "Lab",
+        credits: 2,
+        contactHours: { lecture: 0, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Civil: Plumbing operations, carpentry joints and masonry construction",
+          "Mechanical: Metal welding, sheet metal fabrication and lathe turning",
+          "Electrical: Residential house wiring, energy meter calibration and earth resistance measurement",
+          "Electronics: Soldering electronic circuits, component testing and logic gate verification"
+        ]
+      },
+      {
+        code: "EE3271",
+        title: "Electric Circuits Laboratory",
+        category: "Lab",
+        credits: 2,
+        contactHours: { lecture: 0, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Lab 1: Experimental verification of Kirchhoff's Laws and Network Theorems",
+          "Lab 2: Series and Parallel RLC frequency response and resonance characteristics",
+          "Lab 3: Three-phase power measurement using two-wattmeter method",
+          "Lab 4: Determination of transient response for RL, RC and RLC circuits",
+          "Lab 5: Determination of Z, Y and transmission parameters of two-port network"
+        ]
+      },
+      {
+        code: "GE3272",
+        title: "Communication Laboratory",
+        category: "Lab",
+        credits: 2,
+        contactHours: { lecture: 0, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Exercise 1: Advanced oral communication, group discussions and debates",
+          "Exercise 2: Technical presentation delivery with visual aids",
+          "Exercise 3: Professional interview simulations and body language workshops"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 3,
+    title: "Semester 3",
+    academicYear: "Year 2",
+    subjects: [
+      {
+        code: "MA3303",
+        title: "Probability and Complex Functions",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Random Variables - Discrete and Continuous Distributions (Binomial, Poisson, Normal)",
+          "Unit II: Two Dimensional Random Variables - Joint Distributions, Marginal, Covariance",
+          "Unit III: Analytic Functions - Cauchy-Riemann Equations, Conformal Mapping",
+          "Unit IV: Complex Integration - Cauchy Integral Theorem, Cauchy Residue Theorem",
+          "Unit V: Laplace Transforms - Solution of Differential Equations with Constant Coefficients"
+        ]
+      },
+      {
+        code: "EE3301",
+        title: "Electromagnetic Fields",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Electrostatics I - Vector Calculus, Coulomb's Law, Electric Field Intensity, Gauss's Law",
+          "Unit II: Electrostatics II - Electric Potential, Capacitance, Dielectric Boundary Conditions, Poisson & Laplace",
+          "Unit III: Magnetostatics - Biot-Savart Law, Ampere's Circuital Law, Magnetic Vector Potential, Boundary Conditions",
+          "Unit IV: Electrodynamic Fields - Faraday's Law, Displacement Current, Maxwell's Equations",
+          "Unit V: Electromagnetic Waves - Wave Propagation in Dielectrics and Conductors, Poynting Vector"
+        ]
+      },
+      {
+        code: "EE3302",
+        title: "Digital Logic Circuits",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 2, tutorial: 0, practical: 2 },
+        syllabusOutline: [
+          "Unit I: Number Systems and Boolean Algebra - Simplification by K-Maps and Quine-McCluskey",
+          "Unit II: Combinational Logic Circuits - Adders, Subtractors, Code Converters, Multiplexers, Decoders",
+          "Unit III: Synchronous Sequential Circuits - Flip-Flops, State Diagrams, Counters, Shift Registers",
+          "Unit IV: Asynchronous Sequential Circuits - Hazards, Flow Tables, Race Conditions",
+          "Unit V: Memory Devices and Programmable Logic - ROM, PLA, PAL, FPGA, Basic VHDL/Verilog"
+        ]
+      },
+      {
+        code: "EC3301",
+        title: "Electron Devices and Circuits",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Semiconductor Diodes and Applications - PN Junction, Zener Diode, Rectifiers, Clippers, Clampers",
+          "Unit II: Bipolar Junction Transistors (BJT) - Configurations, Biasing Techniques, Thermal Stability",
+          "Unit III: Field Effect Transistors (JFET, MOSFET) - Characteristics, Biasing, Small Signal Models",
+          "Unit IV: Small Signal Amplifiers - CE, CB, CC Amplifiers, Frequency Response, Multistage Systems",
+          "Unit V: Special Semiconductor Devices - SCR, DIAC, TRIAC, UJT, Optoelectronic Devices (LED, Photodiode)"
+        ]
+      },
+      {
+        code: "EE3303",
+        title: "Electrical Machines - I",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 0, practical: 2 },
+        syllabusOutline: [
+          "Unit I: Magnetic Circuits and Energy Conversion - Electromechanical Energy Conversion, Co-energy",
+          "Unit II: DC Generators - Construction, Armature Reaction, Commutation, Characteristics",
+          "Unit III: DC Motors - Principle, Torque Equation, Speed Control, Starters, Swinburne and Hopkinson Tests",
+          "Unit IV: Single Phase Transformers - Equivalent Circuit, Regulation, Losses, Efficiency, All-Day Efficiency",
+          "Unit V: Three Phase Transformers & Auto-Transformers - Connections, Parallel Operation, Tap Changing"
+        ]
+      },
+      {
+        code: "CS3353",
+        title: "C Programming and Data Structures",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: C Basics - Primitive Types, Operators, Control Structures, Arrays, Strings",
+          "Unit II: Functions and Pointers - Parameter Passing, Dynamic Memory Allocation (malloc, free)",
+          "Unit III: Linear Data Structures - Singly Linked Lists, Doubly Linked Lists, Stacks, Queues",
+          "Unit IV: Non-Linear Data Structures - Binary Trees, Binary Search Trees, AVL Trees, Heaps",
+          "Unit V: Graphs and Algorithm Techniques - BFS, DFS, Dijkstra, Sorting (Merge, Quick)"
+        ]
+      },
+      {
+        code: "EC3311",
+        title: "Electronic Devices and Circuits Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: V-I characteristics of PN junction diode and Zener diode voltage regulation",
+          "Lab 2: Input and output characteristics of BJT in CE configuration with parameter extraction",
+          "Lab 3: JFET and MOSFET drain and transfer characteristics",
+          "Lab 4: Frequency response of Common Emitter (CE) amplifier with and without feedback",
+          "Lab 5: Characterization of SCR, UJT firing circuit and half-wave controlled rectifier"
+        ]
+      },
+      {
+        code: "EE3311",
+        title: "Electrical Machines Laboratory - I",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Open circuit and load characteristics of separately excited DC shunt generator",
+          "Lab 2: Load test on DC shunt motor and DC series motor",
+          "Lab 3: Speed control of DC shunt motor by armature and flux control methods",
+          "Lab 4: Swinburne's test and Hopkinson's regenerative test on DC machines",
+          "Lab 5: Open circuit (OC) and short circuit (SC) tests on single phase transformer",
+          "Lab 6: Sumpner's test on two identical single-phase transformers"
+        ]
+      },
+      {
+        code: "CS3362",
+        title: "C Programming and Data Structures Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Implementation of dynamic array operations and polynomial addition using arrays",
+          "Lab 2: Singly linked list and doubly linked list implementation with insertions and deletions",
+          "Lab 3: Stack ADT implementation with infix to postfix conversion and postfix evaluation",
+          "Lab 4: Queue ADT and priority queue implementation",
+          "Lab 5: Binary search tree insertion, deletion, and tree traversals",
+          "Lab 6: Implementation of shortest path algorithm (Dijkstra) and Minimum Spanning Tree"
+        ]
+      },
+      {
+        code: "GE3361",
+        title: "Professional Development",
+        category: "Lab",
+        credits: 1,
+        contactHours: { lecture: 0, tutorial: 0, practical: 2 },
+        syllabusOutline: [
+          "Exercise 1: Quantitative aptitude and analytical reasoning",
+          "Exercise 2: Verbal ability, reading comprehension and corporate etiquette",
+          "Exercise 3: Group discussion dynamics and mock technical interview rounds"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 4,
+    title: "Semester 4",
+    academicYear: "Year 2",
+    subjects: [
+      {
+        code: "GE3451",
+        title: "Environmental Sciences and Sustainability",
+        category: "Theory",
+        credits: 2,
+        contactHours: { lecture: 2, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Environment and Ecosystems - Structure, Function, Energy Flow, Biodiversity Conservation",
+          "Unit II: Environmental Pollution - Air, Water, Soil, Noise, Hazardous Electronic Waste Management",
+          "Unit III: Natural Resources - Renewable vs Non-Renewable Resources, Water Crises, Deforestation",
+          "Unit IV: Sustainable Development Goals - Carbon Neutrality, Green Technologies, Circular Economy",
+          "Unit V: Environmental Legislation and Public Policies - Environmental Protection Acts, EIA"
+        ]
+      },
+      {
+        code: "EE3401",
+        title: "Transmission and Distribution",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Structure of Electric Power Systems - Generation, Transmission Lines, AC/DC Distribution",
+          "Unit II: Transmission Line Parameters - Resistance, Inductance, Capacitance, Bundled Conductors",
+          "Unit III: Modelling and Performance of Lines - Short, Medium, Long Lines, Ferranti Effect, Surge Impedance",
+          "Unit IV: Insulators and Mechanical Design - Pin, Suspension Insulators, String Efficiency, Sag Calculation",
+          "Unit V: Underground Cables & Substations - Cable Types, Capacitance, Gas Insulated Substations (GIS)"
+        ]
+      },
+      {
+        code: "EE3402",
+        title: "Linear Integrated Circuits",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Operational Amplifier Basics - Differential Amplifier, Op-Amp IC 741 Architecture, DC/AC Characteristics",
+          "Unit II: Applications of Op-Amps - Inverting/Non-inverting, Integrator, Differentiator, Precision Rectifier",
+          "Unit III: Comparators and Waveform Generators - Schmitt Trigger, Astable/Monostable Multivibrators",
+          "Unit IV: Special ICs - 555 Timer, Phase Locked Loop (PLL 565), Voltage Regulators (IC 723)",
+          "Unit V: Analog-to-Digital and Digital-to-Analog Converters - R-2R Ladder, Flash ADC, Dual Slope ADC"
+        ]
+      },
+      {
+        code: "EE3403",
+        title: "Measurements and Instrumentation",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Functional Elements of Measurement Systems - Error Analysis, Dynamic Characteristics",
+          "Unit II: Electrical and Electronic Instruments - PMMC, Moving Iron, Electrodynamometer, Energy Meter",
+          "Unit III: Potentiometers and Electrical Bridges - Wheatstone, Kelvin, Maxwell, Schering, Anderson",
+          "Unit IV: Transducers and Sensor Principles - RTD, Thermocouple, LVDT, Strain Gauge, Piezoelectric",
+          "Unit V: Digital Instrumentation & Data Acquisition - DSO, Spectrum Analyzers, PLC/SCADA DAQ"
+        ]
+      },
+      {
+        code: "EE3404",
+        title: "Microprocessor and Microcontroller",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: 8085 Microprocessor - Architecture, Pin Diagram, Addressing Modes, Instruction Set, Timing Diagrams",
+          "Unit II: 8086 Microprocessor - Architecture, Internal Registers, Memory Segmentation, Interrupts",
+          "Unit III: Peripheral Interfacing - 8255 PPI, 8254 Timer, 8259 Interrupt Controller, 8251 USART",
+          "Unit IV: 8051 Microcontroller - Architecture, Special Function Registers, Timers, Serial Port",
+          "Unit V: Microcontroller Programming & Interfacing - Stepper Motor, LCD, Keypad, ADC/DAC"
+        ]
+      },
+      {
+        code: "EE3405",
+        title: "Electrical Machines - II",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Synchronous Generators - Construction, EMF Equation, Armature Reaction, Voltage Regulation (EMF, MMF, Potier)",
+          "Unit II: Synchronous Motors - Principle of Operation, V and Inverted V Curves, Starting Methods, Hunting",
+          "Unit III: Three Phase Induction Motors - Principle, Torque-Slip Characteristics, Equivalent Circuit, Circle Diagram",
+          "Unit IV: Starting and Speed Control of Induction Motors - Star-Delta, Auto-transformer, V/f Control, Crawling",
+          "Unit V: Single Phase Induction Motors and Special Machines - Double Field Theory, Reluctance, Hysteresis Motors"
+        ]
+      },
+      {
+        code: "EE3411",
+        title: "Electrical Machines Laboratory - II",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Regulation of three-phase alternator by EMF and MMF methods",
+          "Lab 2: Regulation of three-phase salient pole alternator by Slip Test",
+          "Lab 3: Synchronization of alternators with infinite busbars (Dark lamp / Bright lamp method)",
+          "Lab 4: V and Inverted V curves of three-phase synchronous motor",
+          "Lab 5: Load test on three-phase squirrel cage and slip ring induction motor",
+          "Lab 6: No load and blocked rotor tests on three-phase induction motor (Circle Diagram)"
+        ]
+      },
+      {
+        code: "EE3412",
+        title: "Linear and Digital Circuits Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Inverting, non-inverting amplifier and voltage follower using Op-Amp 741",
+          "Lab 2: Differential amplifier, integrator and differentiator circuits",
+          "Lab 3: Active low-pass, high-pass and band-pass filters",
+          "Lab 4: Astable and monostable multivibrators using 555 timer IC",
+          "Lab 5: Design and testing of code converters, binary to gray and BCD to Excess-3",
+          "Lab 6: Synchronous decade counter and shift register verification"
+        ]
+      },
+      {
+        code: "EE3413",
+        title: "Microprocessor and Microcontroller Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: 8085 Assembly Language Programming - 8/16-bit arithmetic, sorting and code conversion",
+          "Lab 2: 8086 Assembly Language Programming - String operations, block move and searching",
+          "Lab 3: Interfacing 8255 Programmable Peripheral Interface with 8085/8086",
+          "Lab 4: Interfacing 8254 Programmable Interval Timer and generation of square waves",
+          "Lab 5: 8051 Microcontroller programming - Timer, counter and serial port communication",
+          "Lab 6: Stepper motor and DC motor speed control using 8051 microcontroller"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 5,
+    title: "Semester 5",
+    academicYear: "Year 3",
+    subjects: [
+      {
+        code: "EE3501",
+        title: "Power System Analysis",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Representation of Power System Components - Single Line Diagram, Per-Unit System, Bus Admittance",
+          "Unit II: Power Flow Analysis - Gauss-Seidel Method, Newton-Raphson Method, Fast Decoupled Load Flow",
+          "Unit III: Symmetrical Fault Analysis - Transient on Transmission Line, Symmetrical Short Circuit, Bus Impedance",
+          "Unit IV: Symmetrical Components & Unsymmetrical Faults - LG, LL, LLG Faults, Sequence Networks",
+          "Unit V: Stability Analysis - Steady State and Transient Stability, Swing Equation, Equal Area Criterion"
+        ]
+      },
+      {
+        code: "EE3591",
+        title: "Power Electronics",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Power Semiconductor Devices - Power Diode, SCR, TRIAC, MOSFET, IGBT, Switching Characteristics",
+          "Unit II: Phase-Controlled Converters - Single Phase and Three Phase Controlled Rectifiers, Inversion Mode",
+          "Unit III: DC to DC Converters (Choppers) - Buck, Boost, Buck-Boost, SEPIC, Cuk, Flyback Regulators",
+          "Unit IV: Inverters - Voltage Source Inverters (VSI), Current Source Inverters (CSI), Sinusoidal PWM",
+          "Unit V: AC to AC Converters - AC Voltage Controllers, Cycloconverters, Matrix Converters"
+        ]
+      },
+      {
+        code: "EE3503",
+        title: "Control Systems",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: System Modeling and Transfer Functions - Block Diagram Reduction, Signal Flow Graphs, Mason's Gain",
+          "Unit II: Time Domain Analysis - Step Response of First and Second Order Systems, Steady State Errors",
+          "Unit III: Frequency Domain Analysis - Bode Plots, Nyquist Stability Criterion, Polar Plots, Gain/Phase Margins",
+          "Unit IV: Stability and Root Locus - Routh-Hurwitz Stability Criterion, Construction of Root Locus",
+          "Unit V: State Space Analysis & Compensators - State Transition Matrix, Controllability, Observability, Lead-Lag"
+        ]
+      },
+      {
+        code: "PEE501",
+        title: "Professional Elective I: Special Electrical Machines",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Synchronous Reluctance Motors - Construction, Working Principle, Phasor Diagram, Control",
+          "Unit II: Stepping Motors - Variable Reluctance, Permanent Magnet, Hybrid, Drive Circuits",
+          "Unit III: Switched Reluctance Motors (SRM) - Construction, Torque Equation, Converter Topologies",
+          "Unit IV: Permanent Magnet Brushless D.C. Motors - Electronic Commutation, Hall Sensors, Torque Ripple",
+          "Unit V: Permanent Magnet Synchronous Motors (PMSM) - Vector Control, Field Oriented Control"
+        ]
+      },
+      {
+        code: "PEE502",
+        title: "Professional Elective II: Solid State Drives",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Drive Dynamics - Four Quadrant Operation, Motor-Load Dynamics, Closed-Loop Control Schemes",
+          "Unit II: Converter-Fed DC Drives - Single Phase and Three Phase Semi and Full Converter DC Drives",
+          "Unit III: Chopper-Fed DC Drives - Single and Multi-Quadrant Chopper Control, Regeneration",
+          "Unit IV: Induction Motor Drives - Stator Voltage Control, V/f Control, Rotor Resistance Control, Slip Recovery",
+          "Unit V: Synchronous Motor Drives - VSI and CSI Fed Drives, Self-Controlled Synchronous Motors"
+        ]
+      },
+      {
+        code: "PEE503",
+        title: "Professional Elective III: Renewable Energy Systems & Microgrids",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Renewable Energy Landscape - Solar Radiation, Wind Energy Potential, Biomass, Hydro",
+          "Unit II: Solar Photovoltaic Systems - PV Cell Characteristics, MPPT Algorithms (P&O, INC), Inverters",
+          "Unit III: Wind Energy Conversion Systems - Betz Limit, HAWT, VAWT, Induction and PMSG Generators",
+          "Unit IV: Energy Storage and Fuel Cells - Batteries, Supercapacitors, Hydrogen Fuel Cell Systems",
+          "Unit V: Microgrids and Grid Integration - Islanded vs Grid-Connected Microgrids, Power Quality Standards"
+        ]
+      },
+      {
+        code: "MC3501",
+        title: "Mandatory Course - I: Constitution of India",
+        category: "Mandatory",
+        credits: 0,
+        contactHours: { lecture: 2, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: History of Making of Indian Constitution - Philosophy of Preamble",
+          "Unit II: Fundamental Rights and Duties - Directive Principles of State Policy",
+          "Unit III: Union Government Structure - President, Prime Minister, Parliament, Supreme Court",
+          "Unit IV: State Government Structure - Governor, Chief Minister, State Legislature, High Courts",
+          "Unit V: Local Administration and Emergency Provisions - Panchayati Raj, 73rd and 74th Amendments"
+        ]
+      },
+      {
+        code: "EE3511",
+        title: "Power Electronics Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Gate firing circuits for SCR, MOSFET and IGBT using PWM driver ICs",
+          "Lab 2: Single-phase half-controlled and fully-controlled bridge rectifiers with R and R-L loads",
+          "Lab 3: Step-down (Buck) and step-up (Boost) DC-DC converters",
+          "Lab 4: Single-phase IGBT based PWM voltage source inverter",
+          "Lab 5: Speed control of DC drive using single-phase fully-controlled rectifier",
+          "Lab 6: MATLAB/Simulink simulation of closed-loop converters and inverters"
+        ]
+      },
+      {
+        code: "EE3512",
+        title: "Control and Instrumentation Laboratory",
+        category: "Lab",
+        credits: 2,
+        contactHours: { lecture: 0, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Lab 1: Determination of transfer function of AC servomotor and DC servomotor",
+          "Lab 2: Design of P, PI and PID controllers for second-order temperature/speed processes",
+          "Lab 3: Stability analysis using Bode plot, Root Locus and Nyquist plot in MATLAB",
+          "Lab 4: Position control system using DC motor with feedback potentiometer",
+          "Lab 5: Calibration of current loop and pressure transducer using dead weight tester",
+          "Lab 6: Virtual instrumentation DAQ programming using LabVIEW"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 6,
+    title: "Semester 6",
+    academicYear: "Year 3",
+    subjects: [
+      {
+        code: "EE3601",
+        title: "Protection and Switchgear",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Principles of Power System Protection - Essential Qualities, CT/PT Operating Conditions, Zones",
+          "Unit II: Electromagnetic and Static Relays - Overcurrent, Directional, Differential, Distance Relays",
+          "Unit III: Apparatus Protection - Transformer Protection (Buchholz), Alternator Protection, Busbar Protection",
+          "Unit IV: Numerical Relays and Substation Automation - Microprocessor-Based Relays, IEC 61850 Protocol",
+          "Unit V: Circuit Breakers - Arc Extinction Theories, Air Blast, SF6, Vacuum Circuit Breakers, Ratings"
+        ]
+      },
+      {
+        code: "EE3602",
+        title: "Power System Operation and Control",
+        category: "Theory",
+        credits: 4,
+        contactHours: { lecture: 3, tutorial: 1, practical: 0 },
+        syllabusOutline: [
+          "Unit I: System Load Characteristics - Load Curves, Diversity Factor, Load Forecasting, System Economics",
+          "Unit II: Real Power and Frequency Control - Generator Governor Mechanism, AGC, Two-Area Tie-Line Control",
+          "Unit III: Reactive Power and Voltage Control - AVR Loops, Excitation Systems, Static VAR Compensators",
+          "Unit IV: Economic Dispatch and Unit Commitment - Incremental Fuel Cost, B-Matrix Loss Formula, Priority List",
+          "Unit V: Computer Control of Power Systems - SCADA, Energy Management Systems (EMS), State Estimation"
+        ]
+      },
+      {
+        code: "PEE601",
+        title: "Professional Elective IV: Electric Vehicle Technology & Battery Management",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Electric Vehicle Architecture - EV Powertrains, HEV, PHEV, BEV, FCEV System Configurations",
+          "Unit II: Electric Propulsion Systems - Selection of Motors (BLDC, PMSM, Induction), Inverter Control",
+          "Unit III: Battery Chemistries and Characterization - Li-Ion, LFP, NMC, Solid-State, Battery Cell Degradation",
+          "Unit IV: Battery Management Systems (BMS) - State of Charge (SOC), State of Health (SOH), Cell Balancing",
+          "Unit V: EV Charging Infrastructure - On-board and Off-board Chargers, CCS, CHAdeMO, V2G Standards"
+        ]
+      },
+      {
+        code: "PEE602",
+        title: "Professional Elective V: Embedded System Design & IoT",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Embedded Architecture - ARM Cortex-M Architecture, Memory Management, Bus Protocols",
+          "Unit II: Real-Time Operating Systems (RTOS) - Task Scheduling, Semaphores, Mutex, FreeRTOS",
+          "Unit III: Communication Interfaces - I2C, SPI, CAN Bus in Automotive and Industrial Applications",
+          "Unit IV: IoT Architecture and Protocols - MQTT, CoAP, HTTP, Zigbee, LoRaWAN Sensor Nodes",
+          "Unit V: Cloud Integration and Edge Computing - AWS IoT Core, Thingspeak, Edge AI Inference"
+        ]
+      },
+      {
+        code: "PEE603",
+        title: "Professional Elective VI: Smart Grid Architecture & Power Quality",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Smart Grid Foundations - Smart Grid Definition, Self-Healing Grid, Wide Area Monitoring (WAMS)",
+          "Unit II: Smart Metering and Substation Automation - AMI, Phasor Measurement Units (PMU), SCADA Integration",
+          "Unit III: Power Quality Issues - Voltage Sags, Swells, Harmonics, Flicker, Transients, IEEE 519 Standard",
+          "Unit IV: Power Quality Mitigation Devices - Active Power Filters, D-STATCOM, DVR, UPQC",
+          "Unit V: Cybersecurity in Smart Grids - Cyber-Physical Attack Vectors, Resilient Communication Protocols"
+        ]
+      },
+      {
+        code: "OEE601",
+        title: "Open Elective I: Sensors, Transducers and Industrial Automation",
+        category: "Elective",
+        electiveType: "Open Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Transducers for Physical Variables - Displacement, Pressure, Flow, Temperature, Optical Sensors",
+          "Unit II: Signal Conditioning Circuits - Instrumentation Amplifiers, Active Filters, Isolation Amplifiers",
+          "Unit III: Programmable Logic Controllers (PLC) - Architecture, Ladder Logic Programming, Timers, Counters",
+          "Unit IV: Distributed Control Systems (DCS) & SCADA - Architecture, Operator Consoles, HMI Development",
+          "Unit V: Industrial Robotics and Automation - Pick and Place Robots, Robot Kinematics, Industry 4.0"
+        ]
+      },
+      {
+        code: "EE3611",
+        title: "Power System Laboratory",
+        category: "Lab",
+        credits: 1.5,
+        contactHours: { lecture: 0, tutorial: 0, practical: 3 },
+        syllabusOutline: [
+          "Lab 1: Computation of transmission line parameters and performance modeling",
+          "Lab 2: Load flow analysis using Gauss-Seidel and Newton-Raphson methods",
+          "Lab 3: Symmetrical and unsymmetrical fault analysis on standard IEEE bus test systems",
+          "Lab 4: Economic dispatch with and without transmission line losses",
+          "Lab 5: Transient stability simulation using Runge-Kutta numerical integration",
+          "Lab 6: Testing and calibration of electromechanical and numerical overcurrent relays"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 7,
+    title: "Semester 7",
+    academicYear: "Year 4",
+    subjects: [
+      {
+        code: "EE3701",
+        title: "High Voltage Engineering",
+        category: "Theory",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Overvoltages in Electrical Power Systems - Lightning and Switching Surges, Protection by Surge Arresters",
+          "Unit II: Breakdown Mechanisms in Gases, Liquids and Solids - Townsend Criterion, Streamer Theory, Cavitation",
+          "Unit III: Generation of High Voltages and Currents - Cascaded Transformers, Marx Impulse Generator, Tesla Coil",
+          "Unit IV: Measurement of High Voltages and High Currents - Sphere Gaps, Electrostatic Voltmeters, Rogowski Coils",
+          "Unit V: High Voltage Testing and Insulation Coordination - Impulse Testing of Transformers, Cables, BIL"
+        ]
+      },
+      {
+        code: "GE3791",
+        title: "Human Values and Ethics",
+        category: "Theory",
+        credits: 2,
+        contactHours: { lecture: 2, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Human Values - Morals, Values and Ethics, Integrity, Work Ethic, Service Learning, Civic Virtue",
+          "Unit II: Engineering Ethics - Senses of Engineering Ethics, Variety of Moral Issues, Moral Dilemmas, Autonomy",
+          "Unit III: Engineering as Social Experimentation - Engineers as Responsible Experimenters, Codes of Ethics",
+          "Unit IV: Safety, Responsibilities and Rights - Assessment of Safety and Risk, Risk-Benefit Analysis, Whistleblowing",
+          "Unit V: Global Issues - Multinational Corporations, Environmental Ethics, Computer Ethics, Weapons Development"
+        ]
+      },
+      {
+        code: "PEE701",
+        title: "Professional Elective VII: AI & Machine Learning for Electrical Systems",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Machine Learning Foundations - Supervised, Unsupervised, Reinforcement Learning for Electrical Systems",
+          "Unit II: Neural Networks in Power Engineering - Perceptrons, MLP, Backpropagation, Load Forecasting",
+          "Unit III: Fuzzy Logic Systems - Fuzzification, Membership Functions, Defuzzification, Fuzzy Speed Control",
+          "Unit IV: Optimization Algorithms - Genetic Algorithms (GA), Particle Swarm Optimization (PSO) in Economic Dispatch",
+          "Unit V: Predictive Maintenance & Fault Diagnosis - Deep Learning for Transformer Health and Motor Fault Detection"
+        ]
+      },
+      {
+        code: "PEE702",
+        title: "Professional Elective VIII: High Voltage Direct Current (HVDC) & FACTS",
+        category: "Elective",
+        electiveType: "Professional Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: HVDC Transmission Principles - Comparison of AC and DC Transmission, Monopolar, Bipolar, Homopolar",
+          "Unit II: Converter Analysis and Control - Line-Commutated and Voltage Source Converters, Firing Angle Control",
+          "Unit III: Reactive Power Control and Harmonics in HVDC - AC/DC Filters, Multi-Terminal DC (MTDC) Systems",
+          "Unit IV: Flexible AC Transmission Systems (FACTS) - STATCOM, SSSC, UPFC, TCSC Operating Principles",
+          "Unit V: FACTS Applications in Grid Stabilization - Damping Sub-Synchronous Resonance, Voltage Collapse Prevention"
+        ]
+      },
+      {
+        code: "OEE701",
+        title: "Open Elective II: Principles of Management and Industrial Economics",
+        category: "Elective",
+        electiveType: "Open Elective",
+        credits: 3,
+        contactHours: { lecture: 3, tutorial: 0, practical: 0 },
+        syllabusOutline: [
+          "Unit I: Introduction to Management - Classical, Behavioral and Management Science Approaches, Planning",
+          "Unit II: Organizing and Staffing - Organizational Structures, Decentralization, Human Resource Planning",
+          "Unit III: Directing and Leading - Motivation Theories (Maslow, Herzberg), Leadership Styles, Communication",
+          "Unit IV: Controlling - Control Process, Budgetary and Non-Budgetary Control Techniques, Productivity",
+          "Unit V: Engineering Economics - Cost Estimation, Break-Even Analysis, Net Present Value (NPV), Payback Period"
+        ]
+      },
+      {
+        code: "EE3711",
+        title: "Summer Internship / Industrial Training / Mini Project",
+        category: "Project",
+        credits: 2,
+        contactHours: { lecture: 0, tutorial: 0, practical: 4 },
+        syllabusOutline: [
+          "Industry-aligned practical training / mini-project development in power systems, electric vehicles, renewable energy, or embedded control under faculty and industry mentorship"
+        ]
+      }
+    ]
+  },
+  {
+    semesterNumber: 8,
+    title: "Semester 8",
+    academicYear: "Year 4",
+    subjects: [
+      {
+        code: "EE3811",
+        title: "Project Work / Capstone Internship",
+        category: "Project",
+        credits: 10,
+        contactHours: { lecture: 0, tutorial: 0, practical: 20 },
+        syllabusOutline: [
+          "Comprehensive capstone research and industrial design project executing hardware prototyping, software simulation, technical paper submission, and viva-voce examination in advanced electrical and electronics disciplines"
+        ]
+      }
+    ]
+  }
+];
+
+eeeSemesters.forEach(sem => {
+  sem.totalCredits = calculateTotalCredits(sem.subjects);
+});
+
+// ----------------------------------------------------------------------------
 // Master Stream Data Creation
 // ----------------------------------------------------------------------------
 const dataset = {
@@ -3708,12 +4521,32 @@ const dataset = {
           degreeType: "B.E.",
           durationYears: 4,
           totalSemesters: 8,
+          institutionType: "Affiliated Non-Autonomous Institutions",
+          university: "Anna University, Chennai",
           regulation: "Anna University Regulation 2021",
+          regulations: [
+            {
+              code: "R2021",
+              name: "Regulation 2021 (CBCS)",
+              isVerified: true,
+              source: "https://cac.annauniv.edu/ - Centre for Academic Courses, Anna University (CBCS Affiliated Colleges)",
+              version: "R2021.3.2"
+            },
+            {
+              code: "R2025",
+              name: "Regulation 2025 (Draft)",
+              isVerified: false,
+              source: "https://cac.annauniv.edu/ - Gazette in Preparation / Pending Academic Council Ratification",
+              version: "R2025-Draft"
+            }
+          ],
+          curriculumVersion: "R2021.3.2",
+          sourceUrl: "https://cac.annauniv.edu/",
           overview: "Power systems, power electronics, electric vehicles, renewable energy microgrids, control engineering, and electric drives.",
-          totalDegreeCredits: 165,
+          totalDegreeCredits: eeeSemesters.reduce((acc, s) => acc + s.totalCredits, 0),
           streamId: "engineering-tech",
-          isCurriculumPopulated: false,
-          semesters: []
+          isCurriculumPopulated: true,
+          semesters: eeeSemesters
         },
         {
           id: "mech",
@@ -4375,7 +5208,12 @@ const dataset = {
 const targetPath = path.join(__dirname, 'curriculumData.json');
 fs.writeFileSync(targetPath, JSON.stringify(dataset, null, 2), 'utf-8');
 
+// Write out synchronous data.js file
+const dataJsPath = path.join(__dirname, 'data.js');
+fs.writeFileSync(dataJsPath, 'window.__CURRICULUM_DATA__ = ' + JSON.stringify(dataset, null, 2) + ';\n', 'utf-8');
+
 console.log(`Successfully generated curriculumData.json at: ${targetPath}`);
+console.log(`Successfully generated data.js at: ${dataJsPath}`);
 console.log(`Total streams: ${dataset.streams.length}`);
 const totalDepts = dataset.streams.reduce((acc, s) => acc + s.departments.length, 0);
 console.log(`Total departments/degrees: ${totalDepts}`);

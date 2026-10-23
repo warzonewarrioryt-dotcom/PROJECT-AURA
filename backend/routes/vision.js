@@ -20,7 +20,7 @@ router.get("/status", (req, res) => {
     success: true,
     system: "AURA Vision",
     configured: isReady,
-    activeModel: "meta/llama-3.2-11b-vision-instruct",
+    activeModel: "Google Gemini Vision (gemini-3.1-flash-lite)",
     capabilities: [
       "real_time_camera_capture",
       "file_upload_fallback",
@@ -63,6 +63,11 @@ router.post("/analyze", async (req, res) => {
       language: language || "english",
       conversationHistory: Array.isArray(conversationHistory) ? conversationHistory : []
     });
+
+    if (!result.success) {
+      const statusCode = result.errorCode === "MISSING_API_CONFIG" ? 503 : 502;
+      return res.status(statusCode).json(result);
+    }
 
     // Track analytics activity
     try {
@@ -113,6 +118,11 @@ router.post("/chat", async (req, res) => {
       conversationHistory: Array.isArray(conversationHistory) ? conversationHistory : [],
       language: language || "english"
     });
+
+    if (!result.success) {
+      const statusCode = result.errorCode === "MISSING_API_CONFIG" ? 503 : 502;
+      return res.status(statusCode).json(result);
+    }
 
     res.json(result);
   } catch (err) {

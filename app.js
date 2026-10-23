@@ -13117,11 +13117,14 @@ topbarLatencyTicker();
     const canvas = document.getElementById("cameraCaptureCanvas");
     const reticle = document.getElementById("visionTargetReticle");
     const placeholder = document.getElementById("cameraPlaceholderText");
+    const placeholderMsg = document.getElementById("cameraPlaceholderMessage");
     const btnClose = document.getElementById("btnCloseCameraModal");
     const btnCapture = document.getElementById("btnCapturePhoto");
     const btnRetake = document.getElementById("btnRetakePhoto");
     const btnUpload = document.getElementById("btnUploadVisionImage");
     const btnPlaceholderUpload = document.getElementById("btnPlaceholderUpload");
+    const btnActivateCameraDirect = document.getElementById("btnActivateCameraDirect");
+    const btnToggleCameraFeed = document.getElementById("btnToggleCameraFeed");
     const fileInput = document.getElementById("visionFileInput");
     const resultsContainer = document.getElementById("visionResultsContainer");
     const analysisOutput = document.getElementById("visionAnalysisOutput");
@@ -13165,34 +13168,59 @@ topbarLatencyTicker();
     }
 
     // Reset views
-    if (previewImg) previewImg.style.display = "none";
+    if (previewImg) {
+      previewImg.style.display = "none";
+      previewImg.src = "";
+    }
     if (videoFeed) videoFeed.style.display = "block";
     if (reticle) reticle.style.display = "flex";
     if (placeholder) placeholder.style.display = "none";
     if (btnRetake) btnRetake.style.display = "none";
-    if (btnCapture) btnCapture.style.display = "inline-flex";
+    if (btnCapture) {
+      btnCapture.style.display = "inline-flex";
+      btnCapture.disabled = false;
+    }
     if (resultsContainer) resultsContainer.style.display = "none";
     if (chatThread) chatThread.innerHTML = "";
     activeVisionImageBase64 = null;
     visionChatHistory = [];
 
-    // Stop and cleanup handler
+    // Stop and cleanup handler: completely releases camera and destroys in-memory image frames
     const stopCameraAndSession = () => {
       if (activeMediaStream) {
-        activeMediaStream.getTracks().forEach(track => track.stop());
+        try {
+          activeMediaStream.getTracks().forEach(track => {
+            track.stop();
+          });
+        } catch (_) {}
         activeMediaStream = null;
       }
       if (videoFeed) videoFeed.srcObject = null;
+      if (previewImg) {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+      }
+      activeVisionImageBase64 = null;
+      visionChatHistory = [];
       camModal.style.display = "none";
-      if (statusPill) statusPill.innerHTML = "<span>●</span> Session Closed";
+      if (statusPill) statusPill.innerHTML = "<span style='color:#94a3b8;'>●</span> Session Closed · Hardware Released";
       const msg = activeVisionLanguage === "tamil"
-        ? "கேமரா அமர்வு முடிக்கப்பட்டது."
-        : "Camera and visual recognition session terminated.";
+        ? "கேமரா அமர்வு முடிக்கப்பட்டது. படத் தரவுகள் பாதுகாப்பாக அழிக்கப்பட்டன."
+        : "Camera session closed and hardware released. Visual frames cleared.";
       if (jarvisResponseText) jarvisResponseText.textContent = msg;
       speakJarvisResponse(msg);
     };
 
     if (btnClose) btnClose.onclick = stopCameraAndSession;
+
+    // Listen for Escape key to close cleanly
+    const handleKeydown = (e) => {
+      if (e.key === "Escape" && camModal.style.display === "flex") {
+        stopCameraAndSession();
+        window.removeEventListener("keydown", handleKeydown);
+      }
+    };
+    window.addEventListener("keydown", handleKeydown);
 
     // Language Toggle handlers
     if (btnLangEn) {
@@ -13232,15 +13260,25 @@ topbarLatencyTicker();
       };
     });
 
-    // Core Analysis Trigger
+    // Core Analysis Trigger with authentic loading and error reporting
     const triggerVisionAnalysis = async () => {
       if (!activeVisionImageBase64) return;
       if (resultsContainer) resultsContainer.style.display = "block";
+      if (btnCapture) btnCapture.disabled = true;
+      if (btnUpload) btnUpload.disabled = true;
+
       if (analysisOutput) {
-        analysisOutput.innerHTML = `<div style="display:flex; align-items:center; gap:10px; color:#38bdf8;">
-          <span style="animation: auraPulse 1.2s infinite; font-size:18px;">⚡</span>
-          <span>${activeVisionLanguage === "tamil" ? "AURA விஷன் படத்தை பகுப்பாய்வு செய்கிறது..." : "AURA Vision analyzing object and telemetry..."}</span>
-        </div>`;
+        analysisOutput.innerHTML = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; text-align:center; gap:12px;">
+            <div style="width:36px; height:36px; border:3px solid rgba(56,189,248,0.2); border-top-color:#38bdf8; border-radius:50%; animation:auraPulse 1s infinite alternate, spin 0.8s linear infinite;"></div>
+            <div style="font-weight:700; color:#38bdf8; font-size:14px;">
+              ${activeVisionLanguage === "tamil" ? "AURA விஷன் படத்தை பகுப்பாய்வு செய்கிறது..." : "AURA Vision Analyzing Visual Telemetry..."}
+            </div>
+            <div style="font-size:12px; color:#94a3b8; max-width:460px; line-height:1.5;">
+              ${activeVisionLanguage === "tamil" ? "பொருளின் பெயர், பயன்பாடு, இயங்கும் முறை, முக்கிய பாகங்கள் மற்றும் தமிழ் விளக்கத்தை உருவாக்குகிறது..." : "Identifying object, evaluating likely purpose, inspecting visible components and generating explanation..."}
+            </div>
+          </div>
+        `;
       }
       resultsContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
@@ -13257,6 +13295,9 @@ topbarLatencyTicker();
         });
 
         const data = await res.json();
+        if (btnCapture) btnCapture.disabled = false;
+        if (btnUpload) btnUpload.disabled = false;
+
         if (data.success && data.analysis) {
           const rawText = data.analysis;
           if (analysisOutput) {
@@ -13267,7 +13308,7 @@ topbarLatencyTicker();
             }
           }
           if (providerBadge) {
-            providerBadge.textContent = data.provider || "Llama 3.2 Vision";
+            providerBadge.textContent = data.provider || "Google Gemini Vision";
           }
 
           visionChatHistory = [
@@ -13275,16 +13316,68 @@ topbarLatencyTicker();
             { role: "assistant", content: rawText }
           ];
 
-          // Speak summary aloud
+          // Speak concise summary aloud
           const cleanSpeech = rawText.replace(/[*#`_\[\]()]/g, " ").replace(/\s+/g, " ").slice(0, 320);
           if (jarvisResponseText) jarvisResponseText.textContent = cleanSpeech;
           speakJarvisResponse(cleanSpeech);
+        } else if (res.status === 503 || data.errorCode === "MISSING_API_CONFIG") {
+          // Clear Missing-API-Configuration state
+          if (analysisOutput) {
+            analysisOutput.innerHTML = `
+              <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.3); border-radius:12px; padding:18px; color:#fca5a5;">
+                <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; margin-bottom:8px;">
+                  <span>⚠️</span> Missing API Configuration
+                </div>
+                <p style="font-size:12px; line-height:1.6; margin:0 0 10px 0;">
+                  ${escapeHtml(data.error || "AURA Vision requires an active vision model key in backend/.env.")}
+                </p>
+                <div style="font-size:11px; color:#94a3b8; background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:8px;">
+                  Configure <code>GEMINI_API_KEY</code>, <code>NVIDIA_API_KEY</code>, or <code>OPENAI_API_KEY</code> to enable real-time visual AI recognition.
+                </div>
+              </div>
+            `;
+          }
         } else {
-          const errMsg = data.error || "Analysis failed.";
-          if (analysisOutput) analysisOutput.textContent = "Error: " + errMsg;
+          // Clear Request-Failure state
+          if (analysisOutput) {
+            analysisOutput.innerHTML = `
+              <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.3); border-radius:12px; padding:18px; color:#fca5a5;">
+                <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; margin-bottom:8px;">
+                  <span>❌</span> Visual Recognition Request Failed
+                </div>
+                <p style="font-size:12px; line-height:1.6; margin:0 0 12px 0;">
+                  ${escapeHtml(data.error || "Visual recognition service was unable to analyze this image frame.")}
+                </p>
+                <div style="display:flex; gap:8px;">
+                  <button type="button" class="btn-vault-action" id="btnRetryAnalysisAction" style="padding:6px 16px; font-size:12px;">🔄 Retry Analysis</button>
+                  <button type="button" class="btn-vault-action" id="btnUploadAltImage" style="padding:6px 16px; font-size:12px;">📁 Try Another Image</button>
+                </div>
+              </div>
+            `;
+            const retryBtn = analysisOutput.querySelector("#btnRetryAnalysisAction");
+            if (retryBtn) retryBtn.onclick = () => triggerVisionAnalysis();
+            const altBtn = analysisOutput.querySelector("#btnUploadAltImage");
+            if (altBtn) altBtn.onclick = () => { if (fileInput) fileInput.click(); };
+          }
         }
       } catch (err) {
-        if (analysisOutput) analysisOutput.textContent = "Telemetry error: " + err.message;
+        if (btnCapture) btnCapture.disabled = false;
+        if (btnUpload) btnUpload.disabled = false;
+        if (analysisOutput) {
+          analysisOutput.innerHTML = `
+            <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.3); border-radius:12px; padding:18px; color:#fca5a5;">
+              <div style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; margin-bottom:8px;">
+                <span>⚡</span> Network / Request Failure
+              </div>
+              <p style="font-size:12px; line-height:1.6; margin:0 0 12px 0;">
+                Failed to reach AURA Vision server: ${escapeHtml(err.message)}
+              </p>
+              <button type="button" class="btn-vault-action" id="btnNetworkRetry" style="padding:6px 16px; font-size:12px;">🔄 Retry Connection</button>
+            </div>
+          `;
+          const netRetryBtn = analysisOutput.querySelector("#btnNetworkRetry");
+          if (netRetryBtn) netRetryBtn.onclick = () => triggerVisionAnalysis();
+        }
       }
     };
 
@@ -13324,13 +13417,20 @@ topbarLatencyTicker();
     if (btnRetake) {
       btnRetake.onclick = () => {
         activeVisionImageBase64 = null;
-        if (previewImg) previewImg.style.display = "none";
-        if (videoFeed) videoFeed.style.display = "block";
-        if (reticle) reticle.style.display = "flex";
+        if (previewImg) {
+          previewImg.src = "";
+          previewImg.style.display = "none";
+        }
+        if (videoFeed && activeMediaStream) {
+          videoFeed.style.display = "block";
+          if (reticle) reticle.style.display = "flex";
+        } else {
+          startCameraStream();
+        }
         btnRetake.style.display = "none";
         if (resultsContainer) resultsContainer.style.display = "none";
         if (chatThread) chatThread.innerHTML = "";
-        if (statusPill) statusPill.innerHTML = "<span>●</span> Live Camera Viewfinder";
+        if (statusPill) statusPill.innerHTML = "<span style='color:#10b981;'>●</span> Live Camera Viewfinder";
       };
     }
 
@@ -13361,7 +13461,7 @@ topbarLatencyTicker();
           if (reticle) reticle.style.display = "none";
           if (placeholder) placeholder.style.display = "none";
           if (btnRetake) btnRetake.style.display = "inline-flex";
-          if (statusPill) statusPill.innerHTML = "<span>●</span> Image Loaded · Analyzing";
+          if (statusPill) statusPill.innerHTML = "<span style='color:#38bdf8;'>●</span> Image File Loaded · Analyzing";
 
           triggerVisionAnalysis();
         };
@@ -13459,67 +13559,111 @@ topbarLatencyTicker();
       };
     }
 
-    // Camera Stream Initialization
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false
-      })
-        .then(stream => {
-          activeMediaStream = stream;
-          videoFeed.srcObject = stream;
-          videoFeed.style.display = "block";
-          if (placeholder) placeholder.style.display = "none";
-          if (statusPill) statusPill.innerHTML = "<span>●</span> Live Camera Viewfinder";
-          const readyMsg = activeVisionLanguage === "tamil"
-            ? "கேமரா தயாராக உள்ளது. பொருளை Reticle உள்ளே வைத்து Capture அழுத்தவும்."
-            : "Camera ready. Frame the object within the reticle and click Capture.";
-          if (jarvisResponseText) jarvisResponseText.textContent = readyMsg;
-          speakJarvisResponse(readyMsg);
+    // Camera Stream Initialization & Permission Handling
+    function startCameraStream() {
+      if (activeMediaStream) {
+        try { activeMediaStream.getTracks().forEach(t => t.stop()); } catch (_) {}
+        activeMediaStream = null;
+      }
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
         })
-        .catch(err => {
-          videoFeed.style.display = "none";
-          if (reticle) reticle.style.display = "none";
-          if (placeholder) {
-            placeholder.style.display = "block";
-            placeholder.innerHTML = `<div style="font-size:32px; margin-bottom:10px;">📷</div>
-              <p style="margin:0 0 12px 0;">Camera access denied (${err.message}). You can upload an image file from your device instead.</p>
-              <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>`;
-            const newUploadBtn = placeholder.querySelector("#btnPlaceholderUpload");
-            if (newUploadBtn) newUploadBtn.onclick = openFilePicker;
+          .then(stream => {
+            activeMediaStream = stream;
+            videoFeed.srcObject = stream;
+            videoFeed.style.display = "block";
+            if (placeholder) placeholder.style.display = "none";
+            if (reticle) reticle.style.display = "flex";
+            if (statusPill) statusPill.innerHTML = "<span style='color:#10b981;'>●</span> Live Camera Viewfinder";
+            const readyMsg = activeVisionLanguage === "tamil"
+              ? "கேமரா தயாராக உள்ளது. பொருளை Reticle உள்ளே வைத்து Capture அழுத்தவும்."
+              : "Camera active. Frame the object and click Capture.";
+            if (jarvisResponseText) jarvisResponseText.textContent = readyMsg;
+            speakJarvisResponse(readyMsg);
+          })
+          .catch(err => {
+            videoFeed.style.display = "none";
+            if (reticle) reticle.style.display = "none";
+            if (placeholder) {
+              placeholder.style.display = "block";
+              if (placeholderMsg) {
+                placeholderMsg.textContent = `Camera access was not granted (${err.name || "Permission Denied"}: ${err.message}). You can directly upload an image file from your device instead.`;
+              }
+            }
+            if (statusPill) statusPill.innerHTML = "<span style='color:#ef4444;'>●</span> Camera Denied · Upload Active";
+            const errMsg = activeVisionLanguage === "tamil"
+              ? "கேமரா அனுமதி மறுக்கப்பட்டது. ஒரு புகைப்படத்தை பதிவேற்றி பகுப்பாய்வு செய்யலாம்."
+              : "Camera access was denied. You can upload an image file instead to identify it.";
+            if (jarvisResponseText) jarvisResponseText.textContent = errMsg;
+            speakJarvisResponse(errMsg);
+          });
+      } else {
+        videoFeed.style.display = "none";
+        if (placeholder) {
+          placeholder.style.display = "block";
+          if (placeholderMsg) {
+            placeholderMsg.textContent = "Camera API is not supported in this browser environment. Please upload an image file instead.";
           }
-          if (statusPill) statusPill.innerHTML = "<span>●</span> Camera Denied · Upload Active";
-          const errMsg = activeVisionLanguage === "tamil"
-            ? "கேமரா அணுகல் மறுக்கப்பட்டது. நீங்கள் ஒரு புகைப்படத்தை பதிவேற்றி பகுப்பாய்வு செய்யலாம்."
-            : "Camera access was denied. You can upload an image file instead to analyze it.";
-          if (jarvisResponseText) jarvisResponseText.textContent = errMsg;
-          speakJarvisResponse(errMsg);
-        });
-    } else {
-      if (placeholder) {
-        placeholder.style.display = "block";
-        placeholder.innerHTML = `<div style="font-size:32px; margin-bottom:10px;">📷</div>
-          <p style="margin:0 0 12px 0;">Camera API not supported in this browser. Please upload an image file instead.</p>
-          <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>`;
-        const newUploadBtn = placeholder.querySelector("#btnPlaceholderUpload");
-        if (newUploadBtn) newUploadBtn.onclick = openFilePicker;
+        }
+        if (statusPill) statusPill.innerHTML = "<span style='color:#f59e0b;'>●</span> No Camera API · Upload Active";
       }
     }
+
+    if (btnActivateCameraDirect) {
+      btnActivateCameraDirect.onclick = () => {
+        requestSensitiveDevicePermission(
+          "AURA Vision Camera Permission",
+          "Would you like me to activate the camera now? Access is strictly isolated to this local session.",
+          startCameraStream
+        );
+      };
+    }
+
+    if (btnToggleCameraFeed) {
+      btnToggleCameraFeed.onclick = () => {
+        if (activeMediaStream) {
+          // Pause/stop stream
+          activeMediaStream.getTracks().forEach(t => t.stop());
+          activeMediaStream = null;
+          videoFeed.srcObject = null;
+          videoFeed.style.display = "none";
+          if (reticle) reticle.style.display = "none";
+          if (placeholder) placeholder.style.display = "block";
+          if (statusPill) statusPill.innerHTML = "<span style='color:#94a3b8;'>●</span> Camera Paused";
+        } else {
+          requestSensitiveDevicePermission(
+            "AURA Vision Camera Permission",
+            "Would you like me to activate the camera now?",
+            startCameraStream
+          );
+        }
+      };
+    }
+
+    // Automatically start camera stream when opened after user permission confirmation
+    startCameraStream();
   }
 
   function openCameraApplication() {
-    openAuraVisionModal();
+    window.openAuraVisionDirect();
   }
 
   window.openAuraVisionDirect = function(prompt, lang) {
+    const isTa = lang === "tamil" || (prompt && /[\u0B80-\u0BFF]/.test(prompt));
     requestSensitiveDevicePermission(
       "AURA Vision Camera Permission",
-      "Would you like me to open the camera to identify this object? Access will be isolated to this local session.",
+      isTa
+        ? "பொருளை அடையாளம் காண கேமராவை திறக்கலாமா? அனுமதி இந்த அமர்வுக்கு மட்டுமே இருக்கும்."
+        : "Would you like AURA Vision to open your camera to identify this object? Access is strictly isolated to this local session.",
       () => openAuraVisionModal(prompt, lang)
     );
   };
   window.openAuraVisionModal = openAuraVisionModal;
   window.openCameraApplication = openCameraApplication;
+  window.openVisionLab = window.openAuraVisionDirect;
 
   // Structured Command Router: executes application features and clarifies hardware limits
   async function routeJarvisCommand(rawTranscript) {

@@ -312,6 +312,13 @@
             </span>
             <span class="nav-label">YouTube Intelligence</span>
           </li>
+          <li class="nav-item" id="navItemAuraVision" onclick="window.openAuraVisionDirect()">
+            <span class="nav-svg-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </span>
+            <span class="nav-label">Vision AI Lab</span>
+            <span class="nav-badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3);">VISION</span>
+          </li>
         </ul>
       </div>
 
@@ -527,6 +534,32 @@
                   </div>
                   <button type="button" class="workspace-card-btn" onclick="event.stopPropagation(); window.openNeuralVoiceCore();">
                     <span>Start Voice Assistant</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- CARD 5: Vision AI — Gesture & Vision Lab -->
+                <div class="workspace-feature-card cc-mod-card" id="widgetVisionLab" onclick="window.openAuraVisionDirect()">
+                  <div class="workspace-card-top">
+                    <div class="workspace-card-icon" style="background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.25);">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </div>
+                    <div class="workspace-card-text">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <h3 class="workspace-card-title">Vision AI — Gesture &amp; Vision Lab</h3>
+                        <span class="nav-badge" style="background:rgba(56,189,248,0.15); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); font-size:9px; padding:2px 6px;">VISION AI</span>
+                      </div>
+                      <p class="workspace-card-desc">Camera object identification, device analysis, OCR text &amp; Tamil explanation.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="workspace-card-btn" id="btnLaunchVisionLab" onclick="event.stopPropagation(); window.openAuraVisionDirect();">
+                    <span>Launch Lab</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="5" y1="12" x2="19" y2="12"/>
                       <polyline points="12 5 19 12 12 19"/>
@@ -2783,8 +2816,11 @@
         <!-- Placeholder when camera denied / inactive -->
         <div id="cameraPlaceholderText" style="color:#94a3b8; font-size:13px; text-align:center; padding:24px; display:none; max-width:440px;">
           <div style="font-size:32px; margin-bottom:10px;">📷</div>
-          <p style="margin:0 0 12px 0;">Camera stopped or access denied. You can directly upload an image file from your device instead.</p>
-          <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>
+          <p style="margin:0 0 12px 0;" id="cameraPlaceholderMessage">Camera is currently inactive or permission was not granted. You can request camera activation or directly upload an image file from your device.</p>
+          <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <button class="btn-generate-gemini" id="btnActivateCameraDirect" style="width:auto; font-size:12px; padding:8px 16px;">📹 Activate Camera</button>
+            <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; padding:8px 16px;">📁 Choose Image File</button>
+          </div>
         </div>
       </div>
 
@@ -2799,13 +2835,14 @@
       </div>
 
       <!-- Bottom Actions Bar -->
-      <div style="padding:12px 20px; display:flex; justify-content:space-between; align-items:center; background:#090d16; border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="padding:12px 20px; display:flex; justify-content:space-between; align-items:center; background:#090d16; border-top:1px solid rgba(255,255,255,0.08); flex-wrap:wrap; gap:10px;">
         <span style="font-size:12px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
-          <span>🔒</span> Sandboxed Hardware Session · Least Privilege Active
+          <span>🔒</span> Sandboxed Hardware Session · Zero Image Retention
         </span>
         <div style="display:flex; align-items:center; gap:10px;">
           <input type="file" id="visionFileInput" accept="image/*" style="display:none;">
           <button class="btn-vault-action" id="btnUploadVisionImage" style="padding:8px 14px; font-size:12px;">📁 Upload Image</button>
+          <button class="btn-vault-action" id="btnToggleCameraFeed" style="padding:8px 14px; font-size:12px;">📹 Camera</button>
           <button class="btn-vault-action" id="btnRetakePhoto" style="display:none; padding:8px 14px; font-size:12px;">🔄 Retake</button>
           <button class="btn-generate-gemini" id="btnCapturePhoto" style="width:auto; padding:9px 20px; font-size:13px; font-weight:600;">📸 Capture &amp; Identify</button>
         </div>

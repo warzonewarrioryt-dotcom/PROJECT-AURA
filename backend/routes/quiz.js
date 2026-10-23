@@ -229,14 +229,65 @@ const MASTER_CURRICULUM = {
       icon: "⚡",
       subjectCount: 6,
       semesters: {
-        1: ["Engineering Mathematics I", "Engineering Physics", "Engineering Chemistry", "Problem Solving & C", "Basic Mechanical & Civil", "Engineering Graphics"],
-        2: ["Engineering Mathematics II", "Electric Circuit Analysis", "Electron Devices & Circuits", "Physics of Electrical Materials", "Environmental Science", "C++ Programming"],
-        3: ["DC Machines and Transformers", "Electromagnetic Theory", "Digital Logic Circuits", "Measurements & Instrumentation", "Transforms & Numerical Methods", "Analog Electronics"],
-        4: ["AC Machines & Alternators", "Transmission & Distribution Systems", "Linear Integrated Circuits", "Control Systems Engineering", "Power Plant Engineering", "Microprocessors (8085/8086)"],
-        5: ["Power Electronics & Converters", "Power System Analysis", "Microcontroller Architecture (8051/PIC)", "Renewable Energy Technologies", "Electrical Machine Design", "Digital Signal Processors"],
-        6: ["Protection & Switchgear", "Electric Drives & Traction Control", "High Voltage Engineering", "Embedded System Controllers", "Power System Operation & Control", "Industrial Instrumentation"],
-        7: ["Smart Grid & Microgrid Technologies", "Electric Vehicle (EV) Powertrains", "Power Quality & Harmonic Filters", "Special Electrical Machines", "Energy Auditing & Management", "VLSI for Power"],
-        8: ["Battery Management Systems (BMS)", "Industrial Automation & PLC/SCADA", "HVDC & FACTS Controllers", "Distributed Generation", "Power System Dynamics", "Capstone Power Project"]
+        1: [
+          "Professional English I (HS3151)",
+          "Matrices and Calculus (MA3151)",
+          "Engineering Physics (PH3151)",
+          "Engineering Chemistry (CY3151)",
+          "Problem Solving and Python Programming (GE3151)",
+          "Heritage of Tamils (GE3152)"
+        ],
+        2: [
+          "Professional English II (HS3252)",
+          "Statistics and Numerical Methods (MA3251)",
+          "Physics for Electrical Engineering (PH3202)",
+          "Basic Civil and Mechanical Engineering (BE3255)",
+          "Engineering Graphics (GE3251)",
+          "Electric Circuit Analysis (EE3251)"
+        ],
+        3: [
+          "Probability and Complex Functions (MA3303)",
+          "Electromagnetic Fields (EE3301)",
+          "Digital Logic Circuits (EE3302)",
+          "Electron Devices and Circuits (EC3301)",
+          "Electrical Machines I (EE3303)",
+          "C Programming and Data Structures (CS3353)"
+        ],
+        4: [
+          "Environmental Sciences and Sustainability (GE3451)",
+          "Transmission and Distribution (EE3401)",
+          "Linear Integrated Circuits (EE3402)",
+          "Measurements and Instrumentation (EE3403)",
+          "Microprocessor and Microcontroller (EE3404)",
+          "Electrical Machines II (EE3405)"
+        ],
+        5: [
+          "Power System Analysis (EE3501)",
+          "Power Electronics (EE3591)",
+          "Control Systems (EE3503)",
+          "Special Electrical Machines (PEE501)",
+          "Solid State Drives (PEE502)",
+          "Renewable Energy Systems (PEE503)"
+        ],
+        6: [
+          "Protection and Switchgear (EE3601)",
+          "Power System Operation and Control (EE3602)",
+          "Electric Vehicle Technology (PEE601)",
+          "Embedded System Design & IoT (PEE602)",
+          "Smart Grid Architecture (PEE603)",
+          "Sensors and Industrial Automation (OEE601)"
+        ],
+        7: [
+          "High Voltage Engineering (EE3701)",
+          "Human Values and Ethics (GE3791)",
+          "AI & Machine Learning in Power Systems (PEE701)",
+          "HVDC and FACTS (PEE702)",
+          "Principles of Management (OEE701)",
+          "Industrial Training / Mini Project (EE3711)"
+        ],
+        8: [
+          "Capstone Project Work / Industrial Internship (EE3811)"
+        ]
       }
     },
     MECH: {
