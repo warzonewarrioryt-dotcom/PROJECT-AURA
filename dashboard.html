@@ -2434,6 +2434,7 @@
       <!-- Action Buttons -->
       <div class="robot-controls-row">
         <button class="btn-robot-action btn-robot-send" id="robotSendBtn">Done &amp; Execute ↑</button>
+        <button type="button" class="btn-robot-action" id="btnRobotVision" style="background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); color:#38bdf8;" onclick="if(typeof window.openAuraVisionDirect==='function') window.openAuraVisionDirect();">👁️ AURA Vision</button>
         <button class="btn-robot-action btn-robot-cancel" id="robotCancelBtn">Cancel ✕</button>
       </div>
     </div>
@@ -2738,29 +2739,109 @@
        SENSITIVE HARDWARE / CAMERA MODAL WITH EXPLICIT PERMISSION
   ======================================================= -->
   <div class="doc-reader-modal" id="cameraHardwareModal" style="display:none;">
-    <div class="doc-reader-box" style="max-width:640px; padding:0; overflow:hidden;">
-      <div class="doc-reader-header" style="padding:16px 20px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <span style="font-size:20px;">📷</span>
+    <div class="doc-reader-box aura-vision-box" style="padding:0; overflow:hidden;">
+      <!-- AURA Vision Header -->
+      <div class="aura-vision-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:36px; height:36px; border-radius:10px; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); display:flex; align-items:center; justify-content:center; font-size:18px;">
+            👁️
+          </div>
           <div>
-            <h3 style="margin:0; font-size:16px; font-weight:700; color:var(--text-primary);">Camera Application</h3>
-            <span style="font-size:11px; color:#10b981; display:inline-flex; align-items:center; gap:4px;" id="cameraStatusPill">
-              <span>●</span> Active Video Stream
+            <h3 style="margin:0; font-size:16px; font-weight:700; color:#f8fafc; display:flex; align-items:center; gap:8px;">
+              <span>AURA Vision</span>
+              <span style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(56,189,248,0.12); color:#38bdf8; border:1px solid rgba(56,189,248,0.25);">
+                AI Object Recognition
+              </span>
+            </h3>
+            <span style="font-size:11px; color:#10b981; display:inline-flex; align-items:center; gap:4px; margin-top:2px;" id="cameraStatusPill">
+              <span>●</span> Live Camera Viewfinder
             </span>
           </div>
         </div>
-        <button class="btn-vault-action delete" id="btnCloseCameraModal">✕ Stop Camera</button>
-      </div>
-      <!-- Video stream display -->
-      <div style="position:relative; width:100%; height:380px; background:#000; display:flex; align-items:center; justify-content:center;">
-        <video id="cameraVideoFeed" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
-        <div id="cameraPlaceholderText" style="color:#94a3b8; font-size:13px; text-align:center; padding:20px; display:none;">
-          Camera stopped or access denied.
+
+        <div style="display:flex; align-items:center; gap:10px;">
+          <!-- Language Selector -->
+          <div style="display:flex; gap:4px; background:rgba(255,255,255,0.04); padding:3px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);">
+            <button id="btnVisionLangEn" class="aura-vision-chip active" style="padding:4px 10px; font-size:11px;">English</button>
+            <button id="btnVisionLangTa" class="aura-vision-chip" style="padding:4px 10px; font-size:11px;">தமிழ்</button>
+          </div>
+          <button class="btn-vault-action delete" id="btnCloseCameraModal" style="padding:8px 14px; font-size:12px;">✕ Close</button>
         </div>
       </div>
-      <div style="padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface-subtle); border-top:1px solid var(--border-subtle);">
-        <span style="font-size:12px; color:var(--text-secondary);">🔒 Sandboxed Hardware Session · Least Privilege Active</span>
-        <button class="btn-vault-action" id="btnCapturePhoto">📸 Capture Frame</button>
+
+      <!-- Viewfinder and Live Video Container -->
+      <div class="aura-vision-viewport-wrap" id="visionViewportWrap">
+        <video id="cameraVideoFeed" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+        <img id="cameraCapturedPreview" style="display:none; width:100%; height:100%; object-fit:contain; background:#030712;" alt="Captured Object">
+        <canvas id="cameraCaptureCanvas" style="display:none;"></canvas>
+
+        <!-- Viewfinder Reticle Overlay -->
+        <div id="visionTargetReticle" class="aura-vision-reticle">
+          <div class="aura-vision-reticle-dot"></div>
+        </div>
+
+        <!-- Placeholder when camera denied / inactive -->
+        <div id="cameraPlaceholderText" style="color:#94a3b8; font-size:13px; text-align:center; padding:24px; display:none; max-width:440px;">
+          <div style="font-size:32px; margin-bottom:10px;">📷</div>
+          <p style="margin:0 0 12px 0;">Camera stopped or access denied. You can directly upload an image file from your device instead.</p>
+          <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>
+        </div>
+      </div>
+
+      <!-- Prompt Chips Toolbar -->
+      <div style="padding:10px 16px; background:rgba(15, 23, 42, 0.95); border-top:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:8px; overflow-x:auto;">
+        <span style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap;">Focus:</span>
+        <button class="aura-vision-chip active" data-vision-prompt="Identify this object, its purpose, and how it works.">🔍 Identify Object</button>
+        <button class="aura-vision-chip" data-vision-prompt="How does this device work and what are its core operating mechanisms?">⚙️ How It Works</button>
+        <button class="aura-vision-chip" data-vision-prompt="Read all visible text, model numbers, labels, and markings in this image.">📝 Read Text (OCR)</button>
+        <button class="aura-vision-chip" data-vision-prompt="Explain this scientific apparatus, electrical component, or educational diagram.">🔬 Science / Circuit</button>
+        <button class="aura-vision-chip" data-vision-prompt="இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு அதன் பயன்பாட்டை தமிழில் விளக்குங்கள்." data-vision-lang="tamil">🇮🇳 தமிழில் விளக்கு</button>
+      </div>
+
+      <!-- Bottom Actions Bar -->
+      <div style="padding:12px 20px; display:flex; justify-content:space-between; align-items:center; background:#090d16; border-top:1px solid rgba(255,255,255,0.08);">
+        <span style="font-size:12px; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+          <span>🔒</span> Sandboxed Hardware Session · Least Privilege Active
+        </span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="file" id="visionFileInput" accept="image/*" style="display:none;">
+          <button class="btn-vault-action" id="btnUploadVisionImage" style="padding:8px 14px; font-size:12px;">📁 Upload Image</button>
+          <button class="btn-vault-action" id="btnRetakePhoto" style="display:none; padding:8px 14px; font-size:12px;">🔄 Retake</button>
+          <button class="btn-generate-gemini" id="btnCapturePhoto" style="width:auto; padding:9px 20px; font-size:13px; font-weight:600;">📸 Capture &amp; Identify</button>
+        </div>
+      </div>
+
+      <!-- AI Vision Results & Follow-Up Q&A Panel -->
+      <div id="visionResultsContainer" style="display:none; max-height:340px; overflow-y:auto; padding:18px 20px; border-top:1px solid rgba(56,189,248,0.2); background:rgba(10, 15, 29, 0.98);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:14px; font-weight:700; color:#38bdf8;">🧠 Visual Analysis</span>
+            <span id="visionProviderBadge" style="font-size:11px; color:#94a3b8; background:rgba(255,255,255,0.05); padding:2px 8px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
+              Llama 3.2 Vision
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-vault-action" id="btnVisionSpeak" title="Listen Aloud" style="padding:4px 10px; font-size:11px;">🔊 Listen</button>
+            <button class="btn-vault-action" id="btnVisionCopy" title="Copy Text" style="padding:4px 10px; font-size:11px;">📋 Copy</button>
+          </div>
+        </div>
+
+        <!-- Output Text -->
+        <div id="visionAnalysisOutput" style="color:#e2e8f0; font-size:13px; line-height:1.6; white-space:pre-wrap; background:rgba(255,255,255,0.02); padding:14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+          Analyzing visual telemetry...
+        </div>
+
+        <!-- Follow-up Questions Section -->
+        <div style="margin-top:16px; border-top:1px solid rgba(255,255,255,0.08); padding-top:14px;">
+          <div style="font-size:12px; font-weight:700; color:#94a3b8; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+            <span>💬</span> Ask Follow-Up Question About This Image:
+          </div>
+          <div id="visionChatThread" style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px; max-height:180px; overflow-y:auto;"></div>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="visionFollowupInput" placeholder="e.g. How does that component connect? or தமிழில் விவரி..." style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); color:#f8fafc; border-radius:8px; padding:9px 12px; font-size:13px; outline:none;">
+            <button class="btn-generate-gemini" id="btnVisionSendFollowup" style="width:auto; padding:9px 18px; font-size:13px;">Ask AURA</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

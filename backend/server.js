@@ -36,6 +36,7 @@ const voiceRoutes = require("./routes/voice");
 const studentRoutes = require("./routes/student");
 const authRoutes = require("./routes/auth");
 const presentationRoutes = require("./routes/presentation");
+const visionRoutes = require("./routes/vision");
 
 /* =========================================================
    MIDDLEWARE
@@ -96,6 +97,7 @@ app.use("/api/voice", voiceRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/presentation", presentationRoutes);
+app.use("/api/vision", visionRoutes);
 
 // Public Google Auth Config Route
 app.get('/api/auth/google-client-id', (req, res) => {

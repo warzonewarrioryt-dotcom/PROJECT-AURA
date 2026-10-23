@@ -31,7 +31,7 @@ async function generateChatCompletion(messages, options = {}) {
     throw new Error("NVIDIA_API_KEY is not configured.");
   }
 
-  const model = options.model || process.env.NVIDIA_MODEL || "meta/llama-3.1-70b-instruct";
+  const model = options.model || process.env.NVIDIA_MODEL || "meta/llama-3.2-11b-vision-instruct";
   const temperature = options.temperature !== undefined ? options.temperature : 0.7;
   const max_tokens = options.max_tokens || 2048;
 

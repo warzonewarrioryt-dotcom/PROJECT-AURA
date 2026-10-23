@@ -13105,54 +13105,421 @@ topbarLatencyTicker();
     };
   }
 
-  function openCameraApplication() {
+  let activeVisionImageBase64 = null;
+  let activeVisionLanguage = "english";
+  let activeVisionPrompt = "Identify this object, its purpose, and how it works.";
+  let visionChatHistory = [];
+
+  function openAuraVisionModal(initialPrompt, initialLang) {
     const camModal = document.getElementById("cameraHardwareModal");
     const videoFeed = document.getElementById("cameraVideoFeed");
+    const previewImg = document.getElementById("cameraCapturedPreview");
+    const canvas = document.getElementById("cameraCaptureCanvas");
+    const reticle = document.getElementById("visionTargetReticle");
     const placeholder = document.getElementById("cameraPlaceholderText");
     const btnClose = document.getElementById("btnCloseCameraModal");
+    const btnCapture = document.getElementById("btnCapturePhoto");
+    const btnRetake = document.getElementById("btnRetakePhoto");
+    const btnUpload = document.getElementById("btnUploadVisionImage");
+    const btnPlaceholderUpload = document.getElementById("btnPlaceholderUpload");
+    const fileInput = document.getElementById("visionFileInput");
+    const resultsContainer = document.getElementById("visionResultsContainer");
+    const analysisOutput = document.getElementById("visionAnalysisOutput");
+    const providerBadge = document.getElementById("visionProviderBadge");
+    const btnSpeak = document.getElementById("btnVisionSpeak");
+    const btnCopy = document.getElementById("btnVisionCopy");
+    const btnLangEn = document.getElementById("btnVisionLangEn");
+    const btnLangTa = document.getElementById("btnVisionLangTa");
+    const followupInput = document.getElementById("visionFollowupInput");
+    const btnSendFollowup = document.getElementById("btnVisionSendFollowup");
+    const chatThread = document.getElementById("visionChatThread");
+    const statusPill = document.getElementById("cameraStatusPill");
+
     if (!camModal || !videoFeed) return;
 
     camModal.style.display = "flex";
 
-    const stopCamera = () => {
+    // Set initial prompt / language if specified
+    if (initialLang) {
+      activeVisionLanguage = initialLang;
+    } else if (initialPrompt && (/[\u0B80-\u0BFF]/.test(initialPrompt) || initialPrompt.toLowerCase().includes("tamil"))) {
+      activeVisionLanguage = "tamil";
+    }
+
+    if (btnLangEn && btnLangTa) {
+      if (activeVisionLanguage === "tamil") {
+        btnLangTa.classList.add("active");
+        btnLangEn.classList.remove("active");
+      } else {
+        btnLangEn.classList.add("active");
+        btnLangTa.classList.remove("active");
+      }
+    }
+
+    if (initialPrompt && initialPrompt.trim()) {
+      activeVisionPrompt = initialPrompt.trim();
+    } else {
+      activeVisionPrompt = activeVisionLanguage === "tamil"
+        ? "இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு அதன் பயன்பாட்டை தமிழில் விளக்குங்கள்."
+        : "Identify this object, its purpose, and how it works.";
+    }
+
+    // Reset views
+    if (previewImg) previewImg.style.display = "none";
+    if (videoFeed) videoFeed.style.display = "block";
+    if (reticle) reticle.style.display = "flex";
+    if (placeholder) placeholder.style.display = "none";
+    if (btnRetake) btnRetake.style.display = "none";
+    if (btnCapture) btnCapture.style.display = "inline-flex";
+    if (resultsContainer) resultsContainer.style.display = "none";
+    if (chatThread) chatThread.innerHTML = "";
+    activeVisionImageBase64 = null;
+    visionChatHistory = [];
+
+    // Stop and cleanup handler
+    const stopCameraAndSession = () => {
       if (activeMediaStream) {
         activeMediaStream.getTracks().forEach(track => track.stop());
         activeMediaStream = null;
       }
       if (videoFeed) videoFeed.srcObject = null;
       camModal.style.display = "none";
-      const msg = "Camera closed and hardware session terminated.";
+      if (statusPill) statusPill.innerHTML = "<span>●</span> Session Closed";
+      const msg = activeVisionLanguage === "tamil"
+        ? "கேமரா அமர்வு முடிக்கப்பட்டது."
+        : "Camera and visual recognition session terminated.";
       if (jarvisResponseText) jarvisResponseText.textContent = msg;
       speakJarvisResponse(msg);
     };
 
-    if (btnClose) btnClose.onclick = stopCamera;
+    if (btnClose) btnClose.onclick = stopCameraAndSession;
 
+    // Language Toggle handlers
+    if (btnLangEn) {
+      btnLangEn.onclick = () => {
+        activeVisionLanguage = "english";
+        btnLangEn.classList.add("active");
+        btnLangTa.classList.remove("active");
+        if (activeVisionImageBase64) triggerVisionAnalysis();
+      };
+    }
+    if (btnLangTa) {
+      btnLangTa.onclick = () => {
+        activeVisionLanguage = "tamil";
+        btnLangTa.classList.add("active");
+        btnLangEn.classList.remove("active");
+        if (activeVisionImageBase64) triggerVisionAnalysis();
+      };
+    }
+
+    // Chip prompt handlers
+    const chips = camModal.querySelectorAll(".aura-vision-chip[data-vision-prompt]");
+    chips.forEach(chip => {
+      chip.onclick = () => {
+        chips.forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeVisionPrompt = chip.getAttribute("data-vision-prompt");
+        if (chip.getAttribute("data-vision-lang")) {
+          activeVisionLanguage = chip.getAttribute("data-vision-lang");
+          if (btnLangTa && btnLangEn) {
+            btnLangTa.classList.add("active");
+            btnLangEn.classList.remove("active");
+          }
+        }
+        if (activeVisionImageBase64) {
+          triggerVisionAnalysis();
+        }
+      };
+    });
+
+    // Core Analysis Trigger
+    const triggerVisionAnalysis = async () => {
+      if (!activeVisionImageBase64) return;
+      if (resultsContainer) resultsContainer.style.display = "block";
+      if (analysisOutput) {
+        analysisOutput.innerHTML = `<div style="display:flex; align-items:center; gap:10px; color:#38bdf8;">
+          <span style="animation: auraPulse 1.2s infinite; font-size:18px;">⚡</span>
+          <span>${activeVisionLanguage === "tamil" ? "AURA விஷன் படத்தை பகுப்பாய்வு செய்கிறது..." : "AURA Vision analyzing object and telemetry..."}</span>
+        </div>`;
+      }
+      resultsContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      try {
+        const res = await fetch("/api/vision/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: activeVisionImageBase64,
+            prompt: activeVisionPrompt,
+            language: activeVisionLanguage,
+            conversationHistory: visionChatHistory
+          })
+        });
+
+        const data = await res.json();
+        if (data.success && data.analysis) {
+          const rawText = data.analysis;
+          if (analysisOutput) {
+            if (typeof marked !== "undefined" && typeof marked.parse === "function") {
+              analysisOutput.innerHTML = marked.parse(rawText);
+            } else {
+              analysisOutput.textContent = rawText;
+            }
+          }
+          if (providerBadge) {
+            providerBadge.textContent = data.provider || "Llama 3.2 Vision";
+          }
+
+          visionChatHistory = [
+            { role: "user", content: activeVisionPrompt },
+            { role: "assistant", content: rawText }
+          ];
+
+          // Speak summary aloud
+          const cleanSpeech = rawText.replace(/[*#`_\[\]()]/g, " ").replace(/\s+/g, " ").slice(0, 320);
+          if (jarvisResponseText) jarvisResponseText.textContent = cleanSpeech;
+          speakJarvisResponse(cleanSpeech);
+        } else {
+          const errMsg = data.error || "Analysis failed.";
+          if (analysisOutput) analysisOutput.textContent = "Error: " + errMsg;
+        }
+      } catch (err) {
+        if (analysisOutput) analysisOutput.textContent = "Telemetry error: " + err.message;
+      }
+    };
+
+    // Capture Frame Handler
+    if (btnCapture) {
+      btnCapture.onclick = () => {
+        if (!videoFeed || videoFeed.videoWidth === 0) {
+          if (fileInput) fileInput.click();
+          return;
+        }
+
+        const width = videoFeed.videoWidth || 640;
+        const height = videoFeed.videoHeight || 480;
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoFeed, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        activeVisionImageBase64 = dataUrl;
+
+        // Freeze preview
+        if (previewImg) {
+          previewImg.src = dataUrl;
+          previewImg.style.display = "block";
+        }
+        videoFeed.style.display = "none";
+        if (reticle) reticle.style.display = "none";
+        if (btnRetake) btnRetake.style.display = "inline-flex";
+        if (statusPill) statusPill.innerHTML = "<span>●</span> Frame Captured · Analyzing";
+
+        triggerVisionAnalysis();
+      };
+    }
+
+    // Retake Handler
+    if (btnRetake) {
+      btnRetake.onclick = () => {
+        activeVisionImageBase64 = null;
+        if (previewImg) previewImg.style.display = "none";
+        if (videoFeed) videoFeed.style.display = "block";
+        if (reticle) reticle.style.display = "flex";
+        btnRetake.style.display = "none";
+        if (resultsContainer) resultsContainer.style.display = "none";
+        if (chatThread) chatThread.innerHTML = "";
+        if (statusPill) statusPill.innerHTML = "<span>●</span> Live Camera Viewfinder";
+      };
+    }
+
+    // Upload fallback handlers
+    const openFilePicker = () => {
+      if (fileInput) fileInput.click();
+    };
+    if (btnUpload) btnUpload.onclick = openFilePicker;
+    if (btnPlaceholderUpload) btnPlaceholderUpload.onclick = openFilePicker;
+
+    if (fileInput) {
+      fileInput.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please select a valid image file (JPEG, PNG, WebP).");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (loadEvt) => {
+          activeVisionImageBase64 = loadEvt.target.result;
+          if (previewImg) {
+            previewImg.src = activeVisionImageBase64;
+            previewImg.style.display = "block";
+          }
+          if (videoFeed) videoFeed.style.display = "none";
+          if (reticle) reticle.style.display = "none";
+          if (placeholder) placeholder.style.display = "none";
+          if (btnRetake) btnRetake.style.display = "inline-flex";
+          if (statusPill) statusPill.innerHTML = "<span>●</span> Image Loaded · Analyzing";
+
+          triggerVisionAnalysis();
+        };
+        reader.readAsDataURL(file);
+      };
+    }
+
+    // Copy text handler
+    if (btnCopy) {
+      btnCopy.onclick = () => {
+        if (analysisOutput) {
+          navigator.clipboard.writeText(analysisOutput.innerText || analysisOutput.textContent || "")
+            .then(() => {
+              const orig = btnCopy.textContent;
+              btnCopy.textContent = "✓ Copied!";
+              setTimeout(() => { btnCopy.textContent = orig; }, 2000);
+            })
+            .catch(() => {});
+        }
+      };
+    }
+
+    // Speak aloud handler
+    if (btnSpeak) {
+      btnSpeak.onclick = () => {
+        if (analysisOutput) {
+          const text = (analysisOutput.innerText || analysisOutput.textContent || "").replace(/[*#`_]/g, " ").slice(0, 350);
+          speakJarvisResponse(text);
+        }
+      };
+    }
+
+    // Follow-up Q&A Chat Handler
+    const handleSendFollowup = async () => {
+      if (!followupInput) return;
+      const question = followupInput.value.trim();
+      if (!question) return;
+      if (!activeVisionImageBase64) {
+        alert("Please capture or upload an image first to ask follow-up questions.");
+        return;
+      }
+
+      followupInput.value = "";
+
+      // Append user bubble
+      if (chatThread) {
+        const uBubble = document.createElement("div");
+        uBubble.className = "aura-vision-chat-bubble user";
+        uBubble.textContent = question;
+        chatThread.appendChild(uBubble);
+
+        const aiBubble = document.createElement("div");
+        aiBubble.className = "aura-vision-chat-bubble ai";
+        aiBubble.textContent = activeVisionLanguage === "tamil" ? "பதிலை சிந்திக்கிறது..." : "Thinking...";
+        chatThread.appendChild(aiBubble);
+        chatThread.scrollTop = chatThread.scrollHeight;
+
+        try {
+          const res = await fetch("/api/vision/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              image: activeVisionImageBase64,
+              question,
+              conversationHistory: visionChatHistory,
+              language: activeVisionLanguage
+            })
+          });
+
+          const data = await res.json();
+          if (data.success && data.analysis) {
+            aiBubble.textContent = data.analysis;
+            visionChatHistory.push({ role: "user", content: question });
+            visionChatHistory.push({ role: "assistant", content: data.analysis });
+
+            const cleanAns = data.analysis.replace(/[*#`_]/g, " ").slice(0, 300);
+            speakJarvisResponse(cleanAns);
+          } else {
+            aiBubble.textContent = "Error: " + (data.error || "Could not process question.");
+          }
+        } catch (chatErr) {
+          aiBubble.textContent = "Network error: " + chatErr.message;
+        }
+        chatThread.scrollTop = chatThread.scrollHeight;
+      }
+    };
+
+    if (btnSendFollowup) btnSendFollowup.onclick = handleSendFollowup;
+    if (followupInput) {
+      followupInput.onkeydown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleSendFollowup();
+        }
+      };
+    }
+
+    // Camera Stream Initialization
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      })
         .then(stream => {
           activeMediaStream = stream;
           videoFeed.srcObject = stream;
           videoFeed.style.display = "block";
           if (placeholder) placeholder.style.display = "none";
-          const readyMsg = "Camera stream active under least-privilege sandbox.";
+          if (statusPill) statusPill.innerHTML = "<span>●</span> Live Camera Viewfinder";
+          const readyMsg = activeVisionLanguage === "tamil"
+            ? "கேமரா தயாராக உள்ளது. பொருளை Reticle உள்ளே வைத்து Capture அழுத்தவும்."
+            : "Camera ready. Frame the object within the reticle and click Capture.";
           if (jarvisResponseText) jarvisResponseText.textContent = readyMsg;
           speakJarvisResponse(readyMsg);
         })
         .catch(err => {
           videoFeed.style.display = "none";
+          if (reticle) reticle.style.display = "none";
           if (placeholder) {
             placeholder.style.display = "block";
-            placeholder.textContent = "Camera access denied or device unavailable: " + err.message;
+            placeholder.innerHTML = `<div style="font-size:32px; margin-bottom:10px;">📷</div>
+              <p style="margin:0 0 12px 0;">Camera access denied (${err.message}). You can upload an image file from your device instead.</p>
+              <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>`;
+            const newUploadBtn = placeholder.querySelector("#btnPlaceholderUpload");
+            if (newUploadBtn) newUploadBtn.onclick = openFilePicker;
           }
-          const errMsg = "Camera access was denied by browser permissions.";
+          if (statusPill) statusPill.innerHTML = "<span>●</span> Camera Denied · Upload Active";
+          const errMsg = activeVisionLanguage === "tamil"
+            ? "கேமரா அணுகல் மறுக்கப்பட்டது. நீங்கள் ஒரு புகைப்படத்தை பதிவேற்றி பகுப்பாய்வு செய்யலாம்."
+            : "Camera access was denied. You can upload an image file instead to analyze it.";
           if (jarvisResponseText) jarvisResponseText.textContent = errMsg;
           speakJarvisResponse(errMsg);
         });
     } else {
-      alert("Camera API is not supported in this environment.");
+      if (placeholder) {
+        placeholder.style.display = "block";
+        placeholder.innerHTML = `<div style="font-size:32px; margin-bottom:10px;">📷</div>
+          <p style="margin:0 0 12px 0;">Camera API not supported in this browser. Please upload an image file instead.</p>
+          <button class="btn-vault-action" id="btnPlaceholderUpload" style="font-size:12px; margin:0 auto;">📁 Choose Image File</button>`;
+        const newUploadBtn = placeholder.querySelector("#btnPlaceholderUpload");
+        if (newUploadBtn) newUploadBtn.onclick = openFilePicker;
+      }
     }
   }
+
+  function openCameraApplication() {
+    openAuraVisionModal();
+  }
+
+  window.openAuraVisionDirect = function(prompt, lang) {
+    requestSensitiveDevicePermission(
+      "AURA Vision Camera Permission",
+      "Would you like me to open the camera to identify this object? Access will be isolated to this local session.",
+      () => openAuraVisionModal(prompt, lang)
+    );
+  };
+  window.openAuraVisionModal = openAuraVisionModal;
+  window.openCameraApplication = openCameraApplication;
 
   // Structured Command Router: executes application features and clarifies hardware limits
   async function routeJarvisCommand(rawTranscript) {
@@ -13246,16 +13613,40 @@ topbarLatencyTicker();
       return;
     }
 
-    // Reusable Sensitive Action Permission Flow
-    if (cmd.includes("camera") || cmd.includes("webcam") || cmd.includes("photo")) {
-      const confirmationPrompt = "Would you like me to open the camera now?";
+    // AURA Vision & Sensitive Camera Permission Flow
+    const isVisionQuery =
+      cmd.includes("what is this") ||
+      cmd.includes("identify this") ||
+      cmd.includes("identify object") ||
+      cmd.includes("what is this component") ||
+      cmd.includes("how does this device work") ||
+      cmd.includes("read the text in this image") ||
+      cmd.includes("read text") ||
+      cmd.includes("explain this in tamil") ||
+      cmd.includes("aura vision") ||
+      cmd.includes("look at this") ||
+      cmd.includes("scan this") ||
+      cmd.includes("camera") ||
+      cmd.includes("webcam") ||
+      cmd.includes("photo");
+
+    if (isVisionQuery) {
+      const isTamilIntent = cmd.includes("tamil") || /[\u0B80-\u0BFF]/.test(raw);
+      const isDirectOpen = cmd.includes("open camera") || (cmd.includes("camera") && !cmd.includes("what") && !cmd.includes("identify"));
+
+      let confirmationPrompt = isTamilIntent
+        ? "இதை அடையாளம் காண நான் கேமராவை திறக்கலாமா?"
+        : (isDirectOpen ? "Would you like me to open the camera now?" : "I can help identify it. May I open the camera?");
+
       jarvisResponseText.textContent = confirmationPrompt;
       speakJarvisResponse(confirmationPrompt);
 
       requestSensitiveDevicePermission(
-        "Camera Access Permission",
-        "Would you like me to open the camera now? Access will be isolated to this local session.",
-        () => openCameraApplication()
+        "AURA Vision Camera Permission",
+        isTamilIntent
+          ? "இதை அடையாளம் காண நான் கேமராவை திறக்கலாமா? அணுகல் இந்த அமர்வுக்கு மட்டுமே மட்டுப்படுத்தப்படும்."
+          : `${confirmationPrompt} Access will be isolated to this local session.`,
+        () => openAuraVisionModal(raw, isTamilIntent ? "tamil" : "english")
       );
       return;
     }
