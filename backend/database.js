@@ -46,9 +46,10 @@ function loadDatabase() {
 
 function saveDatabase(database) {
     try {
+        const dbToSave = database || loadDatabase();
         fs.writeFileSync(
             DB_FILE,
-            JSON.stringify(database, null, 2),
+            JSON.stringify(dbToSave, null, 2),
             "utf8"
         );
 
@@ -465,6 +466,15 @@ function deleteFile(id) {
     };
 }
 
+function updateFile(id, updateData = {}) {
+    const database = loadDatabase();
+    const file = database.files.find(f => f.id === id || f.filename === id || f.name === id || f.originalName === id);
+    if (!file) return null;
+    Object.assign(file, updateData);
+    saveDatabase(database);
+    return file;
+}
+
 
 /* ==========================================
    EXPORT
@@ -493,5 +503,6 @@ module.exports = {
 
     addFile,
     getFiles,
+    updateFile,
     deleteFile
 };

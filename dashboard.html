@@ -432,8 +432,8 @@
             <!-- Welcome Header & 4 Main Feature Cards -->
             <div class="workspace-hero" id="ccHero">
               <div class="workspace-header">
-                <h1 class="workspace-welcome-heading">Your AI Workspace</h1>
-                <p class="workspace-welcome-subtitle">Everything you need to learn, create and explore.</p>
+                <h1 class="workspace-welcome-heading" id="workspaceWelcomeHeading">Welcome to PROJECT AURA</h1>
+                <p class="workspace-welcome-subtitle" id="workspaceWelcomeSubtitle">Your space to learn, create and explore. What would you like to work on today?</p>
               </div>
 
               <!-- 4 Main Feature Cards (2-Column Grid Desktop, 1-Column Mobile) -->
@@ -1692,69 +1692,101 @@
              and language-preferred YouTube videos!
         ===================================================== -->
         <section class="aura-view" id="academic-hub-workspace">
-          <div class="view-header">
-            <div class="view-eyebrow">Academic &amp; Curriculum Intelligence Suite</div>
-            <h2 class="view-title">Academic Hub</h2>
-            <p class="view-desc">Unified academic command center integrating verified Tamil Nadu &amp; CBSE School Curricula (10th, 11th, 12th Standards across Science, Commerce &amp; Arts), the Higher Education College Platform (Regulation 2021), and an AI Study Material Analyzer with strict context-constrained doubt solving.</p>
-            
-            <!-- Modern 3-Way Sub-Navigation Switcher -->
-            <div class="academic-subnav-bar">
-              <button class="academic-subnav-btn active" id="tabAcademicSchool">
-                <span>🏫</span> School Hub
-                <span class="tab-badge">10th, 11th, 12th</span>
-              </button>
-              <button class="academic-subnav-btn" id="tabAcademicCollege">
-                <span>🎓</span> College Curriculum
-                <span class="tab-badge">Regulation 2021</span>
-              </button>
-              <button class="academic-subnav-btn" id="tabAcademicMaterial">
-                <span>📄</span> Material AI Doubt Solver
-                <span class="tab-badge">Exact Grounding</span>
+          <!-- Minimal Header -->
+          <div class="view-header" style="margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div>
+                <h2 class="view-title" style="margin:0 0 4px 0; font-size:24px; font-weight:700; letter-spacing:-0.02em;">Academic Hub</h2>
+                <p class="view-desc" style="margin:0; font-size:14px; color:var(--text-secondary);">Your learning space for school and college.</p>
+              </div>
+              <button class="academic-back-btn" onclick="switchView('command-center')" style="display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s ease;">
+                <span>←</span> Back to Command Center
               </button>
             </div>
+          </div>
+
+          <!-- 3 Clean Curriculum Category Cards -->
+          <div class="academic-category-cards-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:16px;">
+            <!-- Category Card 1: Tamil Nadu State Board -->
+            <div class="academic-category-card active" id="academicCatTNState" onclick="selectAcademicCategory('TN_STATE')">
+              <div class="academic-cat-header">
+                <div class="academic-cat-icon">🏛️</div>
+                <span class="academic-cat-badge">Samacheer Kalvi</span>
+              </div>
+              <h3 class="academic-cat-title">Tamil Nadu State Board</h3>
+              <p class="academic-cat-subtitle">Samacheer Kalvi syllabus for Classes 10, 11, and 12</p>
+              <button class="academic-cat-action-btn" type="button">
+                <span>Explore State Board</span>
+                <span class="academic-cat-action-arrow">→</span>
+              </button>
+            </div>
+
+            <!-- Category Card 2: CBSE -->
+            <div class="academic-category-card" id="academicCatCBSE" onclick="selectAcademicCategory('CBSE')">
+              <div class="academic-cat-header">
+                <div class="academic-cat-icon">🌐</div>
+                <span class="academic-cat-badge">NCERT National</span>
+              </div>
+              <h3 class="academic-cat-title">CBSE</h3>
+              <p class="academic-cat-subtitle">NCERT curriculum for Classes 10, 11, and 12</p>
+              <button class="academic-cat-action-btn" type="button">
+                <span>Explore CBSE</span>
+                <span class="academic-cat-action-arrow">→</span>
+              </button>
+            </div>
+
+            <!-- Category Card 3: College Platform -->
+            <div class="academic-category-card" id="academicCatCollege" onclick="selectAcademicCategory('COLLEGE')">
+              <div class="academic-cat-header">
+                <div class="academic-cat-icon">🎓</div>
+                <span class="academic-cat-badge">Regulation 2021</span>
+              </div>
+              <h3 class="academic-cat-title">College Platform</h3>
+              <p class="academic-cat-subtitle">Engineering &amp; Degree programs · Regulation 2021</p>
+              <button class="academic-cat-action-btn" type="button">
+                <span>Open College Hub</span>
+                <span class="academic-cat-action-arrow">→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Compact AI Study Assistant Card -->
+          <div class="academic-study-assistant-card" id="academicCatAssistant" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding:16px 20px; background:linear-gradient(135deg, rgba(56,189,248,0.06), rgba(129,140,248,0.06)); border:1px solid rgba(56,189,248,0.2); border-radius:12px; margin-bottom:24px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div style="width:40px; height:40px; border-radius:10px; background:rgba(56,189,248,0.12); display:flex; align-items:center; justify-content:center; font-size:20px; color:#38bdf8;">
+                🤖
+              </div>
+              <div>
+                <h4 style="margin:0 0 2px 0; font-size:15px; font-weight:700; color:#f8fafc;">AI Study Assistant</h4>
+                <p style="margin:0; font-size:13px; color:#94a3b8;">Analyze your study materials and get answers grounded in your content.</p>
+              </div>
+            </div>
+            <button class="academic-assistant-btn" onclick="selectAcademicCategory('ASSISTANT')" style="padding:9px 18px; border-radius:8px; background:#38bdf8; color:#090d16; font-size:13px; font-weight:700; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.15s ease;">
+              <span>Open Study Assistant</span>
+              <span>→</span>
+            </button>
+          </div>
+
+          <!-- Hidden compatibility handles for legacy listeners -->
+          <div style="display:none;" aria-hidden="true">
+            <button id="tabAcademicSchool"></button>
+            <button id="tabAcademicCollege"></button>
+            <button id="tabAcademicMaterial"></button>
+            <button id="btnBoardTNState" data-board="TN_STATE"></button>
+            <button id="btnBoardCBSE" data-board="CBSE"></button>
+            <div id="academicBoardSwitcher"></div>
+            <div id="academicBoardSelectorWrap"></div>
           </div>
 
           <!-- PANE A: SCHOOL HUB (10th, 11th & 12th STANDARDS) -->
           <div id="sectionAcademicSchool" class="academic-pane">
             <div class="workspace-card">
-              <div class="eng-title-row">
+              <div class="eng-title-row" style="margin-bottom:14px;">
                 <div class="eng-title-headline">
                   <span>🏫</span>
-                  <span>School Standards Curriculum Explorer</span>
+                  <span id="schoolCurriculumHeading">School Standards Curriculum</span>
                 </div>
                 <span class="eng-badge-pill" id="schoolActiveFilterBadge">12th Standard — Bio-Maths</span>
-              </div>
-              <p class="eng-subline">Explore verified Tamil Nadu State Board (Samacheer Kalvi) &amp; CBSE syllabus breakdown, core units, high-yield board exam formulas, and chapter summaries.</p>
-
-              <!-- Top Prominent Board Selection Segmented Switcher -->
-              <div class="academic-board-segmented-wrap" id="academicBoardSelectorWrap">
-                <div class="academic-board-selector-header">
-                  <div class="academic-board-tag">
-                    <span class="board-indicator-pulse"></span>
-                    <span>CURRICULUM BOARD SELECTION</span>
-                  </div>
-                  <span class="academic-board-hint">Filters syllabus, units &amp; YouTube recommendations instantly</span>
-                </div>
-                <div class="academic-board-segmented-switch" id="academicBoardSwitcher" role="tablist" aria-label="Select Academic Curriculum Board">
-                  <button type="button" class="board-segmented-btn active" data-board="TN_STATE" id="btnBoardTNState" role="tab" aria-selected="true">
-                    <div class="board-btn-glow"></div>
-                    <span class="board-btn-icon">🏛️</span>
-                    <div class="board-btn-text">
-                      <div class="board-btn-title">Tamil Nadu State Board (SSLC / HSC)</div>
-                      <div class="board-btn-sub">Samacheer Kalvi · State Syllabus · Kalvi TV &amp; State Experts</div>
-                    </div>
-                    <span class="board-active-badge">ACTIVE</span>
-                  </button>
-                  <button type="button" class="board-segmented-btn" data-board="CBSE" id="btnBoardCBSE" role="tab" aria-selected="false">
-                    <div class="board-btn-glow"></div>
-                    <span class="board-btn-icon">🌐</span>
-                    <div class="board-btn-text">
-                      <div class="board-btn-title">CBSE Board</div>
-                      <div class="board-btn-sub">NCERT National Curriculum · Physics Wallah, Khan Academy &amp; Magnet Brains</div>
-                    </div>
-                    <span class="board-active-badge">ACTIVE</span>
-                  </button>
-                </div>
               </div>
 
               <!-- Standard Selection Row -->
@@ -2248,7 +2280,13 @@
             style="font-size:15px; font-weight:800; color:var(--text-primary); margin:2px 0 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"
             id="ytModalVideoTitle">Video Title</h3>
         </div>
-        <button class="btn-vault-action delete" id="btnCloseYtModal">✕ Close</button>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <a id="ytModalExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="btn-vault-action" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; color:#38bdf8;">
+            <span>↗</span>
+            <span>Open in YouTube</span>
+          </a>
+          <button class="btn-vault-action delete" id="btnCloseYtModal">✕ Close</button>
+        </div>
       </div>
       <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; background:#000;">
         <iframe id="ytModalIframe" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
@@ -2692,6 +2730,52 @@
         <button type="button" class="ag-vector-btn" id="btnAgCopyBriefing" title="Copy structured briefing payload">
           <span>📋 Copy Briefing</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =======================================================
+       SENSITIVE HARDWARE / CAMERA MODAL WITH EXPLICIT PERMISSION
+  ======================================================= -->
+  <div class="doc-reader-modal" id="cameraHardwareModal" style="display:none;">
+    <div class="doc-reader-box" style="max-width:640px; padding:0; overflow:hidden;">
+      <div class="doc-reader-header" style="padding:16px 20px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:20px;">📷</span>
+          <div>
+            <h3 style="margin:0; font-size:16px; font-weight:700; color:var(--text-primary);">Camera Application</h3>
+            <span style="font-size:11px; color:#10b981; display:inline-flex; align-items:center; gap:4px;" id="cameraStatusPill">
+              <span>●</span> Active Video Stream
+            </span>
+          </div>
+        </div>
+        <button class="btn-vault-action delete" id="btnCloseCameraModal">✕ Stop Camera</button>
+      </div>
+      <!-- Video stream display -->
+      <div style="position:relative; width:100%; height:380px; background:#000; display:flex; align-items:center; justify-content:center;">
+        <video id="cameraVideoFeed" autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+        <div id="cameraPlaceholderText" style="color:#94a3b8; font-size:13px; text-align:center; padding:20px; display:none;">
+          Camera stopped or access denied.
+        </div>
+      </div>
+      <div style="padding:14px 20px; display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface-subtle); border-top:1px solid var(--border-subtle);">
+        <span style="font-size:12px; color:var(--text-secondary);">🔒 Sandboxed Hardware Session · Least Privilege Active</span>
+        <button class="btn-vault-action" id="btnCapturePhoto">📸 Capture Frame</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explicit Confirmation Dialog for Sensitive Actions -->
+  <div class="doc-reader-modal" id="sensitiveActionConfirmModal" style="display:none;">
+    <div class="doc-reader-box" style="max-width:480px; padding:24px; text-align:center;">
+      <div style="font-size:36px; margin-bottom:12px;">🔒</div>
+      <h3 style="margin:0 0 8px 0; font-size:18px; font-weight:700; color:#f8fafc;" id="sensitiveConfirmTitle">Permission Required</h3>
+      <p style="margin:0 0 20px 0; font-size:14px; color:#94a3b8; line-height:1.5;" id="sensitiveConfirmText">
+        Would you like me to open the camera now?
+      </p>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <button class="btn-vault-action delete" id="btnCancelSensitiveAction" style="padding:10px 20px; font-size:13px;">Cancel</button>
+        <button class="btn-generate-gemini" id="btnConfirmSensitiveAction" style="width:auto; padding:10px 24px; font-size:13px;">Confirm &amp; Proceed</button>
       </div>
     </div>
   </div>

@@ -3359,6 +3359,9 @@ if (refreshVaultFilesBtn) {
   refreshVaultFilesBtn.addEventListener("click", () => loadVaultFiles());
 }
 
+// Active pending uploads registry for retry capability
+window.pendingVaultUploads = window.pendingVaultUploads || new Map();
+
 async function uploadFileToVault(file) {
   if (!file) return;
 
@@ -3373,13 +3376,28 @@ async function uploadFileToVault(file) {
     return;
   }
 
-  const formData = new FormData();
-  formData.append("file", file);
+  const tempId = "upload-" + Date.now();
+  window.pendingVaultUploads.set(tempId, file);
+
+  // 1. Immediately display the uploaded file in a visible list directly below upload area without refreshing!
+  renderOptimisticVaultUploadCard({
+    tempId,
+    name: file.name,
+    size: file.size,
+    ext: ext.toUpperCase(),
+    status: "uploading"
+  });
 
   setCoreState("thinking", "INDEXING DOCUMENT");
   updateContextTask(`Ingesting: ${file.name}`);
 
   try {
+    // Transition to Processing/Indexing
+    updateOptimisticVaultUploadStatus(tempId, "processing");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
     const res = await fetch(`${BACKEND_URL}/api/vault/upload`, {
       method: "POST",
       body: formData
@@ -3401,6 +3419,10 @@ async function uploadFileToVault(file) {
       localStorage.setItem("aura_local_vault_files", JSON.stringify(localFiles));
     }
 
+    // Update status to Ready and reload persisted database list
+    updateOptimisticVaultUploadStatus(tempId, "ready", data.file);
+    window.pendingVaultUploads.delete(tempId);
+
     playTactileSound("success");
     await loadVaultFiles();
     setCoreState("idle", "ONLINE");
@@ -3413,9 +3435,105 @@ async function uploadFileToVault(file) {
     console.warn("[VAULT UPLOAD ERROR]", err.message);
     setCoreState("error", "UPLOAD ERROR");
     setTimeout(() => setCoreState("idle", "ONLINE"), 2500);
-    alert("Failed to upload document: " + err.message);
+    // Display failed status with Retry and Remove buttons
+    updateOptimisticVaultUploadStatus(tempId, "failed", null, err.message);
   }
 }
+
+function renderOptimisticVaultUploadCard({ tempId, name, size, ext, status }) {
+  if (!vaultFilesGrid) return;
+
+  // If empty state exists, clear it
+  if (vaultFilesGrid.innerHTML.includes("No Documents Ingested Yet")) {
+    vaultFilesGrid.innerHTML = "";
+  }
+
+  const existing = document.getElementById(tempId);
+  if (existing) existing.remove();
+
+  const sizeStr = `${(size / 1024).toFixed(1)} KB`;
+  const card = document.createElement("div");
+  card.id = tempId;
+  card.className = "vault-file-card optimistic-card";
+  card.style.cssText = "display:flex; flex-direction:column; justify-content:space-between; padding:16px; background:var(--bg-surface); border:1px solid rgba(56,189,248,0.4); border-radius:var(--radius-md); box-shadow:0 4px 16px rgba(0,0,0,0.3); transition:all 0.2s ease;";
+
+  card.innerHTML = `
+    <div class="file-card-top" style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px;">
+      <div class="file-type-icon" style="font-size:24px; color:#38bdf8;">📄</div>
+      <div class="file-name-meta" style="flex:1; min-width:0;">
+        <div class="file-title" style="font-weight:700; font-size:13px; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(name)}</div>
+        <div class="file-date-size" style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-secondary); margin-top:3px;">
+          <span>${ext} · ${sizeStr}</span>
+          <span>•</span>
+          <span>Just now</span>
+        </div>
+        <div style="margin-top:6px;" id="${tempId}-status-badge">
+          <span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); padding:2px 8px; border-radius:10px;">
+            <span style="display:inline-block; width:8px; height:8px; border:2px solid #38bdf8; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+            <span>Uploading...</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="${tempId}-actions" style="display:flex; gap:6px; margin-top:8px;">
+      <span style="font-size:11px; color:var(--text-tertiary);">Processing document...</span>
+    </div>
+  `;
+
+  vaultFilesGrid.prepend(card);
+}
+
+function updateOptimisticVaultUploadStatus(tempId, status, fileData = null, errorMsg = "") {
+  const card = document.getElementById(tempId);
+  const badgeWrap = document.getElementById(`${tempId}-status-badge`);
+  const actionsWrap = document.getElementById(`${tempId}-actions`);
+  if (!card) return;
+
+  if (status === "processing") {
+    card.style.borderColor = "rgba(129,140,248,0.5)";
+    if (badgeWrap) {
+      badgeWrap.innerHTML = `
+        <span style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#818cf8; background:rgba(129,140,248,0.12); border:1px solid rgba(129,140,248,0.3); padding:2px 8px; border-radius:10px;">
+          <span style="display:inline-block; width:8px; height:8px; border:2px solid #818cf8; border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+          <span>Processing &amp; Indexing Chunks...</span>
+        </span>
+      `;
+    }
+  } else if (status === "ready") {
+    card.style.borderColor = "rgba(16,185,129,0.5)";
+    if (badgeWrap) {
+      badgeWrap.innerHTML = `
+        <span style="display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; color:#10b981; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); padding:1px 6px; border-radius:10px;">
+          <span>●</span> READY &amp; INDEXED
+        </span>
+      `;
+    }
+  } else if (status === "failed") {
+    card.style.borderColor = "rgba(239,68,68,0.5)";
+    if (badgeWrap) {
+      badgeWrap.innerHTML = `
+        <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; color:#ef4444; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:10px;" title="${escapeHtml(errorMsg || 'Upload failed')}">
+          <span>✕</span> Upload Failed (${escapeHtml(errorMsg || 'Server Error')})
+        </span>
+      `;
+    }
+    if (actionsWrap) {
+      actionsWrap.innerHTML = `
+        <button class="file-action-btn" onclick="retryVaultUpload('${tempId}')" style="color:#38bdf8; font-weight:700;">🔄 Retry</button>
+        <button class="file-action-btn delete" onclick="document.getElementById('${tempId}')?.remove()" style="color:#ef4444;">🗑️ Remove</button>
+      `;
+    }
+  }
+}
+
+window.retryVaultUpload = function(tempId) {
+  const file = window.pendingVaultUploads.get(tempId);
+  const card = document.getElementById(tempId);
+  if (card) card.remove();
+  if (file) {
+    uploadFileToVault(file);
+  }
+};
 
 async function loadVaultFiles() {
   if (!vaultFilesGrid) return;
@@ -4903,7 +5021,10 @@ window.openEmbeddedYoutubeModal = function (url, title, channel) {
   const modal = document.getElementById("youtubeEmbeddedModal");
   const iframe = document.getElementById("ytModalIframe");
   const titleEl = document.getElementById("ytModalVideoTitle");
+  const extLink = document.getElementById("ytModalExternalLink");
   if (!modal || !iframe) return;
+
+  if (!url) return;
 
   let videoId = "";
   if (url.includes("watch?v=")) {
@@ -4914,14 +5035,28 @@ window.openEmbeddedYoutubeModal = function (url, title, channel) {
     videoId = url.split("embed/")[1].split("?")[0];
   }
 
+  const isValidId = Boolean(videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId));
+
+  if (!isValidId) {
+    // If not a valid 11-char ID (e.g. search query or results URL), open in external tab directly
+    // This prevents YouTube's X-Frame-Options from blocking the iframe with an "unavailable" error
+    window.open(url, "_blank", "noopener,noreferrer");
+    if (typeof playTactileSound === "function") playTactileSound("click");
+    return;
+  }
+
   if (titleEl) {
     titleEl.textContent = title ? `${title} · ${channel || 'YouTube'}` : "Educational Lecture Stream";
   }
 
-  iframe.src = videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1` : url;
+  if (extLink) {
+    extLink.href = `https://www.youtube.com/watch?v=${videoId}`;
+  }
+
+  iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
   modal.style.display = "flex";
   modal.classList.add("active");
-  playTactileSound("click");
+  if (typeof playTactileSound === "function") playTactileSound("click");
 };
 
 const btnCloseYtModal = document.getElementById("btnCloseYtModal");
@@ -11136,12 +11271,13 @@ async function renderAcademicYouTubeRecommendations() {
       <div class="academic-yt-grid">
         ${matchingVideos.map(v => {
           const vId = v.videoId || v.id;
-          const thumb = v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
-          const watchUrl = v.url || `https://www.youtube.com/watch?v=${vId}`;
+          const isRealId = Boolean(vId && /^[a-zA-Z0-9_-]{11}$/.test(vId));
+          const thumb = isRealId ? (v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`) : (v.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400");
+          const watchUrl = isRealId ? `https://www.youtube.com/watch?v=${vId}` : (v.url || directResolverUrl);
           return `
             <div class="academic-yt-card">
               <div class="academic-yt-thumb-wrap" style="position:relative; cursor:pointer;" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\'")}')">
-                <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://i.ytimg.com/vi/${vId}/hqdefault.jpg'" />
+                <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400'" />
                 <span class="academic-yt-chip-badge">${escapeHtml(v.badge || (isCBSE ? 'CBSE NCERT Core' : 'TN State Board Core'))}</span>
                 <span class="academic-yt-lang-badge">${escapeHtml(v.language || (isCBSE ? 'English' : 'Tamil'))}</span>
               </div>
@@ -11155,15 +11291,12 @@ async function renderAcademicYouTubeRecommendations() {
                   <p class="academic-yt-card-desc" style="margin-top:6px;">${escapeHtml(v.description || '')}</p>
                 </div>
                 <div class="academic-yt-card-actions">
-                  <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\'")}')" title="Stream directly inside holographic HUD player">
-                    <span>▷</span>
-                    <span>Watch</span>
+                  <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\'")}')" title="${isRealId ? 'Stream directly inside in-app player' : 'Watch topic on YouTube'}">
+                    <span>${isRealId ? '▷' : '↗'}</span>
+                    <span>${isRealId ? 'Watch' : 'Search YT'}</span>
                   </button>
-                  <a href="${escapeHtml(directResolverUrl)}" target="_blank" rel="noopener noreferrer" class="academic-yt-btn-search" title="Open targeted YouTube search resolver matching ${escapeHtml(directResolverQuery)}">
-                    <span>🔍 Resolver</span>
-                  </a>
                   <a href="${escapeHtml(watchUrl)}" target="_blank" rel="noopener noreferrer" class="academic-yt-btn-yt" title="Watch on YouTube directly">
-                    <span>↗ YT</span>
+                    <span>↗ YouTube</span>
                   </a>
                 </div>
               </div>
@@ -11241,6 +11374,54 @@ function initCollegeAndSchoolHub() {
   const sectionAcademicCollege = document.getElementById("sectionAcademicCollege");
   const sectionAcademicMaterial = document.getElementById("sectionAcademicMaterial");
 
+  window.selectAcademicCategory = function(cat) {
+    const catTN = document.getElementById("academicCatTNState");
+    const catCB = document.getElementById("academicCatCBSE");
+    const catCol = document.getElementById("academicCatCollege");
+    const catAss = document.getElementById("academicCatAssistant");
+
+    if (catTN) catTN.classList.toggle("active", cat === "TN_STATE");
+    if (catCB) catCB.classList.toggle("active", cat === "CBSE");
+    if (catCol) catCol.classList.toggle("active", cat === "COLLEGE");
+    if (catAss) catAss.classList.toggle("active", cat === "ASSISTANT");
+
+    const paneSchool = document.getElementById("sectionAcademicSchool");
+    const paneCollege = document.getElementById("sectionAcademicCollege");
+    const paneMaterial = document.getElementById("sectionAcademicMaterial");
+    const schoolHeading = document.getElementById("schoolCurriculumHeading");
+
+    if (cat === "TN_STATE" || cat === "CBSE") {
+      if (paneSchool) paneSchool.style.display = "block";
+      if (paneCollege) paneCollege.style.display = "none";
+      if (paneMaterial) paneMaterial.style.display = "none";
+
+      academicIntelligenceState.activeBoard = cat;
+      academicIntelligenceState.activeClass10Board = cat === "CBSE" ? "CBSE" : "TN_SSLC";
+
+      if (schoolHeading) {
+        schoolHeading.textContent = cat === "CBSE" ? "CBSE Board (NCERT Curriculum)" : "Tamil Nadu State Board (Samacheer Kalvi)";
+      }
+
+      dockAcademicRecommendationsContainer("school");
+      renderSchoolCurriculum();
+      renderAcademicYouTubeRecommendations();
+    } else if (cat === "COLLEGE") {
+      if (paneSchool) paneSchool.style.display = "none";
+      if (paneCollege) paneCollege.style.display = "block";
+      if (paneMaterial) paneMaterial.style.display = "none";
+
+      ensureCollegeIframeLoaded();
+      dockAcademicRecommendationsContainer("college");
+      renderAcademicYouTubeRecommendations();
+    } else if (cat === "ASSISTANT") {
+      if (paneSchool) paneSchool.style.display = "none";
+      if (paneCollege) paneCollege.style.display = "none";
+      if (paneMaterial) paneMaterial.style.display = "block";
+    }
+
+    if (typeof playTactileSound === "function") playTactileSound("click");
+  };
+
   function switchAcademicTab(tabKey) {
     academicIntelligenceState.activeTab = tabKey;
 
@@ -11248,9 +11429,13 @@ function initCollegeAndSchoolHub() {
     if (tabAcademicCollege) tabAcademicCollege.classList.toggle("active", tabKey === "college");
     if (tabAcademicMaterial) tabAcademicMaterial.classList.toggle("active", tabKey === "material");
 
-    if (sectionAcademicSchool) sectionAcademicSchool.style.display = tabKey === "school" ? "block" : "none";
-    if (sectionAcademicCollege) sectionAcademicCollege.style.display = tabKey === "college" ? "block" : "none";
-    if (sectionAcademicMaterial) sectionAcademicMaterial.style.display = tabKey === "material" ? "block" : "none";
+    if (tabKey === "school") {
+      window.selectAcademicCategory(academicIntelligenceState.activeBoard || "TN_STATE");
+    } else if (tabKey === "college") {
+      window.selectAcademicCategory("COLLEGE");
+    } else if (tabKey === "material") {
+      window.selectAcademicCategory("ASSISTANT");
+    }
 
     if (tabKey === "school") {
       dockAcademicRecommendationsContainer("school");
@@ -12421,8 +12606,35 @@ function initAuthGateway() {
   }
 }
 
+function initWelcomeGreeting() {
+  const headingEl = document.getElementById("workspaceWelcomeHeading");
+  const subtitleEl = document.getElementById("workspaceWelcomeSubtitle");
+  if (!headingEl) return;
+
+  const hasVisited = localStorage.getItem("aura_has_visited");
+  const profile = JSON.parse(localStorage.getItem("aura_student_profile") || "{}");
+  const authUser = JSON.parse(localStorage.getItem("aura_authenticated_user") || "null");
+  const userName = (profile && profile.name) || (authUser && (authUser.name || authUser.displayName)) || "";
+
+  if (hasVisited) {
+    if (userName && userName !== "Student") {
+      headingEl.textContent = `Welcome back, ${userName}`;
+    } else {
+      headingEl.textContent = "Welcome back";
+    }
+  } else {
+    headingEl.textContent = "Welcome to PROJECT AURA";
+    localStorage.setItem("aura_has_visited", "true");
+  }
+
+  if (subtitleEl) {
+    subtitleEl.textContent = "Your space to learn, create and explore. What would you like to work on today?";
+  }
+}
+
 // ── ENSURE AURA 3.0 MODULES INITIALIZE ON PAGE LOAD ──
 function initAura3CoreModules() {
+  initWelcomeGreeting();
   if (typeof initAuthGateway === "function") initAuthGateway();
   if (typeof initGlobalVoiceAssistant === "function") initGlobalVoiceAssistant();
   if (typeof initCollegeAndSchoolHub === "function") initCollegeAndSchoolHub();
@@ -12859,6 +13071,89 @@ topbarLatencyTicker();
     window.speechSynthesis.speak(utter);
   }
 
+  let activeMediaStream = null;
+
+  function requestSensitiveDevicePermission(title, text, onConfirm) {
+    const modal = document.getElementById("sensitiveActionConfirmModal");
+    const titleEl = document.getElementById("sensitiveConfirmTitle");
+    const textEl = document.getElementById("sensitiveConfirmText");
+    const btnConfirm = document.getElementById("btnConfirmSensitiveAction");
+    const btnCancel = document.getElementById("btnCancelSensitiveAction");
+    if (!modal) return;
+
+    if (titleEl) titleEl.textContent = title;
+    if (textEl) textEl.textContent = text;
+
+    modal.style.display = "flex";
+
+    const cleanUp = () => {
+      modal.style.display = "none";
+      btnConfirm.onclick = null;
+      btnCancel.onclick = null;
+    };
+
+    btnConfirm.onclick = () => {
+      cleanUp();
+      if (typeof onConfirm === "function") onConfirm();
+    };
+
+    btnCancel.onclick = () => {
+      cleanUp();
+      const cancelMsg = "Action cancelled by user.";
+      if (jarvisResponseText) jarvisResponseText.textContent = cancelMsg;
+      speakJarvisResponse(cancelMsg);
+    };
+  }
+
+  function openCameraApplication() {
+    const camModal = document.getElementById("cameraHardwareModal");
+    const videoFeed = document.getElementById("cameraVideoFeed");
+    const placeholder = document.getElementById("cameraPlaceholderText");
+    const btnClose = document.getElementById("btnCloseCameraModal");
+    if (!camModal || !videoFeed) return;
+
+    camModal.style.display = "flex";
+
+    const stopCamera = () => {
+      if (activeMediaStream) {
+        activeMediaStream.getTracks().forEach(track => track.stop());
+        activeMediaStream = null;
+      }
+      if (videoFeed) videoFeed.srcObject = null;
+      camModal.style.display = "none";
+      const msg = "Camera closed and hardware session terminated.";
+      if (jarvisResponseText) jarvisResponseText.textContent = msg;
+      speakJarvisResponse(msg);
+    };
+
+    if (btnClose) btnClose.onclick = stopCamera;
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          activeMediaStream = stream;
+          videoFeed.srcObject = stream;
+          videoFeed.style.display = "block";
+          if (placeholder) placeholder.style.display = "none";
+          const readyMsg = "Camera stream active under least-privilege sandbox.";
+          if (jarvisResponseText) jarvisResponseText.textContent = readyMsg;
+          speakJarvisResponse(readyMsg);
+        })
+        .catch(err => {
+          videoFeed.style.display = "none";
+          if (placeholder) {
+            placeholder.style.display = "block";
+            placeholder.textContent = "Camera access denied or device unavailable: " + err.message;
+          }
+          const errMsg = "Camera access was denied by browser permissions.";
+          if (jarvisResponseText) jarvisResponseText.textContent = errMsg;
+          speakJarvisResponse(errMsg);
+        });
+    } else {
+      alert("Camera API is not supported in this environment.");
+    }
+  }
+
   // Structured Command Router: executes application features and clarifies hardware limits
   async function routeJarvisCommand(rawTranscript) {
     const raw = (rawTranscript || "").trim();
@@ -12946,6 +13241,42 @@ topbarLatencyTicker();
     if (cmd.includes("go back") || cmd.includes("home") || cmd.includes("command center")) {
       switchView("command-center");
       const confirmation = "Returned to Command Center.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    // Reusable Sensitive Action Permission Flow
+    if (cmd.includes("camera") || cmd.includes("webcam") || cmd.includes("photo")) {
+      const confirmationPrompt = "Would you like me to open the camera now?";
+      jarvisResponseText.textContent = confirmationPrompt;
+      speakJarvisResponse(confirmationPrompt);
+
+      requestSensitiveDevicePermission(
+        "Camera Access Permission",
+        "Would you like me to open the camera now? Access will be isolated to this local session.",
+        () => openCameraApplication()
+      );
+      return;
+    }
+
+    if (cmd.includes("find") && (cmd.includes("physics") || cmd.includes("notes") || cmd.includes("document"))) {
+      switchView("knowledge-vault");
+      const memSearch = document.getElementById("memorySearchInput");
+      if (memSearch) {
+        memSearch.value = "physics";
+        memSearch.dispatchEvent(new Event("input"));
+      }
+      const confirmation = "Opening Knowledge Vault and locating your physics notes and formulas.";
+      jarvisResponseText.textContent = confirmation;
+      speakJarvisResponse(confirmation);
+      return;
+    }
+
+    if (cmd.includes("youtube") || cmd.includes("lecture") || (cmd.includes("video") && cmd.includes("chapter"))) {
+      switchView("academic-hub-workspace");
+      renderAcademicYouTubeRecommendations();
+      const confirmation = "Searching verified educational YouTube lectures for this chapter.";
       jarvisResponseText.textContent = confirmation;
       speakJarvisResponse(confirmation);
       return;

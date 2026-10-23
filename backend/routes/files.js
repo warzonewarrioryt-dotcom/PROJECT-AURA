@@ -93,7 +93,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       processResult.file.serverPath = req.file.path;
       processResult.file.filename = req.file.filename;
       processResult.file.downloadUrl = `/uploads/${req.file.filename}`;
-      auraDB.saveDatabase();
+      auraDB.updateFile(processResult.file.id, processResult.file);
     }
 
     // Auto-generate related topics and relation information for uploaded file
@@ -136,7 +136,7 @@ Format strictly as JSON:
           processResult.file.relationInfo = relationInfo;
           processResult.file.aiSummary = aiSummary;
           if (parsed.links) processResult.file.matchedLinks = parsed.links;
-          auraDB.saveDatabase();
+          auraDB.updateFile(processResult.file.id, processResult.file);
         }
       }
     } catch (_) {}
@@ -153,7 +153,7 @@ Format strictly as JSON:
       processResult.file.relatedTopics = relatedTopics;
       processResult.file.relationInfo = relationInfo;
       processResult.file.aiSummary = aiSummary;
-      auraDB.saveDatabase();
+      auraDB.updateFile(processResult.file.id, processResult.file);
     }
 
     res.json({

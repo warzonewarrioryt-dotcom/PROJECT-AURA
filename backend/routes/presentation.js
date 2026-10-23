@@ -320,12 +320,13 @@ function buildPdfBuffer(slides, topic, themeKey = "cyber-dark") {
 }
 
 /**
- * POST /api/presentation/export
+ * POST /api/presentation/export, /export/pptx, /export/pdf
  * Downloads the presentation as valid PPTX or PDF file
  */
-router.post("/export", async (req, res) => {
+router.post(["/export", "/export/pptx", "/export/pdf"], async (req, res) => {
   try {
-    const { slides = [], topic = "Project Aura Presentation", format = "pptx", themeKey = "cyber-dark", image = null } = req.body;
+    const isPdfRoute = req.path.includes("pdf");
+    const { slides = [], topic = "Project Aura Presentation", format = isPdfRoute ? "pdf" : "pptx", themeKey = "cyber-dark", image = null } = req.body;
 
     if (!Array.isArray(slides) || slides.length === 0) {
       return res.status(400).json({ success: false, error: "Slides array is required to export presentation." });

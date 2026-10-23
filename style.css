@@ -18124,3 +18124,114 @@ input:focus, textarea:focus, select:focus {
   overflow-y: auto !important;
   width: 100% !important;
 }
+
+/* =========================================================
+   ACADEMIC HUB v3.0 DESIGN SYSTEM STYLES
+========================================================= */
+.academic-category-card {
+  background: var(--bg-surface, #0f131d);
+  border: 1px solid var(--border-card, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.academic-category-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: #141a27;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.academic-category-card.active {
+  border-color: #38bdf8;
+  background: #131b2c;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.academic-cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.academic-cat-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.academic-cat-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.academic-cat-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.academic-cat-subtitle {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0 0 18px 0;
+  flex-grow: 1;
+}
+
+.academic-cat-action-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.academic-category-card:hover .academic-cat-action-btn,
+.academic-category-card.active .academic-cat-action-btn {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+}
+
+.academic-cat-action-arrow {
+  transition: transform 0.15s ease;
+}
+
+.academic-category-card:hover .academic-cat-action-arrow {
+  transform: translateX(4px);
+}
+
+.academic-study-assistant-card {
+  transition: all 0.2s ease;
+}
+
+.academic-study-assistant-card:hover {
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+

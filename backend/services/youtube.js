@@ -132,8 +132,8 @@ const VERIFIED_EDUCATIONAL_CATALOG = [
   {
     subjects: ["tamil", "பொதுத்தமிழ்", "தமிழ்", "செய்யுள்", "உரைநடை", "இலக்கணம்"],
     standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
-    tamil: { id: "ta-kalvi-12", title: "12-ஆம் வகுப்பு பொதுத்தமிழ்: செய்யுள் & உரைநடை விளக்கம்", channel: "Kalvi TV Official", desc: "பாடநூல் செய்யுள் வரிகள், சொல்லும் பொருளும், நயம்பாராட்டல் மற்றும் இலக்கணக் குறிப்புகள்." },
-    english: { id: "ta-cbse-12", title: "CBSE Class 12 Tamil (Code 106) Full Revision", channel: "Tamil Kalvi Guide", desc: "Comprehensive chapter-by-chapter walkthrough for CBSE Tamil core syllabus." }
+    tamil: { id: "m6x8A4V4B9o", title: "12-ஆம் வகுப்பு பொதுத்தமிழ்: செய்யுள் & உரைநடை விளக்கம்", channel: "Kalvi TV Official", desc: "பாடநூல் செய்யுள் வரிகள், சொல்லும் பொருளும், நயம்பாராட்டல் மற்றும் இலக்கணக் குறிப்புகள்." },
+    english: { id: "WS070h7kY3I", title: "CBSE Class 12 Tamil (Code 106) Full Revision", channel: "Tamil Kalvi Guide", desc: "Comprehensive chapter-by-chapter walkthrough for CBSE Tamil core syllabus." }
   }
 ];
 
@@ -332,7 +332,8 @@ async function searchAcademicVideos({ standard = "", board = "", subject = "", t
         const itemSearchQuery = `${boardQueryName} ${stdLabel} ${subjLabel} ${cleanTopic} ${tpl.channel} lecture`;
         const itemResolverUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(itemSearchQuery)}`;
         matched.push({
-          videoId: `query-${encodeURIComponent(subjLabel).slice(0, 10)}-${matched.length + 1}`,
+          videoId: null,
+          isDirectSearch: true,
           title: tpl.title,
           channel: tpl.channel,
           thumbnail: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400`,
