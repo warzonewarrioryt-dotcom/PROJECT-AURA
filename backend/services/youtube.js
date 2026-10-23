@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    PROJECT AURA 3.0
    YOUTUBE INTELLIGENCE SERVICE
    Authentic Syllabus Video Search & Educational Video Integration
@@ -29,7 +29,7 @@ async function searchYouTube(query, maxResults = 6) {
 
   try {
     const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${encodeURIComponent(query)}&type=video&key=${apiKey.trim()}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
 
     if (res.ok) {
       const data = await res.json();
@@ -89,11 +89,11 @@ function cleanTopicForSearch(topicStr) {
   if (!topicStr) return "";
   let t = topicStr.trim();
   // Remove markdown, bullet symbols
-  t = t.replace(/^[-*•\d.]+\s*/, "");
-  // If topic has "Unit I: Something — Details", simplify to "Unit 1 Something"
+  t = t.replace(/^[-*â€¢\d.]+\s*/, "");
+  // If topic has "Unit I: Something â€” Details", simplify to "Unit 1 Something"
   t = t.replace(/Unit\s+([IVXLCDM]+|\d+)\s*:\s*/i, "Unit $1 ");
   // Truncate at dashes/semicolons if overly long
-  if (t.includes("—")) t = t.split("—")[0].trim();
+  if (t.includes("â€”")) t = t.split("â€”")[0].trim();
   if (t.includes(";")) t = t.split(";")[0].trim();
   return t.slice(0, 75).trim();
 }
@@ -256,3 +256,4 @@ module.exports = {
   searchYouTube,
   searchAcademicVideos
 };
+
