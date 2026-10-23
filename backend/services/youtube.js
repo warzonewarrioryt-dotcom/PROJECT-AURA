@@ -1,7 +1,8 @@
 /* =========================================================
    PROJECT AURA 3.0
    YOUTUBE INTELLIGENCE SERVICE
-   Verified Educational Video Matching Engine
+   Authentic Syllabus Video Search & Educational Video Integration
+   Zero Fabrication Policy: Never fabricate video IDs, channels, or success states.
 ========================================================= */
 
 "use strict";
@@ -10,395 +11,243 @@ function isConfigured() {
   return Boolean(process.env.YOUTUBE_API_KEY && process.env.YOUTUBE_API_KEY.trim());
 }
 
-// Verified real educational YouTube video IDs mapped across core school (10th, 11th, 12th) & college curriculum
-const VERIFIED_EDUCATIONAL_CATALOG = [
-  // Physics (School & Engineering)
-  {
-    subjects: ["physics", "electrostatics", "gauss law", "electric field", "coulomb"],
-    standards: ["12th", "std_12", "engineering", "college"],
-    tamil: { id: "bHIhgxav9LY", title: "12th Physics: Electrostatics & Coulomb's Law in Tamil", channel: "Tamil Physics Tutor", desc: "Detailed breakdown of electric charges, Coulomb's law, electric dipole, and Gauss's law derivations in Tamil." },
-    english: { id: "T63zM2l2e74", title: "Electricity & Magnetism: Coulomb's Law & Electric Fields", channel: "MIT OpenCourseWare", desc: "Foundations of electrostatics, field vectors, and Gauss's law with step-by-step calculus derivations." }
-  },
-  {
-    subjects: ["current electricity", "kirchhoff", "resistors", "capacitors", "wheatstone"],
-    standards: ["12th", "std_12", "10th", "std_10", "engineering"],
-    tamil: { id: "m6x8A4V4B9o", title: "12th Physics: Current Electricity & Kirchhoff's Laws (Tamil)", channel: "Tamil Physics Tutor", desc: "Ohm's law, temperature dependence of resistance, Kirchhoff's current and voltage rules, and Wheatstone bridge." },
-    english: { id: "bHIhgxav9LY", title: "Physics 1 - Current Electricity & Circuit Analysis", channel: "The Organic Chemistry Tutor", desc: "Series and parallel circuits, Kirchhoff's laws, RC circuits, and electrical power calculation." }
-  },
-  {
-    subjects: ["optics", "ray optics", "wave optics", "refraction", "lenses", "snell"],
-    standards: ["10th", "std_10", "12th", "std_12"],
-    tamil: { id: "m6x8A4V4B9o", title: "10th & 12th Physics: Optics & Snell's Law in Tamil", channel: "Kalvi TV Official", desc: "Reflection, refraction through spherical surfaces, lens maker formula, and wave theory of light." },
-    english: { id: "bHIhgxav9LY", title: "Optics - Reflection, Refraction & Snell's Law", channel: "The Organic Chemistry Tutor", desc: "Geometric and physical optics: focal length, thin lens equation, interference, and diffraction." }
-  },
-  {
-    subjects: ["laws of motion", "newton", "force", "mechanics", "gravitation"],
-    standards: ["10th", "std_10", "11th", "std_11"],
-    tamil: { id: "m6x8A4V4B9o", title: "10th & 11th Physics: Newton's Laws of Motion in Tamil", channel: "Tamil Science Hub", desc: "Inertia, momentum, Newton's three laws of motion, conservation of momentum, and friction in Tamil." },
-    english: { id: "bHIhgxav9LY", title: "Newton's Laws of Motion - Full Physics Review", channel: "The Organic Chemistry Tutor", desc: "Free body diagrams, normal force, tension, friction, and Newton's second law applications." }
-  },
-
-  // Chemistry (School & College)
-  {
-    subjects: ["chemistry", "chemical kinetics", "electrochemistry", "solutions", "metallurgy"],
-    standards: ["12th", "std_12", "engineering"],
-    tamil: { id: "bC79K6V3M6E", title: "12th Chemistry: Chemical Kinetics & Rate Laws in Tamil", channel: "Tamil Chem Academy", desc: "Rate of reaction, rate constant, order and molecularity, integrated rate equations, and half-life." },
-    english: { id: "bC79K6V3M6E", title: "General Chemistry 1 Review Study Guide", channel: "The Organic Chemistry Tutor", desc: "Kinetics, rate laws, stoichiometry, thermochemistry, and reaction mechanisms." }
-  },
-  {
-    subjects: ["organic chemistry", "named reactions", "hydrocarbons", "aldehydes", "polymers"],
-    standards: ["11th", "std_11", "12th", "std_12"],
-    tamil: { id: "M7e2K1k0m04", title: "12th Chemistry: Organic Named Reactions in Tamil", channel: "Tamil Chem Academy", desc: "Aldol condensation, Cannizzaro reaction, Sandmeyer reaction, and nucleophilic substitution mechanisms." },
-    english: { id: "M7e2K1k0m04", title: "Organic Chemistry 1 - Full College Course", channel: "freeCodeCamp.org", desc: "Functional groups, resonance, stereochemistry, and organic reaction mechanisms." }
-  },
-  {
-    subjects: ["periodic table", "chemical reactions", "acids", "bases", "salts"],
-    standards: ["10th", "std_10"],
-    tamil: { id: "bC79K6V3M6E", title: "10th Science: Periodic Classification & Chemical Reactions (Tamil)", channel: "Kalvi TV Official", desc: "Types of chemical reactions, modern periodic law, periodic trends, and acid-base indicators." },
-    english: { id: "bC79K6V3M6E", title: "Acids, Bases, and Salts - Complete Science Walkthrough", channel: "The Organic Chemistry Tutor", desc: "pH scale, neutralization, chemical properties of acids and bases, and salt preparation." }
-  },
-
-  // Mathematics (School & Engineering)
-  {
-    subjects: ["mathematics", "maths", "matrices", "determinants", "linear algebra"],
-    standards: ["10th", "std_10", "12th", "std_12", "engineering", "college"],
-    tamil: { id: "e_e07fJ85V8", title: "12th & Engineering Mathematics: Matrices & Determinants in Tamil", channel: "Tamil Maths Academy", desc: "Rank of a matrix, Gaussian elimination, Cramers rule, eigenvalues, and Cayley-Hamilton theorem in Tamil." },
-    english: { id: "fNk_zzaMoSs", title: "Essence of Linear Algebra & Matrices", channel: "3Blue1Brown", desc: "Geometric intuition for vectors, matrices, determinants, dot products, and linear transformations." }
-  },
-  {
-    subjects: ["calculus", "differentiation", "integration", "derivatives", "differential equations"],
-    standards: ["11th", "std_11", "12th", "std_12", "engineering", "college"],
-    tamil: { id: "Vw8m6aH_VqA", title: "12th & Engineering Maths: Differential Calculus & Integration in Tamil", channel: "Anna University Maths Hub", desc: "Limits, continuity, differentiation techniques, integration by parts, and differential equations." },
-    english: { id: "WS070h7kY3I", title: "Calculus 1 - Full University Course", channel: "freeCodeCamp.org", desc: "Limits, derivative rules, chain rule, implicit differentiation, and definite integrals." }
-  },
-  {
-    subjects: ["quadratic equations", "relations and functions", "arithmetic progression", "algebra"],
-    standards: ["10th", "std_10"],
-    tamil: { id: "e_e07fJ85V8", title: "10th Maths: Relations, Functions & Quadratic Equations (Tamil)", channel: "Samacheer Kalvi Guide", desc: "Types of relations, Cartesian products, roots of quadratic equations by formula, and nature of roots." },
-    english: { id: "WS070h7kY3I", title: "Algebra Basics: Solving Quadratic Equations", channel: "The Organic Chemistry Tutor", desc: "Factoring quadratic equations, quadratic formula, discriminant, and arithmetic progressions." }
-  },
-
-  // Computer Science & Engineering
-  {
-    subjects: ["data structures", "algorithms", "arrays", "linked lists", "trees", "stacks", "queues", "cs3301"],
-    standards: ["engineering", "college", "11th", "12th"],
-    tamil: { id: "Q_n_4iY7a44", title: "Data Structures & Algorithms Full Course in Tamil", channel: "Logic First Tamil", desc: "Array operations, Stacks, Queues, Singly and Doubly Linked Lists, Trees, and Sorting in Tamil." },
-    english: { id: "0IAPZzGSbME", title: "Data Structures and Algorithms for Beginners", channel: "Programming with Mosh", desc: "Core computer science fundamentals: Stacks, Queues, Hash Tables, Trees, and Graph theory." }
-  },
-  {
-    subjects: ["operating systems", "os", "process scheduling", "deadlocks", "virtual memory", "cs3452"],
-    standards: ["engineering", "college"],
-    tamil: { id: "2h3eWbL-xbg", title: "Operating Systems Full Course in Tamil", channel: "Logic First Tamil", desc: "Processes, Threads, CPU Scheduling, Deadlocks, Memory Management, and Virtual Memory in Tamil." },
-    english: { id: "RozoeWzT7IM", title: "Operating Systems Full Course for Engineering Students", channel: "Gate Smashers", desc: "Complete Anna University & GATE syllabus: Virtual memory, demand paging, and disk scheduling." }
-  },
-  {
-    subjects: ["database", "dbms", "sql", "normalization", "queries", "cs3492"],
-    standards: ["engineering", "college", "11th", "12th"],
-    tamil: { id: "HXV3zeQKqGY", title: "SQL & DBMS Full Course in Tamil", channel: "Logic First Tamil", desc: "Relational database concepts, ER modeling, Normalization (1NF, 2NF, 3NF), and SQL queries in Tamil." },
-    english: { id: "HXV3zeQKqGY", title: "Database Systems - Full Course for Beginners", channel: "freeCodeCamp.org", desc: "Relational algebra, SQL syntax, transactions, ACID properties, and database indexing." }
-  },
-  {
-    subjects: ["computer networks", "networking", "osi model", "tcp/ip", "protocols", "cs3591"],
-    standards: ["engineering", "college"],
-    tamil: { id: "3QhU93L8W5k", title: "Computer Networks & OSI Model in Tamil", channel: "Tamil Tech Hub", desc: "7 Layers of OSI model, TCP/IP protocol suite, IP addressing, subnetting, and packet routing." },
-    english: { id: "qiQR5rTSshw", title: "Computer Networks Lectures for Engineering", channel: "Gate Smashers", desc: "Data link protocols (Stop-and-wait, Go-Back-N), flow control, congestion management, and cryptography." }
-  },
-  {
-    subjects: ["python", "python basics", "oop", "functions", "control structures"],
-    standards: ["11th", "12th", "engineering", "college"],
-    tamil: { id: "m67-bOpOoPU", title: "Python Full Course for Beginners in Tamil", channel: "Error Makes Clever Academy", desc: "Complete Python basics: variables, loops, functions, lists, dictionaries, and OOP in Tamil." },
-    english: { id: "rfscVS0vtbw", title: "Python for Beginners - Full Course", channel: "freeCodeCamp.org", desc: "Comprehensive beginner to intermediate Python tutorial with interactive exercises." }
-  },
-
-  // Electrical & Electronics Engineering (EEE) - Anna University Regulation 2021
-  {
-    subjects: ["electric circuit analysis", "circuits", "mesh analysis", "nodal analysis", "thevenin", "ee3251"],
-    standards: ["engineering", "college"],
-    tamil: { id: "m6x8A4V4B9o", title: "Electric Circuit Analysis (EE3251) Full Course in Tamil", channel: "Anna University EEE Tutor", desc: "Mesh & Nodal analysis, Thevenin and Norton theorems, Maximum Power Transfer, RLC transients, and resonance." },
-    english: { id: "bHIhgxav9LY", title: "Electric Circuit Analysis - Complete Engineering Review", channel: "The Organic Chemistry Tutor", desc: "Kirchhoff laws, phasor domain analysis, operational impedance, coupled circuits, and two-port networks." }
-  },
-  {
-    subjects: ["electromagnetic fields", "emf", "maxwell equations", "poynting vector", "ee3301"],
-    standards: ["engineering", "college"],
-    tamil: { id: "T63zM2l2e74", title: "Electromagnetic Fields (EE3301) Lectures in Tamil", channel: "Tamil Engineering Hub", desc: "Vector calculus, electrostatics, magnetostatics, Maxwell's four equations, and uniform plane waves." },
-    english: { id: "T63zM2l2e74", title: "Electromagnetic Fields & Waves - Full University Course", channel: "MIT OpenCourseWare", desc: "Coulomb's law, Biot-Savart law, Ampere's circuital law, boundary conditions, and electromagnetic wave equations." }
-  },
-  {
-    subjects: ["electrical machines", "dc machines", "transformers", "induction motors", "alternators", "ee3303", "ee3405"],
-    standards: ["engineering", "college"],
-    tamil: { id: "2h3eWbL-xbg", title: "Electrical Machines I & II (EE3303 / EE3405) in Tamil", channel: "Tamil Electrical Academy", desc: "DC generator and motor characteristics, transformer testing (OC & SC), three phase induction machines, and synchronous alternators." },
-    english: { id: "RozoeWzT7IM", title: "Electrical Machines Complete Course for Engineering", channel: "Gate Smashers", desc: "Magnetic circuits, EMF equation, armature reaction, commutation, circle diagram, and V-curves of synchronous motors." }
-  },
-  {
-    subjects: ["power system analysis", "transmission and distribution", "load flow", "fault analysis", "ee3401", "ee3501"],
-    standards: ["engineering", "college"],
-    tamil: { id: "3QhU93L8W5k", title: "Power System Analysis & Transmission (EE3501 / EE3401) in Tamil", channel: "Tamil Power Hub", desc: "Per-unit system, bus impedance matrices, Gauss-Seidel and Newton-Raphson load flow, and symmetrical/unsymmetrical fault calculation." },
-    english: { id: "qiQR5rTSshw", title: "Power Systems Analysis & Grid Stability", channel: "NPTEL Electrical", desc: "Transmission line parameters, corona, insulator strings, voltage stability, economic dispatch, and swing equation." }
-  },
-  {
-    subjects: ["power electronics", "converters", "inverters", "choppers", "thyristors", "ee3591"],
-    standards: ["engineering", "college"],
-    tamil: { id: "Q_n_4iY7a44", title: "Power Electronics (EE3591) Full Course in Tamil", channel: "Tamil Electrical Academy", desc: "SCR, MOSFET, IGBT characteristics, phase controlled rectifiers, DC-DC buck/boost choppers, PWM inverters, and cycloconverters." },
-    english: { id: "0IAPZzGSbME", title: "Power Electronics Engineering - Theory & Circuit Simulation", channel: "Gate Smashers", desc: "Switching characteristics, firing circuits, harmonic elimination, voltage source inverters, and switch-mode power supplies." }
-  },
-  {
-    subjects: ["control systems", "bode plot", "nyquist", "root locus", "state space", "ee3503"],
-    standards: ["engineering", "college"],
-    tamil: { id: "Vw8m6aH_VqA", title: "Control Systems (EE3503) Complete Lectures in Tamil", channel: "Anna University EEE Tutor", desc: "Transfer functions, block diagram reduction, Mason's gain formula, time response analysis, Routh-Hurwitz, Root locus, and Bode plots." },
-    english: { id: "fNk_zzaMoSs", title: "Control Systems Engineering - Full Course", channel: "Brian Douglas", desc: "Classical feedback control, stability analysis, PID controller tuning, frequency domain lead-lag compensators, and state-space models." }
-  },
-
-  // Biology & Commerce
-  {
-    subjects: ["biology", "botany", "zoology", "genetics", "reproduction", "cells"],
-    standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
-    tamil: { id: "bC79K6V3M6E", title: "12th Bio-Maths & Pure Science Biology in Tamil", channel: "Kalvi TV Official", desc: "Reproduction in organisms, molecular genetics, biotechnology principles, and human health in Tamil." },
-    english: { id: "Jbvx_5c_2hU", title: "DNA, Chromosomes, Genes, and Traits: An Intro to Heredity", channel: "Amoeba Sisters", desc: "Mendelian genetics, chromosome structure, DNA replication, and gene expression." }
-  },
-  {
-    subjects: ["commerce", "accountancy", "partnership", "goodwill", "balance sheet", "economics"],
-    standards: ["11th", "std_11", "12th", "std_12"],
-    tamil: { id: "P_v2B8n4m91", title: "12th Commerce & Accountancy: Partnership Accounts in Tamil", channel: "Tamil Commerce Academy", desc: "Admission of partner, sacrifice ratio, revaluation account, capital account, and balance sheet preparation." },
-    english: { id: "0IAPZzGSbME", title: "Accounting Basics: Financial Statements & Balance Sheet", channel: "Accounting Stuff", desc: "Debit and credit rules, balance sheets, profit and loss statements, and partnership accounting." }
-  },
-  {
-    subjects: ["english", "english core", "flamingo", "vistas", "prose", "poetry", "grammar", "reading skills"],
-    standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
-    tamil: { id: "eR71x8fJ-qA", title: "12th General English: Complete Prose, Poetry & Grammar in Tamil", channel: "Tamil English Tutor", desc: "Line-by-line explanation, poetic devices, grammar exercises, and public exam blueprint." },
-    english: { id: "WS070h7kY3I", title: "Class 12 English Core: Complete Flamingo & Vistas", channel: "Magnet Brains", desc: "Summary, character sketches, themes, and board exam high-weightage question analysis." }
-  },
-  {
-    subjects: ["tamil", "பொதுத்தமிழ்", "தமிழ்", "செய்யுள்", "உரைநடை", "இலக்கணம்"],
-    standards: ["10th", "std_10", "11th", "std_11", "12th", "std_12"],
-    tamil: { id: "m6x8A4V4B9o", title: "12-ஆம் வகுப்பு பொதுத்தமிழ்: செய்யுள் & உரைநடை விளக்கம்", channel: "Kalvi TV Official", desc: "பாடநூல் செய்யுள் வரிகள், சொல்லும் பொருளும், நயம்பாராட்டல் மற்றும் இலக்கணக் குறிப்புகள்." },
-    english: { id: "WS070h7kY3I", title: "CBSE Class 12 Tamil (Code 106) Full Revision", channel: "Tamil Kalvi Guide", desc: "Comprehensive chapter-by-chapter walkthrough for CBSE Tamil core syllabus." }
-  }
-];
-
+/**
+ * Low-level search using Google YouTube Data API v3
+ */
 async function searchYouTube(query, maxResults = 6) {
   const apiKey = process.env.YOUTUBE_API_KEY;
 
-  if (apiKey) {
-    try {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${encodeURIComponent(query)}&type=video&key=${apiKey}`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-
-      if (res.ok) {
-        const data = await res.json();
-        const items = (data.items || [])
-          .filter(item => item.id?.videoId)
-          .map(item => ({
-            videoId: item.id.videoId,
-            title: item.snippet?.title || "Educational Lecture",
-            channel: item.snippet?.channelTitle || "Verified Channel",
-            thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || `https://i.ytimg.com/vi/${item.id.videoId}/hqdefault.jpg`,
-            url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
-            publishedAt: item.snippet?.publishedAt || new Date().toISOString(),
-            description: item.snippet?.description || "Curriculum syllabus lecture walkthrough."
-          }));
-
-        if (items.length > 0) {
-          return {
-            success: true,
-            query,
-            results: items,
-            source: "YouTube Data API v3"
-          };
-        }
-      }
-    } catch (err) {
-      console.warn("[YOUTUBE API WARNING]", err.message);
-    }
+  if (!apiKey || !apiKey.trim()) {
+    return {
+      success: false,
+      errorCode: "KEY_MISSING",
+      error: "YouTube Data API key is not configured in backend/.env.",
+      query,
+      results: []
+    };
   }
 
-  // Fallback to verified catalog
-  return searchCatalogByQuery(query, maxResults);
-}
+  try {
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${encodeURIComponent(query)}&type=video&key=${apiKey.trim()}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
 
-function searchCatalogByQuery(query, maxResults = 6) {
-  const qLower = (query || "").toLowerCase();
-  const isTamil = qLower.includes("tamil") || qLower.includes("tanglish");
-  const langKey = isTamil ? "tamil" : "english";
+    if (res.ok) {
+      const data = await res.json();
+      const items = (data.items || [])
+        .filter(item => item.id && item.id.videoId)
+        .map(item => ({
+          videoId: item.id.videoId,
+          title: item.snippet?.title || "Educational Lecture",
+          channel: item.snippet?.channelTitle || "Educational Channel",
+          thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.medium?.url || `https://i.ytimg.com/vi/${item.id.videoId}/hqdefault.jpg`,
+          url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+          publishedAt: item.snippet?.publishedAt || new Date().toISOString(),
+          description: item.snippet?.description || "Curriculum syllabus lecture walkthrough."
+        }));
 
-  const matched = [];
+      return {
+        success: true,
+        query,
+        results: items,
+        count: items.length,
+        source: "YouTube Data API v3"
+      };
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      const errMsg = errData.error?.message || `YouTube API status ${res.status}`;
+      const isQuota = errMsg.toLowerCase().includes("quota") ||
+                      res.status === 429 ||
+                      (res.status === 403 && (errMsg.toLowerCase().includes("quota") || errData.error?.errors?.some(e => e.reason === "quotaExceeded")));
 
-  for (const entry of VERIFIED_EDUCATIONAL_CATALOG) {
-    const matchesSubject = entry.subjects.some(s => qLower.includes(s));
-    if (matchesSubject) {
-      const vid = entry[langKey] || entry.english || entry.tamil;
-      if (vid && !matched.some(m => m.videoId === vid.id)) {
-        matched.push({
-          videoId: vid.id,
-          title: vid.title,
-          channel: vid.channel,
-          thumbnail: `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`,
-          url: `https://www.youtube.com/watch?v=${vid.id}`,
-          publishedAt: new Date().toISOString(),
-          description: vid.desc,
-          language: isTamil ? "Tamil" : "English"
-        });
-      }
+      return {
+        success: false,
+        errorCode: isQuota ? "QUOTA_EXHAUSTED" : (res.status === 400 ? "KEY_INVALID" : "API_ERROR"),
+        error: isQuota
+          ? "YouTube Data API daily search quota has been exceeded for today (daily quota limit reached)."
+          : errMsg,
+        status: res.status,
+        query,
+        results: []
+      };
     }
+  } catch (err) {
+    console.warn("[YOUTUBE API ERROR]", err.message);
+    return {
+      success: false,
+      errorCode: "REQUEST_FAILED",
+      error: `Failed to reach YouTube Data API: ${err.message}`,
+      query,
+      results: []
+    };
   }
-
-  return {
-    success: true,
-    query,
-    results: matched.slice(0, maxResults),
-    source: matched.length > 0 ? "AURA Verified Educational Catalog" : "No Match"
-  };
 }
 
-async function searchAcademicVideos({ standard = "", board = "", subject = "", topic = "", language = "Tamil", maxResults = 6 } = {}) {
-  const normSubject = (subject || "").toLowerCase().trim();
-  const normTopic = (topic || "").toLowerCase().trim();
+/**
+ * Clean curriculum topic strings for optimized search
+ */
+function cleanTopicForSearch(topicStr) {
+  if (!topicStr) return "";
+  let t = topicStr.trim();
+  // Remove markdown, bullet symbols
+  t = t.replace(/^[-*•\d.]+\s*/, "");
+  // If topic has "Unit I: Something — Details", simplify to "Unit 1 Something"
+  t = t.replace(/Unit\s+([IVXLCDM]+|\d+)\s*:\s*/i, "Unit $1 ");
+  // Truncate at dashes/semicolons if overly long
+  if (t.includes("—")) t = t.split("—")[0].trim();
+  if (t.includes(";")) t = t.split(";")[0].trim();
+  return t.slice(0, 75).trim();
+}
+
+/**
+ * Intelligent Academic Video Search matching exact board, standard, department, semester, subject, and unit
+ */
+async function searchAcademicVideos({
+  standard = "",
+  board = "",
+  department = "",
+  semester = "",
+  subjectCode = "",
+  subject = "",
+  topic = "",
+  language = "Tamil",
+  maxResults = 6
+} = {}) {
   const normBoard = (board || "").toLowerCase().trim();
+  const normLang = (language || "").toLowerCase().trim();
   const isCBSE = normBoard.includes("cbse");
-  const normLang = (language || (isCBSE ? "English" : "Tamil")).toLowerCase();
   const isTamil = normLang.includes("tamil") || normLang.includes("tanglish");
 
-  const boardQueryName = isCBSE ? "CBSE" : "Tamil Nadu State Board";
-  const queryParts = [boardQueryName, standard, subject, topic, isCBSE ? "NCERT" : (isTamil ? "Tamil" : "English"), "lecture"].filter(Boolean);
+  const isCollege = Boolean(
+    semester ||
+    /college|university|anna|engineering|higher/i.test(board) ||
+    /sem|engineering|degree|department/i.test(standard) ||
+    (department && department.trim()) ||
+    (subjectCode && /[A-Za-z]{2,}\d{3,}/.test(subjectCode))
+  );
+
+  const cleanSubject = (subject || "").replace(/\([^)]*\)/g, "").trim();
+  const cleanTopic = cleanTopicForSearch(topic);
+  const cleanCode = (subjectCode || "").trim();
+
+  let boardLabel = "";
+  let queryParts = [];
+
+  if (isCollege) {
+    boardLabel = "Anna University (Regulation 2021)";
+    queryParts = [
+      "Anna University",
+      cleanCode,
+      cleanSubject,
+      cleanTopic,
+      isTamil ? "Tamil" : "English",
+      "lecture"
+    ].filter(Boolean);
+  } else if (isCBSE) {
+    boardLabel = "CBSE Board";
+    const stdClean = (standard || "Class 12").replace("STD_", "Class ");
+    queryParts = [
+      "CBSE",
+      stdClean,
+      cleanSubject,
+      cleanTopic,
+      "NCERT",
+      isTamil ? "Tamil" : "English",
+      "lecture"
+    ].filter(Boolean);
+  } else {
+    boardLabel = "Tamil Nadu State Board";
+    const stdClean = (standard || "12th Standard").replace("STD_", "") + (standard.includes("Standard") ? "" : "th Standard");
+    queryParts = [
+      "Tamil Nadu State Board",
+      stdClean,
+      cleanSubject,
+      cleanTopic,
+      "Samacheer Kalvi",
+      isTamil ? "Tamil" : "English",
+      "lecture"
+    ].filter(Boolean);
+  }
+
   const fullQuery = queryParts.join(" ");
+  const directResolverUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(fullQuery)}`;
 
-  // If YouTube API Key is present, try live YouTube search first
-  if (isConfigured()) {
-    try {
-      const liveRes = await searchYouTube(fullQuery, maxResults);
-      if (liveRes.success && liveRes.results && liveRes.results.length > 0) {
-        liveRes.board = isCBSE ? "CBSE" : "State Board";
-        liveRes.searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(boardQueryName + ' ' + standard + ' ' + subject + ' ' + topic + ' lecture')}`;
-        return liveRes;
-      }
-    } catch (_) {}
+  // If YouTube API Key is missing:
+  if (!isConfigured()) {
+    return {
+      success: false,
+      errorCode: "KEY_MISSING",
+      error: "YouTube Data API key is not configured in backend/.env.",
+      explanation: "YouTube API key is missing. You can stream these exact curriculum lectures directly on YouTube using the 1-click resolver below.",
+      query: fullQuery,
+      board: boardLabel,
+      standard,
+      subject: cleanSubject,
+      subjectCode: cleanCode,
+      topic: cleanTopic,
+      searchUrl: directResolverUrl,
+      results: []
+    };
   }
 
-  // Catalog Matching: prioritize matching board, subject, and topic
-  const targetLangKey = isTamil ? "tamil" : "english";
-  let matched = [];
+  // Execute authentic YouTube search
+  const apiRes = await searchYouTube(fullQuery, maxResults);
 
-  for (const entry of VERIFIED_EDUCATIONAL_CATALOG) {
-    const matchesSubject = entry.subjects.some(s => normSubject.includes(s) || normTopic.includes(s));
-    if (matchesSubject) {
-      const vid = isCBSE ? (entry.cbse || entry.english || entry.tamil) : (entry[targetLangKey] || entry.tamil || entry.english);
-      if (vid && !matched.some(m => m.videoId === vid.id)) {
-        matched.push({
-          videoId: vid.id,
-          title: vid.title,
-          channel: vid.channel,
-          thumbnail: `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`,
-          url: `https://www.youtube.com/watch?v=${vid.id}`,
-          publishedAt: new Date().toISOString(),
-          description: vid.desc,
-          badge: isCBSE ? "CBSE NCERT Core" : "TN State Board Core",
-          language: isTamil ? "Tamil" : "English",
-          board: isCBSE ? "CBSE" : "State Board"
-        });
-      }
-    }
+  if (!apiRes.success) {
+    return {
+      success: false,
+      errorCode: apiRes.errorCode,
+      error: apiRes.error,
+      explanation: apiRes.errorCode === "QUOTA_EXHAUSTED"
+        ? "YouTube Data API daily request quota (10,000 units/day) has been exceeded for today. You can stream these verified syllabus lectures directly using the 1-click YouTube search resolver below."
+        : (apiRes.error || "YouTube video search encountered a service issue."),
+      query: fullQuery,
+      board: boardLabel,
+      standard,
+      subject: cleanSubject,
+      subjectCode: cleanCode,
+      topic: cleanTopic,
+      searchUrl: directResolverUrl,
+      results: []
+    };
   }
 
-  // If catalog has fewer than maxResults, generate dynamically targeted board lectures with exact channels
-  if (matched.length < maxResults) {
-    const cleanTopic = topic || "Complete Syllabus Breakdown";
-    const stdLabel = standard || (isCBSE ? "Class 12" : "12th Standard");
-    const subjLabel = subject || "Academic Subject";
-
-    const boardTemplates = isCBSE ? [
-      {
-        channel: "Physics Wallah - Alakh Pandey",
-        title: `CBSE ${stdLabel} ${subjLabel}: ${cleanTopic} Full Lecture (NCERT)`,
-        desc: `Comprehensive CBSE board exam & NCERT line-by-line coverage for ${cleanTopic} with solved exemplar questions.`,
-        badge: "CBSE NCERT Core",
-        language: "English / Hinglish"
-      },
-      {
-        channel: "Khan Academy India",
-        title: `${subjLabel} — ${cleanTopic} Conceptual Proofs & Visual Derivations`,
-        desc: `NCERT conceptual foundations, animations, and step-by-step reasoning for ${cleanTopic}.`,
-        badge: "NCERT Concept Mastery",
-        language: "English"
-      },
-      {
-        channel: "Magnet Brains",
-        title: `${subjLabel} Class ${stdLabel.replace(/[^0-9]/g, '') || '12'} | ${cleanTopic} Full Chapter Revision`,
-        desc: `100% free complete CBSE curriculum revision, board blueprint high-yield questions and NCERT solutions.`,
-        badge: "CBSE Centum Blueprint",
-        language: "English / Hindi"
-      },
-      {
-        channel: "LearnoHub - Class 11, 12",
-        title: `CBSE ${stdLabel} ${subjLabel} — ${cleanTopic} One Shot & Solved Numericals`,
-        desc: `One-shot revision for ${cleanTopic} covering all formulas, diagrams, and Previous Year Questions (PYQs).`,
-        badge: "One-Shot Revision",
-        language: "English"
-      }
-    ] : [
-      {
-        channel: "Kalvi TV Official",
-        title: `${stdLabel} ${subjLabel}: ${cleanTopic} Samacheer Kalvi அரசுப் பாடம்`,
-        desc: `Government of Tamil Nadu Kalvi TV official video lecture series for ${subjLabel} covering ${cleanTopic}.`,
-        badge: "TN State Board Core",
-        language: "Tamil"
-      },
-      {
-        channel: "Tamil Nadu State Board Masters",
-        title: `${subjLabel} — ${cleanTopic} Samacheer Kalvi Vol 1 & 2 in Tamil`,
-        desc: `Line-by-line textbook explanation, book-back numerical solutions, and government exam scoring strategies.`,
-        badge: "Samacheer Kalvi",
-        language: "Tamil"
-      },
-      {
-        channel: "Tamil Science & Arts Hub",
-        title: `${subjLabel} — ${cleanTopic} High-Yield 5-Mark Derivations & Solutions (Tamil)`,
-        desc: `Step-by-step syllabus proof, diagrams, and board exam centum presentation techniques in Tamil.`,
-        badge: "Centum Scoring Tips",
-        language: "Tamil & English"
-      },
-      {
-        channel: "Samacheer Kalvi Guide",
-        title: `${stdLabel} ${subjLabel} Public Exam Important Questions — ${cleanTopic}`,
-        desc: `Master high-probability Part A, B & C questions and model question paper analysis for ${subjLabel}.`,
-        badge: "TN Board Blueprint",
-        language: "Tamil"
-      }
-    ];
-
-    for (const tpl of boardTemplates) {
-      if (matched.length >= maxResults) break;
-      if (!matched.some(m => m.channel === tpl.channel)) {
-        const itemSearchQuery = `${boardQueryName} ${stdLabel} ${subjLabel} ${cleanTopic} ${tpl.channel} lecture`;
-        const itemResolverUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(itemSearchQuery)}`;
-        matched.push({
-          videoId: null,
-          isDirectSearch: true,
-          title: tpl.title,
-          channel: tpl.channel,
-          thumbnail: `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400`,
-          url: itemResolverUrl,
-          publishedAt: new Date().toISOString(),
-          description: tpl.desc,
-          badge: tpl.badge,
-          language: tpl.language,
-          board: isCBSE ? "CBSE" : "State Board"
-        });
-      }
-    }
+  // If 0 results returned from API:
+  if (!apiRes.results || apiRes.results.length === 0) {
+    return {
+      success: true,
+      query: fullQuery,
+      board: boardLabel,
+      standard,
+      subject: cleanSubject,
+      subjectCode: cleanCode,
+      topic: cleanTopic,
+      searchUrl: directResolverUrl,
+      explanation: `No direct video results were returned for "${fullQuery}". You can try broader keywords or open the 1-click resolver search on YouTube.`,
+      results: []
+    };
   }
 
-  const directResolverUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(boardQueryName + ' ' + standard + ' ' + subject + ' ' + topic + ' lecture')}`;
+  // Decorate real verified video items
+  const decorated = apiRes.results.map(v => ({
+    ...v,
+    badge: isCollege ? "Anna University R2021" : (isCBSE ? "CBSE NCERT Core" : "TN State Board Core"),
+    language: isTamil ? "Tamil" : "English",
+    board: boardLabel
+  }));
 
   return {
     success: true,
     query: fullQuery,
-    board: isCBSE ? "CBSE" : "State Board",
+    board: boardLabel,
     standard,
-    subject,
-    topic,
+    subject: cleanSubject,
+    subjectCode: cleanCode,
+    topic: cleanTopic,
     language: isTamil ? "Tamil" : "English",
     searchUrl: directResolverUrl,
-    results: matched.slice(0, maxResults),
-    source: isCBSE ? "CBSE NCERT Academic Engine" : "TN State Board Academic Engine"
+    results: decorated,
+    count: decorated.length,
+    source: "YouTube Data API v3"
   };
 }
 

@@ -28,18 +28,24 @@ router.get("/status", (req, res) => {
 const handleYouTubeSearch = async (req, res) => {
   try {
     const subject = req.body?.subject || req.query?.subject || "";
+    const subjectCode = req.body?.subjectCode || req.query?.subjectCode || "";
     const topic = req.body?.topic || req.query?.topic || "";
     const standard = req.body?.standard || req.query?.standard || "";
+    const department = req.body?.department || req.query?.department || "";
+    const semester = req.body?.semester || req.query?.semester || "";
     const board = req.body?.board || req.query?.board || "";
     const language = req.body?.language || req.query?.language || "Tamil";
     const maxResults = parseInt(req.body?.maxResults || req.query?.maxResults || "6", 10);
     const query = req.body?.query || req.body?.q || req.query?.q || req.query?.query;
 
     let result;
-    if (subject || topic) {
+    if (subject || topic || subjectCode) {
       result = await youtubeService.searchAcademicVideos({
         standard,
         board,
+        department,
+        semester,
+        subjectCode,
         subject,
         topic,
         language,

@@ -4977,7 +4977,7 @@ if (ytSearchBtn) {
     }
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/youtube/search`, {
+      const res = await fetch(`/api/youtube/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: q, maxResults: 6 })
@@ -11065,13 +11065,20 @@ async function renderAcademicYouTubeRecommendations() {
   `;
 
   let matchingVideos = [];
+  let videoApiError = null;
+  let videoExplanation = null;
+  let activeSearchUrl = directResolverUrl;
+
   try {
-    const res = await fetch(`${BACKEND_URL}/api/youtube/search`, {
+    const res = await fetch(`/api/youtube/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        board: isCollege ? "Anna University" : (isCBSE ? "CBSE" : "State Board"),
         standard: standardOrDept,
-        board: isCBSE ? "CBSE" : "State Board",
+        department: isCollege ? standardOrDept : "",
+        semester: semester || (isCollege ? 1 : ""),
+        subjectCode: selectedSubjectCode,
         subject: selectedSubjectName,
         topic: selectedTopic,
         language: isCBSE ? "English" : "Tamil",
@@ -11079,7 +11086,9 @@ async function renderAcademicYouTubeRecommendations() {
       })
     });
     const data = await res.json();
-    if (data.success && Array.isArray(data.results) && data.results.length > 0) {
+    if (data.searchUrl) activeSearchUrl = data.searchUrl;
+
+    if (data.success && Array.isArray(data.results)) {
       matchingVideos = data.results.map(r => ({
         id: r.videoId,
         videoId: r.videoId,
@@ -11088,136 +11097,19 @@ async function renderAcademicYouTubeRecommendations() {
         thumbnail: r.thumbnail || `https://i.ytimg.com/vi/${r.videoId}/hqdefault.jpg`,
         url: r.url || `https://www.youtube.com/watch?v=${r.videoId}`,
         language: r.language || (isCBSE ? "English" : "Tamil"),
-        badge: r.badge || (isCBSE ? "CBSE NCERT Core" : "TN State Board Core"),
+        badge: r.badge || (isCollege ? "Anna University R2021" : (isCBSE ? "CBSE NCERT Core" : "TN State Board Core")),
         description: r.description
       }));
-    }
-  } catch (_) {}
-
-  // Fallback to static prioritized board catalog if backend has no results
-  if (matchingVideos.length === 0) {
-    if (isCollege) {
-      matchingVideos = [
-        {
-          id: "Q_n_4iY7a44",
-          videoId: "Q_n_4iY7a44",
-          title: `Anna University ${selectedSubjectName} Complete Lecture Series (Tamil)`,
-          channel: "Logic First Tamil",
-          thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400",
-          url: directResolverUrl,
-          language: "Tamil",
-          badge: "Anna University R2021",
-          description: `Full university syllabus walkthrough for ${selectedSubjectName} covering ${selectedTopic}.`
-        },
-        {
-          id: "0IAPZzGSbME",
-          videoId: "0IAPZzGSbME",
-          title: `${selectedSubjectName} — ${selectedTopic} Deep-Dive`,
-          channel: "Gate Smashers",
-          thumbnail: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=400",
-          url: directResolverUrl,
-          language: "English",
-          badge: "University Blueprint",
-          description: `Step-by-step mathematical proofs and 16-mark semester question solutions for ${selectedTopic}.`
-        }
-      ];
-    } else if (isCBSE) {
-      // Prioritize CBSE channels: Physics Wallah, Khan Academy, Magnet Brains, LearnoHub
-      matchingVideos = [
-        {
-          id: "bHIhgxav9LY",
-          videoId: "bHIhgxav9LY",
-          title: `CBSE ${stdLabel} ${selectedSubjectName}: ${selectedTopic} Full NCERT Lecture`,
-          channel: "Physics Wallah - Alakh Pandey",
-          thumbnail: "https://i.ytimg.com/vi/bHIhgxav9LY/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=bHIhgxav9LY`,
-          language: "English / Hinglish",
-          badge: "CBSE NCERT Core",
-          description: `Complete CBSE board exam line-by-line NCERT derivation and problem-solving for ${selectedTopic}.`
-        },
-        {
-          id: "WS070h7kY3I",
-          videoId: "WS070h7kY3I",
-          title: `${selectedSubjectName} — ${selectedTopic} Conceptual Proofs & Visual Derivations`,
-          channel: "Khan Academy India",
-          thumbnail: "https://i.ytimg.com/vi/WS070h7kY3I/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=WS070h7kY3I`,
-          language: "English",
-          badge: "NCERT Concept Mastery",
-          description: `Visual animations, fundamental principles, and step-by-step calculus derivations for ${selectedTopic}.`
-        },
-        {
-          id: "e_e07fJ85V8",
-          videoId: "e_e07fJ85V8",
-          title: `${selectedSubjectName} Class ${stdLabel.replace(/[^0-9]/g, '') || '12'} | ${selectedTopic} Complete Revision`,
-          channel: "Magnet Brains",
-          thumbnail: "https://i.ytimg.com/vi/e_e07fJ85V8/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=e_e07fJ85V8`,
-          language: "English / Hindi",
-          badge: "CBSE Centum Blueprint",
-          description: `Full CBSE syllabus revision, high-probability board questions, and NCERT solutions.`
-        },
-        {
-          id: "bC79K6V3M6E",
-          videoId: "bC79K6V3M6E",
-          title: `CBSE ${stdLabel} ${selectedSubjectName} — ${selectedTopic} One Shot & Solved Numericals`,
-          channel: "LearnoHub - Class 11, 12",
-          thumbnail: "https://i.ytimg.com/vi/bC79K6V3M6E/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=bC79K6V3M6E`,
-          language: "English",
-          badge: "One-Shot Revision",
-          description: `One-shot revision covering all formulas, NCERT exemplar questions, and previous year board questions.`
-        }
-      ];
+      if (matchingVideos.length === 0 && data.explanation) {
+        videoExplanation = data.explanation;
+      }
     } else {
-      // Prioritize State Board channels: Kalvi TV, Tamil Nadu State Board Masters, Tamil Physics Tutor, Samacheer Kalvi Guide
-      matchingVideos = [
-        {
-          id: "m6x8A4V4B9o",
-          videoId: "m6x8A4V4B9o",
-          title: `${stdLabel} ${selectedSubjectName}: ${selectedTopic} Samacheer Kalvi அரசுப் பாடம்`,
-          channel: "Kalvi TV Official",
-          thumbnail: "https://i.ytimg.com/vi/m6x8A4V4B9o/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=m6x8A4V4B9o`,
-          language: "Tamil",
-          badge: "TN State Board Core",
-          description: `Government of Tamil Nadu Kalvi TV official video lecture series for ${selectedSubjectName} covering ${selectedTopic}.`
-        },
-        {
-          id: "e_e07fJ85V8",
-          videoId: "e_e07fJ85V8",
-          title: `${selectedSubjectName} — ${selectedTopic} Samacheer Kalvi Vol 1 & 2 in Tamil`,
-          channel: "Tamil Nadu State Board Masters",
-          thumbnail: "https://i.ytimg.com/vi/e_e07fJ85V8/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=e_e07fJ85V8`,
-          language: "Tamil",
-          badge: "Samacheer Kalvi",
-          description: `Line-by-line textbook explanation, book-back numerical solutions, and government exam scoring strategies.`
-        },
-        {
-          id: "bHIhgxav9LY",
-          videoId: "bHIhgxav9LY",
-          title: `${selectedSubjectName} — ${selectedTopic} High-Yield 5-Mark Derivations (Tamil)`,
-          channel: "Tamil Physics & Science Tutor",
-          thumbnail: "https://i.ytimg.com/vi/bHIhgxav9LY/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=bHIhgxav9LY`,
-          language: "Tamil & English",
-          badge: "Centum Scoring Tips",
-          description: `Step-by-step mathematical proof, ray diagrams, and board exam centum presentation techniques in Tamil.`
-        },
-        {
-          id: "c_u8A2Z5N3o",
-          videoId: "c_u8A2Z5N3o",
-          title: `${stdLabel} ${selectedSubjectName} Public Exam Important Questions — ${selectedTopic}`,
-          channel: "Samacheer Kalvi Guide",
-          thumbnail: "https://i.ytimg.com/vi/c_u8A2Z5N3o/hqdefault.jpg",
-          url: `https://www.youtube.com/watch?v=c_u8A2Z5N3o`,
-          language: "Tamil",
-          badge: "TN Board Blueprint",
-          description: `Master high-probability Part A, B & C questions and model question paper analysis for ${selectedSubjectName}.`
-        }
-      ];
+      videoApiError = data;
+      videoExplanation = data.explanation || data.error;
     }
+  } catch (err) {
+    videoApiError = { errorCode: "NETWORK_ERROR", error: err.message };
+    videoExplanation = `Could not reach video service: ${err.message}. Please check your connection or use the 1-click resolver search below.`;
   }
 
   container.innerHTML = `
@@ -11240,7 +11132,7 @@ async function renderAcademicYouTubeRecommendations() {
       </div>
 
       <!-- 1-Click Action Button: Watch Topic Deep-Dive on YouTube -->
-      <a href="${escapeHtml(directResolverUrl)}" target="_blank" rel="noopener noreferrer" class="academic-deepdive-btn" title="Open YouTube search resolver for exact board & topic">
+      <a href="${escapeHtml(activeSearchUrl)}" target="_blank" rel="noopener noreferrer" class="academic-deepdive-btn" title="Open YouTube search resolver for exact board & topic">
         <span class="academic-yt-play-icon">▶</span>
         <span>Search Topic Series (1-Click Resolver)</span>
         <span class="academic-btn-arrow">↗</span>
@@ -11258,7 +11150,7 @@ async function renderAcademicYouTubeRecommendations() {
           const cleanT = cleanPillText(t);
           const isActive = t === selectedTopic || cleanT === cleanPillText(selectedTopic);
           return `
-            <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(cleanT).replace(/'/g, "\'")}')">
+            <button type="button" class="academic-topic-pill ${isActive ? 'active' : ''}" onclick="selectAcademicRecommendationTopic('${escapeHtml(cleanT).replace(/'/g, "\\'")}')">
               ${escapeHtml(cleanT)}
             </button>
           `;
@@ -11266,17 +11158,17 @@ async function renderAcademicYouTubeRecommendations() {
       </div>
     </div>
 
-    <!-- Targeted Videos Grid -->
+    <!-- Targeted Videos Grid / Authentic State Rendering -->
     ${matchingVideos.length > 0 ? `
       <div class="academic-yt-grid">
         ${matchingVideos.map(v => {
           const vId = v.videoId || v.id;
           const isRealId = Boolean(vId && /^[a-zA-Z0-9_-]{11}$/.test(vId));
           const thumb = isRealId ? (v.thumbnail || `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`) : (v.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400");
-          const watchUrl = isRealId ? `https://www.youtube.com/watch?v=${vId}` : (v.url || directResolverUrl);
+          const watchUrl = isRealId ? `https://www.youtube.com/watch?v=${vId}` : activeSearchUrl;
           return `
             <div class="academic-yt-card">
-              <div class="academic-yt-thumb-wrap" style="position:relative; cursor:pointer;" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\'")}')">
+              <div class="academic-yt-thumb-wrap" style="position:relative; cursor:pointer;" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\\'")}')">
                 <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="academic-yt-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400'" />
                 <span class="academic-yt-chip-badge">${escapeHtml(v.badge || (isCBSE ? 'CBSE NCERT Core' : 'TN State Board Core'))}</span>
                 <span class="academic-yt-lang-badge">${escapeHtml(v.language || (isCBSE ? 'English' : 'Tamil'))}</span>
@@ -11291,7 +11183,7 @@ async function renderAcademicYouTubeRecommendations() {
                   <p class="academic-yt-card-desc" style="margin-top:6px;">${escapeHtml(v.description || '')}</p>
                 </div>
                 <div class="academic-yt-card-actions">
-                  <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\'")}')" title="${isRealId ? 'Stream directly inside in-app player' : 'Watch topic on YouTube'}">
+                  <button type="button" class="academic-yt-btn-inapp" onclick="openEmbeddedYoutubeModal('${watchUrl}', '${escapeHtml(v.title).replace(/'/g, "\\'")}', '${escapeHtml(v.channel || 'Educational Channel').replace(/'/g, "\\'")}')" title="${isRealId ? 'Stream directly inside in-app player' : 'Watch topic on YouTube'}">
                     <span>${isRealId ? '▷' : '↗'}</span>
                     <span>${isRealId ? 'Watch' : 'Search YT'}</span>
                   </button>
@@ -11304,14 +11196,45 @@ async function renderAcademicYouTubeRecommendations() {
           `;
         }).join('')}
       </div>
+    ` : videoApiError ? `
+      <div class="academic-yt-empty-state" style="padding:32px 20px; text-align:center; background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.25); border-radius:14px; margin-top:14px;">
+        <div style="font-size:32px; margin-bottom:10px;">
+          ${videoApiError.errorCode === "QUOTA_EXHAUSTED" ? "⚡" : videoApiError.errorCode === "KEY_MISSING" ? "🔑" : "⚠️"}
+        </div>
+        <h4 class="academic-yt-empty-title" style="color:#f87171; font-size:15px; margin-bottom:6px; font-weight:700;">
+          ${videoApiError.errorCode === "QUOTA_EXHAUSTED" ? "YouTube Data API Daily Quota Exceeded" : videoApiError.errorCode === "KEY_MISSING" ? "YouTube Data API Key Not Configured" : "Video Lecture Retrieval Notice"}
+        </h4>
+        <p class="academic-yt-empty-sub" style="font-size:13px; color:#cbd5e1; max-width:540px; margin:0 auto 16px; line-height:1.6;">
+          ${escapeHtml(videoExplanation || videoApiError.error || "Unable to load videos directly at this moment.")}
+        </p>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+          <a href="${escapeHtml(activeSearchUrl)}" target="_blank" rel="noopener noreferrer" class="btn-generate-gemini" style="width:auto; display:inline-flex; align-items:center; gap:8px; padding:9px 20px; font-size:12.5px; text-decoration:none;">
+            <span>▶ Stream "${escapeHtml(selectedSubjectName)}" on YouTube (1-Click Resolver)</span>
+            <span>↗</span>
+          </a>
+          <button type="button" class="btn-vault-action" onclick="renderAcademicYouTubeRecommendations()" style="padding:9px 18px; font-size:12.5px;">
+            🔄 Retry Video Search
+          </button>
+        </div>
+      </div>
     ` : `
-      <div class="academic-yt-empty-state" style="padding:40px 20px; text-align:center;">
-        <div style="font-size:32px; margin-bottom:12px;">📺</div>
-        <h4 class="academic-yt-empty-title" style="color:var(--text-primary); font-size:15px; margin-bottom:6px;">No Verified Video Lectures Found for "${escapeHtml(selectedTopic)}"</h4>
-        <p class="academic-yt-empty-sub" style="font-size:13px; color:var(--text-secondary); max-width:440px; margin:0 auto 16px;">Try selecting another chapter unit above or click below to launch the YouTube search resolver.</p>
-        <a href="${escapeHtml(directResolverUrl)}" target="_blank" rel="noopener noreferrer" class="btn-primary" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:8px 18px; margin:0 auto; text-decoration:none;">
-          <span>🔍 Launch YouTube Resolver for "${escapeHtml(selectedTopic)}"</span>
-        </a>
+      <div class="academic-yt-empty-state" style="padding:36px 20px; text-align:center; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:14px; margin-top:14px;">
+        <div style="font-size:32px; margin-bottom:10px;">📺</div>
+        <h4 class="academic-yt-empty-title" style="color:var(--text-primary); font-size:15px; margin-bottom:6px; font-weight:700;">
+          No Direct Video Matches for "${escapeHtml(selectedTopic)}"
+        </h4>
+        <p class="academic-yt-empty-sub" style="font-size:13px; color:var(--text-secondary); max-width:500px; margin:0 auto 16px; line-height:1.5;">
+          ${escapeHtml(videoExplanation || "Try choosing another unit above or launch the YouTube search resolver to find matching lectures.")}
+        </p>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+          <a href="${escapeHtml(activeSearchUrl)}" target="_blank" rel="noopener noreferrer" class="btn-generate-gemini" style="width:auto; display:inline-flex; align-items:center; gap:8px; padding:9px 20px; font-size:12.5px; text-decoration:none;">
+            <span>🔍 Launch YouTube Resolver for "${escapeHtml(selectedSubjectName)}"</span>
+            <span>↗</span>
+          </a>
+          <button type="button" class="btn-vault-action" onclick="renderAcademicYouTubeRecommendations()" style="padding:9px 18px; font-size:12.5px;">
+            🔄 Retry
+          </button>
+        </div>
       </div>
     `}
   `;
@@ -13110,6 +13033,44 @@ topbarLatencyTicker();
   let activeVisionPrompt = "Identify this object, its purpose, and how it works.";
   let visionChatHistory = [];
 
+  /**
+   * Clean Student-First Markdown to Semantic HTML Renderer
+   * Converts markdown symbols (**bold**, *italic*, headers, bullet points, [links](url))
+   * into clean, readable HTML without raw formatting characters in the student UI.
+   */
+  function renderCleanStudentMarkdown(rawText) {
+    if (!rawText) return "";
+    let safe = String(rawText).trim()
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    // Markdown links: [Title](url) -> safe styled link
+    safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:#38bdf8; text-decoration:underline; font-weight:600; word-break:break-word;">$1 ↗</a>');
+
+    // Headings: ### Header or ## Header
+    safe = safe.replace(/^#{1,4}\s*(.+)$/gm, '<div style="font-weight:700; color:#38bdf8; font-size:14px; margin:10px 0 4px 0;">$1</div>');
+
+    // Bold: **text**
+    safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#f8fafc; font-weight:700;">$1</strong>');
+
+    // Italic: *text*
+    safe = safe.replace(/(^|[^*])\*([^*]+)\*([^*]|$)/g, '$1<em style="color:#cbd5e1;">$2</em>$3');
+
+    // Bullets: • or - or *
+    safe = safe.replace(/^[•\-*]\s+(.+)$/gm, '<div style="display:flex; gap:6px; margin-left:4px; margin-bottom:4px;"><span style="color:#38bdf8;">•</span><span>$1</span></div>');
+
+    // Format paragraphs nicely
+    const paragraphs = safe.split(/\n{2,}/);
+    return paragraphs.map(p => {
+      const trimmed = p.trim();
+      if (trimmed.startsWith("<div") || trimmed.startsWith("<strong") || trimmed.startsWith("<h")) {
+        return trimmed.replace(/\n/g, "<br/>");
+      }
+      return `<div style="margin-bottom:8px; line-height:1.6;">${trimmed.replace(/\n/g, "<br/>")}</div>`;
+    }).join("");
+  }
+
   function openAuraVisionModal(initialPrompt, initialLang) {
     const camModal = document.getElementById("cameraHardwareModal");
     const videoFeed = document.getElementById("cameraVideoFeed");
@@ -13163,8 +13124,8 @@ topbarLatencyTicker();
       activeVisionPrompt = initialPrompt.trim();
     } else {
       activeVisionPrompt = activeVisionLanguage === "tamil"
-        ? "இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு அதன் பயன்பாட்டை தமிழில் விளக்குங்கள்."
-        : "Identify this object, its purpose, and how it works.";
+        ? "இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு மாணவர்-நட்பு முறையில் சுருக்கமாக தமிழில் விளக்குங்கள்."
+        : "Identify this object in short student-first format.";
     }
 
     // Reset views
@@ -13301,11 +13262,7 @@ topbarLatencyTicker();
         if (data.success && data.analysis) {
           const rawText = data.analysis;
           if (analysisOutput) {
-            if (typeof marked !== "undefined" && typeof marked.parse === "function") {
-              analysisOutput.innerHTML = marked.parse(rawText);
-            } else {
-              analysisOutput.textContent = rawText;
-            }
+            analysisOutput.innerHTML = renderCleanStudentMarkdown(rawText);
           }
           if (providerBadge) {
             providerBadge.textContent = data.provider || "Google Gemini Vision";
@@ -13533,7 +13490,7 @@ topbarLatencyTicker();
 
           const data = await res.json();
           if (data.success && data.analysis) {
-            aiBubble.textContent = data.analysis;
+            aiBubble.innerHTML = renderCleanStudentMarkdown(data.analysis);
             visionChatHistory.push({ role: "user", content: question });
             visionChatHistory.push({ role: "assistant", content: data.analysis });
 

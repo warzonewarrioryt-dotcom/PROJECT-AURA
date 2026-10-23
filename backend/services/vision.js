@@ -66,37 +66,41 @@ function getOpenAiClient() {
   return openAiClient;
 }
 
-const VISION_SYSTEM_PROMPT = `You are AURA Vision, the friendly, intelligent visual AI assistant of PROJECT AURA.
-Your mission is to examine user-approved camera captures or uploaded images and explain what you see with scientific accuracy, clarity, and warmth.
+const productSearch = require("./productSearch");
 
-CORE INSTRUCTIONS:
-1. Identified Object: State what the object or diagram is clearly, including its category and your confidence.
-2. Likely Purpose & Application: Explain what it is used for in science, engineering, technology, education, or everyday life.
-3. How It Works: Explain its operating principle or core mechanism in an intuitive, engaging manner.
-4. Key Visible Details: Point out notable components, ports, buttons, markings, model numbers, or visible text (OCR).
-5. Diagrams & Schematics: If an electrical circuit, mathematical equation, or academic diagram is shown, explain the key principles step-by-step.
-6. Uncertainty & Honesty: If the image is blurry, partially cropped, or multiple objects share similar features, explicitly state your uncertainty instead of guessing. Never invent non-existent specifications.
-7. Language Requirement: Support natural English and Tamil (தமிழ்). When prompted in Tamil, or when the user selected Tamil, provide a fluent, culturally respectful explanation in Tamil.
+const VISION_SYSTEM_PROMPT = `You are AURA Vision, the friendly, intelligent, student-first study assistant of PROJECT AURA.
+Your mission is to help students learn with short, clear, warm, and encouraging explanations.
 
-OUTPUT STRUCTURE:
-Format your analysis cleanly with Markdown headings:
-### 1. 🔍 Identified Object
-[Name and brief definition with confidence rating]
+DEFAULT STUDENT-FIRST ANSWER STYLE (Strictly keep between 40 to 90 words):
+When a student shows an object, component, or device, respond strictly in this clean, friendly format:
 
-### 2. 🎯 Likely Purpose & Use
-[Primary utility and real-world applications]
+🔍 **This looks like:** [object name]
 
-### 3. ⚙️ How It Works / Operating Principle
-[Mechanism or scientific principle]
+💡 **What it does:** [one or two simple, easy-to-understand sentences explaining its main purpose]
 
-### 4. 📝 Visible Details & Markings
-[Observable parts, buttons, ports, labels, or OCR text]
+📚 **Student tip:** [one useful fact, formula, real-world example, or practical tip for students]
 
-### 5. 💡 Comprehensive Explanation
-[Deep-dive educational explanation in the requested language]
+Finish with one short, friendly follow-up suggestion, such as:
+"Want me to explain how it works?" or "Want to know how its buttons work?"
 
-### 6. ⚠️ Observations & Uncertainty
-[Any caveats, lighting limits, or alternative possibilities]`;
+TAMIL STUDENT-FIRST FORMAT (இயற்கையான தமிழில் 40 முதல் 80 வார்த்தைகளில் சுருக்கமாக):
+🔍 **இது ஒரு:** [பொருளின் பெயர்] போலத் தெரிகிறது.
+
+💡 **இது என்ன செய்யும்:** [ஒன்று அல்லது இரண்டு எளிய வாக்கியங்களில் அதன் பயன்பாடு]
+
+📚 **Student tip:** [மாணவர்களுக்கான ஒரு பயனுள்ள தகவல் அல்லது குறிப்பு]
+
+Finish with:
+"இதன் இயக்கம் அல்லது பாகங்கள் பற்றி விரிவாகப் பார்க்கலாமா?"
+
+SPECIAL RULES:
+1. Brevity & Word Count: Default responses MUST be concise (around 40–90 words). Avoid lengthy introductions, repeated conclusions, excessive headings, and unnecessary emojis.
+2. Detailed Explanations: Use a longer, comprehensive explanation ONLY when the student explicitly asks "explain in detail", "detailed", "விரிவாக", or "deep dive".
+3. Engineering & Electrical Components: Explain the component's purpose in simple terms and give a relevant practical example (e.g. in robotics, home appliances, or power grids).
+4. Educational Diagrams: Focus on the main concept and important labels.
+5. Text-Reading (OCR): When asked to read text, transcribe the visible text first, then briefly explain it.
+6. Uncertainty & Truthfulness: Distinguish visible evidence from inference. State uncertainty honestly if blurry or partially cropped. Never invent non-existent specifications or make unsupported claims about a person's identity, political affiliation, brand, or model.
+7. Clean Output: Format cleanly for the student UI. Avoid complex nested markdown.`;
 
 /**
  * Extract base64 and mime-type from any image input
@@ -137,6 +141,67 @@ function normalizeImageDataUrl(imageInput) {
 }
 
 /**
+ * Enrich visual analysis with verified product buying/learning links if applicable
+ */
+async function enrichWithProductLinks(text, { prompt, isTamil }) {
+  if (!text || typeof text !== "string") return text;
+  if (text.includes("🛒") || text.toLowerCase().includes("buy or learn more")) {
+    return text;
+  }
+
+  // Extract object name from the first lines
+  let objectName = "";
+  const objMatch = text.match(/(?:This looks like|இது ஒரு)[:\s*]+([^\n\r.]+)/i);
+  if (objMatch && objMatch[1]) {
+    objectName = objMatch[1].replace(/[*_]/g, "").trim();
+  }
+
+  if (!objectName) {
+    const firstLine = text.split("\n")[0] || "";
+    objectName = firstLine.replace(/[*#_🔍💡📚]/g, "").trim();
+  }
+
+  if (!objectName || !productSearch.isPurchasableItem(objectName, prompt)) {
+    return text;
+  }
+
+  try {
+    const pData = await productSearch.findProductLinks({
+      objectName,
+      userPrompt: prompt,
+      isTamil
+    });
+
+    if (pData) {
+      let productSection = "\n\n🛒 **" + (isTamil ? "வாங்க அல்லது மேலும் அறிய:" : "Buy or learn more:") + "**\n";
+      if (pData.hasDirectLinks && Array.isArray(pData.items) && pData.items.length > 0) {
+        pData.items.forEach(item => {
+          const priceStr = item.price ? ` (${item.price})` : "";
+          productSection += `• [${item.title} — ${item.seller}](${item.url})${priceStr}\n`;
+        });
+      } else if (pData.searchLinks && pData.searchLinks.length > 0) {
+        const linkStr = pData.searchLinks.map(s => `[${s.seller}](${s.url})`).join(" | ");
+        productSection += `${pData.message} ${linkStr}\n`;
+      }
+
+      // Insert before the last follow-up question
+      const lines = text.trim().split("\n");
+      const lastLine = lines[lines.length - 1];
+      if (lastLine.includes("?") || lastLine.includes("பார்க்கலாமா") || lastLine.includes("Want me")) {
+        lines.splice(lines.length - 1, 0, productSection.trim());
+        return lines.join("\n\n");
+      } else {
+        return text.trim() + productSection;
+      }
+    }
+  } catch (err) {
+    console.warn("[VISION PRODUCT ENRICH NOTE]", err.message);
+  }
+
+  return text;
+}
+
+/**
  * Check if at least one vision service is configured
  */
 function isConfigured() {
@@ -164,8 +229,8 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
   const isTamil = language === "tamil" || /[\u0B80-\u0BFF]/.test(prompt || "");
 
   let defaultPrompt = isTamil
-    ? "இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு, அதன் பயன்பாடு, அது எவ்வாறு செயல்படுகிறது மற்றும் அதில் காணப்படும் முக்கிய விவரங்களை தெளிவாக தமிழில் விளக்குங்கள்."
-    : "Identify this object, explain its primary purpose, how it works, and describe notable visible components, text, or details.";
+    ? "இந்த படத்தில் உள்ள பொருளை அடையாளம் கண்டு மாணவர்-நட்பு முறையில் சுருக்கமாக தமிழில் விளக்குங்கள்."
+    : "Identify this object and provide a short, friendly, student-first explanation.";
 
   const effectivePrompt = (prompt && prompt.trim()) ? prompt.trim() : defaultPrompt;
   let lastError = null;
@@ -193,7 +258,7 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
         contents.push({
           role: "user",
           parts: [
-            { text: isTamil ? `${effectivePrompt}\n\nமுக்கிய குறிப்பு: உங்கள் முழு விளக்கத்தையும் சரளமாகவும் துல்லியமாகவும் தமிழில் வழங்கவும்.` : effectivePrompt },
+            { text: isTamil ? `${effectivePrompt}\n\nமுக்கிய குறிப்பு: மாணவர்களுக்கான சுருக்கமான (40-80 வார்த்தைகள்) தெளிவான தமிழ் பதிலைத் தரவும்.` : effectivePrompt },
             { inlineData: { mimeType, data: base64Data } }
           ]
         });
@@ -207,7 +272,7 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
             contents,
             generationConfig: {
               temperature: 0.2,
-              maxOutputTokens: 1200
+              maxOutputTokens: 600
             }
           }),
           signal: AbortSignal.timeout(12000)
@@ -215,11 +280,12 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
 
         if (res.ok) {
           const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+          let text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
           if (text.trim()) {
+            const enrichedAnalysis = await enrichWithProductLinks(text.trim(), { prompt: effectivePrompt, isTamil });
             return {
               success: true,
-              analysis: text.trim(),
+              analysis: enrichedAnalysis,
               provider: `AURA Vision (Google Gemini ${model})`,
               model: model,
               language: isTamil ? "tamil" : "english",
@@ -292,9 +358,10 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
             } catch (_) {}
           }
 
+          const enrichedNvText = await enrichWithProductLinks(text, { prompt: effectivePrompt, isTamil });
           return {
             success: true,
-            analysis: text,
+            analysis: enrichedNvText,
             provider: `AURA Vision (NVIDIA ${nvModel})`,
             model: nvModel,
             language: isTamil ? "tamil" : "english",
@@ -344,9 +411,10 @@ async function analyzeImage({ image, prompt, language = "english", conversationH
 
         const text = res.choices?.[0]?.message?.content || "";
         if (text.trim()) {
+          const enrichedOaiText = await enrichWithProductLinks(text.trim(), { prompt: effectivePrompt, isTamil });
           return {
             success: true,
-            analysis: text.trim(),
+            analysis: enrichedOaiText,
             provider: `AURA Vision (OpenAI ${oModel})`,
             model: oModel,
             language: isTamil ? "tamil" : "english",
