@@ -93,3 +93,31 @@ Phases can overlap after their prerequisites pass; do not mark an acceptance cri
 ## 8. Audit sign-off
 
 **Phase 0 artifact exists.** This document records an initial static audit and plan. It is **not** a claim that the app has been run, tested in browsers, security-certified, or that the full audit is complete. No application source code was changed as part of producing this artifact.
+
+
+## 9. Supplemental security review (2026-10-24)
+
+A follow-up static inspection of authentication, file, student, and system routes found additional **critical items that must be addressed before public production use**. These are code-level observations; exploitability and live deployment exposure still require controlled testing.
+
+### Critical — authentication bypass/default credential risks
+
+- `backend/routes/auth.js` seeds a built-in lead-scholar account with a hard-coded default password when that user is absent. The login flow also contains a special-case password bypass for that account. `backend/routes/student.js` contains additional hard-coded default/demo credentials and password bypass comparisons. Remove default credentials and bypasses; rotate any credentials that may have been used; require a secure one-time setup or normal account registration. Do not expose or reuse the literal values.
+- `backend/routes/auth.js`'s Google ID token verifier attempts the official library and TokenInfo endpoint, but then falls back to decoding JWT claims locally and returns the email claim without cryptographic signature verification. An unverified token payload must never authenticate a user. Remove this fallback and fail closed unless the token is verified against Google's trusted keys and the expected audience/issuer.
+- Password validation accepts a minimum length of four characters in inspected registration paths. Establish a modern password policy and rate limiting, while preserving a safe migration path for existing users.
+- The student profile and several student/file/analytics routes expose read/write/delete endpoints. The current static review has not yet established consistent session verification and per-user authorization across them. Verify each route's identity binding and ownership checks before considering auth complete.
+
+### High — data exposure and execution surface
+
+- File routes include list, upload, download, raw-content, content, and delete endpoints. Combined with static serving of `/uploads`, this creates a potential private-document exposure risk until access controls and file naming/ownership rules are confirmed.
+- `backend/routes/system.js` includes an `/execute` endpoint, and `backend/services/windowsCompanion.js` imports/uses OS command execution. Review the full call chain, allowlist permitted commands, require explicit user confirmation for destructive actions, and ensure this capability is not remotely callable without strong authorization.
+- Student and auth routes maintain local JSON-backed account/profile state. Review privacy, file permissions, concurrency/atomic writes, backup policy, and deletion behavior before claiming secure permanent deletion.
+
+### Required priority order
+
+1. Disable hard-coded default/demo login paths and remove the unverified JWT fallback.
+2. Confirm authentication and per-user authorization on every profile, file, memory, analytics, quiz, system, and deletion endpoint.
+3. Restrict CORS to approved origins; protect private uploads; add request/file validation, rate limits, and security headers.
+4. Scan the repository and full Git history for secrets; rotate any real exposed credentials. Never commit replacement secrets.
+5. Add regression tests for login, Google sign-in, cross-user file access, delete-my-data, and system command restrictions.
+
+This supplemental review strengthens the initial risk ranking. It does not certify the app as secure and does not substitute for a full code/history scan or local runtime testing.
